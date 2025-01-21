@@ -7,7 +7,7 @@
 
 ## 참조
 
-- **FE 노션**: https://foggy-dragon-4af.notion.site/2-3-17610dd8017c80399a9ed1e2f8ac964c?pvs=4
+- **노션**: https://www.notion.so/FE-84934a09ea0c48d7912744ba889d488b
 - **Figma**: https://www.figma.com/design/kr0KTm6F7ol2X8p0dTIuFH/QUADRUPLE?node-id=2-2&t=yv0n3lEl6c37KBEQ-1
 
 ## **프로젝트 개요**
@@ -52,3 +52,4 @@
 - **쿠키 관리**: react-cookie
 
 ---
+## 문제 해결
