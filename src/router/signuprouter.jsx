@@ -57,4 +57,4 @@ const signUpRouter = () => {
     },
   ];
 };
-export default scheduleRouter;
+export default signUpRouter;
