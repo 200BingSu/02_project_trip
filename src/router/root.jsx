@@ -6,6 +6,7 @@ import Loading from "../components/loading/Loading";
 import scheduleRouter from "./schedulerouter";
 import NotFound from "../pages/NotFound";
 import scheduleBoardRouter from "./scheduleboardrouter";
+import signUpRouter from "./signuprouter";
 
 // lazy
 const LazyHome = lazy(() => import("../pages/Index"));
@@ -133,6 +134,7 @@ const router = createBrowserRouter([
         <LazySignUp />
       </Suspense>
     ),
+    children: signUpRouter(),
   },
   {
     path: "/user",
