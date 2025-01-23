@@ -4,28 +4,28 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-// const formItemLayout = {
-//   labelCol: {
-//     xs: { span: 24 },
-//     sm: { span: 8 },
-//   },
-//   wrapperCol: {
-//     xs: { span: 24 },
-//     sm: { span: 16 },
-//   },
-// };
-// const tailFormItemLayout = {
-//   wrapperCol: {
-//     xs: {
-//       span: 24,
-//       offset: 0,
-//     },
-//     sm: {
-//       span: 16,
-//       offset: 8,
-//     },
-//   },
-// };
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 24 },
+  },
+};
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 24,
+      offset: 0,
+    },
+  },
+};
 
 // 약관 동의
 const CheckboxGroup = Checkbox.Group;
@@ -75,7 +75,6 @@ const SignUpUser = () => {
   const getIdCheck = async () => {
     console.log("아이디 중복 체크 시도");
     setValidateStatus("validating");
-    console.log("validateStatus", validateStatus);
     try {
       const res = await axios.get(`/api/user/sign-up?email=email`);
       setValidateStatus("success");
@@ -97,7 +96,7 @@ const SignUpUser = () => {
     }
   };
 
-  // post login api
+  // post signUp api
   const handleClickPost = async data => {
     try {
       const res = await axios.post(`/api/signUpUser`, data);
@@ -130,7 +129,7 @@ const SignUpUser = () => {
 
   return (
     <Form
-      // {...formItemLayout}
+      {...formItemLayout}
       form={form}
       name="register"
       onFinish={values => onFinish(values)}
@@ -231,9 +230,7 @@ const SignUpUser = () => {
         style={{ display: "flex", flexDirection: "column" }}
       />
       {/* 제출 버튼 */}
-      <Form.Item
-      // {...tailFormItemLayout}
-      >
+      <Form.Item {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit" block>
           다음
         </Button>

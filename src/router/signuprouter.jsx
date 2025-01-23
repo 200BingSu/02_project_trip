@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import Loading from "../components/loading/Loading";
 
 const signUpRouter = () => {
+  const LazySignUp = lazy(() => import("../pages/signup/SignUpIndex"));
   const LazySignUpUser = lazy(() => import("../pages/signup/SignUpUser"));
   const LazySignUpBusiness = lazy(
     () => import("../pages/signup/SignUpBusiness"),
@@ -15,6 +16,14 @@ const signUpRouter = () => {
     () => import("../pages/signup/CompleteSingUP"),
   );
   return [
+    {
+      path: "index",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazySignUp />
+        </Suspense>
+      ),
+    },
     {
       path: "user",
       element: (
