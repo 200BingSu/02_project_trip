@@ -7,11 +7,11 @@ const Layout = () => {
   const path = window.location.pathname;
   return (
     <>
-      {path === "/" ? <MainHeader /> : <Header />}
-      <div className="max-w-3xl mx-auto bg-slate-200">
+      {/* {path === "/" ? <MainHeader /> : <Header />} */}
+      <div className="max-w-3xl mx-auto">
         <Outlet />
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
