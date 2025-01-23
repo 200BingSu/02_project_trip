@@ -7,6 +7,7 @@ import scheduleRouter from "./schedulerouter";
 import NotFound from "../pages/NotFound";
 import scheduleBoardRouter from "./scheduleboardrouter";
 import signUpRouter from "./signuprouter";
+import Layout from "../components/layout/Layout";
 
 // lazy
 const LazyHome = lazy(() => import("../pages/Index"));
@@ -18,143 +19,138 @@ const LazyNotification = lazy(
   () => import("../pages/notification/NotificationIndex"),
 );
 const LazyPayment = lazy(() => import("../pages/payment/PaymentIndex"));
-const LazySchedule = lazy(() => import("../pages/schedule/ScheduleIndex"));
+const LazySchedule = lazy(() => import("../pages/schedule/Schedule"));
 const LazyScheduleBoard = lazy(
-  () => import("../pages/scheduleBoard/scheduleBoardIndex"),
+  () => import("../pages/scheduleBoard/scheduleBoard"),
 );
 const LazySearch = lazy(() => import("../pages/search/SearchIndex"));
 const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
-const LazySignUp = lazy(() => import("../pages/signup/SignUpIndex"));
+const LazySignUp = lazy(() => import("../pages/signup/SignUp"));
 const LazyUser = lazy(() => import("../pages/user/UserIndex"));
 const LazyContent = lazy(() => import("../pages/contents/ContentIndex"));
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyHome />
-      </Suspense>
-    ),
+    element: <Layout />,
+    children: [
+      {
+        path: "/",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyHome />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/content",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyContent />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/booking",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyBooking />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/budget",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyBudget />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/business",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyBudget />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/coupon",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyCoupon />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/notification",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyNotification />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/payment",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyPayment />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/schedule",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazySchedule />
+          </Suspense>
+        ),
+        children: scheduleRouter(),
+      },
+      {
+        path: "/scheduleboard",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyScheduleBoard />
+          </Suspense>
+        ),
+        children: scheduleBoardRouter(),
+      },
+      {
+        path: "/search",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazySearch />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/signin",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazySignIn />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/signup",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazySignUp />
+          </Suspense>
+        ),
+        children: signUpRouter(),
+      },
+      {
+        path: "/user",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyUser />
+          </Suspense>
+        ),
+      },
+      { path: "*", element: <NotFound /> },
+    ],
   },
-  {
-    path: "/content",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyContent />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/booking",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyBooking />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/budget",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyBudget />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/business",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyBudget />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/coupon",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyCoupon />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/notification",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyNotification />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/payment",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyPayment />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/schedule",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazySchedule />
-      </Suspense>
-    ),
-    children: scheduleRouter(),
-  },
-  {
-    path: "/scheduleboard",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyScheduleBoard />
-      </Suspense>
-    ),
-    children: scheduleBoardRouter(),
-  },
-  {
-    path: "/search",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazySearch />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/signin",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazySignIn />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/signup",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazySignUp />
-      </Suspense>
-    ),
-    children: signUpRouter(),
-  },
-  {
-    path: "/user",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <LazyUser />
-      </Suspense>
-    ),
-  },
-  //   {
-  //     path: "/company",
-  //     element: (
-  //       <Suspense fallback={<Loading />}>
-  //         <LazyCompany />
-  //       </Suspense>
-  //     ),
-  //     children: companyRouter(),
-  //   },
-
-  { path: "*", element: <NotFound /> },
 ]);
 
 export default router;
