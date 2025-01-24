@@ -1,34 +1,11 @@
-import { Button, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { removeCookie, setCookie } from "../../utils/cookie";
 import { userAtom } from "../../atoms/userAtom";
 import { USER } from "../../constants/api";
-
-// 폼 레이아웃
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 24 },
-  },
-};
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 24,
-      offset: 0,
-    },
-  },
-};
+import { useState } from "react";
 
 const SingInIndex = () => {
   const [form] = Form.useForm();
@@ -40,6 +17,8 @@ const SingInIndex = () => {
   const handleNavigateHome = () => {
     navigate(`/`);
   };
+  // useState
+  const [loginType, setLoginType] = useState("personal");
   // 로그인 함수
   const postSignInUser = async data => {
     try {
@@ -64,9 +43,15 @@ const SingInIndex = () => {
   };
 
   return (
-    <div className="w-full px-[122px] py-[225px]">
-      <div className="w-full flex items-center justify-center">
-        <div className="w-[330px] h-[50px]">
+    <div
+      className="w-full h-screen px-[122px] py-[225px] 
+                    flex flex-col items-center justify-center"
+    >
+      <div
+        className="w-full 
+                    flex items-center justify-center"
+      >
+        <div className="w-[330px] h-[50px] mb-[20px]">
           <img
             src="/public/images/logo_1.png"
             alt="로고 이미지"
@@ -74,18 +59,33 @@ const SingInIndex = () => {
           />
         </div>
       </div>
-      <div className="w-full flex gap-[30px] h-[30px] items-center justify-center">
-        <button type="button" className="text-2xl">
-          개인 회원
+      <div
+        className="w-full h-[30px] 
+                    flex items-center justify-center 
+                    gap-[30px]"
+      >
+        <button
+          type="button"
+          className={`text-2xl h-[60px] pt-[17px] pb-[16px]
+                     ${loginType === "personal" ? "text-primary" : "text-slate-400"}
+                     ${loginType === "personal" ? "border-b-2 border-primary" : "border-b-1 border-slate-200"}`}
+          onClick={() => setLoginType("personal")}
+        >
+          개인회원
         </button>
-        <button type="button" className="text-2xl">
-          기업 회원
+        <button
+          type="button"
+          className={`text-2xl h-[60px] pt-[17px] pb-[16px]
+                     ${loginType === "business" ? "text-primary" : "text-slate-400"}
+                     ${loginType === "business" ? "border-b-2 border-primary" : "border-b-1 border-slate-200"}`}
+          onClick={() => setLoginType("business")}
+        >
+          기업회원
         </button>
       </div>
       {/* 로그인 폼 */}
-      <div className="w-full ">
+      <div className="w-full">
         <Form
-          {...formItemLayout}
           form={form}
           name="register"
           onFinish={values => onFinish(values)}
@@ -97,7 +97,7 @@ const SingInIndex = () => {
             name="email"
             label="이메일"
             labelCol={{ span: 24 }} // Label의 그리드 크기
-            rules={[{ required: true, message: "이메일을 입력해주세요." }]}
+            // rules={[{ required: true, message: "이메일을 입력해주세요." }]}
           >
             <Input
               placeholder="이메일을 입력하세요"
@@ -108,27 +108,51 @@ const SingInIndex = () => {
             name="pw"
             label="비밀번호"
             labelCol={{ span: 24 }} // Label의 그리드 크기
-            rules={[{ required: true, message: "비밀번호를 입력해주세요." }]}
+            // rules={[{ required: true, message: "비밀번호를 입력해주세요." }]}
           >
             <Input.Password
               placeholder="비밀번호를 입력하세요"
               style={{ height: "60px" }}
             />
           </Form.Item>
-
+          {/* 로그인 유지, 아이디 저장 */}
+          <div
+            className="w-full mb-[40px] 
+                          flex items-center justify-start"
+          >
+            <Checkbox>로그인 유지</Checkbox>
+            <Checkbox>아이디 저장</Checkbox>
+          </div>
           {/* 제출 버튼 */}
           <Form.Item>
-            <Button
-              {...tailFormItemLayout}
-              type="primary"
-              htmlType="submit"
-              block
-              className="h-[60px]"
-            >
+            <Button type="primary" htmlType="submit" block className="h-[60px]">
               다음
             </Button>
           </Form.Item>
         </Form>
+        {/* 아이디 찾기, 비밀번호 찾기, 회원가입 */}
+        <div
+          className="w-full 
+                        flex items-center justify-between 
+                        gap-[20px]"
+        >
+          <div
+            className="flex items-center justify-center 
+                          gap-[20px] 
+                          text-slate-300"
+          >
+            <button type="button" className="text-slate-500">
+              아이디 찾기
+            </button>
+            |
+            <button type="button" className="text-slate-500">
+              비밀번호 찾기
+            </button>
+          </div>
+          <button type="button" className="text-slate-500 underline">
+            회원가입
+          </button>
+        </div>
       </div>
     </div>
   );

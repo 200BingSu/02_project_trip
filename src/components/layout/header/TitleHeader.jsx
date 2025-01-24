@@ -15,8 +15,8 @@ import { IoIosClose } from "react-icons/io";
  */
 const TitleHeader = React.memo(({ icon, title, onClick }) => {
   return (
-    <div className="flex max-w-3xl mx-auto items-center h-[60px] px-[30px] gap-10">
-      <div className="text-[36px]" onClick={onClick}>
+    <div className="flex max-w-3xl w-full mx-auto items-center h-[60px] px-[30px] gap-10 bg-white fixed top-0 left-[50%] translate-x-[-50%] z-50">
+      <div className="text-[36px] cursor-pointer" onClick={onClick}>
         {icon === "back" ? <IoIosArrowRoundBack /> : <IoIosClose />}
       </div>
       <div className="text-[24px] font-bold">{title ? `${title}` : ``}</div>
