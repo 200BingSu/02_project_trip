@@ -13,13 +13,13 @@ export const USER = {
   resetPassword: "/api/user/reset-password",
   signInUser: "/api/user/sign-in",
   getAccessToken: "/api/user/access-token",
-  getUserInfo: "/api/user/userInfo?userId=userId",
+  getUserInfo: "/api/user/userInfo?userId=",
   patchUser: "/api/user",
 };
 
 export const CONTENT = {
-  getDetail: "/api/detail",
-  getReview: "/api/detail/review",
+  getDetail: "/api/detail?strfId=",
+  getReview: "/api/detail/review?strf_id=1&start_idx=0&size=20",
   postBooking: "/api/booking",
   getBookingList: "/api/booking",
   getBooking: "/api/booking?booking_id=1",
@@ -27,19 +27,19 @@ export const CONTENT = {
 
 export const WISHLIST = {
   postWishList: "/api/wish-list",
-  getWishList: "/api/wish-list",
+  getWishList: "/api/wish-list?category=%22STAY%22&page=1",
 };
 
 export const SEARCH = {
-  searchPage: "/api/search",
-  getSearchList: "/api/search/list",
+  search: "/api/search",
+  searchPage: "/api/search-page",
 };
 
 export const TRIP = {
   getTripList: "/api/trip-list",
-  getLocationList: "/api/trip/location",
+  getLocationList: "/api/trip/location?location_id=",
   postTrip: "/api/trip",
-  getTrip: "/api/trip?trip_id=1",
+  getTrip: "/api/trip?trip_id=",
   transportGet: "/api/transport/get",
   postSchedule: "/api/schedule",
   deleteSchedule: "/api/schedule",
