@@ -1,28 +1,47 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { Button, Form, Input } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Timer from "../../components/signup/Timer";
 import axios from "axios";
 import { USER } from "../../constants/api";
 
 const ConfirmEmail = () => {
   const [form] = Form.useForm();
+  const [formData, setFormData] = useState({});
+  const [file, setFile] = useState("");
 
   // useNavigate
   const navigate = useNavigate();
   const location = useLocation();
   const locationData = location.state;
+
+  useEffect(() => {
+    setFormData(locationData);
+  }, []);
+
   console.log("이메일 코드 확인 페이지:", locationData);
   const handleNavigateNext = data => {
     navigate(`/signup/complete`, { state: data });
   };
 
   // postSignup
-  const postSignUpUser = async data => {
-    console.log("보낼 데이터:", data);
+  const postSignUpUser = async () => {
+    const postData = new FormData();
+    postData.append(
+      "p",
+      new Blob([JSON.stringify(formData)], { type: "application/json" }),
+    );
+    if (file) {
+      postData.append("profilePic", file);
+    }
+    console.log("보낼 데이터:", postData);
     try {
-      const res = await axios.post(`${USER.signUpUser}`, data);
+      const res = await axios.post(`${USER.signUpUser}`, postData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log("회원가입 시도:", res.data);
       handleNavigateNext(locationData);
     } catch (error) {
@@ -35,7 +54,7 @@ const ConfirmEmail = () => {
       const res = await axios.post(`${USER.checkMail}`, data);
       console.log("이메일 링크 체크:", res.data);
       if (res.data.code === "200 성공") {
-        postSignUpUser(locationData);
+        postSignUpUser(data);
       }
     } catch (error) {
       console.log(error);
@@ -45,12 +64,12 @@ const ConfirmEmail = () => {
   // 제출 버튼
   const onFinish = values => {
     const formData = values;
-    const sendData = {
+    const emailCheckData = {
       ...formData,
-      email: locationData.p.email ? locationData.p.email : "없음",
+      email: locationData.email ? locationData.email : "없음",
     };
-    console.log(sendData);
-    postCheckMail(sendData);
+    console.log(emailCheckData);
+    postCheckMail(emailCheckData);
   };
 
   return (
@@ -92,7 +111,7 @@ const ConfirmEmail = () => {
               style={{ height: "60px" }}
             />
           </Form.Item>
-          {/* <Timer /> */}
+          <Timer />
           <p>
             메일을 받지 못했다면 인증 코드 재 전송을 요청하거나 스팸 메일함을
             확인해보세요.

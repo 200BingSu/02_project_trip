@@ -2,5 +2,8 @@ import { atom } from "recoil";
 
 export const userAtom = atom({
   key: "userAtom",
-  default: "", // accessToken
+  default: {
+    userId: 0,
+    accessToken: "",
+  }, // accessToken
 });
