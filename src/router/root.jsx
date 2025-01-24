@@ -10,7 +10,7 @@ import signUpRouter from "./signuprouter";
 import Layout from "../components/layout/Layout";
 
 // lazy
-const LazyHome = lazy(() => import("../pages/Index"));
+const LazyHome = lazy(() => import("../pages/Test"));
 const LazyBooking = lazy(() => import("../pages/bookings/BookingIndex"));
 const LazyBudget = lazy(() => import("../pages/budget/BudgetIndex"));
 const LazyBusiness = lazy(() => import("../pages/business/BusinessIndex"));

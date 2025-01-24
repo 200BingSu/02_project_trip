@@ -31,13 +31,13 @@ const tailFormItemLayout = {
 
 // 약관 동의
 const CheckboxGroup = Checkbox.Group;
-const plainOptions = [
-  { label: "[필수] 만 14세 이상입니다.", value: "required-1" },
-  { label: "[필수] 서비스 이용약관", value: "required-2" },
-  { label: "[필수] 개인정보 수집 및 이용 동의", value: "required-3" },
-  { label: "[필수] 위치서비스 이용 동의", value: "required-4" },
-  { label: "[선택] 이벤트 및 할인 혜택 안내 동의", value: "option-1" },
-];
+// const plainOptions = [
+//   { label: "[필수] 만 14세 이상입니다.", value: "required-1" },
+//   { label: "[필수] 서비스 이용약관", value: "required-2" },
+//   { label: "[필수] 개인정보 수집 및 이용 동의", value: "required-3" },
+//   { label: "[필수] 위치서비스 이용 동의", value: "required-4" },
+//   { label: "[선택] 이벤트 및 할인 혜택 안내 동의", value: "option-1" },
+// ];
 const defaultCheckedList = [];
 // 필수 약관 체크 기준
 // const requiredOptionArr = plainOptions.filter(item =>
@@ -51,7 +51,8 @@ const SignUpUser = () => {
   // useState
   const [formLayout, setFormLayout] = useState("vertical");
   const [formData, setFormData] = useState({});
-  const [checkedList, setCheckedList] = useState(defaultCheckedList);
+  const [selectedValues, setSelectedValues] = useState([]);
+  const [isAllChecked, setIsAllChecked] = useState(false);
   const [validateStatus, setValidateStatus] = useState(null); // validateStatus 상태
 
   // useNavigate
@@ -60,19 +61,18 @@ const SignUpUser = () => {
     navigate(`/signup/confirmemail`, { state: data });
   };
 
-  // 약관 체크
-  const checkAll = plainOptions.length === checkedList.length;
-  const indeterminate =
-    checkedList.length > 0 && checkedList.length < plainOptions.length;
-
-  const onChange = list => {
-    setCheckedList(list);
+  const handleChange = checkedValues => {
+    setSelectedValues(checkedValues);
+    setIsAllChecked(checkedValues.length > 4);
   };
 
   const onCheckAllChange = e => {
-    setCheckedList(
-      e.target.checked ? plainOptions.map(option => option.value) : [],
-    );
+    const checked = e.target.checked;
+    const newCheckedList = checked
+      ? ["required-1", "required-2", "required-3", "required-4", "option-1"]
+      : [];
+    setSelectedValues(newCheckedList);
+    setIsAllChecked(checked);
   };
 
   //checkDuplicatedEmail
@@ -231,21 +231,26 @@ const SignUpUser = () => {
             />
           </Form.Item>
           {/* 약관 동의 */}
+          {/* 약관 동의 */}
           <Checkbox
-            indeterminate={indeterminate}
             onChange={onCheckAllChange}
-            checked={checkAll}
+            checked={isAllChecked}
             className="bg-slate-100 w-full font-semibold text-lg mb-[15px] py-[10px] px-[15px] rounded-lg"
           >
             전체 동의합니다.
           </Checkbox>
-          {/* <Divider /> */}
-          <CheckboxGroup
-            options={plainOptions}
-            value={checkedList}
-            onChange={onChange}
+          <Checkbox.Group
+            value={selectedValues}
+            onChange={handleChange}
             className="flex flex-col gap-[10px] mb-[74px]"
-          />
+          >
+            <Checkbox value="required-1">필수 약관 1</Checkbox>
+            <Checkbox value="required-2">필수 약관 2</Checkbox>
+            <Checkbox value="required-3">필수 약관 3</Checkbox>
+            <Checkbox value="required-4">필수 약관 4</Checkbox>
+            <Checkbox value="option-1">선택 약관 1</Checkbox>
+          </Checkbox.Group>
+
           {/* 제출 버튼 */}
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit" block className="h-[60px]">
