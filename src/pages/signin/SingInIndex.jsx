@@ -33,7 +33,7 @@ const tailFormItemLayout = {
 const SingInIndex = () => {
   const [form] = Form.useForm();
   // recoil
-  const [loginToken, setLoginToken] = useRecoilState(userAtom);
+  const [loginInfo, setLoginInfo] = useRecoilState(userAtom);
 
   // useNavigate
   const navigate = useNavigate();
@@ -46,6 +46,10 @@ const SingInIndex = () => {
       const res = await axios.post(`${USER.signInUser}`, data);
       console.log("로그인 시도:", res.data);
       setCookie(`accessToken`, res.data.accessToken);
+      setLoginInfo({
+        userId: res.data.userId,
+        accessToken: res.data.accessToken,
+      });
       handleNavigateHome();
     } catch (error) {
       console.log("로그인 에러:", error);
@@ -61,16 +65,22 @@ const SingInIndex = () => {
 
   return (
     <div className="w-full px-[122px] py-[225px]">
-      <div className="w-[330px] h-[50px]">
-        <img
-          src="/public/images/logo_1.png"
-          alt="로고 이미지"
-          className="w-full h-full"
-        />
+      <div className="w-full flex items-center justify-center">
+        <div className="w-[330px] h-[50px]">
+          <img
+            src="/public/images/logo_1.png"
+            alt="로고 이미지"
+            className="w-full h-full"
+          />
+        </div>
       </div>
-      <div>
-        <button type="button">개인 회원</button>
-        <button type="button">기업 회원</button>
+      <div className="w-full flex gap-[30px] h-[30px] items-center justify-center">
+        <button type="button" className="text-2xl">
+          개인 회원
+        </button>
+        <button type="button" className="text-2xl">
+          기업 회원
+        </button>
       </div>
       {/* 로그인 폼 */}
       <div className="w-full ">

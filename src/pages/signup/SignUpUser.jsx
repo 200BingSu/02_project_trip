@@ -83,7 +83,11 @@ const SignUpUser = () => {
       const res = await axios.get(
         `${USER.checkDuplicatedEmail}${e.target.value}`,
       );
-      setValidateStatus("success");
+      if (res.data.data === true) {
+        setValidateStatus("success");
+      } else {
+        setValidateStatus("error");
+      }
       console.log("아이디 중복 체크", res.data);
     } catch (error) {
       console.log(error);
@@ -107,19 +111,18 @@ const SignUpUser = () => {
     const { confirm, ...filterData } = values;
     const email = values.email;
     // console.log("email", email);
-    const postData = {
-      profilePic: "",
-      p: { ...filterData, role: ["USER"] },
-
-      // busi_num: null,
-      // agree: optionArr.length,
-    };
-    setFormData(postData);
+    // const postData = {
+    //   profilePic: "",
+    //   p: { ...filterData, role: ["USER"] },
+    //   // busi_num: null,
+    //   // agree: optionArr.length,
+    // };
+    setFormData(filterData);
     //console.log("보내지는 데이터:", postData);
     if (requiredArr.length === 4 && validateStatus === "success") {
       console.log("이메일 링크 요청", { email: email });
       postEmail({ email: email });
-      handleClickNavigate(postData);
+      handleClickNavigate(filterData);
     } else {
       console.log("제출 조건에 맞지 않음");
     }
@@ -150,10 +153,7 @@ const SignUpUser = () => {
               },
             ]}
           >
-            <Input
-              placeholder="이메일을 입력하세요"
-              style={{ height: "60px" }}
-            />
+            <Input placeholder="이름을 입력하세요" style={{ height: "60px" }} />
           </Form.Item>
           {/* 이메일 */}
           <Form.Item
@@ -175,7 +175,7 @@ const SignUpUser = () => {
           >
             <Input
               onBlur={e => getIdCheck(e)}
-              placeholder="비밀번호를 입력하세요"
+              placeholder="이메일을 입력하세요"
               style={{ height: "60px" }}
             />
           </Form.Item>
