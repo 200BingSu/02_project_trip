@@ -5,7 +5,7 @@ const scheduleRouter = () => {
   const LazyScheduleIndex = lazy(
     () => import("../pages/schedule/ScheduleIndex"),
   );
-  const LazyRegionList = lazy(() => import("../pages/schedule/RegionList"));
+  // const LazyRegionList = lazy(() => import("../pages/schedule/RegionList"));
   return [
     {
       path: "index",
@@ -15,14 +15,14 @@ const scheduleRouter = () => {
         </Suspense>
       ),
     },
-    {
-      path: "regionlist",
-      element: (
-        <Suspense fallback={<Loading />}>
-          <LazyRegionList />
-        </Suspense>
-      ),
-    },
+    // {
+    //   path: "regionlist",
+    //   element: (
+    //     <Suspense fallback={<Loading />}>
+    //       <LazyRegionList />
+    //     </Suspense>
+    //   ),
+    // },
   ];
 };
 export default scheduleRouter;
