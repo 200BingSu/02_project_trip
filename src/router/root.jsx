@@ -8,6 +8,7 @@ import NotFound from "../pages/NotFound";
 import scheduleBoardRouter from "./scheduleboardrouter";
 import signUpRouter from "./signuprouter";
 import Layout from "../components/layout/Layout";
+import searchRouter from "./searchrouter";
 
 // lazy
 const LazyHome = lazy(() => import("../pages/Test"));
@@ -122,6 +123,7 @@ const router = createBrowserRouter([
             <LazySearch />
           </Suspense>
         ),
+        children: searchRouter(),
       },
       {
         path: "/signin",

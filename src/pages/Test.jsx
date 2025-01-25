@@ -67,6 +67,7 @@ const Test = () => {
       console.log("상품조회", error);
     }
   };
+
   //리뷰 조회
   const getReview = async () => {
     // 임시 아이디 부여
@@ -147,11 +148,52 @@ const Test = () => {
       <Button type="primary" onClick={getSearch}>
         검색
       </Button>
+      <Button
+        type="Link"
+        onClick={() => {
+          navigate(`/search/location`);
+        }}
+      >
+        지역 검색
+      </Button>
+      <Button
+        type="Link"
+        onClick={() => {
+          navigate(`/search/contents`);
+        }}
+      >
+        컨텐츠 검색
+      </Button>
       <Button type="primary" onClick={getSearchPage}>
         검색페이지
       </Button>
       <Button type="primary" onClick={getDetail}>
         상품조회
+      </Button>
+      {/* 숙소 */}
+      <Button
+        type="Link"
+        onClick={() => navigate(`/contents?strf=STAY&strfId=82`)}
+      >
+        숙소 id=82
+      </Button>
+      <Button
+        type="Link"
+        onClick={() => navigate(`/contents?strf=RESTAUR&strfId=305`)}
+      >
+        음식점 id=305
+      </Button>
+      <Button
+        type="Link"
+        onClick={() => navigate(`/contents?strf=TOUR&strfId=58`)}
+      >
+        관광지 id=58
+      </Button>
+      <Button
+        type="Link"
+        onClick={() => navigate(`/contents?strf=FEST&strfId=829`)}
+      >
+        축제 id=829
       </Button>
       <Button type="primary" onClick={getReview}>
         리뷰조회
