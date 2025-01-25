@@ -1,17 +1,20 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { removeCookie, setCookie } from "../../utils/cookie";
 import { userAtom } from "../../atoms/userAtom";
 import { USER } from "../../constants/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 const SingInIndex = () => {
   const [form] = Form.useForm();
   // recoil
   const [loginInfo, setLoginInfo] = useRecoilState(userAtom);
-
+  useEffect(() => {
+    console.log("유저 상태 관리:", loginInfo);
+  });
   // useNavigate
   const navigate = useNavigate();
   const handleNavigateHome = () => {
@@ -24,12 +27,15 @@ const SingInIndex = () => {
     try {
       const res = await axios.post(`${USER.signInUser}`, data);
       console.log("로그인 시도:", res.data);
-      setCookie(`accessToken`, res.data.accessToken);
-      setLoginInfo({
-        userId: res.data.userId,
-        accessToken: res.data.accessToken,
-      });
-      handleNavigateHome();
+      if (res.data.data === 200) {
+        console.log("현재 시각:", moment().format("H:mm:ss"));
+        setCookie(`accessToken`, res.data.accessToken);
+        setLoginInfo({
+          userId: res.data.userId,
+          accessToken: res.data.accessToken,
+        });
+        handleNavigateHome();
+      }
     } catch (error) {
       console.log("로그인 에러:", error);
       removeCookie(`accessToken`);
@@ -149,9 +155,9 @@ const SingInIndex = () => {
               비밀번호 찾기
             </button>
           </div>
-          <button type="button" className="text-slate-500 underline">
+          <Link to="/signup/index" className="text-slate-500 underline">
             회원가입
-          </button>
+          </Link>
         </div>
       </div>
     </div>

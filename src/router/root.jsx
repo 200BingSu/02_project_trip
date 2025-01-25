@@ -42,7 +42,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/content",
+        path: "/contents",
         element: (
           <Suspense fallback={<Loading />}>
             <LazyContent />
