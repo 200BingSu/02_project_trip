@@ -132,6 +132,9 @@ const Test = () => {
   return (
     <div className="flex flex-col items-start justify-start h-screen gap-4">
       개발 중 페이지(Index.jsx 완료 후 교체하기)
+      <Button type="primary" onClick={handleNavigateLogin}>
+        로그인으로 이동
+      </Button>
       <Button type="primary" onClick={logout}>
         로그아웃
       </Button>

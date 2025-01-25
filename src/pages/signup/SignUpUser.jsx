@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { USER } from "../../constants/api";
 import TitleHeader from "../../components/layout/header/TitleHeader";
+import Policy from "../../components/signup/Policy";
 
 const formItemLayout = {
   labelCol: {
@@ -31,20 +32,8 @@ const tailFormItemLayout = {
 
 // 약관 동의
 const CheckboxGroup = Checkbox.Group;
-// const plainOptions = [
-//   { label: "[필수] 만 14세 이상입니다.", value: "required-1" },
-//   { label: "[필수] 서비스 이용약관", value: "required-2" },
-//   { label: "[필수] 개인정보 수집 및 이용 동의", value: "required-3" },
-//   { label: "[필수] 위치서비스 이용 동의", value: "required-4" },
-//   { label: "[선택] 이벤트 및 할인 혜택 안내 동의", value: "option-1" },
-// ];
+
 const defaultCheckedList = [];
-// 필수 약관 체크 기준
-// const requiredOptionArr = plainOptions.filter(item =>
-//   item.includes("required"),
-// );
-// const requiredOptionLength = requiredOptionArr.length;
-// const optionArr = plainOptions.filter(item => item.includes("option"));
 
 const SignUpUser = () => {
   const [form] = Form.useForm();
@@ -54,13 +43,15 @@ const SignUpUser = () => {
   const [selectedValues, setSelectedValues] = useState([]);
   const [isAllChecked, setIsAllChecked] = useState(false);
   const [validateStatus, setValidateStatus] = useState(null); // validateStatus 상태
+  const [policyType, setPolicyType] = useState("required");
+  const [showPolicy, setShowPolicy] = useState(false);
 
   // useNavigate
   const navigate = useNavigate();
   const handleClickNavigate = data => {
     navigate(`/signup/confirmemail`, { state: data });
   };
-
+  // 약관
   const handleChange = checkedValues => {
     setSelectedValues(checkedValues);
     setIsAllChecked(checkedValues.length > 4);
@@ -106,17 +97,12 @@ const SignUpUser = () => {
   };
 
   const onFinish = values => {
-    const optionArr = checkedList.filter(item => item === "option");
-    const requiredArr = checkedList.filter(item => item.includes("required"));
+    const optionArr = selectedValues.filter(item => item === "option");
+    const requiredArr = selectedValues.filter(item =>
+      item.includes("required"),
+    );
     const { confirm, ...filterData } = values;
     const email = values.email;
-    // console.log("email", email);
-    // const postData = {
-    //   profilePic: "",
-    //   p: { ...filterData, role: ["USER"] },
-    //   // busi_num: null,
-    //   // agree: optionArr.length,
-    // };
     setFormData(filterData);
     //console.log("보내지는 데이터:", postData);
     if (requiredArr.length === 4 && validateStatus === "success") {
@@ -128,16 +114,22 @@ const SignUpUser = () => {
     }
   };
 
+  // 약관 보기
+  const handleClickPolicy = e => {
+    setPolicyType(e.target.value);
+    setShowPolicy(true);
+  };
+
   return (
     <>
       <TitleHeader icon={"back"} title={"회원가입"} />
-      <div className="w-full px-28 py-[50px]">
+      <div className="w-full px-28 py-[50px] mt-[60px]">
         <Form
           {...formItemLayout}
           form={form}
           name="register"
           onFinish={values => onFinish(values)}
-          style={{ maxWidth: 600 }}
+          className="w-full"
           layout={formLayout}
           scrollToFirstError
         >
@@ -242,15 +234,56 @@ const SignUpUser = () => {
           <Checkbox.Group
             value={selectedValues}
             onChange={handleChange}
-            className="flex flex-col gap-[10px] mb-[74px]"
+            className="flex flex-col gap-[10px] mb-[74px] w-full"
           >
-            <Checkbox value="required-1">필수 약관 1</Checkbox>
-            <Checkbox value="required-2">필수 약관 2</Checkbox>
-            <Checkbox value="required-3">필수 약관 3</Checkbox>
-            <Checkbox value="required-4">필수 약관 4</Checkbox>
-            <Checkbox value="option-1">선택 약관 1</Checkbox>
+            <Checkbox value="required-1">[필수] 만 14세 이상입니다.</Checkbox>
+            <div className="w-full flex justify-between">
+              <Checkbox value="required-2" className="underline">
+                [필수] 서비스 이용약관
+              </Checkbox>
+              <button
+                type="button"
+                className="text-[16px] text-slate-300"
+                value="required-2"
+                onClick={handleClickPolicy}
+              >
+                보기
+              </button>
+            </div>
+            <div className="w-full flex justify-between">
+              <Checkbox value="required-3" className="underline">
+                [필수] 개인정보 수집 및 이용 동의
+              </Checkbox>
+              <button
+                type="button"
+                className="text-[16px] text-slate-300"
+                value="required-3"
+                onClick={handleClickPolicy}
+              >
+                보기
+              </button>
+            </div>
+            <div className="w-full flex justify-between">
+              <Checkbox value="required-4" className="underline">
+                [필수] 위치서비스 이용 동의
+              </Checkbox>
+              <button
+                type="button"
+                className="text-[16px] text-slate-300"
+                value="required-4"
+                onClick={handleClickPolicy}
+              >
+                보기
+              </button>
+            </div>
+            <Checkbox value="option-1">
+              [선택] 이벤트 및 할인 혜택 안내 동의
+            </Checkbox>
           </Checkbox.Group>
-
+          {/* 약관 보기 */}
+          {showPolicy ? (
+            <Policy policyType={policyType} setShowPolicy={setShowPolicy} />
+          ) : null}
           {/* 제출 버튼 */}
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit" block className="h-[60px]">

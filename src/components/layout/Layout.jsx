@@ -8,7 +8,7 @@ const Layout = () => {
   return (
     <>
       {/* {path === "/" ? <MainHeader /> : <Header />} */}
-      <div className="max-w-3xl mx-auto bg-slate-100">
+      <div className="max-w-3xl mx-auto ">
         <Outlet />
       </div>
       {/* <Footer /> */}
