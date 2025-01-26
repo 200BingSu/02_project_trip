@@ -6,7 +6,7 @@ import Footer from "./footer/Footer";
 const Layout = () => {
   const path = window.location.pathname;
   return (
-    <div className="max-w-3xl mx-auto ">
+    <div className="max-w-3xl mx-auto relative">
       {path === "/" ? <MainHeader /> : <Header />}
       <div>
         <Outlet />
