@@ -44,27 +44,13 @@ const SearchContents = () => {
   const searchedTxts = searchData?.searchedTxts;
 
   return (
-    <div className="w-full">
-      {/* 상단바 */}
-      <div className=" flex px-[32px] py-[30px] gap-[40px] items-center bg-white">
-        {/* 뒤로가기 */}
-        <div
-          className="text-[36px] cursor-pointer"
-          onClick={() => {
-            navigate(-1);
-          }}
-        >
-          <IoIosArrowRoundBack />
-        </div>
-        {/* 검색바 */}
-        <SearchBar
-          searchState={searchState}
-          setSearchState={setSearchState}
-          searchedTxts={searchedTxts}
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-        />
-      </div>
+    <div className="w-full flex flex-col gap-[30px]">
+      {/* 검색바 */}
+      <SearchBar
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
+        setSearchState={setSearchState}
+      />
       {/* 검색 결과 */}
       {searchState ? (
         <SearchList searchData={searchData} searchValue={searchValue} />

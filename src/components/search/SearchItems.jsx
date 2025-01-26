@@ -1,8 +1,16 @@
-import { Rate } from "antd";
+import { Rate, Skeleton } from "antd";
 import React, { forwardRef, memo } from "react";
 import { AiTwotoneHeart } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 const SearchItems = forwardRef(({ type, data }, ref) => {
+  //useNavigate
+  const navigate = useNavigate();
+  const handleClickList = item => {
+    console.log("클릭된 아이템", item);
+    navigate(`/contents?strfId=${item.strfId}`);
+  };
+
   const itemsArr = data?.list;
   return (
     <div ref={ref} className="flex flex-col gap-[20px] items-center">
@@ -13,7 +21,13 @@ const SearchItems = forwardRef(({ type, data }, ref) => {
         {data ? (
           itemsArr.map(item => {
             return (
-              <li className="flex gap-[20px]" key={item.strfId}>
+              <li
+                className="flex gap-[20px] items-center"
+                key={item.strfId}
+                onClick={() => {
+                  handleClickList();
+                }}
+              >
                 {/* 썸네일 */}
                 <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px]">
                   <img
@@ -67,13 +81,13 @@ const SearchItems = forwardRef(({ type, data }, ref) => {
             );
           })
         ) : (
-          <li className="flex gap-[20px]">
+          <li className="flex gap-[20px] items-center">
             {/* 썸네일 */}
             <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px]">
-              <img
-                src="#"
-                alt="thumbnail"
-                className="w-full h-full object-cover"
+              <Skeleton.Image
+                active={false}
+                size="large"
+                style={{ width: "130px", height: "130px" }}
               />
             </div>
             {/* 정보 */}

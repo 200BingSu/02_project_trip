@@ -7,55 +7,45 @@ import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 
 const SearchBar = React.memo(
-  ({
-    setSearchState,
-    searchedTxts,
-    setSearchValue,
-    searchValue,
-    searchState,
-  }) => {
+  ({ searchValue, setSearchValue, setSearchState }) => {
+    //useNavigate
+    const navigate = useNavigate();
     // useState
     const [searchBarFocus, setSearchBarFocus] = useState(false);
-    const [nowTyping, setNowTyping] = useState(false);
+    const [inputValue, setInputValue] = useState("");
 
     // 검색창 비우기
-    const onChange = e => {
-      // console.log(e);
-      set;
-    };
+    const onChange = e => {};
 
     return (
-      <div className="w-full relative">
+      <div className="w-full px-[32px] py-[30px] flex items-center gap-[40px] relative ">
+        {/* 뒤로가기 */}
+        <div
+          className="text-[36px] cursor-pointer"
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          <IoIosArrowRoundBack />
+        </div>
         <Input
-          classNames="px-[12px]"
           placeholder="지금 어디로 여행을 떠나고 싶으신가요?"
           variant="borderless"
           allowClear
           onChange={e => {
             onChange();
-            setNowTyping(e.target.value ? true : false);
+            setInputValue(e.target.value);
           }}
-          onFocus={() => {
-            setSearchBarFocus(true);
-          }}
-          onBlur={() => {
-            setSearchBarFocus(false);
-          }}
-          className={`h-[60px] ${
-            searchValue ? "bg-white" : nowTyping ? "bg-white" : "bg-slate-100"
-          }`}
           onKeyDown={e => {
-            // console.log(e.code);
             if (e.code === "Enter") {
               setSearchValue(e.target.value);
               setSearchState(true);
-              setSearchBarFocus(false);
-              setNowTyping(false);
             }
           }}
+          className={`w-full h-[60px] px-[12px] ${inputValue ? "bg-white" : "bg-slate-100"}`}
         />
-        {nowTyping ? null : searchValue ? null : (
-          <FiSearch className="text-[24px] text-gray-400 absolute top-[50%] translate-y-[-50%] right-[18px]" />
+        {inputValue ? null : (
+          <FiSearch className="text-[24px] text-gray-400 absolute top-[50%] translate-y-[-50%] right-[45px]" />
         )}
         {searchBarFocus ? (
           <ul className="absolute top-[120%] translate-y-[-50%] left-[5px]">
