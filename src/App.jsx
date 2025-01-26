@@ -9,6 +9,11 @@ const App = () => {
         token: {
           colorPrimary: "#0DD1FD",
         },
+        components: {
+          Rate: {
+            starColor: "#0DD1FD",
+          },
+        },
       }}
     >
       <RouterProvider router={router} />

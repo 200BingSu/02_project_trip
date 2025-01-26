@@ -6,13 +6,13 @@ import Footer from "./footer/Footer";
 const Layout = () => {
   const path = window.location.pathname;
   return (
-    <>
-      {/* {path === "/" ? <MainHeader /> : <Header />} */}
-      <div className="max-w-3xl mx-auto ">
+    <div className="max-w-3xl mx-auto ">
+      {path === "/" ? <MainHeader /> : <Header />}
+      <div>
         <Outlet />
       </div>
-      {/* <Footer /> */}
-    </>
+      <Footer />
+    </div>
   );
 };
 export default Layout;

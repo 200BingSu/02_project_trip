@@ -15,26 +15,7 @@ const SearchLocation = () => {
   // useState
   const [searchState, setSearchState] = useState(false);
 
-  return (
-    <div>
-      {/* 상단바 */}
-      <div className="flex px-[32px] py-[30px] gap-[40px] items-center bg-white">
-        {/* 뒤로가기 */}
-        <div
-          className="text-[36px] cursor-pointer"
-          onClick={() => {
-            navigate(-1);
-          }}
-        >
-          <IoIosArrowRoundBack />
-        </div>
-        {/* 검색바 */}
-        <SearchBar setSearchState={setSearchState} />
-      </div>
-      {/* 검색 결과 */}
-      {searchState ? <SearchList /> : <SearchNone />}
-    </div>
-  );
+  return <div>지역 목록 검색</div>;
 };
 
 export default SearchLocation;

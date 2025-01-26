@@ -12,9 +12,7 @@ const SingInIndex = () => {
   const [form] = Form.useForm();
   // recoil
   const [loginInfo, setLoginInfo] = useRecoilState(userAtom);
-  useEffect(() => {
-    console.log("유저 상태 관리:", loginInfo);
-  });
+
   // useNavigate
   const navigate = useNavigate();
   const handleNavigateHome = () => {

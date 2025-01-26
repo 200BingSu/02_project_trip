@@ -1,4 +1,4 @@
 const Footer = () => {
-  return <div>Footer</div>;
+  return <div className="max-w-3xl mx-auto">Footer</div>;
 };
 export default Footer;
