@@ -1,6 +1,7 @@
+import React from "react";
 import { Link } from "react-router-dom";
 
-const DockBar = () => {
+const DockBar = React.memo(() => {
   return (
     <div className="flex max-w-3xl mx-auto justify-between items-center h-[60px] px-[30px] gap-10 bg-slate-400 fixed w-full bottom-0 ">
       <Link to="/search">검색</Link>
@@ -10,5 +11,5 @@ const DockBar = () => {
       <Link to="/user">마이페이지</Link>
     </div>
   );
-};
+});
 export default DockBar;

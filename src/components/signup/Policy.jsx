@@ -1,7 +1,7 @@
 import React from "react";
 import TitleHeader from "../layout/header/TitleHeader";
 
-const Policy = ({ policyType, setShowPolicy }) => {
+const Policy = React.memo(({ policyType, setShowPolicy }) => {
   const makePolicy = () => {
     switch (policyType) {
       case "required-1":
@@ -117,6 +117,6 @@ const Policy = ({ policyType, setShowPolicy }) => {
       <h1 className="text-[24px] font-bold text-center">약관 {policyType}</h1>
     </div>
   );
-};
+});
 
 export default Policy;
