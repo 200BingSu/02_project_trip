@@ -67,6 +67,7 @@ const Test = () => {
       console.log("상품조회", error);
     }
   };
+
   //리뷰 조회
   const getReview = async () => {
     // 임시 아이디 부여
@@ -130,44 +131,87 @@ const Test = () => {
     handleNavigateLogin();
   };
   return (
-    <div className="flex flex-col items-start justify-start h-screen gap-4">
+    <div className="pb-[100px]">
+      <div className="flex flex-col gap-[20px]">
+        <Button type="primary" onClick={handleNavigateLogin}>
+          로그인으로 이동
+        </Button>
+        <Button type="primary" onClick={logout}>
+          로그아웃
+        </Button>
+        <Button type="primary" onClick={getMypage}>
+          마이페이지
+        </Button>
+        <Button type="primary" onClick={getToken}>
+          토큰
+        </Button>
+        <Button type="primary" onClick={getSearch}>
+          검색
+        </Button>
+        <Button
+          type="Link"
+          onClick={() => {
+            navigate(`/search/location`);
+          }}
+        >
+          지역 검색
+        </Button>
+        <Button
+          type="Link"
+          onClick={() => {
+            navigate(`/search/contents`);
+          }}
+        >
+          컨텐츠 검색
+        </Button>
+        <Button type="primary" onClick={getSearchPage}>
+          검색페이지
+        </Button>
+        <Button type="primary" onClick={getDetail}>
+          상품조회
+        </Button>
+        {/* 숙소 */}
+        <Button
+          type="Link"
+          onClick={() => navigate(`/contents?strf=STAY&strfId=82`)}
+        >
+          숙소 id=82
+        </Button>
+        <Button
+          type="Link"
+          onClick={() => navigate(`/contents?strf=RESTAUR&strfId=305`)}
+        >
+          음식점 id=305
+        </Button>
+        <Button
+          type="Link"
+          onClick={() => navigate(`/contents?strf=TOUR&strfId=58`)}
+        >
+          관광지 id=58
+        </Button>
+        <Button
+          type="Link"
+          onClick={() => navigate(`/contents?strf=FEST&strfId=829`)}
+        >
+          축제 id=829
+        </Button>
+        <Button type="primary" onClick={getReview}>
+          리뷰조회
+        </Button>
+        <Button type="primary" onClick={getTrip}>
+          트립
+        </Button>
+        <Button type="primary" onClick={getTripLocation}>
+          트립/로케이션
+        </Button>
+        <Button type="primary" onClick={getTripList}>
+          트립/트립 리스트
+        </Button>
+        <Button type="primary" onClick={getWishList}>
+          위시리스트
+        </Button>
+      </div>
       개발 중 페이지(Index.jsx 완료 후 교체하기)
-      <Button type="primary" onClick={handleNavigateLogin}>
-        로그인으로 이동
-      </Button>
-      <Button type="primary" onClick={logout}>
-        로그아웃
-      </Button>
-      <Button type="primary" onClick={getMypage}>
-        마이페이지
-      </Button>
-      <Button type="primary" onClick={getToken}>
-        토큰
-      </Button>
-      <Button type="primary" onClick={getSearch}>
-        검색
-      </Button>
-      <Button type="primary" onClick={getSearchPage}>
-        검색페이지
-      </Button>
-      <Button type="primary" onClick={getDetail}>
-        상품조회
-      </Button>
-      <Button type="primary" onClick={getReview}>
-        리뷰조회
-      </Button>
-      <Button type="primary" onClick={getTrip}>
-        트립
-      </Button>
-      <Button type="primary" onClick={getTripLocation}>
-        트립/로케이션
-      </Button>
-      <Button type="primary" onClick={getTripList}>
-        트립/트립 리스트
-      </Button>
-      <Button type="primary" onClick={getWishList}>
-        위시리스트
-      </Button>
       <DockBar />
     </div>
   );

@@ -1,6 +1,6 @@
 import { Button, Divider, Form, Input } from "antd";
 import Checkbox from "antd/es/checkbox/Checkbox";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { USER } from "../../constants/api";
@@ -52,22 +52,22 @@ const SignUpUser = () => {
     navigate(`/signup/confirmemail`, { state: data });
   };
   // 약관
-  const handleChange = checkedValues => {
+  const handleChange = useCallback(checkedValues => {
     setSelectedValues(checkedValues);
     setIsAllChecked(checkedValues.length > 4);
-  };
+  }, []);
 
-  const onCheckAllChange = e => {
+  const onCheckAllChange = useCallback(e => {
     const checked = e.target.checked;
     const newCheckedList = checked
       ? ["required-1", "required-2", "required-3", "required-4", "option-1"]
       : [];
     setSelectedValues(newCheckedList);
     setIsAllChecked(checked);
-  };
+  }, []);
 
   //checkDuplicatedEmail
-  const getIdCheck = async e => {
+  const getIdCheck = useCallback(async e => {
     console.log("아이디 중복 체크 시도");
     setValidateStatus("validating");
     try {
@@ -84,9 +84,9 @@ const SignUpUser = () => {
       console.log(error);
       setValidateStatus("error");
     }
-  };
+  }, []);
   // post emailLink api
-  const postEmail = async data => {
+  const postEmail = useCallback(async data => {
     console.log("이메일 발송 데이터:", data);
     try {
       const res = await axios.get(`${USER.sendMail}${data.email}`, data);
@@ -94,7 +94,7 @@ const SignUpUser = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, []);
 
   const onFinish = values => {
     const optionArr = selectedValues.filter(item => item === "option");
@@ -115,10 +115,10 @@ const SignUpUser = () => {
   };
 
   // 약관 보기
-  const handleClickPolicy = e => {
+  const handleClickPolicy = useCallback(e => {
     setPolicyType(e.target.value);
     setShowPolicy(true);
-  };
+  }, []);
 
   return (
     <>
