@@ -33,6 +33,7 @@ export const WISHLIST = {
 export const SEARCH = {
   search: "/api/search",
   searchPage: "/api/search-page",
+  searchList: "/api/search/list",
 };
 
 export const TRIP = {
