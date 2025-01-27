@@ -5,7 +5,7 @@ import { SEARCH } from "../../constants/api";
 
 // 카테고리 목록
 const strfArr = ["전체", "관광지", "숙소", "맛집", "축제"];
-const SearchList = ({ searchValue }) => {
+const SearchList = ({ searchValue, searchData }) => {
   // useRef
   const topRef = useRef(null);
   const stayRef = useRef(null);
@@ -78,10 +78,30 @@ const SearchList = ({ searchValue }) => {
         })}
       </ul>
       {/* 검색 결과 */}
-      <SearchItems type="관광지" data={tourData} ref={tourRef} />
-      <SearchItems type="숙소" data={stayData} ref={stayRef} />
-      <SearchItems type="맛집" data={restaurData} ref={restaurantRef} />
-      <SearchItems type="축제" data={festData} ref={festivalRef} />
+      <SearchItems
+        type="관광지"
+        data={tourData}
+        ref={tourRef}
+        searchValue={searchValue}
+      />
+      <SearchItems
+        type="숙소"
+        data={stayData}
+        ref={stayRef}
+        searchValue={searchValue}
+      />
+      <SearchItems
+        type="맛집"
+        data={restaurData}
+        ref={restaurantRef}
+        searchValue={searchValue}
+      />
+      <SearchItems
+        type="축제"
+        data={festData}
+        ref={festivalRef}
+        searchValue={searchValue}
+      />
     </div>
   );
 };
