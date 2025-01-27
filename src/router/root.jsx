@@ -29,6 +29,9 @@ const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
 const LazySignUp = lazy(() => import("../pages/signup/SignUp"));
 const LazyUser = lazy(() => import("../pages/user/UserIndex"));
 const LazyContent = lazy(() => import("../pages/contents/ContentIndex"));
+const LazyContentPublishing = lazy(
+  () => import("../pages/contents/ContentPublishing"),
+);
 
 const router = createBrowserRouter([
   {
@@ -47,6 +50,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Loading />}>
             <LazyContent />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/contentspublishing",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyContentPublishing />
           </Suspense>
         ),
       },

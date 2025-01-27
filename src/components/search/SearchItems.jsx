@@ -1,17 +1,45 @@
 import { Rate, Skeleton } from "antd";
-import React, { forwardRef, memo } from "react";
+import React, { forwardRef, memo, useEffect, useState } from "react";
 import { AiTwotoneHeart } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { SEARCH } from "../../constants/api";
+import axios from "axios";
 
-const SearchItems = forwardRef(({ type, data }, ref) => {
+const SearchItems = forwardRef(({ type, data, searchValue }, ref) => {
   //useNavigate
   const navigate = useNavigate();
   const handleClickList = item => {
     console.log("클릭된 아이템", item);
     navigate(`/contents?strfId=${item.strfId}`);
   };
+  // useState
+  const [dataIndex, setDataIndex] = useState(4);
+  useEffect(() => {
+    console.log(dataIndex);
+  }, [dataIndex]);
+  // 더보기 api
+  const getSearchListMore = async data => {
+    try {
+      const res = await axios.get(`${SEARCH.searchList}`, data);
+      console.log("더보기 결과:", res.data);
+    } catch (error) {
+      console.log("더보기 에러:", error);
+    }
+  };
+  // 더보기 버튼 클릭
+  const handleClickButton = () => {
+    const sendData = {
+      category: type,
+      search_word: searchValue,
+      last_index: dataIndex,
+    };
+    console.log("더보기 sendData:", sendData);
+    getSearchListMore(sendData);
+    setDataIndex(prev => prev + 4);
+  };
 
   const itemsArr = data?.list;
+
   return (
     <div ref={ref} className="flex flex-col gap-[20px] items-center">
       <h2 className="w-full text-[24px] font-semibold text-slate-700">
@@ -81,7 +109,10 @@ const SearchItems = forwardRef(({ type, data }, ref) => {
             );
           })
         ) : (
-          <li className="flex gap-[20px] items-center">
+          <li
+            className="flex gap-[20px] items-center cursor-pointer"
+            onClick={handleClickList}
+          >
             {/* 썸네일 */}
             <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px]">
               <Skeleton.Image
@@ -134,6 +165,7 @@ const SearchItems = forwardRef(({ type, data }, ref) => {
         type="button"
         className="px-[20px] py-[10px] border border-slate-300 
         rounded-[24px] text-[16px] font-semibold text-slate-600"
+        onClick={handleClickButton}
       >
         {type} 검색결과 더보기
       </button>
