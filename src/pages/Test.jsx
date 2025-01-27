@@ -170,6 +170,7 @@ const Test = () => {
         <Button type="primary" onClick={getDetail}>
           상품조회
         </Button>
+        <Button type="Link" onClick={() => navigate(`/contentspublishing`)}>상품 퍼블리싱</Button>
         {/* 숙소 */}
         <Button
           type="Link"
