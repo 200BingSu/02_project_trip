@@ -72,7 +72,7 @@ const SingInIndex = () => {
           type="button"
           className={`text-2xl h-[60px] pt-[17px] pb-[16px]
                      ${loginType === "personal" ? "text-primary" : "text-slate-400"}
-                     ${loginType === "personal" ? "border-b-2 border-primary" : "border-b-1 border-slate-200"}`}
+                     ${loginType === "personal" ? "border-b-[2px] border-primary" : "border-b-1 border-slate-200"}`}
           onClick={() => setLoginType("personal")}
         >
           개인회원
@@ -81,7 +81,7 @@ const SingInIndex = () => {
           type="button"
           className={`text-2xl h-[60px] pt-[17px] pb-[16px]
                      ${loginType === "business" ? "text-primary" : "text-slate-400"}
-                     ${loginType === "business" ? "border-b-2 border-primary" : "border-b-1 border-slate-200"}`}
+                     ${loginType === "business" ? "border-b-[2px] border-primary" : "border-b-1 border-slate-200"}`}
           onClick={() => setLoginType("business")}
         >
           기업회원
