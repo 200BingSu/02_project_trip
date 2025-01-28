@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { CONTENT } from "../../constants/api";
+import { CONTENT, TRIP } from "../../constants/api";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -8,13 +8,14 @@ import {
   FaFireExtinguisher,
   FaLocationDot,
 } from "react-icons/fa6";
+import { FaSwimmingPool } from "react-icons/fa";
 import { Modal, Rate, Skeleton, Tabs } from "antd";
 import {
   AiOutlineFundView,
   AiOutlineSafety,
   AiTwotoneHeart,
 } from "react-icons/ai";
-import { BiBlanket, BiTime, BiWifi } from "react-icons/bi";
+import { BiBlanket, BiSolidEditAlt, BiTime, BiWifi } from "react-icons/bi";
 import { BiDownload } from "react-icons/bi";
 import {
   IoIosArrowDown,
@@ -38,6 +39,11 @@ import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { BsThermometerHalf } from "react-icons/bs";
 import DetailInfo from "../../components/contents/DetailInfo";
 import Reviews from "../../components/contents/Reviews";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../../atoms/userAtom";
+import ContentsHeader from "../../components/layout/header/ContentsHeader";
+import ScheduleModal from "../../components/contents/ScheduleModal";
+import AmenityModal from "../../components/contents/AmenityModal";
 
 dayjs.extend(isBetween);
 
@@ -46,13 +52,20 @@ const ContentPublishing = () => {
   const [searchParams] = useSearchParams();
   const strfType = searchParams.get("strf");
   const strfId = searchParams.get("strfId");
+  // recoil
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   //useState
   const [contentData, setContentData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(true);
-  // 모달
+  const [isRegistModalOpen, setIsRegistModalOpen] = useState(false);
+  const [openBusinessTime, setOpenBusinessTime] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+  // 편의 시설 모달
   const showModal = () => {
     setIsModalOpen(true);
+    document.body.style.overflowY = "scroll"; // 혹은 'auto'
   };
   const handleOk = () => {
     setIsModalOpen(false);
@@ -60,8 +73,26 @@ const ContentPublishing = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  //   영업시간 펼치기
-  const [openBusinessTime, setOpenBusinessTime] = useState(false);
+  // 일정 등록 모달
+  const showRegistModal = () => {
+    setIsRegistModalOpen(true);
+  };
+  const handleRegistOk = () => {
+    setIsRegistModalOpen(false);
+  };
+  const handleRegistCancel = () => {
+    setIsRegistModalOpen(false);
+  };
+  // 리뷰 등록 모달
+  const showReviewModal = () => {
+    setIsReviewModalOpen(true);
+  };
+  const handleReviewOk = () => {
+    setIsReviewModalOpen(false);
+  };
+  const handleReviewCancel = () => {
+    setIsReviewModalOpen(false);
+  };
 
   // 상품 조회
   const getDetail = async () => {
@@ -77,7 +108,29 @@ const ContentPublishing = () => {
   useEffect(() => {
     getDetail();
   }, []);
-
+  // 상품 등록
+  // const postSchedule = async () => {
+  //   const sendData = {
+  //     strf_Id: strfId,
+  //     trip_Id: "없음",
+  //     day: "없음",
+  //     seq: 1,
+  //     path_type: null,
+  //     time: null,
+  //     distance: null,
+  //   };
+  //   console.log("일정 등록 데이터:", sendData);
+  //   try {
+  //     const res = await axios.post(`${TRIP.postSchedule}`, sendData, {
+  //       headers: {
+  //         Authorization: `Bearer ${userInfo.accessToken}`,
+  //       },
+  //     });
+  //     console.log("상품 등록", res.data);
+  //   } catch (error) {
+  //     console.log("상품 등록", error);
+  //   }
+  // };
   // 카테고리 한글 변환
   const categoryKor = category => {
     if (category === "STAY") return "호텔";
@@ -100,20 +153,19 @@ const ContentPublishing = () => {
     { key: "냉장고", icon: <CgSmartHomeRefrigerator /> },
     { key: "침구", icon: <BiBlanket /> },
     { key: "가스레인지", icon: <PiCookingPot /> },
+    { key: "수영장", icon: <FaSwimmingPool /> },
     { key: "화재 경보기", icon: <FaFireExtinguisher /> },
     { key: "금고", icon: <AiOutlineSafety /> },
   ];
-
+  // 검색 지우기
   const onChange = key => {
     console.log(key);
   };
 
   return (
-    <div>
+    <div className="relative pb-[96px]">
       {/* 헤더 */}
-      <div>
-        헤더(임시): contents?strf={strfType}&strfId={strfId}
-      </div>
+      <ContentsHeader contentData={contentData} strfId={strfId} />
       {/* 메인 썸네일 */}
       <div className="w-full h-[467px] bg-gray-200">
         <img
@@ -124,7 +176,7 @@ const ContentPublishing = () => {
       </div>
       {/* 컨텐츠 영역 */}
       <div className="w-full flex flex-col gap-[30px] px-[32px] py-[30px]">
-        {/* 컨텐츠 영역 상단 */}
+        {/* 카테고리, 업체명, 주소, 별점, 찜하기, 영업시간 */}
         <div className="w-full flex flex-col gap-[10px]">
           {/* 카테고리 */}
           <div className="text-[16px] text-slate-500">카테고리</div>
@@ -159,106 +211,84 @@ const ContentPublishing = () => {
             </div>
           </div>
           {/* 영업 시간 */}
-          <BusinessTime type={strfType} />
+          <BusinessTime
+            type={strfType}
+            contentData={contentData}
+            openBusinessTime={openBusinessTime}
+            setOpenBusinessTime={setOpenBusinessTime}
+          />
         </div>
         {/* 쿠폰 */}
         {strfType === "STAY" && (
-          <div
-            className="w-full flex gap-[10px] 
-          items-center justify-between
-          px-[20px] py-[16px] rounded-2xl 
-          bg-white border border-slate-200 shadow-[0_0_7px_0_rgba(0,0,0,0.2)]"
-          >
-            <p className="text-[18px] font-semibold">최대 n% 할인</p>
-            <button
-              type="button"
-              className="flex gap-[10px] items-center px-[15px] py-[10px] rounded-3xl bg-secondary2 text-white text-[16px] font-semibold"
+          <div className="w-full flex flex-col gap-[30px]">
+            <div
+              className="w-full flex gap-[10px] 
+                        items-center justify-between
+                        px-[20px] py-[16px] rounded-2xl 
+                        bg-white border border-slate-200 shadow-[0_0_7px_0_rgba(0,0,0,0.2)]"
             >
-              <BiDownload />
-              쿠폰 받기
-            </button>
-          </div>
-        )}
-        {/* 라인 */}
-        <div className="w-full h-[10px] bg-slate-100"></div>
-        {/* 메뉴 */}
-        <Menu type={strfType} />
-        {/* 라인 */}
-        <div className="w-full h-[10px] bg-slate-100"></div>
-        {/* 편의 시설 및 서비스 */}
-        {strfType === "STAY" && (
-          <div className="flex flex-col gap-[20px]">
-            <div className="flex gap-[5px] items-center justify-between">
-              <h2 className="text-[28px] font-semibold">편의 시설 및 서비스</h2>
+              <p className="text-[18px] font-semibold">최대 n% 할인</p>
               <button
                 type="button"
-                className="flex gap-[10px] items-center text text-slate-400"
-                onClick={showModal}
+                className="flex gap-[10px] items-center px-[15px] py-[10px] rounded-3xl bg-secondary2 text-white text-[16px] font-semibold"
               >
-                더보기 <IoIosArrowRoundForward />
+                <BiDownload />
+                쿠폰 받기
               </button>
-              <Modal
-                closeIcon={null}
-                title={null}
-                open={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
-                footer={null}
-                width={768}
-                styles={{
-                  content: { padding: "20px 0" },
-                }}
-              >
-                <div className="custom-modal-header flex gap-[40px] px-[32px] items-center mb-[20px]">
-                  <div className="custom-close-icon" onClick={handleCancel}>
-                    <IoIosClose className="text-[35px]" />
-                  </div>
-                  <div className="custom-title font-bold text-[24px] text-slate-700">
-                    편의시설 및 서비스
-                  </div>
-                </div>
-                <ul className="flex flex-wrap gap-[30px] vertical-gap-[20px]">
-                  {amenities.map(item => (
-                    <li
-                      key={item.key}
-                      className="flex flex-col gap-[10px] items-center w-[100px]"
-                    >
-                      <div>{item.icon}</div>
-                      <p>{item.key}</p>
-                    </li>
-                  ))}
-                </ul>
-              </Modal>
             </div>
-            {/* 편의시설 리스트 */}
-            <ul className="flex flex-wrap gap-auto vertical-gap-[20px]">
-              {contentData ? (
-                contentData?.amenity.map((item, index) => {
-                  return (
-                    <li
-                      className="flex flex-col gap-[10px] items-center"
-                      key={index}
-                    >
-                      <div>
-                        {amenities.find(amenity => amenity.key === item).icon}
-                      </div>
-                      <p>{item}</p>
-                    </li>
-                  );
-                })
-              ) : (
-                <li className="flex flex-col gap-[10px] items-center">
-                  <div>
-                    <FaBed />
-                  </div>
-                  <p>침대</p>
-                </li>
-              )}
-            </ul>
+            {/* 라인 */}
+            <div className="w-full h-[10px] bg-slate-100"></div>
           </div>
         )}
-        {/* 라인 */}
-        <div className="w-full h-[10px] bg-slate-100"></div>
+        {/* 메뉴 */}
+        <Menu type={strfType} strfId={strfId} contentData={contentData} />
+        {/* 편의 시설 및 서비스 */}
+        {strfType === "STAY" && (
+          <div className="flex flex-col gap-[30px]">
+            <div className="flex flex-col gap-[20px]">
+              <div className="flex gap-[5px] items-center justify-between">
+                <h2 className="text-[28px] font-semibold">
+                  편의 시설 및 서비스
+                </h2>
+                <button
+                  type="button"
+                  className="flex gap-[10px] items-center text text-slate-400"
+                  onClick={showModal}
+                >
+                  더보기 <IoIosArrowRoundForward />
+                </button>
+              </div>
+              {/* 편의시설 리스트 */}
+              <ul className="flex flex-wrap gap-auto vertical-gap-[20px]">
+                {contentData ? (
+                  contentData?.amenity.map((item, index) => {
+                    return (
+                      <li
+                        className="flex flex-col gap-[10px] items-center"
+                        key={index}
+                      >
+                        <div className="text-[24px] w-[24px] h-[24px]">
+                          {amenities.find(amenity => amenity.key === item).icon}
+                        </div>
+                        <p className="text-slate-700">{item}</p>
+                      </li>
+                    );
+                  })
+                ) : (
+                  <li className="flex flex-col gap-[10px] items-center">
+                    <div>
+                      <FaBed />
+                    </div>
+                    <p>침대</p>
+                  </li>
+                )}
+              </ul>
+            </div>
+            {/* 라인 */}
+            <div className="w-full h-[10px] bg-slate-100"></div>
+          </div>
+        )}
+
         {/* 상세정보 및 리뷰 선택 */}
         <div className="w-full flex items-center justify-center">
           <button
@@ -286,8 +316,35 @@ const ContentPublishing = () => {
         </div>
         {/* 컨텐츠 영역 컨텐츠 */}
         {isDetailOpen && <DetailInfo contentData={contentData} />}
-        {!isDetailOpen && <Reviews contentData={contentData} />}
+        {!isDetailOpen && <Reviews contentData={contentData} strfId={strfId} />}
       </div>
+      {/* 일정 추가 및 리뷰쓰기 버튼 */}
+      <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 bg-white fixed bottom-0 left-[50%] translate-x-[-50%] z-30">
+        <button
+          type="button"
+          className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
+          onClick={showRegistModal}
+        >
+          <FaLocationDot className="text-slate-400" />
+          <p className="text-[22px] text-slate-700 font-medium">일정 추가</p>
+        </button>
+        <button
+          type="button"
+          className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
+          onClick={showReviewModal}
+        >
+          <BiSolidEditAlt className="text-slate-400" />
+          <p className="text-[22px] text-slate-700 font-medium">리뷰 쓰기</p>
+        </button>
+      </div>
+      {/* 일정 추가 모달창 */}
+      {isRegistModalOpen ? (
+        <ScheduleModal handleRegistCancel={handleRegistCancel} />
+      ) : null}
+      {/* 편의 시설 모달창 */}
+      {isModalOpen ? (
+        <AmenityModal handleCancel={handleCancel} amenities={amenities} />
+      ) : null}
     </div>
   );
 };

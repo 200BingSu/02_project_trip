@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { BiTime } from "react-icons/bi";
@@ -6,7 +6,12 @@ import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 
 dayjs.extend(isBetween);
 
-const BusinessTime = ({ type = "STAY" }) => {
+const BusinessTime = ({
+  type = "STAY",
+  contentData,
+  openBusinessTime,
+  setOpenBusinessTime,
+}) => {
   // 영업 시간 변환
   const timeFormat = time => {
     if (!time) return "N/A";
@@ -131,4 +136,4 @@ const BusinessTime = ({ type = "STAY" }) => {
   );
 };
 
-export default BusinessTime;
+export default memo(BusinessTime);
