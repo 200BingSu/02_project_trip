@@ -18,7 +18,7 @@ const Test = () => {
   // 마이페이지 조회
   const getMypage = async () => {
     try {
-      const res = await axios.get(`${USER.getUserInfo}${userId}`);
+      const res = await axios.get(`${USER.getUserInfo}${userInfo.userId}`);
       console.log("마이페이지 조회:", res.data);
     } catch (error) {
       console.log("마이페이지 조회:", error);
@@ -170,7 +170,9 @@ const Test = () => {
         <Button type="primary" onClick={getDetail}>
           상품조회
         </Button>
-        <Button type="Link" onClick={() => navigate(`/contentspublishing`)}>상품 퍼블리싱</Button>
+        <Button type="Link" onClick={() => navigate(`/contentspublishing`)}>
+          상품 퍼블리싱
+        </Button>
         {/* 숙소 */}
         <Button
           type="Link"
