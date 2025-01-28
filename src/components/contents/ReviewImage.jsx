@@ -1,0 +1,96 @@
+const ReviewImage = ({ imgArr }) => {
+  const imgArrLeng = imgArr.length;
+  return (
+    <div>
+      {imgArrLeng === 1 && (
+        <ul className="h-[400px] rounded-lg overflow-hidden">
+          <li className="w-full h-full bg-slate-200">
+            <img src="" alt="" />
+          </li>
+        </ul>
+      )}
+      {imgArrLeng === 2 && (
+        <ul className="h-[400px] grid grid-cols-2 gap-[10px] rounded-lg overflow-hidden">
+          <li className="w-full h-full bg-slate-200">
+            <img src="" alt="" />
+          </li>
+          <li className="w-full h-full bg-slate-200">
+            <img src="" alt="" />
+          </li>
+        </ul>
+      )}
+      {imgArrLeng === 3 && (
+        <ul className="h-[400px] grid grid-cols-4 grid-rows-4 gap-[10px] rounded-lg overflow-hidden">
+          <li className="bg-slate-200 col-span-2 row-span-4">
+            <img src="" alt="" />
+          </li>
+          <li className="bg-slate-200 col-span-2 row-span-2 col-start-3 row-start-1">
+            <img src="" alt="" />
+          </li>
+          <li className="bg-slate-200 col-span-2 row-span-2 col-start-3 row-start-3">
+            <img src="" alt="" />
+          </li>
+        </ul>
+      )}
+      {imgArrLeng === 4 && (
+        <ul className="h-[400px] grid grid-cols-4 grid-rows-4 gap-2.5 rounded-lg overflow-hidden">
+          <li className="bg-slate-200 col-start-3 col-end-5 row-start-1 row-end-3">
+            <img src="" alt="" />
+          </li>
+          <li className="bg-slate-200 col-start-3 col-end-5 row-start-3 row-end-5">
+            <img src="" alt="" />
+          </li>
+          <li className="bg-slate-200 col-start-1 col-end-3 row-start-1 row-end-3">
+            <img src="" alt="" />
+          </li>
+          <li className="bg-slate-200 col-start-1 col-end-3 row-start-3 row-end-5">
+            <img src="" alt="" />
+          </li>
+        </ul>
+      )}
+      {imgArrLeng === 5 && (
+        <ul className="h-[400px] grid grid-cols-4 grid-rows-4 gap-2.5 rounded-lg overflow-hidden">
+          <li className="col-start-1 col-end-3 row-start-1 row-end-5 bg-slate-200">
+            <img src="" alt="" />
+          </li>
+          <li className="col-start-3 col-end-4 row-start-1 row-end-3 bg-slate-200">
+            <img src="" alt="" />
+          </li>
+          <li className="col-start-3 col-end-4 row-start-3 row-end-5 bg-slate-200">
+            <img src="" alt="" />
+          </li>
+          <li className="col-start-4 col-end-5 row-start-1 row-end-3 bg-slate-200">
+            <img src="" alt="" />
+          </li>
+          <li className="col-start-4 col-end-5 row-start-3 row-end-5 bg-slate-200">
+            <img src="" alt="" />
+          </li>
+        </ul>
+      )}
+      {imgArrLeng > 5 && (
+        <ul className="h-[400px] grid grid-cols-4 grid-rows-4 gap-2.5 rounded-lg overflow-hidden">
+          <li className="col-start-1 col-end-3 row-start-1 row-end-5 bg-slate-200">
+            <img src="" alt="" />
+          </li>
+          <li className="col-start-3 col-end-4 row-start-1 row-end-3 bg-slate-200">
+            <img src="" alt="" />
+          </li>
+          <li className="col-start-3 col-end-4 row-start-3 row-end-5 bg-slate-200">
+            <img src="" alt="" />
+          </li>
+          <li className="col-start-4 col-end-5 row-start-1 row-end-3 bg-slate-200">
+            <img src="" alt="" />
+          </li>
+          <li className="col-start-4 col-end-5 row-start-3 row-end-5 bg-slate-200 relative rounded-lg">
+            <img src="" alt="" />
+            <div className="absolute inset-0 bg-black bg-opacity-50 content-[''] z-10 flex items-center justify-center text-white rounded-lg">
+              + {imgArrLeng - 5}
+            </div>
+          </li>
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default ReviewImage;
