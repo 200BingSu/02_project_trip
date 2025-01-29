@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import SearchBar from "../../components/search/SearchBar";
 import SearchNone from "../../components/search/SearchNone";
@@ -14,6 +14,10 @@ import axios from "axios";
 const SearchLocation = () => {
   //useNavigate
   const navigate = useNavigate();
+  const location = useLocation();
+  const locationState = location.state;
+  console.log("locationState", locationState);
+
   // useState
   const [locationData, setLocationData] = useState(null);
   const [selectedLocationId, setSelectedLocationId] = useState([]);
