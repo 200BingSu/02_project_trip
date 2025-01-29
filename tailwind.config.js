@@ -39,6 +39,9 @@ export default {
         warning: "#FDE047",
         error: "#EF4444",
       },
+      fontFamily: {
+        "work-sans": ['"Work Sans"', "sans-serif"],
+      },
     },
   },
   plugins: [],

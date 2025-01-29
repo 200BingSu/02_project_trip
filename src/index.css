@@ -4,5 +4,6 @@
 
 html,
 body :root {
-  font-family: "Pretendard-Regular", "Spoqa Han Sans Neo", sans-serif;
+  font-family: "Pretendard-Regular", "Spoqa Han Sans Neo", "Work Sans",
+    sans-serif;
 }
