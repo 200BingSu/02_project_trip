@@ -126,7 +126,10 @@ const Reviews = ({ contentData, strfId }) => {
         <ul>
           {reviewsArr.map((item, index) => {
             return (
-              <li className="flex flex-col gap-[20px] py-[30px] border-b border-slate-200">
+              <li
+                key={index}
+                className="flex flex-col gap-[20px] py-[30px] border-b border-slate-200"
+              >
                 {/* info */}
                 <div className="flex flex-col gap-[10px]">
                   {/* 프로필, 닉네임, 리뷰 수 */}

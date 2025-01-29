@@ -2,7 +2,8 @@ const ScheduleModal = ({ handleRegistCancel }) => {
   return (
     <div
       className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white
-          w-[768px] h-[506px]
+          w-[468px]
+          flex flex-col gap-[36px] pt-[40px] rounded-2xl
         "
     >
       <div className="custom-modal-header"></div>
@@ -12,10 +13,10 @@ const ScheduleModal = ({ handleRegistCancel }) => {
           <p className="text-[28px] text-slate-700">추가하실 수 있습니다.</p>
         </div>
       </div>
-      <div className="custom-modal-footer w-full flex pt-[20px] justify-center">
+      <div className="custom-modal-footer w-full flex py-[20px] justify-center">
         <button
           type="button"
-          className="flex justify-center w-full text-slate-500 text-[24px]"
+          className="flex justify-center w-full text-slate-500 text-[24px] border-r border-slate-300"
           onClick={handleRegistCancel}
         >
           취소
