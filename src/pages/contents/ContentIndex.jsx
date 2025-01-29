@@ -163,7 +163,7 @@ const ContentPublishing = () => {
   };
 
   return (
-    <div className="relative pb-[96px]">
+    <div className="relative pb-[70px]">
       {/* 헤더 */}
       <ContentsHeader contentData={contentData} strfId={strfId} />
       {/* 메인 썸네일 */}
