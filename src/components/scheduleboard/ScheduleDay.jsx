@@ -1,6 +1,10 @@
 import { Rate } from "antd";
 import { useEffect, useState } from "react";
 import { AiTwotoneHeart } from "react-icons/ai";
+import { BiNavigation, BiSolidBus } from "react-icons/bi";
+import { BsQuestionLg } from "react-icons/bs";
+import { FaWalking } from "react-icons/fa";
+import { FaTrainSubway } from "react-icons/fa6";
 import {
   CustomOverlayMap,
   Map,
@@ -9,7 +13,51 @@ import {
 } from "react-kakao-maps-sdk";
 import { useNavigate } from "react-router-dom";
 
-const ScheduleDay = ({ data }) => {
+// defaultData
+const defaultData = {
+  day: 1,
+  weather: "sunny",
+  schedules: [
+    {
+      seq: 1,
+      strfId: 9,
+      strfTitle: "제목",
+      category: "카테고리",
+      address: "주소",
+      lat: 37.570083,
+      lng: 126.99022,
+      distance: 2000,
+      duration: 30,
+      pathType: "도보",
+    },
+    {
+      seq: 2,
+      strfId: 9,
+      strfTitle: "제목",
+      category: "카테고리",
+      address: "주소",
+      lat: 37.570083,
+      lng: 126.99022,
+      distance: 2000,
+      duration: 30,
+      pathType: "도보",
+    },
+    {
+      seq: 3,
+      strfId: 9,
+      strfTitle: "제목",
+      category: "카테고리",
+      address: "주소",
+      lat: 37.570083,
+      lng: 126.99022,
+      distance: 2000,
+      duration: 30,
+      pathType: "도보",
+    },
+  ],
+};
+
+const ScheduleDay = ({ data = defaultData, showMap = true }) => {
   //useNavigate
   const navigate = useNavigate();
   const handleClickSchedule = item => {
@@ -97,53 +145,85 @@ const ScheduleDay = ({ data }) => {
         return "black";
     }
   };
+  // pathType 아이콘
+  const matchPathTypeIcon = pathType => {
+    switch (pathType) {
+      case "버스":
+        return <BiSolidBus />;
+      case "지하철":
+        return <FaTrainSubway />;
+      case "도보":
+        return <FaWalking />;
+      default:
+        return <BiNavigation />;
+    }
+  };
+  const matchWeatherIcon = weather => {
+    switch (weather) {
+      case "sunny":
+        return <img src="/public/images/weathericon/sunny.svg" alt="sunny" />;
+      case "cloudy":
+        return "⛅";
+      case "overcast":
+        return "☁";
+      case "rain":
+        return <img src="/public/images/weathericon/rain.svg" alt="rain" />;
+      case "snow":
+        return <img src="/public/images/weathericon/snow.svg" alt="snow" />;
+      default:
+        return "";
+    }
+  };
   return (
     <div className="flex flex-col gap-[30px]">
       {/* 라인 */}
       <div className="h-[10px] bg-slate-100"></div>
       {/* 맵 */}
-      <div className="h-[292px] bg-slate-200">
-        <Map
-          center={getCenterPoint(positions)}
-          style={{ width: "100%", height: "100%", borderRadius: "8px" }}
-          level={8}
-        >
-          {scheduleArr.map((item, index) => {
-            return;
-          })}
-          {/* {positions.map((position, index) => (
+      {showMap ? (
+        <div className="h-[292px] bg-slate-200">
+          <Map
+            center={getCenterPoint(positions)}
+            style={{ width: "100%", height: "100%", borderRadius: "8px" }}
+            level={8}
+          >
+            {scheduleArr.map((item, index) => {
+              return;
+            })}
+            {/* {positions.map((position, index) => (
             <MapMarker
               key={`${position.title}-${position.latlng}`}
               position={position.latlng} // 마커를 표시할 위치
               title={position.title} // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
             />
           ))} */}
-          {positions.map((position, index) => (
-            <CustomOverlayMap
-              key={`${position.title}-${index}`} // Unique key for each custom overlay
-              position={position.latlng} // Position for the overlay
-            >
-              <div
-                className={`label text-white w-[20px] h-[20px]
-                  flex items-center justify-center rounded-full
-                  -translate-x-1 -translate-y-1
-                  ${dayBgColor(data.day)}`}
+            {positions.map((position, index) => (
+              <CustomOverlayMap
+                key={`${position.title}-${index}`} // Unique key for each custom overlay
+                position={position.latlng} // Position for the overlay
               >
-                <span className="center font-medium text-white text-[12px]">
-                  {index + 1}
-                </span>{" "}
-              </div>
-            </CustomOverlayMap>
-          ))}
-          <Polyline
-            path={lineData}
-            strokeWeight={3} // 선의 두께 입니다
-            strokeColor={dayLineColor(data.day)} // 선의 색깔입니다
-            strokeOpacity={0.7} // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-            strokeStyle={"solid"} // 선의 스타일입니다
-          />
-        </Map>
-      </div>
+                <div
+                  className={`label text-white w-[20px] h-[20px]
+                  flex items-center justify-center rounded-full
+                  
+                  ${dayBgColor(data.day)}`}
+                >
+                  <span className="center font-medium text-white text-[12px]">
+                    {index + 1}
+                  </span>{" "}
+                </div>
+              </CustomOverlayMap>
+            ))}
+            <Polyline
+              path={lineData}
+              strokeWeight={3} // 선의 두께 입니다
+              strokeColor={dayLineColor(data.day)} // 선의 색깔입니다
+              strokeOpacity={0.7} // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+              strokeStyle={"solid"} // 선의 스타일입니다
+            />
+          </Map>
+        </div>
+      ) : null}
+
       <div className="flex flex-col gap-[20px]">
         {/* Day, 날짜, 날씨 */}
         <div className="flex gap-[10px] items-center">
@@ -153,7 +233,9 @@ const ScheduleDay = ({ data }) => {
             Day {data.day}
           </h3>
           <span className="text-[18px] text-slate-700">01.25 화</span>
-          <div className="w-[30px] y-[30px]">{data.weather}</div>
+          <div className="w-[30px] h-[30px] flex items-center justify-center text-[30px]">
+            {matchWeatherIcon(data.weather)}
+          </div>
         </div>
         {/* 일정 목록 */}
         <ul className="relative">
@@ -225,11 +307,11 @@ const ScheduleDay = ({ data }) => {
                   </div>
                   {/* type */}
                   <div className="flex gap-[10px] items-center px-[10px]">
-                    <div className="text-[12px] text-slate-600">
-                      {item.pathType}
+                    <div className=" text-slate-400 h-[18px]">
+                      {matchPathTypeIcon(item.pathType)}
                     </div>
-                    <div className="text-[14px] text-slate-600">
-                      {item.pathType}
+                    <div className="text-[14px] text-slate-400">
+                      {item.duration}분
                     </div>
                   </div>
                 </div>
