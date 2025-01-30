@@ -51,6 +51,9 @@ const SignUpUser = () => {
   const handleClickNavigate = data => {
     navigate(`/signup/confirmemail`, { state: data });
   };
+  const navigateBack = () => {
+    navigate(`/signin`);
+  };
   // 약관
   const handleChange = useCallback(checkedValues => {
     setSelectedValues(checkedValues);
@@ -122,7 +125,7 @@ const SignUpUser = () => {
 
   return (
     <>
-      <TitleHeader icon={"back"} title={"회원가입"} />
+      <TitleHeader icon={"back"} title={"회원가입"} onClick={navigateBack} />
       <div className="w-full px-28 py-[50px] mt-[60px]">
         <Form
           {...formItemLayout}
@@ -166,7 +169,11 @@ const SignUpUser = () => {
             validateStatus={validateStatus}
           >
             <Input
-              onBlur={e => getIdCheck(e)}
+              onBlur={e => {
+                if (e.target.value) {
+                  getIdCheck(e);
+                }
+              }}
               placeholder="이메일을 입력하세요"
               style={{ height: "60px" }}
             />

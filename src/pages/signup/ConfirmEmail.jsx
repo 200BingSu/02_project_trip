@@ -1,30 +1,42 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { Button, Form, Input } from "antd";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Timer from "../../components/signup/Timer";
 import axios from "axios";
 import { USER } from "../../constants/api";
 
 const ConfirmEmail = () => {
   const [form] = Form.useForm();
+  //useState
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState("");
-
+  const [locationData, setLocationData] = useState(null);
   // useNavigate
   const navigate = useNavigate();
   const location = useLocation();
-  const locationData = location.state;
-
-  useEffect(() => {
-    setFormData(locationData);
-  }, []);
-
-  console.log("이메일 코드 확인 페이지:", locationData);
+  const locationState = location.state;
+  console.log("로케이션 데이터", locationState);
   const handleNavigateNext = data => {
     navigate(`/signup/complete`, { state: data });
   };
 
+  useEffect(() => {
+    setFormData(locationState);
+  }, []);
+  //postEmail
+  const postEmail = useCallback(async () => {
+    const sendData = {
+      email: locationState.email,
+    };
+    console.log("이메일 발송 데이터:", sendData);
+    try {
+      const res = await axios.get(`${USER.sendMail}${data.email}`, sendData);
+      console.log("이메일 발송 결과:", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   // postSignup
   const postSignUpUser = async () => {
     const postData = new FormData();
@@ -43,7 +55,7 @@ const ConfirmEmail = () => {
         },
       });
       console.log("회원가입 시도:", res.data);
-      handleNavigateNext(locationData);
+      handleNavigateNext(locationState);
     } catch (error) {
       console.log("회원가입 시도:", error);
     }
@@ -66,7 +78,7 @@ const ConfirmEmail = () => {
     const formData = values;
     const emailCheckData = {
       ...formData,
-      email: locationData.email ? locationData.email : "없음",
+      email: locationState.email ? locationState.email : "없음",
     };
     console.log(emailCheckData);
     postCheckMail(emailCheckData);
@@ -77,22 +89,26 @@ const ConfirmEmail = () => {
       <TitleHeader icon="back" title="회원가입" />
       <div className="mt-[100px]">
         {/* 타이틀 */}
-        <div>이메일 인증 확인</div>
+        <h2 className="text-[30px] text-slate-700 font-bold">
+          이메일 인증 확인
+        </h2>
         {/* 안내문 */}
         <div>
-          <p>{locationData ? locationData.email : "이메일이 없습니다."}</p>
-          <p>
+          <p className="text-[24px] text-primary font-bold">
+            {locationState ? locationState.email : "이메일이 없습니다."}
+          </p>
+          <p className="text-[18px] text-slate-600 font-medium">
             본인인증 이메일이 발송되었습니다. 확인 후 회원가입을 완료해주시기
             바랍니다.
           </p>
         </div>
         {/* 인증 코드 작성 */}
-        <div className="items-center h-full" style={{ position: "relative" }}>
+        <div className="items-center h-full">
           <Form
             form={form}
             name="register"
             onFinish={values => onFinish(values)}
-            style={{ maxWidth: 600 }}
+            style={{ maxWidth: 600, position: "relative" }}
             scrollToFirstError
           >
             {/* 이메일 인증 코드 입력 */}
@@ -118,7 +134,10 @@ const ConfirmEmail = () => {
               확인해보세요.
             </p>
             <p>
-              이메일이 오지 않았나요? <span>이메일 재발송</span>
+              이메일이 오지 않았나요?{" "}
+              <button type="button" className="text-slate-600 underline">
+                이메일 재발송
+              </button>
             </p>
             {/* 제출 버튼 */}
             <Form.Item>
