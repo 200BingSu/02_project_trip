@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 
-const ScheduleBoard = () => {
+const Booking = () => {
   return (
     <div>
       <Outlet />
     </div>
   );
 };
-export default ScheduleBoard;
+export default Booking;

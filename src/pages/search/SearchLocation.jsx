@@ -1,5 +1,5 @@
 import { Button, Checkbox, Form, Input, Skeleton } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
@@ -16,7 +16,16 @@ const SearchLocation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const locationState = location.state;
-  console.log("locationState", locationState);
+  const fromPage = locationState?.from;
+
+  // 일정 관리 안 넣었음
+  const hadleClickSubmitButton = () => {
+    if (fromPage) {
+      navigate(fromPage, { state: selectedLocationId });
+    } else {
+      navigate(`/schedule`);
+    }
+  };
 
   // useState
   const [locationData, setLocationData] = useState(null);
@@ -25,9 +34,15 @@ const SearchLocation = () => {
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    // console.log(searchValue);
+    console.log(searchValue);
   }, [searchValue]);
-
+  //useRef
+  const imgRef = useRef(null);
+  useEffect(() => {
+    if (imgRef.current) {
+      console.log(imgRef.current);
+    }
+  }, []);
   //getLocationList
   const getLocationList = async () => {
     try {
@@ -43,23 +58,7 @@ const SearchLocation = () => {
   }, []);
 
   const locationArr = locationData?.data.locationList;
-  // const locationArr = [
-  //   {
-  //     locationId: 1,
-  //     locationPic: "",
-  //     title: "가평",
-  //   },
-  //   {
-  //     locationId: 2,
-  //     locationPic: "",
-  //     title: "강릉",
-  //   },
-  //   {
-  //     locationId: 3,
-  //     locationPic: "",
-  //     title: "경주",
-  //   },
-  // ];
+  const sortArr = locationArr?.filter(item => item.title.includes(searchValue));
 
   // 지역 선택
   const handleClickSelect = item => {
@@ -73,9 +72,9 @@ const SearchLocation = () => {
     );
   };
 
-  useEffect(() => {
-    console.log("selectedLocationId", selectedLocationId);
-  }, [selectedLocationId]);
+  // useEffect(() => {
+  //   console.log("selectedLocationId", selectedLocationId);
+  // }, [selectedLocationId]);
   return (
     <div>
       {/* 검색바 */}
@@ -86,8 +85,8 @@ const SearchLocation = () => {
       />
       {/* 지역 목록 */}
       <ul className="flex flex-col gap-[20px] px-[32px] mb-[20px]">
-        {locationArr ? (
-          locationArr?.map(item => {
+        {sortArr?.length > 0 ? (
+          sortArr?.map(item => {
             return (
               <li
                 className="flex justify-between items-center"
@@ -98,7 +97,12 @@ const SearchLocation = () => {
                   {/* 썸네일 */}
                   <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
                     {item.locationPic ? (
-                      <img src={item.locationPic} alt={item.title} />
+                      <img
+                        src={`http://112.222.157.156:5221/pic/location/${item.locationPic}`}
+                        alt={item.title}
+                        ref={imgRef}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <Skeleton.Image
                         active={false}
@@ -184,11 +188,12 @@ const SearchLocation = () => {
         )}
       </ul>
       {/* 제출 버튼 */}
-      <div className="w-full px-[32px]">
+      <div className="w-full px-[32px] mb-[20px]">
         {selectedLocationId.length > 0 ? (
           <button
             type="button"
             className="w-full px-[20px] py-[15px] text-[20px] font-bold text-white bg-primary rounded-lg"
+            onClick={hadleClickSubmitButton}
           >
             {selectedLocationId.length === 1
               ? `${selectedLocationId[0]?.title} 선택 완료`
