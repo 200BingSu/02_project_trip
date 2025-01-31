@@ -9,6 +9,7 @@ const DockBar = React.memo(() => {
       <Link to="/">홈</Link>
       <Link to="/scheduleboard/index">여행기</Link>
       <Link to="/user">마이페이지</Link>
+      <Link to="/contents/index?strf=STAY&strfId=82">숙소(임시)</Link>
     </div>
   );
 });

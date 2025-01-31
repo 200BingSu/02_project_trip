@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
-import { Rate } from "antd";
+import { Button, Rate } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -9,11 +9,13 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
+import { REVIEW } from "../../constants/api";
+import axios from "axios";
 
 const filesSchema = yup.object({
   imgfiles: yup
     .mixed()
-    .test("fileCount", "최대 3개의 파일만 업로드 가능합니다.", value => {
+    .test("fileCount", "최대 20개의 파일만 업로드 가능합니다.", value => {
       return value && value.length <= 20;
     })
     // .test("filesize", "파일 크기는 2MB 이하만 가능합니다.", value => {
@@ -37,24 +39,30 @@ const filesSchema = yup.object({
 
 const PostReview = () => {
   //recoil
-  const { userId } = useRecoilValue(userAtom);
+  const { userId, accessToken } = useRecoilValue(userAtom);
   //쿼리스트링
   const [searchParams] = useSearchParams();
   const strfId = searchParams.get("strfId");
 
   // useNavigate
   const navigate = useNavigate();
+  const navigateBack = () => {
+    navigate(-1);
+  };
   const location = useLocation();
   const locationState = location.state;
   //   console.log(locationState);
   //useState
   const [text, setText] = useState("");
   const [value, setValue] = useState(0); //Rate
-  const [files, setFiles] = useState({});
+  const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({});
   useEffect(() => {
     setFormData({ ...formData, rating: value });
   }, [value]);
+  useEffect(() => {
+    console.log("업데이트된 files:", files);
+  }, [files]);
   useEffect(() => {
     console.log("formData", formData);
   }, [formData]);
@@ -84,34 +92,48 @@ const PostReview = () => {
 
   //postReview
   const postReview = async () => {
+    const pData = { ...formData, userId: userId, strfId: strfId };
+    console.log("p", pData);
+    console.log("JSON인 p", JSON.stringify(pData));
     const postData = new FormData();
     postData.append(
       "p",
-      new Blob(
-        [JSON.stringify({ ...formData, userId: userId, strfId: strfId })],
-        { type: "application/json" },
-      ),
+      new Blob([JSON.stringify(pData)], { type: "application/json" }),
     );
-    if (files) {
-      postData.append("pics", files);
+
+    if (files.length) {
+      files.forEach(file => postData.append("pics", file));
     }
-    console.log("보낼 데이터:", postData);
+    console.log("보낼 데이터:", [...postData]);
+    for (let pair of postData.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
+    }
     try {
-      const res = await axios.post(`${USER.signUpUser}`, postData, {
+      const res = await axios.post(`${REVIEW.postReview}`, postData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          // "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log("회원가입 시도:", res.data);
-      handleNavigateNext(locationState);
+      console.log("리뷰 등록:", res.data);
     } catch (error) {
-      console.log("회원가입 시도:", error);
+      if (error.response) {
+        console.error("서버 오류 응답:", error.response.data); // 서버가 반환한 오류 메시지
+        console.error("서버 상태 코드:", error.response.status); // 상태 코드
+        console.error("서버 헤더:", error.response.headers); // 헤더 정보
+      } else {
+        console.error("리뷰 등록 실패:", error.message); // 요청을 보낼 때 발생한 오류
+      }
     }
   };
 
   return (
     <div>
-      <TitleHeader title={locationState?.strfTitle} icon="back" />
+      <TitleHeader
+        title={locationState?.strfTitle}
+        icon="back"
+        onClick={navigateBack}
+      />
       <div className="mt-[110px]">
         {/* 별점 */}
         <div>
@@ -171,7 +193,9 @@ const PostReview = () => {
           </div>
           {/* 제출 버튼 */}
           <button type="submit">제출</button>
-          <button type="button">확인</button>
+          <Button type="primary" htmltype="button" onClick={postReview}>
+            확인
+          </Button>
         </form>
       </div>
     </div>
