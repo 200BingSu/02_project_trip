@@ -95,7 +95,7 @@ const dummyData = [
   },
   {
     day: 3,
-    weather: "rainy",
+    weather: "rain",
     schedules: [
       {
         seq: 1,
@@ -125,7 +125,7 @@ const dummyData = [
   },
   {
     day: 4,
-    weather: "snowy",
+    weather: "snow",
     schedules: [
       {
         seq: 1,

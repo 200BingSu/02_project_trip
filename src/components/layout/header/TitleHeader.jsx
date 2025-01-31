@@ -39,7 +39,7 @@ const TitleHeader = React.memo(
     h-[60px] px-[30px] bg-white fixed top-0 left-[50%] translate-x-[-50%] z-50"
       >
         {/* 좌측 */}
-        <div className="flex gap-10">
+        <div className="flex gap-10 items-center">
           <button
             type="button"
             className="text-[60px] text-slate-700"

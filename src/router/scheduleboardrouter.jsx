@@ -8,6 +8,9 @@ const scheduleBoardRouter = () => {
   const LazyScheduleDetail = lazy(
     () => import("../pages/scheduleboard/scheduleDetail"),
   );
+  const LazySchedulePost = lazy(
+    () => import("../pages/scheduleboard/PostBoard"),
+  );
   return [
     {
       path: "index",
@@ -22,6 +25,14 @@ const scheduleBoardRouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazyScheduleDetail />
+        </Suspense>
+      ),
+    },
+    {
+      path: "schedulePost",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazySchedulePost />
         </Suspense>
       ),
     },

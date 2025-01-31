@@ -13,7 +13,7 @@ const DetailInfo = ({ contentData }) => {
         <h2 className="text-[28px] font-semibold text-slate-700">소개</h2>
         {/* 소개글 */}
         <div
-          class={`relative w-full transition-all h-auto ${openDetail ? `` : `before:absolute before:inset-0 before:bg-gradient-to-t before:from-white/100 before:to-white/0`}`}
+          className={`relative w-full transition-all h-auto ${openDetail ? `` : `before:absolute before:inset-0 before:bg-gradient-to-t before:from-white/100 before:to-white/0`}`}
         >
           <p
             className={`text-[18px] text-slate-500 ${openDetail ? `` : `line-clamp-5`}`}
