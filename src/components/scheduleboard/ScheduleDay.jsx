@@ -57,6 +57,15 @@ const defaultData = {
   ],
 };
 
+/**
+ * ### 인수
+ * #### data
+ * 디폴트 데이터가 적용되어 있음
+ * #### showMap
+ * 맵이 보일지 여부(boolean)
+ * - 디폴트: true
+ *
+ */
 const ScheduleDay = ({ data = defaultData, showMap = true }) => {
   //useNavigate
   const navigate = useNavigate();
@@ -163,9 +172,11 @@ const ScheduleDay = ({ data = defaultData, showMap = true }) => {
       case "sunny":
         return <img src="/public/images/weathericon/sunny.svg" alt="sunny" />;
       case "cloudy":
-        return "⛅";
+        return <img src="/public/images/weathericon/cloudy.svg" alt="cloudy" />;
       case "overcast":
-        return "☁";
+        return (
+          <img src="/public/images/weathericon/overcast.svg" alt="overcast" />
+        );
       case "rain":
         return <img src="/public/images/weathericon/rain.svg" alt="rain" />;
       case "snow":

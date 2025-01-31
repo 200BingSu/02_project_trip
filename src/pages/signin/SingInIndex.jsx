@@ -12,6 +12,9 @@ const SingInIndex = () => {
   const [form] = Form.useForm();
   // recoil
   const [loginInfo, setLoginInfo] = useRecoilState(userAtom);
+  useEffect(() => {
+    console.log("recoil", loginInfo);
+  }, [loginInfo]);
 
   // useNavigate
   const navigate = useNavigate();

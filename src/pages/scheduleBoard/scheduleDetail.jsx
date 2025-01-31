@@ -185,7 +185,7 @@ const dummyData = [
   },
 ];
 
-const scheduleDetail = () => {
+const ScheduleDetail = () => {
   //useNavigate
   const navigate = useNavigate();
   const handleNavigateBack = () => {
@@ -248,4 +248,4 @@ const scheduleDetail = () => {
     </div>
   );
 };
-export default scheduleDetail;
+export default ScheduleDetail;

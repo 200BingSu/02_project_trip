@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { Skeleton } from "antd";
 import { FiSearch } from "react-icons/fi";
@@ -7,7 +7,7 @@ import { BiShow } from "react-icons/bi";
 import { GoThumbsup } from "react-icons/go";
 import { IoReaderOutline } from "react-icons/io5";
 
-const scheduleBoardIndex = () => {
+const ScheduleBoardIndex = () => {
   //useNavigate
   const navigate = useNavigate();
   const navigateBack = () => {
@@ -19,6 +19,9 @@ const scheduleBoardIndex = () => {
   const navigateDetail = tripId => {
     navigate(`/scheduleboard/scheduleDetail?tripId=${tripId}`);
   };
+  const location = useLocation();
+  const locationState = location.state;
+  console.log(locationState);
   //useState
   const [filter, setFilter] = useState(0);
 
@@ -27,13 +30,15 @@ const scheduleBoardIndex = () => {
       <TitleHeader onClick={navigateBack} title="여행기" icon="back" />
       <div className="flex flex-col px-[32px] mt-[60px]">
         {/* 지역 검색바 */}
-        <div className="relative">
+        <div className="relative" onClick={navigateSearchLocation}>
           <input
             placeholder={"어느 곳으로 가실건가요?"}
             className="
           flex gap-[10px] px-[46px] py-[8px] w-full
           bg-slate-100 hover:bg-[#eef3f7] 
-          rounded-3xl h-[80px]"
+          rounded-3xl h-[80px] outline-none text-slate-500"
+            value={`${locationState?.length ? locationState.map(item => item.title).join(", ") : "어느곳으로 가실건가요?"}`}
+            readOnly
           />
           <FiSearch className="absolute left-[12px] top-1/2 -translate-y-1/2 text-[24px] text-slate-400" />
         </div>
@@ -128,4 +133,4 @@ const scheduleBoardIndex = () => {
     </div>
   );
 };
-export default scheduleBoardIndex;
+export default ScheduleBoardIndex;

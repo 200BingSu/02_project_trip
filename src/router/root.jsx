@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 // import companyRouter from "./companyrouter";
 import Loading from "../components/loading/Loading";
@@ -9,8 +9,14 @@ import scheduleBoardRouter from "./scheduleboardrouter";
 import signUpRouter from "./signuprouter";
 import Layout from "../components/layout/Layout";
 import searchRouter from "./searchrouter";
+import bookingRouter from "./bookingrouter";
+import { getCookie } from "../utils/cookie";
+import { userAtom } from "../atoms/userAtom";
+import { useRecoilValue } from "recoil";
+import contentsRouter from "./contentsrouter";
 
 // lazy
+
 const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/bookings/BookingIndex"));
 const LazyBudget = lazy(() => import("../pages/budget/BudgetIndex"));
@@ -28,8 +34,14 @@ const LazySearch = lazy(() => import("../pages/search/SearchIndex"));
 const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
 const LazySignUp = lazy(() => import("../pages/signup/SignUp"));
 const LazyUser = lazy(() => import("../pages/user/UserIndex"));
-const LazyContent = lazy(() => import("../pages/contents/ContentIndex"));
+const LazyContent = lazy(() => import("../pages/contents/Contents"));
 
+// AuthWrapper 컴포넌트 생성
+// const accessToken = getCookie("accessToken");
+const AuthWrapper = () => {
+  const { userId, accessToken } = useRecoilValue(userAtom);
+  return accessToken ? <LazyHome /> : <Navigate to="/signin" replace />;
+};
 const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -38,7 +50,8 @@ const router = createBrowserRouter([
         path: "/",
         element: (
           <Suspense fallback={<Loading />}>
-            <LazyHome />
+            {/* {accessToken ? <LazyHome /> : <Navigate to="/signin" replace />} */}
+            <AuthWrapper />
           </Suspense>
         ),
       },
@@ -49,6 +62,7 @@ const router = createBrowserRouter([
             <LazyContent />
           </Suspense>
         ),
+        children: contentsRouter(),
       },
       {
         path: "/booking",
@@ -57,6 +71,7 @@ const router = createBrowserRouter([
             <LazyBooking />
           </Suspense>
         ),
+        children: bookingRouter(),
       },
       {
         path: "/budget",

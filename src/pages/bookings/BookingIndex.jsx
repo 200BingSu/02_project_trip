@@ -4,24 +4,32 @@ import axios from "axios";
 import { USER } from "../../constants/api";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SelectCoupon from "../../components/booking/SelectCoupon";
 import { IoIosArrowDown } from "react-icons/io";
-import { Checkbox, Radio } from "antd";
+import { Button, Checkbox, Radio } from "antd";
 
 const CheckboxGroup = Checkbox.Group;
 const plainOptions = [
   {
-    label: <p>취소/이용규정 동의</p>,
+    label: <p className="select-none">취소/이용규정 동의</p>,
     value: "required-1",
   },
   {
-    label: <p>취소 정책 안내</p>,
+    label: <p className="underline select-none">취소 정책 안내</p>,
     value: "required-2",
   },
   {
-    label: <p>개인 정보 수집 및 이용 동의</p>,
+    label: <p className="underline select-none">개인 정보 수집 및 이용 동의</p>,
     value: "required-3",
+  },
+  {
+    label: <p className="underline select-none">개인정보 제 3자 제공</p>,
+    value: "required-4",
+  },
+  {
+    label: <p className="select-none">마케팅 이용 동의</p>,
+    value: "required-5",
   },
 ];
 const defaultCheckedList = [];
@@ -34,8 +42,14 @@ const BookingIndex = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   //useNavigate
   const navigate = useNavigate();
+  const location = useLocation();
+  const locationState = location.state;
+  console.log("locationState", locationState);
   const navigateBack = () => {
     navigate(-1);
+  };
+  const navigateCompleteBooking = () => {
+    navigate(`/booking/complete`);
   };
   // useState
   const [userData, setUserData] = useState({});
@@ -43,6 +57,8 @@ const BookingIndex = () => {
   const [checkedList, setCheckedList] = useState(defaultCheckedList);
   const [checkAll, setCheckAll] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
+  // useRef
+
   // getUserInfo
   const getUserInfo = async () => {
     try {
@@ -61,12 +77,33 @@ const BookingIndex = () => {
       console.log("회원 정보:", error);
     }
   };
-  // 체크리스트
-  // const indeterminate =
-  //   checkedList.length > 0 && checkedList.length < plainOptions.length;
-  // const onChange = list => {
-  //   setCheckedList(list);
-  // };
+  //postBooking
+  const postBooking = async () => {
+    const sendData = {
+      checkIn: locationState.dates[0],
+      checkOut: locationState.dates[1],
+      finalPayment: 50000,
+    };
+    console.log("sendData", sendData);
+    try {
+      const res = await axios.get(
+        `/api/booking?checkIn=${sendData.checkIn}&checkOut=${sendData.checkOut}&finalPayment=${sendData.finalPayment}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.accessToken}`,
+          },
+        },
+      );
+      console.log("찜하기", res.data);
+      const filterData = {
+        name: res.data.name,
+        email: res.data.email,
+      };
+      setUserData(filterData);
+    } catch (error) {
+      console.log("회원 정보:", error);
+    }
+  };
   const onChange = list => {
     setCheckedList(list);
     setIndeterminate(list.length > 0 && list.length < plainOptions.length);
@@ -192,7 +229,7 @@ const BookingIndex = () => {
                 예약 금액
               </h4>
               <p className="text-[18px] text-slate-700">
-                {(50000).toLocaleString()}원
+                {(locationState?.price || 50000).toLocaleString()}원
               </p>
             </li>
             <li className="w-full flex items-center justify-between">
@@ -200,7 +237,7 @@ const BookingIndex = () => {
                 쿠폰 할인
               </h4>
               <p className="text-[18px] text-slate-700">
-                - {(5000).toLocaleString()}원
+                - {(0).toLocaleString()}원
               </p>
             </li>
             <li className="w-full flex items-center justify-between">
@@ -208,7 +245,8 @@ const BookingIndex = () => {
                 총 결제 금액
               </h4>
               <p className="text-[24px] text-primary font-semibold">
-                {(50000 - 5000).toLocaleString()}원
+                <span>{(locationState?.price || 50000).toLocaleString()}</span>
+                원
               </p>
             </li>
           </ul>
@@ -236,18 +274,21 @@ const BookingIndex = () => {
                   ),
                 },
               ]}
+              style={{ display: "flex", alignItems: "center" }}
             />
             {/* 결제 혜택 */}
             <div className="flex flex-col gap-[5px] px-[20px] py-[20px] rounded-lg bg-slate-100">
-              <h4 className="text-[18px] text-slate-700">결제혜택</h4>
-              <p className="text-[16px] text-slate-500">
+              <h4 className="text-[18px] text-slate-700 select-none">
+                결제혜택
+              </h4>
+              <p className="text-[16px] text-slate-500 select-none">
                 본 프로모션은 카카오페이 계정 기준 "기간 내 1회, 카카오페이머니
                 결제"에 한해 페이포인트 적립 가능합니다.
               </p>
               <ul>
                 <li className="flex gap-[5px]">
                   <p className="text-[16px] text-slate-500">-</p>
-                  <p className="text-[16px] text-slate-500">
+                  <p className="text-[16px] text-slate-500 ">
                     포인트 적립은 장바구니 합산 기준으로 최종 결제 금액 4만원
                     이상 시 자동 적립되며, 카카오페이 톡채널로 안내됩니다. (기간
                     내 누적 결제금액이 아닌 단건 결제에 한함)
@@ -283,7 +324,7 @@ const BookingIndex = () => {
           </div>
         </div>
         {/* 취소 정책 및 이용 동의 */}
-        <div className="px-[32px] py-[30px] flex flex-col gap-[30px] border-b-[10px] border-slate-100">
+        <div className="px-[32px] py-[30px] flex flex-col gap-[30px]">
           <h2 className="pb-[20px] text-[24px] text-slate-700 font-semibold">
             취소 정책 및 이용 동의
           </h2>
@@ -292,8 +333,9 @@ const BookingIndex = () => {
             onChange={onCheckAllChange}
             checked={checkAll}
             style={{ padding: "20px 10px" }}
+            className="bg-slate-50 px-[10px] py-[20px] rounded-lg"
           >
-            <span className="text-[18px] text-slate-600 font-semibold">
+            <span className="text-[18px] text-slate-600 font-semibold select-none">
               전체 동의합니다.
             </span>
           </Checkbox>
@@ -301,8 +343,21 @@ const BookingIndex = () => {
             options={plainOptions}
             value={checkedList}
             onChange={onChange}
-            direction="vertical"
+            className="flex flex-col gap-[8px]"
           />
+          {/* 결제하기 */}
+          <Button
+            type="primary"
+            className="h-[60px] px-[15px] py-[10px] rounded-lg "
+            onClick={() => {
+              if (checkAll) {
+                postBooking();
+                navigateCompleteBooking();
+              }
+            }}
+          >
+            <p className="text-[24px] text-white font-semibold">결제하기</p>
+          </Button>
         </div>
       </div>
       {/* 모달창 */}

@@ -9,7 +9,7 @@ const scheduleBoardRouter = () => {
     () => import("../pages/scheduleBoard/ScheduleDetail"),
   );
   const LazySchedulePost = lazy(
-    () => import("../pages/scheduleboard/PostBoard"),
+    () => import("../pages/scheduleBoard/PostBoard"),
   );
   return [
     {

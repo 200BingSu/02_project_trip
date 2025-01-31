@@ -24,3 +24,6 @@ html,
 body :root {
   font-family: "Work Sans", "Pretendard";
 }
+p {
+  user-select: none;
+}
