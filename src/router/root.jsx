@@ -11,7 +11,7 @@ import Layout from "../components/layout/Layout";
 import searchRouter from "./searchrouter";
 
 // lazy
-const LazyHome = lazy(() => import("../pages/Test"));
+const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/bookings/BookingIndex"));
 const LazyBudget = lazy(() => import("../pages/budget/BudgetIndex"));
 const LazyBusiness = lazy(() => import("../pages/business/BusinessIndex"));
@@ -22,7 +22,7 @@ const LazyNotification = lazy(
 const LazyPayment = lazy(() => import("../pages/payment/PaymentIndex"));
 const LazySchedule = lazy(() => import("../pages/schedule/Schedule"));
 const LazyScheduleBoard = lazy(
-  () => import("../pages/scheduleboard/scheduleBoard"),
+  () => import("../pages/scheduleBoard/ScheduleBoard"),
 );
 const LazySearch = lazy(() => import("../pages/search/SearchIndex"));
 const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
