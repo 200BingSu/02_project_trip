@@ -1,6 +1,6 @@
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { CONTENT, TRIP } from "../../constants/api";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import {
   FaBath,
@@ -47,13 +47,18 @@ import AmenityModal from "../../components/contents/AmenityModal";
 
 dayjs.extend(isBetween);
 
-const ContentPublishing = () => {
+const ContentIndex = () => {
   // 쿼리 스트링 조회
   const [searchParams] = useSearchParams();
   const strfType = searchParams.get("strf");
   const strfId = searchParams.get("strfId");
   // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  // useNavigate
+  const navigate = useNavigate();
+  const navigatePostReview = () => {
+    navigate(`/contents/postreview?strfId=${strfId}`, { state: contentData });
+  };
   //useState
   const [contentData, setContentData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,7 +66,13 @@ const ContentPublishing = () => {
   const [isRegistModalOpen, setIsRegistModalOpen] = useState(false);
   const [openBusinessTime, setOpenBusinessTime] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-
+  const [reviewsData, setReviewsData] = useState([]);
+  const [reviewIndex, setReviewIndex] = useState(6);
+  // useRef
+  const imgRef = useRef(null);
+  useEffect(() => {
+    console.log(imgRef.current);
+  }, []);
   // 편의 시설 모달
   const showModal = () => {
     setIsModalOpen(true);
@@ -96,8 +107,16 @@ const ContentPublishing = () => {
 
   // 상품 조회
   const getDetail = async () => {
+    const sendData = {
+      strfId: strfId,
+      userId: userInfo.userId,
+    };
+    console.log("sendData:", sendData);
     try {
-      const res = await axios.get(`${CONTENT.getDetail}${strfId}`);
+      const res = await axios.get(
+        `/api/detail?strfId=${strfId}&userId=${userInfo.userId}`,
+        sendData,
+      );
       const resultData = res.data.data;
       console.log("resultData", resultData);
       setContentData(resultData);
@@ -105,32 +124,31 @@ const ContentPublishing = () => {
       console.log("상품조회", error);
     }
   };
+  //리뷰 조회
+  //getReviews
+  const getReview = useCallback(async () => {
+    const sendData = {
+      page: 1,
+      size: 6,
+      strfId: strfId,
+    };
+    console.log("리뷰 불러오기 리퀘스트:", sendData);
+    try {
+      const res = await axios.get(
+        `/api/review?page=1&size=6&strfId=${strfId}`,
+        sendData,
+      );
+      console.log("리뷰 더 불러오기:", res.data);
+      setReviewsData(res.data.data);
+      setReviewIndex(prev => prev + 10);
+    } catch (error) {
+      console.log("리뷰 더 불러오기:", error);
+    }
+  }, []);
   useEffect(() => {
     getDetail();
+    getReview();
   }, []);
-  // 상품 등록
-  // const postSchedule = async () => {
-  //   const sendData = {
-  //     strf_Id: strfId,
-  //     trip_Id: "없음",
-  //     day: "없음",
-  //     seq: 1,
-  //     path_type: null,
-  //     time: null,
-  //     distance: null,
-  //   };
-  //   console.log("일정 등록 데이터:", sendData);
-  //   try {
-  //     const res = await axios.post(`${TRIP.postSchedule}`, sendData, {
-  //       headers: {
-  //         Authorization: `Bearer ${userInfo.accessToken}`,
-  //       },
-  //     });
-  //     console.log("상품 등록", res.data);
-  //   } catch (error) {
-  //     console.log("상품 등록", error);
-  //   }
-  // };
   // 카테고리 한글 변환
   const categoryKor = category => {
     if (category === "STAY") return "호텔";
@@ -169,9 +187,10 @@ const ContentPublishing = () => {
       {/* 메인 썸네일 */}
       <div className="w-full h-[467px] bg-gray-200">
         <img
-          src={contentData?.thumbnail}
+          src={`http://112.222.157.156:5221/strf/${strfId}/${contentData?.strfPics[0].pic}`}
           alt="content-thumbnail"
           className="w-full h-full object-cover"
+          ref={imgRef}
         />
       </div>
       {/* 컨텐츠 영역 */}
@@ -179,15 +198,19 @@ const ContentPublishing = () => {
         {/* 카테고리, 업체명, 주소, 별점, 찜하기, 영업시간 */}
         <div className="w-full flex flex-col gap-[10px]">
           {/* 카테고리 */}
-          <div className="text-[16px] text-slate-500">카테고리</div>
+          <div className="text-[16px] text-slate-500">
+            {categoryKor(contentData?.category || "STAY")}
+          </div>
           {/* 컨텐츠 타이틀 */}
           <div className="font-semibold text-[36px] text-slate-700 line">
-            제목
+            {contentData?.strfTitle || "제목"}
           </div>
           {/* 주소 */}
           <div className="flex gap-[5px] items-center">
             <FaLocationDot className="text-[18px] text-slate-300" />
-            <p className="text-[16px] text-slate-700">주소</p>
+            <p className="text-[16px] text-slate-700">
+              {contentData?.locationName || "주소"}
+            </p>
           </div>
           {/* 별점 및 찜하기*/}
           <div className="flex gap-[20px] items-center">
@@ -198,7 +221,7 @@ const ContentPublishing = () => {
                 {contentData?.ratingAvg || "평점"}
               </p>
               <p className="text-[16px] text-primary underline">
-                리뷰 {(contentData?.ratingCnt || 1000).toLocaleString()}개
+                리뷰 {(reviewsData ? reviewsData.length : 0).toLocaleString()}개
               </p>
             </div>
             <p className="text-[16px] text-slate-300 font-light">|</p>
@@ -261,7 +284,7 @@ const ContentPublishing = () => {
               {/* 편의시설 리스트 */}
               <ul className="flex flex-wrap gap-auto vertical-gap-[20px]">
                 {contentData ? (
-                  contentData?.amenity.map((item, index) => {
+                  contentData.amenities.map((item, index) => {
                     return (
                       <li
                         className="flex flex-col gap-[10px] items-center"
@@ -316,7 +339,14 @@ const ContentPublishing = () => {
         </div>
         {/* 컨텐츠 영역 컨텐츠 */}
         {isDetailOpen && <DetailInfo contentData={contentData} />}
-        {!isDetailOpen && <Reviews contentData={contentData} strfId={strfId} />}
+        {!isDetailOpen && (
+          <Reviews
+            reviewsData={reviewsData}
+            setReviewsData={setReviewsData}
+            reviewIndex={reviewIndex}
+            setReviewIndex={setReviewIndex}
+          />
+        )}
       </div>
       {/* 일정 추가 및 리뷰쓰기 버튼 */}
       <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 bg-white fixed bottom-0 left-[50%] translate-x-[-50%] z-30">
@@ -334,7 +364,12 @@ const ContentPublishing = () => {
           onClick={showReviewModal}
         >
           <BiSolidEditAlt className="text-slate-400" />
-          <p className="text-[22px] text-slate-700 font-medium">리뷰 쓰기</p>
+          <p
+            className="text-[22px] text-slate-700 font-medium"
+            onClick={navigatePostReview}
+          >
+            리뷰 쓰기
+          </p>
         </button>
       </div>
       {/* 일정 추가 모달창 */}
@@ -348,4 +383,4 @@ const ContentPublishing = () => {
     </div>
   );
 };
-export default ContentPublishing;
+export default ContentIndex;
