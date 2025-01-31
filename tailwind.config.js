@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}", // Vite 프로젝트에 맞는 파일 확장자 추가
   ],
+
   plugins: [require("@tailwindcss/line-clamp")],
   theme: {
     extend: {
