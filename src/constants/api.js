@@ -97,5 +97,5 @@ export const ALARM = {
 };
 
 export const BOOKING = {
-  getBooking: "/api/booking",
+  getBooking: "/api/booking?checkIn=string&checkOut=string&finalPayment=0",
 };

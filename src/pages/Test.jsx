@@ -3,23 +3,51 @@ import DockBar from "../components/layout/DockBar/DockBar";
 import axios from "axios";
 import { CONTENT, SEARCH, TRIP, USER, WISHLIST } from "../constants/api";
 import { removeCookie } from "../utils/cookie";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../atoms/userAtom";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Test = () => {
   // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  useEffect(() => {
+    console.log("userInfo", userInfo);
+  }, []);
+
   // useNavigate
   const navigate = useNavigate();
   const handleNavigateLogin = () => {
     navigate(`/signin`);
   };
+  //resetToken
+  const resetToken = async () => {
+    try {
+      const res = await axios.get("/api/user/access-token");
+      console.log(res);
+      setCookie("accessToken");
+      setUserInfo(prev => ({
+        ...prev,
+        accessToken: res.data.ressulData.accessToken,
+      }));
+      // 원래하려던 API 다시 호출
+      getMypage();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // 마이페이지 조회
   const getMypage = async () => {
     try {
-      const res = await axios.get(`${USER.getUserInfo}${userInfo.userId}`);
+      const res = await axios.get(`${USER.getUserInfo}${userInfo.userId}`, {
+        headers: {
+          Authorization: `Bearer ${userInfo.accessToken}`,
+        },
+      });
       console.log("마이페이지 조회:", res.data);
+      if (res.status === 401) {
+        resetToken();
+      }
     } catch (error) {
       console.log("마이페이지 조회:", error);
     }
@@ -176,25 +204,25 @@ const Test = () => {
         {/* 숙소 */}
         <Button
           type="Link"
-          onClick={() => navigate(`/contents?strf=STAY&strfId=82`)}
+          onClick={() => navigate(`/contents/index?strf=STAY&strfId=82`)}
         >
           숙소 id=82
         </Button>
         <Button
           type="Link"
-          onClick={() => navigate(`/contents?strf=RESTAUR&strfId=305`)}
+          onClick={() => navigate(`/contents/index?strf=RESTAUR&strfId=305`)}
         >
           음식점 id=305
         </Button>
         <Button
           type="Link"
-          onClick={() => navigate(`/contents?strf=TOUR&strfId=58`)}
+          onClick={() => navigate(`/contents/index?strf=TOUR&strfId=58`)}
         >
           관광지 id=58
         </Button>
         <Button
           type="Link"
-          onClick={() => navigate(`/contents?strf=FEST&strfId=829`)}
+          onClick={() => navigate(`/contents/index?strf=FEST&strfId=829`)}
         >
           축제 id=829
         </Button>

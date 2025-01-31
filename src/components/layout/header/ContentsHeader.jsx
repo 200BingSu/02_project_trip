@@ -7,7 +7,7 @@ import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
 import { useNavigate } from "react-router-dom";
 
-const ContentsHeader = ({ contentsData, strfId }) => {
+const ContentsHeader = ({ contentData, strfId }) => {
   //recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   //useNavigate
@@ -62,7 +62,7 @@ const ContentsHeader = ({ contentsData, strfId }) => {
         <div
           className={`text-[24px] font-bold ${scrollY > 0 ? "text-slate-700'" : "text-white"}`}
         >
-          {contentsData?.strfTitle || "제목"}
+          {contentData?.strfTitle || "제목"}
         </div>
       </div>
       <div className="flex gap-[20px]">
