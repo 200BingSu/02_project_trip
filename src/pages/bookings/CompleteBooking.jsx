@@ -54,23 +54,37 @@ const CompleteBooking = () => {
         </ul>
         {/* 체크인, 체크아웃 */}
         <ul className="flex ">
-          <li className="">
-            <p>체크인</p>
-            <p>날짜, 요일, 시간</p>
+          <li
+            className="border border-slate-100 py-[30px]
+                        flex flex-col gap-[10px]"
+          >
+            <p className="text-[24px] text-slate-400 font-bold">체크인</p>
+            <p className="text-[24px] text-slate-700">날짜, 요일, 시간</p>
           </li>
-          <li className="">
-            <p>체크인</p>
-            <p>날짜, 요일, 시간</p>
+          <li
+            className="border border-slate-100 py-[30px]
+                        flex flex-col gap-[10px]"
+          >
+            <p className="text-[24px] text-slate-400 font-bold">체크인</p>
+            <p className="text-[24px] text-slate-700">날짜, 요일, 시간</p>
           </li>
         </ul>
         {/* 버튼 */}
-        <div>
-          <button type="button">예약 확인하기</button>
+        <div className="flex gap-[10px]">
+          <button
+            type="button"
+            className="px-[15px] py-[30px] rounded-lg border border-slate-300
+            text-[24px] font-semibold text-slate-700"
+          >
+            예약 확인하기
+          </button>
           <button
             type="button"
             onClick={() => {
               navigate("/");
             }}
+            className="px-[15px] py-[30px] rounded-lg border border-slate-300
+            text-[24px] font-semibold text-slate-700"
           >
             메인으로 가기
           </button>
