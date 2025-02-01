@@ -18,14 +18,14 @@ const filesSchema = yup.object({
     .test("fileCount", "최대 20개의 파일만 업로드 가능합니다.", value => {
       return value && value.length <= 20;
     })
-    // .test("filesize", "파일 크기는 2MB 이하만 가능합니다.", value => {
-    //   // 파일이 여러개 이므로 각 파일을 반복문으로 용량을 비교해야 함.
-    //   return (
-    //     // 파일들이 있다면 && 모든 파일들을 배열로서 변환하고, every 즉, 조건이 맞는지 반복해서 비교한다.
-    //     // every 는 모두 true인 경우만 true 를 리턴한다. 하나라도 false 면 false 리턴
-    //     value && Array.from(value).every(file => file.size <= 2 * 1024 * 1024)
-    //   );
-    // })
+    .test("filesize", "파일 크기는 2MB 이하만 가능합니다.", value => {
+      // 파일이 여러개 이므로 각 파일을 반복문으로 용량을 비교해야 함.
+      return (
+        // 파일들이 있다면 && 모든 파일들을 배열로서 변환하고, every 즉, 조건이 맞는지 반복해서 비교한다.
+        // every 는 모두 true인 경우만 true 를 리턴한다. 하나라도 false 면 false 리턴
+        value && Array.from(value).every(file => file.size <= 2 * 1024 * 1024)
+      );
+    })
     .test("fileType", "JPG 또는 PNG 파일만 업로드 가능합니다.", value => {
       // 파일이 1개가 아니고 여러개이므로 반복문으로 type 비교를 해야 함.
       return (
@@ -100,14 +100,11 @@ const PostReview = () => {
       "p",
       new Blob([JSON.stringify(pData)], { type: "application/json" }),
     );
-
-    if (files.length) {
+    //postData.append("p", JSON.stringify(pData));
+    if (files.length > 0) {
       files.forEach(file => postData.append("pics", file));
     }
     console.log("보낼 데이터:", [...postData]);
-    for (let pair of postData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
     try {
       const res = await axios.post(`${REVIEW.postReview}`, postData, {
         headers: {
@@ -189,7 +186,7 @@ const PostReview = () => {
             >
               <AiOutlinePlus size={36} className="text-slate-400" />
             </label>
-            <p>{errors.imgfiles?.message}</p>
+            <p>에러메세지:{errors.imgfiles?.message}</p>
           </div>
           {/* 제출 버튼 */}
           <button type="submit">제출</button>

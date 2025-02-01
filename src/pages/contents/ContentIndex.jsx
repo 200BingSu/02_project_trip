@@ -97,6 +97,7 @@ const ContentIndex = () => {
   // 리뷰 등록 모달
   const showReviewModal = () => {
     setIsReviewModalOpen(true);
+    navigatePostReview();
   };
   const handleReviewOk = () => {
     setIsReviewModalOpen(false);
@@ -361,15 +362,12 @@ const ContentIndex = () => {
         <button
           type="button"
           className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
-          onClick={showReviewModal}
+          onClick={() => {
+            showReviewModal();
+          }}
         >
           <BiSolidEditAlt className="text-slate-400" />
-          <p
-            className="text-[22px] text-slate-700 font-medium"
-            onClick={navigatePostReview}
-          >
-            리뷰 쓰기
-          </p>
+          <p className="text-[22px] text-slate-700 font-medium">리뷰 쓰기</p>
         </button>
       </div>
       {/* 일정 추가 모달창 */}
