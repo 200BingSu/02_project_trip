@@ -3,7 +3,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { LiaComment } from "react-icons/lia";
 import ReviewImage from "./ReviewImage";
 import axios from "axios";
-import { data } from "react-router-dom";
+import { data, useSearchParams } from "react-router-dom";
 
 // 더미
 const dummyArr = [
@@ -89,6 +89,9 @@ const Reviews = ({
 }) => {
   //useState
   const [selectedReview, setSelectedReview] = useState(null);
+  //쿼리스트링
+  const [searchParams] = useSearchParams();
+  const strfId = searchParams.get("strfId");
 
   useEffect(() => {
     console.log("리뷰 목록:", reviewsData);
@@ -99,7 +102,7 @@ const Reviews = ({
     const sendData = {
       page: 1,
       size: reviewIndex,
-      strfId: strfId,
+      strfId: parseInt(strfId),
     };
     console.log("리뷰 불러오기 리퀘스트:", sendData);
     try {

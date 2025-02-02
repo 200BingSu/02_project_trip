@@ -89,9 +89,9 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
                 separator={"~"}
               />
             </div>
-            <div className="w-full flex justify-center py-[20px] text-slate-700 text-[18px">
+            {/* <div className="w-full flex justify-center py-[20px] text-slate-700 text-[18px">
               인원
-            </div>
+            </div> */}
           </div>
           <ul>
             {contentData ? (

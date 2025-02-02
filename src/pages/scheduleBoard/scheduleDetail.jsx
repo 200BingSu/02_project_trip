@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import TitleHeader from "../../components/layout/header/TitleHeader";
+import TitleHeader, {
+  RightContent,
+} from "../../components/layout/header/TitleHeader";
 import { BiShow } from "react-icons/bi";
 import { GoThumbsup } from "react-icons/go";
 import { IoReaderOutline } from "react-icons/io5";
@@ -193,7 +195,11 @@ const ScheduleDetail = () => {
   };
   return (
     <div>
-      <TitleHeader icon="back" onClick={handleNavigateBack} left={true} />
+      <TitleHeader
+        icon="back"
+        onClick={handleNavigateBack}
+        rightContent={<RightContent icon1={true} icon4={true} />}
+      />
       <div className="flex flex-col px-[32px] py-[30px] gap-[30px] mt-[60px]">
         {/* 이미지 */}
         <div className="h-[406px] bg-slate-200">
