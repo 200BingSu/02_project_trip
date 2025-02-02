@@ -3,6 +3,64 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
 import { BiSolidShareAlt } from "react-icons/bi";
 import { CgMenuGridO } from "react-icons/cg";
+import { HiOutlineMap } from "react-icons/hi2";
+import { IoReaderOutline } from "react-icons/io5";
+export const RightContent = React.memo(
+  ({
+    icon1 = false,
+    icon2 = false,
+    icon3 = false,
+    icon4 = false,
+    icon1Click,
+    icon2Click,
+    icon3Click,
+    icon4Click,
+  }) => {
+    return (
+      <div>
+        <ul className="flex gap-[30px] items-center">
+          {icon1 ? (
+            <li
+              className="flex items-center text-[36px] text-slate-700"
+              onClick={icon1Click}
+            >
+              <button type="button">
+                <BiSolidShareAlt />
+              </button>
+            </li>
+          ) : null}
+          {icon2 ? (
+            <li
+              className="flex items-center text-[36px] text-slate-700"
+              onClick={icon2Click}
+            >
+              <button type="button" onClick={icon2Click}>
+                <HiOutlineMap />
+              </button>
+            </li>
+          ) : null}
+          {icon3 ? (
+            <li
+              className="flex items-center text-[36px] text-slate-700"
+              onClick={icon3Click}
+            >
+              <IoReaderOutline />
+            </li>
+          ) : null}
+          {icon4 ? (
+            <li
+              className="flex items-center text-[36px] text-slate-700"
+              onClick={icon4Click}
+            >
+              <CgMenuGridO />
+            </li>
+          ) : null}
+        </ul>
+      </div>
+    );
+  },
+);
+
 /**
  * props
  * ## onClick
@@ -24,15 +82,7 @@ import { CgMenuGridO } from "react-icons/cg";
  * - grid 아이콘 클릭 시 함수
  */
 const TitleHeader = React.memo(
-  ({
-    icon,
-    title,
-    onClick,
-    left = false,
-    leftIcon = <BiSolidShareAlt />,
-    leftIconClick,
-    gridClick,
-  }) => {
+  ({ icon, title, onClick, rightContent = null }) => {
     return (
       <div
         className="flex max-w-3xl w-full mx-auto items-center justify-between 
@@ -52,15 +102,8 @@ const TitleHeader = React.memo(
           </div>
         </div>
         {/* 우측 */}
-        <div
-          className={`flex gap-[30px] items-center text-[36px] text-slate-700 ${left ? "" : "hidden"}`}
-        >
-          <button type="button" onClick={leftIconClick}>
-            {leftIcon}
-          </button>
-          <button type="button" onClick={gridClick}>
-            <CgMenuGridO />
-          </button>
+        <div className={`flex items-center text-[36px] text-slate-700`}>
+          {rightContent}
         </div>
       </div>
     );

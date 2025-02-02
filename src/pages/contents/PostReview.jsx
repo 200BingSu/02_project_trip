@@ -42,7 +42,7 @@ const PostReview = () => {
   const { userId, accessToken } = useRecoilValue(userAtom);
   //쿼리스트링
   const [searchParams] = useSearchParams();
-  const strfId = searchParams.get("strfId");
+  const strfId = parseInt(searchParams.get("strfId"));
 
   // useNavigate
   const navigate = useNavigate();
