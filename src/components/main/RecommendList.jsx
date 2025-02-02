@@ -1,50 +1,92 @@
-import { useState } from "react";
+import React from "react";
+import { IoIosArrowRoundForward } from "react-icons/io";
+import { Link } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+const data = {
+  recommendList: [
+    {
+      strfId: 193,
+      strfTitle: "포레스트 리솜 해브나인 스파 (해브나인 힐링스파)",
+      locationTitle: "충북 ",
+      category: "TOUR",
+      strfPic: "https://picsum.photos/500",
+      explain: "생활에 지친 몸과 마음에 휴식을 주는 곳",
+    },
+    {
+      strfId: 473,
+      strfTitle: "포천아트밸리 (한탄강 유네스코 세계지질공원)",
+      locationTitle: "경기도",
+      category: "TOUR",
+      strfPic: "https://picsum.photos/500",
+      explain: "폐채석장의 변신, 반려동물 동반 가능한 복합문화공간",
+    },
+    {
+      strfId: 571,
+      strfTitle: "쉬자파크",
+      locationTitle: "가평&양평 양평군",
+      category: "TOUR",
+      strfPic: "https://picsum.photos/500",
+      explain: "상품 소개입니다.",
+    },
+    {
+      strfId: 633,
+      strfTitle: "두물머리",
+      locationTitle: "가평&양평 양평군",
+      category: "TOUR",
+      strfPic: "https://picsum.photos/500",
+      explain: "상품 소개입니다.",
+    },
+    {
+      strfId: 328,
+      strfTitle: "보문관광단지",
+      locationTitle: "경주 경주시",
+      category: "TOUR",
+      strfPic: "https://picsum.photos/500",
+      explain: "상품 소개입니다.",
+    },
+  ],
+};
 
 const RecommendList = ({ recommend }) => {
-  // 현재 선택된 카테고리
-  const [selectedCategory, setSelectedCategory] = useState("TOUR");
-
-  // 현재 선택된 카테고리에 해당하는 데이터 필터링
-  const filteredList = recommend.filter(
-    item => item.category === selectedCategory,
-  );
-
-  const categoryTitle = {
-    TOUR: "관광지",
-    STAY: "숙소",
-    RESTAUR: "맛집",
-  };
-
   return (
     <div>
-      <h1 className="text-3xl font-bold">최근 본 목록</h1>
-      {/* 탭 메뉴 */}
-      <div className="flex space-x-4 mb-4">
-        {Object.keys(categoryTitle).map(category => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-5 py-2 rounded-2xl mt-[30px] mb-[30px] ${
-              selectedCategory === category
-                ? "bg-primary text-white"
-                : "bg-white text-slate-500 border border-slate-300"
-            }`}
+      <h1 className="text-3xl font-bold">회원님에게 추천하는 여행지</h1>
+      <Swiper
+        slidesPerView={1}
+        className="mySwiper relative mt-5 after:bg-slate-100 after:inline-block after:w-full after:h-72 after:absolute after:top-0 after:left-0 "
+      >
+        {data.recommendList.map(item => (
+          <SwiperSlide
+            key={item.strfId}
+            className="!flex align-middle justify-center gap-8 mt-12 px-8"
           >
-            {categoryTitle[category]}
-          </button>
+            <div className="mt-12 w-[50%]">
+              <span className="bg-slate-800 text-white py-1 px-3 rounded-2xl font-light text-xs">
+                {item.locationTitle}
+              </span>
+              <h2 className="text-2xl font-medium break-keep">
+                {item.strfTitle}
+              </h2>
+              {/* <p>{item.category}</p> */}
+              <p className="text-lg font-normal text-slate-500 break-keep">
+                {item.explain}
+              </p>
+              <Link
+                to=""
+                className="text-slate-400 flex align-middle font-light gap-1"
+              >
+                자세히보기 <IoIosArrowRoundForward className="text-lg" />
+              </Link>
+            </div>
+            <img
+              src={item.strfPic}
+              alt={item.strfTitle}
+              className="w-[400px] h-[300px] rounded-tr-[36px] rounded-bl-[36px]"
+            />
+          </SwiperSlide>
         ))}
-      </div>
-
-      {/* 필터링된 데이터 출력 */}
-      <div>
-        {filteredList.map(item => (
-          <div key={item.strfId} className="p-4 border-b">
-            <h3 className="font-bold">{item.strfTitle}</h3>
-            <p>{item.locationTitle}</p>
-            <p>{item.explain}</p>
-          </div>
-        ))}
-      </div>
+      </Swiper>
     </div>
   );
 };
