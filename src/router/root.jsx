@@ -38,10 +38,10 @@ const LazyContent = lazy(() => import("../pages/contents/Contents"));
 
 // AuthWrapper 컴포넌트 생성
 // const accessToken = getCookie("accessToken");
-const AuthWrapper = () => {
-  const { userId, accessToken } = useRecoilValue(userAtom);
-  return accessToken ? <LazyHome /> : <Navigate to="/signin" replace />;
-};
+// const AuthWrapper = () => {
+//   const { userId, accessToken } = useRecoilValue(userAtom);
+//   return accessToken ? <LazyHome /> : <Navigate to="/signin" replace />;
+// };
 const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -51,7 +51,8 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Loading />}>
             {/* {accessToken ? <LazyHome /> : <Navigate to="/signin" replace />} */}
-            <AuthWrapper />
+            {/* <AuthWrapper /> */}
+            <LazyHome />
           </Suspense>
         ),
       },
