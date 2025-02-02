@@ -62,6 +62,7 @@ export const MAIN = {
 
 export const REVIEW = {
   getMyReviews: "/api/my_reviews",
+  postReview: "/api/review",
   postRating: "/api/reveiw",
   patchReview: "/api/review",
 };
