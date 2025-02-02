@@ -11,6 +11,15 @@ import SearchList from "../../components/search/SearchList";
 import { TRIP } from "../../constants/api";
 import axios from "axios";
 
+// dummyLocationArr
+const dummyLocationArr = [
+  {
+    locationId: 1,
+    locationPic: "location.png",
+    title: "가평",
+  },
+];
+
 const SearchLocation = () => {
   //useNavigate
   const navigate = useNavigate();
@@ -23,7 +32,7 @@ const SearchLocation = () => {
     if (fromPage) {
       navigate(fromPage, { state: selectedLocationId });
     } else {
-      navigate(`/schedule/days`);
+      navigate(`/schedule/days`, { state: selectedLocationId });
     }
   };
 
@@ -85,107 +94,111 @@ const SearchLocation = () => {
       />
       {/* 지역 목록 */}
       <ul className="flex flex-col gap-[20px] px-[32px] mb-[20px]">
-        {sortArr?.length > 0 ? (
-          sortArr?.map(item => {
-            return (
-              <li
-                className="flex justify-between items-center"
-                key={item.locationId}
-              >
-                {/* 우측*/}
-                <div className="flex gap-[30px] items-center">
-                  {/* 썸네일 */}
-                  <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
-                    {item.locationPic ? (
-                      <img
-                        src={`http://112.222.157.156:5221/pic/location/${item.locationPic}`}
-                        alt={item.title}
-                        ref={imgRef}
-                        className="w-full h-full object-cover"
-                      />
+        {sortArr?.length > 0
+          ? sortArr?.map(item => {
+              return (
+                <li
+                  className="flex justify-between items-center"
+                  key={item.locationId}
+                >
+                  {/* 우측*/}
+                  <div className="flex gap-[30px] items-center">
+                    {/* 썸네일 */}
+                    <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
+                      {item.locationPic ? (
+                        <img
+                          src={`http://112.222.157.156:5221/pic/location/${item.locationPic}`}
+                          alt={item.title}
+                          ref={imgRef}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Skeleton.Image
+                          active={false}
+                          style={{ width: "100px", height: "100px" }}
+                        />
+                      )}
+                    </div>
+                    {/* 텍스트 */}
+                    <div className="flex flex-col gap-[16px]">
+                      <p className="text-[24px] text-slate-700">{item.title}</p>
+                      <p className="text-[18px] text-slate-500">
+                        어디론가 떠나고 싶을 때
+                      </p>
+                    </div>
+                  </div>
+                  {/* 좌측 */}
+                  <div className="h-auto flex items-center justify-center ">
+                    {selectedLocationId.filter(
+                      selectedItem =>
+                        selectedItem.locationId === item.locationId,
+                    ).length > 0 ? (
+                      <button
+                        type="button"
+                        className="text-[16px] text-primary border border-primary3 rounded-2xl px-[15px] py-[5px]"
+                        onClick={() => handleClickCancel(item)}
+                      >
+                        취소
+                      </button>
                     ) : (
+                      <button
+                        type="button"
+                        className="text-[16px] text-slate-500 border border-slate-300 rounded-2xl px-[15px] py-[5px]"
+                        onClick={() => handleClickSelect(item)}
+                      >
+                        선택
+                      </button>
+                    )}
+                  </div>
+                </li>
+              );
+            })
+          : dummyLocationArr.map((item, index) => {
+              return (
+                <li className="flex justify-between items-center" key={index}>
+                  {/* 우측*/}
+                  <div className="flex gap-[30px] items-center">
+                    {/* 썸네일 */}
+                    <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
                       <Skeleton.Image
                         active={false}
                         style={{ width: "100px", height: "100px" }}
                       />
+                    </div>
+                    {/* 텍스트 */}
+                    <div className="flex flex-col gap-[16px]">
+                      <p className="text-[24px] text-slate-700">{item.title}</p>
+                      <p className="text-[18px] text-slate-500">
+                        어디론가 떠나고 싶을 때
+                      </p>
+                    </div>
+                  </div>
+                  {/* 좌측 */}
+                  <div className="h-auto flex items-center justify-center ">
+                    {selectedLocationId.filter(
+                      selectedItem =>
+                        selectedItem.locationId === item.locationId,
+                    ).length > 0 ? (
+                      <button
+                        type="button"
+                        className="text-[16px] text-primary border border-primary3 rounded-2xl px-[15px] py-[5px]"
+                        onClick={() => handleClickCancel(item)}
+                      >
+                        취소
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-[16px] text-slate-500 border border-slate-300 rounded-2xl px-[15px] py-[5px]"
+                        onClick={() => handleClickSelect(item)}
+                      >
+                        선택
+                      </button>
                     )}
                   </div>
-                  {/* 텍스트 */}
-                  <div className="flex flex-col gap-[16px]">
-                    <p className="text-[24px] text-slate-700">{item.title}</p>
-                    <p className="text-[18px] text-slate-500">
-                      어디론가 떠나고 싶을 때
-                    </p>
-                  </div>
-                </div>
-                {/* 좌측 */}
-                <div className="h-auto flex items-center justify-center ">
-                  {selectedLocationId.filter(
-                    selectedItem => selectedItem.locationId === item.locationId,
-                  ).length > 0 ? (
-                    <button
-                      type="button"
-                      className="text-[16px] text-primary border border-primary3 rounded-2xl px-[15px] py-[5px]"
-                      onClick={() => handleClickCancel(item)}
-                    >
-                      취소
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="text-[16px] text-slate-500 border border-slate-300 rounded-2xl px-[15px] py-[5px]"
-                      onClick={() => handleClickSelect(item)}
-                    >
-                      선택
-                    </button>
-                  )}
-                </div>
-              </li>
-            );
-          })
-        ) : (
-          <li className="flex justify-between items-center">
-            {/* 우측*/}
-            <div className="flex gap-[30px] items-center">
-              {/* 썸네일 */}
-              <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
-                <Skeleton.Image
-                  active={false}
-                  style={{ width: "100px", height: "100px" }}
-                />
-              </div>
-              {/* 텍스트 */}
-              <div className="flex flex-col gap-[16px]">
-                <p className="text-[24px] text-slate-700">지역 이름</p>
-                <p className="text-[18px] text-slate-500">
-                  어디론가 떠나고 싶을 때
-                </p>
-              </div>
-            </div>
-            {/* 좌측 */}
-            <div className="h-auto flex items-center justify-center ">
-              {selectedLocationId.filter(
-                selectedItem => selectedItem.locationId === item.locationId,
-              ).length > 0 ? (
-                <button
-                  type="button"
-                  className="text-[16px] text-primary border border-primary3 rounded-2xl px-[15px] py-[5px]"
-                  onClick={() => handleClickCancel(item)}
-                >
-                  취소
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="text-[16px] text-slate-500 border border-slate-300 rounded-2xl px-[15px] py-[5px]"
-                  onClick={() => handleClickSelect(item)}
-                >
-                  선택
-                </button>
-              )}
-            </div>
-          </li>
-        )}
+                </li>
+              );
+            })}
       </ul>
       {/* 제출 버튼 */}
       <div className="w-full px-[32px] mb-[20px]">
