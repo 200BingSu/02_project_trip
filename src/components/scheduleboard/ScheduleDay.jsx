@@ -1,7 +1,7 @@
 import { Rate } from "antd";
 import { useEffect, useState } from "react";
 import { AiTwotoneHeart } from "react-icons/ai";
-import { BiNavigation, BiSolidBus } from "react-icons/bi";
+import { BiNavigation, BiSolidBus, BiSolidTrain } from "react-icons/bi";
 import { BsQuestionLg } from "react-icons/bs";
 import { FaWalking } from "react-icons/fa";
 import { FaLocationDot, FaTrainSubway } from "react-icons/fa6";
@@ -74,40 +74,67 @@ const defaultData = {
  *#### newTrip
  *일정 추가 및 메모 추가 버튼 보일지 여부
  */
-const ScheduleDay = ({ data, showMap = true, newTrip = false }) => {
-  // recoil
-  const { selectedTripId } = useRecoilValue(scheduleAtom);
+const ScheduleDay = ({
+  data,
+  showMap = true,
+  newTrip = false,
+  startAt,
+  tripId,
+}) => {
   //useNavigate
   const navigate = useNavigate();
   const handleClickSchedule = item => {
     console.log(item);
   };
+
+  const navigateSearchContents = () => {
+    navigate(`/search/trip?tripId=${tripId}`);
+  };
   //useState
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
+  const [mapCenter, setMapCenter] = useState({
+    lat: 35.868475,
+    lng: 128.593743,
+  });
+  const [dayData, setDayData] = useState();
 
   // 지도
   const scheduleArr = data?.schedules || [];
-  const positions = scheduleArr?.map((item, index) => {
+  const scheArr = scheduleArr.filter(item => item.scheOrMemo === "SCHE");
+  console.log(`${data.day} scheArr`, scheArr);
+  const positions = scheArr?.map((item, index) => {
     return { title: item.strfTitle, latlng: { lat: item.lat, lng: item.lng } };
   });
+  console.log("positions", positions);
   const lineData = [positions.map(pos => pos.latlng)];
   const getCenterPoint = positions => {
-    if (!positions.length) return null; // 빈 배열 예외 처리
-    const center = positions.reduce(
+    if (!positions.length) return { lat: 37.5665, lng: 126.978 }; // 빈 배열 예외 처리
+
+    // 유효한 좌표만 필터링
+    const validPositions = positions.filter(
+      pos =>
+        pos.latlng &&
+        parseFloat(pos.latlng.lat) != null &&
+        pos.latlng.lng != null,
+    );
+
+    if (!validPositions.length) return { lat: 37.5665, lng: 126.978 }; // 유효한 좌표가 없으면 기본값 반환
+
+    const center = validPositions.reduce(
       (acc, pos) => {
-        acc.lat += pos.latlng.lat;
-        acc.lng += pos.latlng.lng;
+        acc.lat += parseFloat(pos.latlng.lat);
+        acc.lng += parseFloat(pos.latlng.lng);
         return acc;
       },
       { lat: 0, lng: 0 },
     );
-    // 개수로 나누어 평균값을 구함
+
     return {
-      lat: center.lat / positions.length,
-      lng: center.lng / positions.length,
+      lat: center.lat / validPositions.length,
+      lng: center.lng / validPositions.length,
     };
   };
+
   useEffect(() => {
     const kakaoMapScript = document.createElement("script");
     kakaoMapScript.async = true;
@@ -185,10 +212,19 @@ const ScheduleDay = ({ data, showMap = true, newTrip = false }) => {
   // pathType 아이콘
   const matchPathTypeIcon = pathType => {
     switch (pathType) {
-      case "버스":
-        return <BiSolidBus />;
-      case "지하철":
+      case 1: //지하철
         return <FaTrainSubway />;
+      case 2: //버스
+        return <BiSolidBus />;
+      case 3: //버스+지하철
+        return (
+          <div>
+            <BiSolidBus />
+            <FaTrainSubway />
+          </div>
+        );
+      case 11: //열차
+        return <BiSolidTrain />;
       case "도보":
         return <FaWalking />;
       default:
@@ -220,15 +256,15 @@ const ScheduleDay = ({ data, showMap = true, newTrip = false }) => {
       {/* <div className="h-[10px] bg-slate-100"></div> */}
       {/* 맵 */}
       {showMap ? (
-        <div className="h-[292px] bg-slate-200 px-[32px]">
+        <div className="h-[292px] px-[32px]">
           <Map
             center={getCenterPoint(positions)}
             style={{ width: "100%", height: "100%", borderRadius: "8px" }}
             level={8}
           >
-            {scheduleArr.map((item, index) => {
+            {/* {scheduleArr.map((item, index) => {
               return;
-            })}
+            })} */}
             {/* {positions.map((position, index) => (
             <MapMarker
               key={`${position.title}-${position.latlng}`}
@@ -272,7 +308,7 @@ const ScheduleDay = ({ data, showMap = true, newTrip = false }) => {
           >
             Day {data?.day}
           </h3>
-          <span className="text-[18px] text-slate-700">01.25 화</span>
+          <span className="text-[18px] text-slate-700">{startAt}</span>
           <div className="w-[30px] h-[30px] flex items-center justify-center text-[30px]">
             {matchWeatherIcon(data?.weather)}
           </div>
@@ -286,82 +322,87 @@ const ScheduleDay = ({ data, showMap = true, newTrip = false }) => {
                 onClick={item => handleClickSchedule(item)}
                 className="flex flex-col gap-[30px] justify-center "
               >
-                {/* 일정 */}
-                <div className="flex gap-[30px] items-center">
-                  <div
-                    className={`w-[30px] h-[30px]
-                  flex items-center justify-center  
-                  rounded-full
-                  text-[16px] text-white font-medium
-                  ${dayBgColor(data?.day)}`}
-                  >
-                    {item.seq}
-                  </div>
-                  {/* 일정 정보 */}
-                  <div className="flex gap-[20px] items-center">
-                    {/* 이미지 */}
-                    <div className="w-[60px] h-[60px] bg-slate-200 rounded-lg">
-                      <img src="" alt="thum" />
+                {/* 일정 또는 메모 */}
+                {item.scheOrMemo === "SCHE" ? (
+                  // 일정
+                  <div className="flex gap-[30px] items-center">
+                    <div
+                      className={`w-[30px] h-[30px]
+                                  flex items-center justify-center  
+                                  rounded-full
+                                  text-[16px] text-white font-medium
+                                  ${dayBgColor(data?.day)}`}
+                    >
+                      {index + 1}
                     </div>
-                    {/* 정보 */}
-                    <div>
-                      <h4 className="font-semibold text-[20px] text-slate-700">
-                        {item.strfTitle}
-                      </h4>
-                      <div className="flex gap-[10px] items-center">
-                        <p className="text-[14px] text-slate-500">
-                          {item.category}
-                        </p>
+                    {/* 일정 정보 */}
+                    <div className="flex gap-[20px] items-center">
+                      {/* 이미지 */}
+                      <div className="w-[60px] h-[60px] bg-slate-200 rounded-lg">
+                        <img src="" alt="thum" />
+                      </div>
+                      {/* 정보 */}
+                      <div>
+                        <h4 className="font-semibold text-[20px] text-slate-700">
+                          {item.strfTitle}
+                        </h4>
                         <div className="flex gap-[10px] items-center">
-                          <div className="flex gap-[5px] items-center">
-                            <Rate
-                              count={1}
-                              value={0}
-                              style={{
-                                width: "16px",
-                                height: "16px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            />
-                            <p className="text-[12px] text-slate-500">평점</p>
-                            <p className="text-[12px] text-slate-500">
-                              ({(1000).toLocaleString()})
+                          <p className="text-[14px] text-slate-500">
+                            {item.category}
+                          </p>
+                          <div className="flex gap-[10px] items-center">
+                            <div className="flex gap-[5px] items-center">
+                              <Rate
+                                count={1}
+                                value={0}
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              />
+                              <p className="text-[12px] text-slate-500">평점</p>
+                              <p className="text-[12px] text-slate-500">
+                                ({(1000).toLocaleString()})
+                              </p>
+                            </div>
+                            <p className="flex gap-[5px] items-center">
+                              <AiTwotoneHeart className="text-[16px]" />
+                              <span className="text-[12px] text-slate-500">
+                                찜하기 수
+                              </span>
                             </p>
                           </div>
-                          <p className="flex gap-[5px] items-center">
-                            <AiTwotoneHeart className="text-[16px]" />
-                            <span className="text-[12px] text-slate-500">
-                              찜하기 수
-                            </span>
-                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                {/* 메모 */}
-                <div className="flex gap-[30px] items-center">
-                  {/* 점 */}
-                  <div className="w-[30px] h-[30px] flex items-center justify-center">
+                ) : (
+                  // 메모
+                  <div className="flex gap-[30px] items-center">
+                    {/* 점 */}
+                    <div className="w-[30px] h-[30px] flex items-center justify-center">
+                      <div
+                        className={`w-[10px] h-[10px] flex items-center justify-center rounded-full  text-[16px] text-white font-medium ${dayBgColor(data?.day)}`}
+                      ></div>
+                    </div>
+                    {/* 내용 */}
                     <div
-                      className={`w-[10px] h-[10px] flex items-center justify-center rounded-full  text-[16px] text-white font-medium ${dayBgColor(data?.day)}`}
-                    ></div>
-                  </div>
-                  {/* 내용 */}
-                  <div
-                    className="flex flex-col gap-[10px] justify-center
+                      className="flex flex-col gap-[10px] justify-center
                   px-[20px] py-[20px] w-full rounded-2xl
                   bg-slate-50 "
-                  >
-                    <p className="flex gap-[5px] text-slate-700">
-                      <IoReaderOutline className="text-slate-300 text-[18px]" />
-                      닉네임
-                    </p>
-                    <p className="text-[14px]">내용</p>
+                    >
+                      <p className="flex gap-[5px] text-slate-700">
+                        <IoReaderOutline className="text-slate-300 text-[18px]" />
+                        닉네임
+                      </p>
+                      <p className="text-[14px]">내용</p>
+                    </div>
                   </div>
-                </div>
+                )}
+
                 {/* path_type */}
                 <div className="flex items-center">
                   {/* 점 */}
@@ -376,7 +417,8 @@ const ScheduleDay = ({ data, showMap = true, newTrip = false }) => {
                       {matchPathTypeIcon(item.pathType)}
                     </div>
                     <div className="text-[14px] text-slate-400">
-                      {item.duration}분
+                      {item.duration}
+                      {item.pathType ? "분" : null}
                     </div>
                   </div>
                 </div>
@@ -400,6 +442,7 @@ const ScheduleDay = ({ data, showMap = true, newTrip = false }) => {
               w-full
               border border-slate-300
               text-slate-700 text-[22px] font-medium"
+              onClick={navigateSearchContents}
             >
               <FaLocationDot className="text-slate-400 text-[18px]" />
               일정 추가
