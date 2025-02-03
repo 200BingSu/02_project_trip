@@ -11,7 +11,9 @@ import {
 import { FaSwimmingPool } from "react-icons/fa";
 import { Modal, Rate, Skeleton, Tabs } from "antd";
 import {
+  AiFillHeart,
   AiOutlineFundView,
+  AiOutlineHeart,
   AiOutlineSafety,
   AiTwotoneHeart,
 } from "react-icons/ai";
@@ -39,11 +41,12 @@ import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { BsThermometerHalf } from "react-icons/bs";
 import DetailInfo from "../../components/contents/DetailInfo";
 import Reviews from "../../components/contents/Reviews";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 import ContentsHeader from "../../components/layout/header/ContentsHeader";
 import ScheduleModal from "../../components/contents/ScheduleModal";
 import AmenityModal from "../../components/contents/AmenityModal";
+import { scheduleAtom } from "../../atoms/scheduleAtom";
 
 dayjs.extend(isBetween);
 
@@ -54,6 +57,8 @@ const ContentIndex = () => {
   const strfId = searchParams.get("strfId");
   // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const { nowTripId } = useRecoilValue(scheduleAtom);
+  console.log(nowTripId);
   // useNavigate
   const navigate = useNavigate();
   const navigatePostReview = () => {
@@ -86,7 +91,10 @@ const ContentIndex = () => {
   };
   // 일정 등록 모달
   const showRegistModal = () => {
-    setIsRegistModalOpen(true);
+    if (nowTripId === 0) {
+      setIsRegistModalOpen(true);
+    } else {
+    }
   };
   const handleRegistOk = () => {
     setIsRegistModalOpen(false);
@@ -219,7 +227,7 @@ const ContentIndex = () => {
             <div className="flex gap-[5px] items-center">
               <Rate disabled count={1} value={1} />
               <p className="text-[16px] text-slate-700 font-semibold">
-                {contentData?.ratingAvg || "평점"}
+                {contentData?.ratingAvg || "5.0"}
               </p>
               <p className="text-[16px] text-primary underline">
                 리뷰 {(reviewsData ? reviewsData.length : 0).toLocaleString()}개
@@ -228,7 +236,12 @@ const ContentIndex = () => {
             <p className="text-[16px] text-slate-300 font-light">|</p>
             {/* 찜하기 */}
             <div className="flex gap-[5px] items-center">
-              <AiTwotoneHeart className="text-[18px] text-slate-100" />
+              {contentData?.wishIn ? (
+                <AiFillHeart className="text-color-secondary3" />
+              ) : (
+                <AiOutlineHeart className="text-slate-400" />
+              )}
+
               <p className="text-[16px] text-slate-700">
                 {(contentData?.wishCnt || 1000).toLocaleString()}
               </p>
