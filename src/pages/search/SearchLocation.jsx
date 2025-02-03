@@ -10,6 +10,7 @@ import SearchNone from "../../components/search/SearchNone";
 import SearchList from "../../components/search/SearchList";
 import { TRIP } from "../../constants/api";
 import axios from "axios";
+import { LocationPic } from "../../constants/pic";
 
 // dummyLocationArr
 const dummyLocationArr = [
@@ -107,7 +108,7 @@ const SearchLocation = () => {
                     <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
                       {item.locationPic ? (
                         <img
-                          src={`http://112.222.157.156:5221/pic/location/${item.locationPic}`}
+                          src={`${LocationPic}${item.locationPic}`}
                           alt={item.title}
                           ref={imgRef}
                           className="w-full h-full object-cover"

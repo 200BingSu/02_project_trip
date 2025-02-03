@@ -22,6 +22,9 @@ const SelectDays = () => {
   //recoil
   const { accessToken } = useRecoilValue(userAtom);
   const [tripId, setTripId] = useRecoilState(scheduleAtom);
+  useEffect(() => {
+    console.log(tripId);
+  }, [tripId]);
   //useNavigate
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,7 +39,7 @@ const SelectDays = () => {
   const navigateBack = () => {
     navigate(-1);
   };
-  const navigateScheduleIndex = () => {
+  const navigateScheduleIndex = tripId => {
     navigate(`/schedule/index?tripId=${tripId}`);
   };
   // useState
@@ -63,8 +66,11 @@ const SelectDays = () => {
       console.log("일정 등록", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
-        setTripId(resultData.data.tripId);
-        navigateScheduleIndex();
+        const newTripId = resultData.data.trip_id;
+        console.log("newTripId", newTripId);
+        setTripId(newTripId);
+        // console.log(tripId);
+        navigateScheduleIndex(newTripId);
       }
     } catch (error) {
       console.log(error);
