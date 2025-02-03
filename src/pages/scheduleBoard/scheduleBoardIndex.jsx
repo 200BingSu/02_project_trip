@@ -2,10 +2,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { Skeleton } from "antd";
 import { FiSearch } from "react-icons/fi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { GoThumbsup } from "react-icons/go";
 import { IoReaderOutline } from "react-icons/io5";
+import axios from "axios";
 
 const ScheduleBoardIndex = () => {
   //useNavigate
@@ -24,7 +25,20 @@ const ScheduleBoardIndex = () => {
   console.log(locationState);
   //useState
   const [filter, setFilter] = useState(0);
-
+  //parseFloat(pos.latlng.lng)
+  const getAllTripReview = async (type = "latest") => {
+    try {
+      const res = await axios.get(
+        `/api/trip-review/allTripReview?orderType=${type}`,
+      );
+      console.log(`여행기 모두 불러오기 ${type}`, res.data);
+    } catch (error) {
+      console.log(`여행기 모두 불러오기 ${type}`, error);
+    }
+  };
+  useEffect(() => {
+    getAllTripReview();
+  }, []);
   return (
     <div>
       <TitleHeader onClick={navigateBack} title="여행기" icon="back" />
