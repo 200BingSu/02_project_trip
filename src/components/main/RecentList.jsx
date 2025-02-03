@@ -2,198 +2,7 @@ import { useState } from "react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { Rate } from "antd";
 
-const data = {
-  recentList: [
-    {
-      category: "STAY",
-      recent: [
-        {
-          strfId: 94,
-          strfTitle: "호산여인숙",
-          strfPic: "https://picsum.photos/200",
-          locationName: "강진군",
-          wishIn: false,
-          averageRating: 2,
-          wishCnt: 5,
-        },
-        {
-          strfId: 95,
-          strfTitle: "비바스호텔",
-          strfPic: "https://picsum.photos/200",
-          locationName: "대구광역시 ",
-          wishIn: true,
-          averageRating: 0,
-          wishCnt: 10,
-        },
-        {
-          strfId: 957,
-          strfTitle: "브라운도트 호텔 사상르네시떼",
-          strfPic: "https://picsum.photos/200",
-          locationName: "부산광역시 ",
-          wishIn: false,
-          averageRating: 4,
-          wishCnt: 5,
-        },
-        {
-          strfId: 98,
-          strfTitle: "홀리데이 인 광주 호텔",
-          strfPic: "https://picsum.photos/200",
-          locationName: "광주",
-          wishIn: false,
-          averageRating: 1.5,
-          wishCnt: 5,
-        },
-        {
-          strfId: 99,
-          strfTitle: "덕구온천리조트 호텔&콘도",
-          strfPic: "https://picsum.photos/200",
-          locationName: "경북",
-          wishIn: false,
-          averageRating: 3,
-          wishCnt: 5,
-        },
-        {
-          strfId: 97,
-          strfTitle: "유원재",
-          strfPic: "https://picsum.photos/200",
-          locationName: "충북",
-          wishIn: true,
-          averageRating: 0.5,
-          wishCnt: 5,
-        },
-      ],
-    },
-    {
-      category: "RESTAUR",
-      recent: [
-        {
-          strfId: 65,
-          strfTitle: "충무호동복",
-          strfPic: "https://picsum.photos/200",
-          locationName: "대구광역시",
-          wishIn: true,
-          averageRating: 5,
-          wishCnt: 0,
-        },
-        {
-          strfId: 131,
-          strfTitle: "라뮤즈 드 연희",
-          strfPic: "https://picsum.photos/200",
-          locationName: "서울특별시",
-          wishIn: true,
-          averageRating: 0,
-          wishCnt: 1,
-        },
-        {
-          strfId: 1311,
-          strfTitle: "태평소국밥(원조태평소국밥 태평본점)",
-          strfPic: "https://picsum.photos/200",
-          locationName: "대전",
-          wishIn: false,
-          averageRating: 1,
-          wishCnt: 1,
-        },
-        {
-          strfId: 1312,
-          strfTitle: "조양방직",
-          strfPic: "https://picsum.photos/200",
-          locationName: "인천",
-          wishIn: true,
-          averageRating: 2.5,
-          wishCnt: 1,
-        },
-        {
-          strfId: 1313,
-          strfTitle: "런던베이글뮤지엄",
-          strfPic: "https://picsum.photos/200",
-          locationName: "서울특별시",
-          wishIn: false,
-          averageRating: 3,
-          wishCnt: 1,
-        },
-        {
-          strfId: 1314,
-          strfTitle: "키누카누 파주점",
-          strfPic: "https://picsum.photos/200",
-          locationName: "경기",
-          wishIn: true,
-          averageRating: 0,
-          wishCnt: 1,
-        },
-        {
-          strfId: 1315,
-          strfTitle: "이재모피자 본점",
-          strfPic: "https://picsum.photos/200",
-          locationName: "부산",
-          wishIn: false,
-          averageRating: 4.5,
-          wishCnt: 1,
-        },
-      ],
-    },
-    {
-      category: "TOUR",
-      recent: [
-        {
-          strfId: 70,
-          strfTitle: "한강 나루터",
-          strfPic: "https://picsum.photos/200",
-          locationName: "서울특별시",
-          wishIn: false,
-          averageRating: 0.5,
-          wishCnt: 0,
-        },
-        {
-          strfId: 715,
-          strfTitle: "한강 나루터",
-          strfPic: "https://picsum.photos/200",
-          locationName: "서울특별시",
-          wishIn: true,
-          averageRating: 0,
-          wishCnt: 0,
-        },
-        {
-          strfId: 7151,
-          strfTitle: "원대리 자작나무 숲 (속삭이는 자작나무 숲)",
-          strfPic: "https://picsum.photos/200",
-          locationName: "강원",
-          wishIn: true,
-          averageRating: 0,
-          wishCnt: 0,
-        },
-        {
-          strfId: 71512,
-          strfTitle: "",
-          strfPic: "https://picsum.photos/200",
-          locationName: "서울특별시",
-          wishIn: false,
-          averageRating: 3.5,
-          wishCnt: 0,
-        },
-        {
-          strfId: 71513,
-          strfTitle: "간월암(서산)",
-          strfPic: "https://picsum.photos/200",
-          locationName: "충남",
-          wishIn: true,
-          averageRating: 0,
-          wishCnt: 0,
-        },
-        {
-          strfId: 71514,
-          strfTitle: "라테라스 윈터빌리지 어드벤처",
-          strfPic: "https://picsum.photos/200",
-          locationName: "전남 ",
-          wishIn: false,
-          averageRating: 5,
-          wishCnt: 0,
-        },
-      ],
-    },
-  ],
-};
-
-const RecentList = () => {
+const RecentList = ({ recent }) => {
   const [activeTab, setActiveTab] = useState("STAY");
 
   const categoryNameMap = {
@@ -202,15 +11,16 @@ const RecentList = () => {
     TOUR: "관광지",
   };
 
-  const activeTabData = data.recentList.find(
-    item => item.category === activeTab,
-  );
-
+  const activeTabData = recent.find(item => item.category === activeTab);
+  // recent가 비어있으면 null을 반환하여 아무것도 렌더링하지 않음
+  if (!recent || recent.length === 0) {
+    return null;
+  }
   return (
     <div>
       <h1 className="text-3xl font-bold">최근 본 목록</h1>
       <div>
-        {data.recentList.map(item => (
+        {recent.map(item => (
           <button
             key={item.category}
             onClick={() => setActiveTab(item.category)}
