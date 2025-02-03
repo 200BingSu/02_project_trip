@@ -19,11 +19,26 @@
   unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3,
     U+D7B0-D7FF, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E;
 }
+html,
+body {
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  display: none;
+}
 
+/*특정 부분 스크롤바 없애기*/
+.box {
+  -ms-overflow-style: none;
+}
+.box::-webkit-scrollbar {
+  display: none;
+}
 html,
 body :root {
   font-family: "Work Sans", "Pretendard";
 }
+
 p {
   user-select: none;
 }
