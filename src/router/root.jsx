@@ -16,7 +16,7 @@ import { useRecoilValue } from "recoil";
 import contentsRouter from "./contentsrouter";
 import usertrouter from "./usertrouter";
 
-// lazy
+// lazys
 
 const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/bookings/BookingIndex"));

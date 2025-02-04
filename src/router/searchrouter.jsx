@@ -8,6 +8,7 @@ const searchRouter = () => {
   const LazySearchContents = lazy(
     () => import("../pages/search/SearchContents"),
   );
+  const LazySearchTrip = lazy(() => import("../pages/search/SearchTrip"));
   return [
     {
       path: "location",
@@ -22,6 +23,14 @@ const searchRouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazySearchContents />
+        </Suspense>
+      ),
+    },
+    {
+      path: "trip",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazySearchTrip />
         </Suspense>
       ),
     },
