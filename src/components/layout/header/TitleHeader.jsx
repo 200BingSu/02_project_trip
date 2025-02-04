@@ -1,10 +1,9 @@
 import React from "react";
-import { IoIosArrowRoundBack } from "react-icons/io";
-import { IoIosClose } from "react-icons/io";
 import { BiSolidShareAlt } from "react-icons/bi";
 import { CgMenuGridO } from "react-icons/cg";
 import { HiOutlineMap } from "react-icons/hi2";
-import { IoReaderOutline } from "react-icons/io5";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { IoCloseSharp, IoReaderOutline } from "react-icons/io5";
 export const RightContent = React.memo(
   ({
     icon1 = false,
@@ -92,12 +91,12 @@ const TitleHeader = React.memo(
         <div className="flex gap-10 items-center">
           <button
             type="button"
-            className="text-[60px] text-slate-700"
+            className="text-3xl text-slate-700"
             onClick={onClick}
           >
-            {icon === "back" ? <IoIosArrowRoundBack /> : <IoIosClose />}
+            {icon === "back" ? <IoIosArrowRoundBack /> : <IoCloseSharp />}
           </button>
-          <div className="text-[24px] font-bold text-slate-700">
+          <div className="text-2xl font-bold text-slate-700">
             {title ? `${title}` : ``}
           </div>
         </div>
