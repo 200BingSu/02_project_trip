@@ -13,10 +13,19 @@ const SearchBar = React.memo(
     // useState
     const [searchBarFocus, setSearchBarFocus] = useState(false);
     const [inputValue, setInputValue] = useState("");
-
+    const [popularData, setPopularData] = useState([]);
     // 검색창 비우기
     const onChange = e => {};
-
+    // 인기 검색어
+    const getSearchBasicPopular = async () => {
+      try {
+        const res = await axios.get(`/api/search/popular`);
+        const resultData = res.data;
+        setPopularData(resultData);
+      } catch (error) {
+        console.log("인기검색어", error);
+      }
+    };
     return (
       <div className="w-full px-[32px] py-[30px] flex items-center gap-[40px] relative ">
         {/* 뒤로가기 */}
@@ -49,9 +58,9 @@ const SearchBar = React.memo(
         )}
         {searchBarFocus ? (
           <ul className="absolute top-[120%] translate-y-[-50%] left-[5px]">
-            {searchedTxts ? (
-              searchedTxts?.map((item, index) => {
-                return <li key={index}>{item}</li>;
+            {popularData ? (
+              popularData?.map((item, index) => {
+                return <li key={index}>{item.strfName}</li>;
               })
             ) : (
               <li className="text-slate-700 text-[16px]">데이터 없음</li>
