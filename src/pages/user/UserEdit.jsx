@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BiSolidCamera } from "react-icons/bi";
@@ -12,7 +12,7 @@ const UserEdit = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [profileImg, setProfileImg] = useState("/images/user.png");
   const [selectedFile, setSelectedFile] = useState(null);
-  const [editInfo, setEditInfo] = useState([]);
+
   // useLocation
   const location = useLocation();
   const useProfile = location.state;
@@ -21,22 +21,35 @@ const UserEdit = () => {
   const updateInfoCorrect = async () => {
     try {
       const formData = new FormData();
-      formData.append("name", useProfile.name);
-      formData.append("profilePic", selectedFile); // 파일 추가
+      formData.append("profilePic", selectedFile); // ✅ 파일 추가
+
+      // ✅ JSON 데이터를 문자열로 변환하여 FormData에 추가
+      const userInfoJSON = JSON.stringify({
+        email: useProfile.email,
+        name: useProfile.name,
+      });
+      formData.append("p", userInfoJSON); // ✅ JSON 데이터를 문자열로 추가
+
+      console.log("보낼 데이터:", formData);
 
       const res = await axios.patch(
         `/api/user`,
-        formData, // FormData 전달
+        formData, // ✅ JSON 데이터를 보냄
         {
           headers: {
             Authorization: `Bearer ${userInfo.accessToken}`,
-            "Content-Type": "multipart/form-data", // 파일 업로드 시 필요
+            "Content-Type": "multipart/form-data",
           },
         },
       );
-      console.log(userInfo.accessToken);
-      console.log("데이터 뽑았음?", res.data);
-      setUserInfo(prev => ({ ...prev, name: values.name }));
+
+      console.log("응답 데이터:", res.data);
+
+      setUserInfo(prev => ({
+        ...prev,
+        name: useProfile.name,
+        email: useProfile.email,
+      }));
     } catch (error) {
       console.log(error);
     }
@@ -101,7 +114,7 @@ const UserEdit = () => {
           </p>
         </div>
         <div className="w-full h-full">
-          <Form onFinish={updateInfoCorrect}>
+          <Form onFinish={() => updateInfoCorrect()}>
             <div>
               {/* 닉네임 */}
               <Form.Item
@@ -112,6 +125,7 @@ const UserEdit = () => {
                     "text-lg font-semibold text-slate-700 m-0 !ml-1 !pb-1",
                 }} // Tailwind 스타일 적용
                 name={useProfile.name}
+                value={useProfile.name}
                 className="h-20"
               >
                 <Input

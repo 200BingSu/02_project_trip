@@ -250,7 +250,7 @@ const ScheduleIndex = () => {
             px-[15px] py-[10px] rounded-3xl
             text-slate-500 bg-slate-100"
           >
-            <AiOutlinePlus className="text-slate-300" />
+            <AiOutlinePlus className="text-slate-300" /> {/*출발~*/}
             가계부
           </button>
         </div>
