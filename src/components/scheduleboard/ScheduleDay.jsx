@@ -16,53 +16,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
 import { MEMO } from "../../constants/api";
-import { useRecoilValue } from "recoil";
-import { scheduleAtom } from "../../atoms/scheduleAtom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { tripAtom } from "../../atoms/tripAtom";
 import MemoModal from "../schedule/MemoModal";
-
-// defaultData(days[0])
-const defaultData = {
-  day: 1,
-  weather: "sunny",
-  schedules: [
-    {
-      seq: 1,
-      strfId: 9,
-      strfTitle: "제목",
-      category: "카테고리",
-      address: "주소",
-      lat: 37.570083,
-      lng: 126.99022,
-      distance: 2000,
-      duration: 30,
-      pathType: "도보",
-    },
-    {
-      seq: 2,
-      strfId: 9,
-      strfTitle: "제목",
-      category: "카테고리",
-      address: "주소",
-      lat: 37.570083,
-      lng: 126.99022,
-      distance: 2000,
-      duration: 30,
-      pathType: "도보",
-    },
-    {
-      seq: 3,
-      strfId: 9,
-      strfTitle: "제목",
-      category: "카테고리",
-      address: "주소",
-      lat: 37.570083,
-      lng: 126.99022,
-      distance: 2000,
-      duration: 30,
-      pathType: "도보",
-    },
-  ],
-};
 
 /**
  * ### 인수
@@ -82,6 +38,11 @@ const ScheduleDay = ({
   startAt,
   tripId,
 }) => {
+  //recoil
+  const [trip, setTrip] = useRecoilState(tripAtom);
+  useEffect(() => {
+    console.log("trip", trip);
+  }, [trip]);
   //useNavigate
   const navigate = useNavigate();
   const handleClickSchedule = item => {
@@ -90,6 +51,8 @@ const ScheduleDay = ({
 
   const navigateSearchContents = () => {
     navigate(`/search/trip?tripId=${tripId}`);
+    console.log(data);
+    setTrip({ nowTripId: tripId, lastSeq: data.schedules.length });
   };
   //useState
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -100,17 +63,17 @@ const ScheduleDay = ({
   const [dayData, setDayData] = useState();
   const [memoModal, setMemoModal] = useState(false);
   useEffect(() => {
-    console.log("메모 모달창", memoModal);
+    // console.log("메모 모달창", memoModal);
   }, [memoModal]);
 
   // 지도
   const scheduleArr = data?.schedules || [];
   const scheArr = scheduleArr.filter(item => item.scheOrMemo === "SCHE");
-  console.log(`${data.day} scheArr`, scheArr);
+  // console.log(`${data.day} scheArr`, scheArr);
   const positions = scheArr?.map((item, index) => {
     return { title: item.strfTitle, latlng: { lat: item.lat, lng: item.lng } };
   });
-  console.log("positions", positions);
+  // console.log("positions", positions);
   const lineData = [positions.map(pos => pos.latlng)];
   const getCenterPoint = positions => {
     if (!positions.length) return { lat: 37.5665, lng: 126.978 }; // 빈 배열 예외 처리

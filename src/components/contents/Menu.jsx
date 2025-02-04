@@ -71,7 +71,7 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
     setDates(formatString);
   };
   useEffect(() => {
-    console.log("dates", dates);
+    // console.log("dates", dates);
   }, [dates]);
 
   return (
