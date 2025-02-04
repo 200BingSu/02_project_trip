@@ -20,7 +20,7 @@ const SearchItems = forwardRef(({ type, data, searchValue }, ref) => {
   // 더보기 api
   const getSearchListMore = async data => {
     try {
-      const res = await axios.get(`${SEARCH.searchList}`, data);
+      const res = await axios.get(`${SEARCH.searchList}`);
       console.log("더보기 결과:", res.data);
     } catch (error) {
       console.log("더보기 에러:", error);

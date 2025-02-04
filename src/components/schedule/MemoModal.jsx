@@ -1,6 +1,10 @@
 import { Input } from "antd";
+import { useState } from "react";
 
 const MemoModal = ({ setMemoModal }) => {
+  //useState
+  const [title, setTitle] = useState("");
+  // 모달창
   const handleBackgroundClick = () => {
     setMemoModal(false);
   };
