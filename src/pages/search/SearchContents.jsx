@@ -18,6 +18,7 @@ const SearchContents = () => {
   const [searchState, setSearchState] = useState(false); // 검색 전, 후 구분
   const [searchValue, setSearchValue] = useState(""); // 검색어
   const [searchData, setSearchData] = useState({});
+  const [popularData, setPopularData] = useState([]);
   // search api
   const getSearch = useCallback(async () => {
     try {
@@ -31,6 +32,16 @@ const SearchContents = () => {
   useEffect(() => {
     getSearch();
   }, []);
+  // 인기 검색어
+  const getSearchBasicPopular = async () => {
+    try {
+      const res = await axios.get(`/api/search/popular`);
+      const resultData = res.data;
+      setPopularData(resultData);
+    } catch (error) {
+      console.log("인기검색어", error);
+    }
+  };
   // searchValue
   useEffect(() => {
     console.log("searchValue:", searchValue);
