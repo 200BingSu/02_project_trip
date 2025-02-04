@@ -15,7 +15,7 @@ import { userAtom } from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
 import contentsRouter from "./contentsrouter";
 
-// lazy
+// lazys
 
 const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/bookings/BookingIndex"));
