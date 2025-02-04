@@ -4,6 +4,22 @@ import { CgMenuGridO } from "react-icons/cg";
 import { HiOutlineMap } from "react-icons/hi2";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoCloseSharp, IoReaderOutline } from "react-icons/io5";
+
+
+/**
+ * ## props
+ * ### icon1
+ * 공유
+ * ### icon2
+ * 맵
+ * ### icon3
+ * 여행기
+ * ### icon4
+ * 그리드 버튼
+ * ### icon1Click~icon4Click
+ * 적용할 함수
+ */
+
 export const RightContent = React.memo(
   ({
     icon1 = false,
@@ -70,22 +86,17 @@ export const RightContent = React.memo(
  * ## title
  * - 문자열 넣으면 출력
  * - 비우면 공백
- * ## left
- * - 기본: false
- * - true: 우측 아이콘 활성화
- * ## leftIcon
- * - 기본: 공유 아이콘
- * ## leftIconClick
- * - 우측 아이콘 클릭 시 함수
- * ## gridClick
- * - grid 아이콘 클릭 시 함수
+ * ## rightContent
+ * - 기본은 null
+ * - 사용: rightContent = {<RightContent icon1=true icon2=true>}
+ * - RightContent props는 해당 컴포넌트에서 확인
  */
 const TitleHeader = React.memo(
   ({ icon, title, onClick, rightContent = null }) => {
     return (
       <div
         className="flex max-w-3xl w-full mx-auto items-center justify-between 
-    h-[60px] px-[30px] bg-white fixed top-0 left-[50%] translate-x-[-50%] z-50"
+    h-[60px] px-[30px] bg-white fixed top-0 left-[50%] translate-x-[-50%] z-10"
       >
         {/* 좌측 */}
         <div className="flex gap-10 items-center">

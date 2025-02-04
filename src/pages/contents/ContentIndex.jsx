@@ -11,7 +11,9 @@ import {
 import { FaSwimmingPool } from "react-icons/fa";
 import { Modal, Rate, Skeleton, Tabs } from "antd";
 import {
+  AiFillHeart,
   AiOutlineFundView,
+  AiOutlineHeart,
   AiOutlineSafety,
   AiTwotoneHeart,
 } from "react-icons/ai";
@@ -39,11 +41,14 @@ import { CgSmartHomeRefrigerator } from "react-icons/cg";
 import { BsThermometerHalf } from "react-icons/bs";
 import DetailInfo from "../../components/contents/DetailInfo";
 import Reviews from "../../components/contents/Reviews";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 import ContentsHeader from "../../components/layout/header/ContentsHeader";
 import ScheduleModal from "../../components/contents/ScheduleModal";
 import AmenityModal from "../../components/contents/AmenityModal";
+import { scheduleAtom } from "../../atoms/scheduleAtom";
+import jwtAxios from "../../apis/jwt";
+import { getCookie } from "../../utils/cookie";
 
 dayjs.extend(isBetween);
 
@@ -54,6 +59,11 @@ const ContentIndex = () => {
   const strfId = searchParams.get("strfId");
   // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+
+  const accessToken = getCookie("accessToken");
+  console.log("토큰", accessToken);
+  const { nowTripId } = useRecoilValue(scheduleAtom);
+  console.log("현재 tripId:", nowTripId);
   // useNavigate
   const navigate = useNavigate();
   const navigatePostReview = () => {
@@ -86,7 +96,10 @@ const ContentIndex = () => {
   };
   // 일정 등록 모달
   const showRegistModal = () => {
-    setIsRegistModalOpen(true);
+    if (nowTripId === 0) {
+      setIsRegistModalOpen(true);
+    } else {
+    }
   };
   const handleRegistOk = () => {
     setIsRegistModalOpen(false);
@@ -106,16 +119,34 @@ const ContentIndex = () => {
     setIsReviewModalOpen(false);
   };
 
-  // 상품 조회
-  const getDetail = async () => {
+  // 상품 조회(비회원)
+  const getDetailGuest = async () => {
+    const sendData = {
+      strfId: strfId,
+    };
+    console.log("sendData:", sendData);
+    try {
+      const res = await axios.get(
+        `/api/detail/member/non?strf_id=${strfId}`,
+        sendData,
+      );
+      const resultData = res.data.data;
+      console.log("resultData", resultData);
+      setContentData(resultData);
+    } catch (error) {
+      console.log("상품조회", error);
+    }
+  };
+  // 상품조회(회원)
+  const getDetailMember = async () => {
     const sendData = {
       strfId: strfId,
       userId: userInfo.userId,
     };
     console.log("sendData:", sendData);
     try {
-      const res = await axios.get(
-        `/api/detail?strfId=${strfId}&userId=${userInfo.userId}`,
+      const res = await jwtAxios.get(
+        `/api/detail/member?user_id=${userInfo.userId}&strf_id=${strfId}`,
         sendData,
       );
       const resultData = res.data.data;
@@ -126,7 +157,6 @@ const ContentIndex = () => {
     }
   };
   //리뷰 조회
-  //getReviews
   const getReview = useCallback(async () => {
     const sendData = {
       page: 1,
@@ -147,9 +177,15 @@ const ContentIndex = () => {
     }
   }, []);
   useEffect(() => {
-    getDetail();
+    if (accessToken) {
+      getDetailMember();
+    } else {
+      getDetailGuest();
+    }
     getReview();
   }, []);
+
+  //
   // 카테고리 한글 변환
   const categoryKor = category => {
     if (category === "STAY") return "호텔";
@@ -219,7 +255,7 @@ const ContentIndex = () => {
             <div className="flex gap-[5px] items-center">
               <Rate disabled count={1} value={1} />
               <p className="text-[16px] text-slate-700 font-semibold">
-                {contentData?.ratingAvg || "평점"}
+                {contentData?.ratingAvg || "5.0"}
               </p>
               <p className="text-[16px] text-primary underline">
                 리뷰 {(reviewsData ? reviewsData.length : 0).toLocaleString()}개
@@ -228,7 +264,12 @@ const ContentIndex = () => {
             <p className="text-[16px] text-slate-300 font-light">|</p>
             {/* 찜하기 */}
             <div className="flex gap-[5px] items-center">
-              <AiTwotoneHeart className="text-[18px] text-slate-100" />
+              {contentData?.wishIn ? (
+                <AiFillHeart className="text-color-secondary3" />
+              ) : (
+                <AiOutlineHeart className="text-slate-400" />
+              )}
+
               <p className="text-[16px] text-slate-700">
                 {(contentData?.wishCnt || 1000).toLocaleString()}
               </p>
@@ -350,26 +391,29 @@ const ContentIndex = () => {
         )}
       </div>
       {/* 일정 추가 및 리뷰쓰기 버튼 */}
-      <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 bg-white fixed bottom-0 left-[50%] translate-x-[-50%] z-30">
-        <button
-          type="button"
-          className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
-          onClick={showRegistModal}
-        >
-          <FaLocationDot className="text-slate-400" />
-          <p className="text-[22px] text-slate-700 font-medium">일정 추가</p>
-        </button>
-        <button
-          type="button"
-          className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
-          onClick={() => {
-            showReviewModal();
-          }}
-        >
-          <BiSolidEditAlt className="text-slate-400" />
-          <p className="text-[22px] text-slate-700 font-medium">리뷰 쓰기</p>
-        </button>
-      </div>
+      {accessToken ? (
+        <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 bg-white fixed bottom-0 left-[50%] translate-x-[-50%] z-30">
+          <button
+            type="button"
+            className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
+            onClick={showRegistModal}
+          >
+            <FaLocationDot className="text-slate-400" />
+            <p className="text-[22px] text-slate-700 font-medium">일정 추가</p>
+          </button>
+          <button
+            type="button"
+            className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
+            onClick={() => {
+              showReviewModal();
+            }}
+          >
+            <BiSolidEditAlt className="text-slate-400" />
+            <p className="text-[22px] text-slate-700 font-medium">리뷰 쓰기</p>
+          </button>
+        </div>
+      ) : null}
+
       {/* 일정 추가 모달창 */}
       {isRegistModalOpen ? (
         <ScheduleModal handleRegistCancel={handleRegistCancel} />
