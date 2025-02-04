@@ -83,16 +83,6 @@ const Index = () => {
     navigate(`/search/contents`);
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
-    } else {
-      document.documentElement.style.overflow = "unset";
-      document.body.style.overflow = "unset";
-    }
-  }, [isOpen]);
-
   return (
     <div>
       <UserIndex isOpen={isOpen} onClose={() => setIsOpen(false)} />
