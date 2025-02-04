@@ -53,6 +53,7 @@ const UserIndex = ({ isOpen, onClose }) => {
   const handleUserEdit = () => {
     navigate("user/useredit", { state: useProfile });
   };
+  console.log(`${ProfilePic}${userInfo.userId}/${useProfile?.profilePIc}`);
   return (
     <div
       className={`overflow-hidden max-w-3xl w-full fixed left-1/2 -translate-x-1/2 inset-0 z-[99] flex justify-end transition-opacity duration-300 ${
@@ -94,8 +95,9 @@ const UserIndex = ({ isOpen, onClose }) => {
                 <div className="mx-auto w-32 h-32 rounded-full overflow-hidden">
                   <img
                     src={
-                      `${ProfilePic}${userInfo.userId}/${useProfile?.profilePIc}` ||
-                      `/images/user.png`
+                      useProfile.profilePIc
+                        ? `${ProfilePic}${userInfo.userId}/${useProfile?.profilePIc}`
+                        : `/images/user.png`
                     }
                     alt="User-Profile"
                     className="h-full object-cover"
