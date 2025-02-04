@@ -15,7 +15,7 @@ export const ProductPic = "http://112.222.157.156:5221/pic/strf/";
 /**
  * ## 메뉴 사진
  * 뒤에 strfId/menuId 필요
- * 예시: http://112.222.157.156:5221/pic/strf/${strfId}/${menuId}/1.jpg
+ * 예시: http://112.222.157.156:5221/pic/strf/${strfId}/menu/1.jpg
  */
 export const MenuPic = "http://112.222.157.156:5221/pic/strf/";
 
@@ -31,3 +31,10 @@ export const LocationPic = "http://112.222.157.156:5221/pic/location/";
  * 예시: http://112.222.157.156:5221/pic/reviewId/${reviewId}/1.jpg
  */
 export const ReviewPic = "http://112.222.157.156:5221/pic/reviewId/";
+
+/**
+ * ## 여행기 사진
+ *뒤에 reviewId 필요
+ * 예시: "http://112.222.157.156:5221/pic/tripReview/${trip_review_id}/1.jpg
+ */
+export const TripReviewPic = "http://112.222.157.156:5221/pic/tripReview/";
