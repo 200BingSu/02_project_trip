@@ -47,7 +47,7 @@ const ConfirmEmail = () => {
     if (file) {
       postData.append("profilePic", file);
     }
-    console.log("보낼 데이터:", postData);
+    console.log("보낼 데이터:", [...postData]);
     try {
       const res = await axios.post(`${USER.signUpUser}`, postData, {
         headers: {

@@ -161,7 +161,7 @@ const SearchTrip = () => {
                   // } else if (index === 4) {
                   //   moveTo(festivalRef);
                   // }
-                  getSearchWord(strfArr[index].type);
+                  getSearchWord(strfArr[index].name);
                 }}
               >
                 {item.name}
