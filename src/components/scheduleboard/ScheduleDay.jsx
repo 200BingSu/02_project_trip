@@ -18,6 +18,7 @@ import jwtAxios from "../../apis/jwt";
 import { MEMO } from "../../constants/api";
 import { useRecoilValue } from "recoil";
 import { scheduleAtom } from "../../atoms/scheduleAtom";
+import MemoModal from "../schedule/MemoModal";
 
 // defaultData(days[0])
 const defaultData = {
@@ -97,6 +98,10 @@ const ScheduleDay = ({
     lng: 128.593743,
   });
   const [dayData, setDayData] = useState();
+  const [memoModal, setMemoModal] = useState(false);
+  useEffect(() => {
+    console.log("메모 모달창", memoModal);
+  }, [memoModal]);
 
   // 지도
   const scheduleArr = data?.schedules || [];
@@ -225,12 +230,15 @@ const ScheduleDay = ({
         );
       case 11: //열차
         return <BiSolidTrain />;
-      case "도보":
+      case 12: //고속/시외버스
+        return <BiSolidBus />;
+      case 13: //항공
         return <FaWalking />;
       default:
         return <BiNavigation />;
     }
   };
+  // 날씨 아이콘
   const matchWeatherIcon = weather => {
     switch (weather) {
       case "sunny":
@@ -396,9 +404,9 @@ const ScheduleDay = ({
                     >
                       <p className="flex gap-[5px] text-slate-700">
                         <IoReaderOutline className="text-slate-300 text-[18px]" />
-                        닉네임
+                        {item.title}
                       </p>
-                      <p className="text-[14px]">내용</p>
+                      <p className="text-[14px]">{item.content}</p>
                     </div>
                   </div>
                 )}
@@ -412,13 +420,22 @@ const ScheduleDay = ({
                     ></div>
                   </div>
                   {/* type */}
-                  <div className="flex gap-[10px] items-center px-[10px]">
-                    <div className=" text-slate-400 h-[18px]">
+                  <div
+                    className={`${item.pathType === null ? "h-[38px] flex gap-[10px] items-center px-[10px] bg-slate-50 rounded-2xl cursor-pointer" : "h-[38px] flex gap-[10px] items-center px-[10px] bg-white rounded-2xl"}`}
+                    onClick={() => {
+                      console.log(item);
+                    }}
+                  >
+                    <div
+                      className={`${item.pathType === null ? "text-slate-600 h-[18px]" : "text-slate-400 h-[18px]"}`}
+                    >
                       {matchPathTypeIcon(item.pathType)}
                     </div>
-                    <div className="text-[14px] text-slate-400">
+                    <div
+                      className={`${item.pathType === null ? "text-[14px] text-slate-600 h-[18px]" : "text-[14px] text-slate-400 h-[18px]"}`}
+                    >
                       {item.duration}
-                      {item.pathType ? "분" : null}
+                      {item.pathType ? "분" : "길찾기"}
                     </div>
                   </div>
                 </div>
@@ -454,6 +471,9 @@ const ScheduleDay = ({
               w-full
               border border-slate-300
               text-slate-700 text-[22px] font-medium"
+              onClick={() => {
+                setMemoModal(true);
+              }}
             >
               <MdOutlineAutoAwesomeMotion className="text-slate-400 text-[18px]" />
               메모 추가
@@ -461,6 +481,8 @@ const ScheduleDay = ({
           </div>
         ) : null}
       </div>
+      {/* 모달창 */}
+      {memoModal ? <MemoModal setMemoModal={setMemoModal} /> : null}
     </div>
   );
 };
