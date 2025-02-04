@@ -3,15 +3,19 @@ import React, { useCallback, useEffect, useState } from "react";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import SearchBar from "../../components/search/SearchBar";
 import SearchNone from "../../components/search/SearchNone";
 import SearchList from "../../components/search/SearchList";
 import { SEARCH } from "../../constants/api";
 import axios from "axios";
+import jwtAxios from "../../apis/jwt";
 
 const SearchContents = () => {
+  // 쿼리스트링
+  const [searchParams] = useSearchParams();
+
   //useNavigate
   const navigate = useNavigate();
   // useState
@@ -22,7 +26,7 @@ const SearchContents = () => {
   // search api
   const getSearch = useCallback(async () => {
     try {
-      const res = await axios.get(`${SEARCH.search}`);
+      const res = await jwtAxios.get(`${SEARCH.search}`);
       console.log("검색:", res.data);
       setSearchData(res.data);
     } catch (error) {

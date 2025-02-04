@@ -1,11 +1,15 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { AiOutlineImport, AiTwotoneHeart } from "react-icons/ai";
+import {
+  AiOutlineHeart,
+  AiOutlineImport,
+  AiTwotoneHeart,
+} from "react-icons/ai";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { WISHLIST } from "../../../constants/api";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ContentsHeader = ({ contentData, strfId }) => {
   //recoil
@@ -15,6 +19,10 @@ const ContentsHeader = ({ contentData, strfId }) => {
   const navigateBack = () => {
     navigate(-1);
   };
+  const location = useLocation();
+  const nowUrl = location.search;
+  // console.log("URL:", nowUrl);
+  const localeIp = `http://localhost:5173/contents/index?${nowUrl}`;
   // useState
   const [scrollY, setScrollY] = useState(0);
   // scrollY 이벤트
@@ -67,7 +75,9 @@ const ContentsHeader = ({ contentData, strfId }) => {
       </div>
       <div className="flex gap-[20px]">
         <div className="text-[36px] cursor-pointer " onClick={postWishList}>
-          <AiTwotoneHeart style={{ color: "white" }} />
+          <AiOutlineHeart
+            className={scrollY > 0 ? "text-slate-700" : "text-white"}
+          />
         </div>
         <div className="text-[36px] cursor-pointer">
           <AiOutlineImport

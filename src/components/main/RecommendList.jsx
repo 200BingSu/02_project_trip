@@ -2,61 +2,19 @@ import React from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
-
-const data = {
-  recommendList: [
-    {
-      strfId: 193,
-      strfTitle: "포레스트 리솜 해브나인 스파 (해브나인 힐링스파)",
-      locationTitle: "충북 ",
-      category: "TOUR",
-      strfPic: "https://picsum.photos/500",
-      explain: "생활에 지친 몸과 마음에 휴식을 주는 곳",
-    },
-    {
-      strfId: 473,
-      strfTitle: "포천아트밸리 (한탄강 유네스코 세계지질공원)",
-      locationTitle: "경기도",
-      category: "TOUR",
-      strfPic: "https://picsum.photos/500",
-      explain: "폐채석장의 변신, 반려동물 동반 가능한 복합문화공간",
-    },
-    {
-      strfId: 571,
-      strfTitle: "쉬자파크",
-      locationTitle: "가평&양평 양평군",
-      category: "TOUR",
-      strfPic: "https://picsum.photos/500",
-      explain: "상품 소개입니다.",
-    },
-    {
-      strfId: 633,
-      strfTitle: "두물머리",
-      locationTitle: "가평&양평 양평군",
-      category: "TOUR",
-      strfPic: "https://picsum.photos/500",
-      explain: "상품 소개입니다.",
-    },
-    {
-      strfId: 328,
-      strfTitle: "보문관광단지",
-      locationTitle: "경주 경주시",
-      category: "TOUR",
-      strfPic: "https://picsum.photos/500",
-      explain: "상품 소개입니다.",
-    },
-  ],
-};
+import { ProductPic } from "../../constants/pic";
 
 const RecommendList = ({ recommend }) => {
   return (
     <div>
-      <h1 className="text-3xl font-bold">회원님에게 추천하는 여행지</h1>
+      <h1 className="text-3xl font-bold mx-[32px]">
+        회원님에게 추천하는 여행지
+      </h1>
       <Swiper
         slidesPerView={1}
         className="mySwiper relative mt-5 after:bg-slate-100 after:inline-block after:w-full after:h-72 after:absolute after:top-0 after:left-0 "
       >
-        {data.recommendList.map(item => (
+        {recommend.map(item => (
           <SwiperSlide
             key={item.strfId}
             className="!flex align-middle justify-center gap-8 mt-12 px-8"
@@ -80,7 +38,7 @@ const RecommendList = ({ recommend }) => {
               </Link>
             </div>
             <img
-              src={item.strfPic}
+              src={`${ProductPic}${item.strfId}${item.strfPic}`}
               alt={item.strfTitle}
               className="w-[400px] h-[300px] rounded-tr-[36px] rounded-bl-[36px]"
             />

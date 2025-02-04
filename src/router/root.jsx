@@ -14,8 +14,9 @@ import { getCookie } from "../utils/cookie";
 import { userAtom } from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
 import contentsRouter from "./contentsrouter";
+import usertrouter from "./usertrouter";
 
-// lazy
+// lazys
 
 const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/bookings/BookingIndex"));
@@ -33,7 +34,7 @@ const LazyScheduleBoard = lazy(
 const LazySearch = lazy(() => import("../pages/search/SearchIndex"));
 const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
 const LazySignUp = lazy(() => import("../pages/signup/SignUp"));
-const LazyUser = lazy(() => import("../pages/user/UserIndex"));
+const LazyUser = lazy(() => import("../pages/user/User"));
 const LazyContent = lazy(() => import("../pages/contents/Contents"));
 
 // AuthWrapper 컴포넌트 생성
@@ -165,6 +166,7 @@ const router = createBrowserRouter([
             <LazyUser />
           </Suspense>
         ),
+        children: usertrouter(),
       },
       { path: "*", element: <NotFound /> },
     ],
