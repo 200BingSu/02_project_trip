@@ -1,5 +1,6 @@
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { ProductPic } from "../../constants/pic";
 
 const FestivalList = ({ festivities }) => {
   return (
@@ -11,7 +12,7 @@ const FestivalList = ({ festivities }) => {
             className="h-[600px] relative text-white rounded-tl-[60px] rounded-br-[60px] overflow-hidden after:absolute after:left-0 after:bottom-0 after:w-full after:h-[50%] after:bg-gradient-to-b after:from-transparent after:to-black after:opacity-70"
           >
             <img
-              src={item.strfPic}
+              src={`${ProductPic}${item.strfId}${item.strfPic}`}
               alt={item.festTitle}
               className="h-[600px]"
             />

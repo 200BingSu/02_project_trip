@@ -1,5 +1,5 @@
 import { Input } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
@@ -14,6 +14,9 @@ const SearchBar = React.memo(
     const [searchBarFocus, setSearchBarFocus] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const [popularData, setPopularData] = useState([]);
+    useEffect(() => {
+      setInputValue(searchValue);
+    }, [searchValue]);
     // 검색창 비우기
     const onChange = e => {};
     // 인기 검색어
@@ -51,6 +54,7 @@ const SearchBar = React.memo(
               setSearchState(true);
             }
           }}
+          value={searchValue}
           className={`w-full h-[60px] px-[12px] ${inputValue ? "bg-white" : "bg-slate-100"}`}
         />
         {inputValue ? null : (

@@ -23,6 +23,8 @@ const Index = () => {
   const [locations, setLocations] = useState([]);
   const [recent, setRecent] = useState([]);
   const [recommend, setRecommend] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
 
   const getMainList = async () => {
     try {
@@ -48,6 +50,16 @@ const Index = () => {
     getMainList();
   }, []);
 
+  const handleScroll = () => {
+    if (window.scrollY > 140) {
+      setScrollY(true); // 스크롤이 60 이상이면 고정
+    } else {
+      setScrollY(false); // 스크롤이 60이면 고정 해제
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
   // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   // useNavigate
@@ -70,19 +82,24 @@ const Index = () => {
   const HandleSearchPage = () => {
     navigate(`/search/contents`);
   };
+
   return (
     <div>
-      <UserIndex />
-      <header className="flex h-[60px] items-center mx-[32px]">
+      <UserIndex isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <header
+        className={`flex h-[60px] items-center px-[32px] max-w-3xl w-full duration-300 ${scrollY ? "fixed top-0 " : "relative"} z-50 bg-white `}
+      >
         <h1 className="w-[160px] mr-auto">
           <img src="/images/logo_1.png" alt="main_logo" />
         </h1>
         <nav className=" flex gap-[16px]">
           <BiBell className="text-3xl text-slate-400 cursor-pointer" />
-          <CgMenuGridO className="text-3xl text-slate-400 cursor-pointer" />
+          <CgMenuGridO
+            className="text-3xl text-slate-400 cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          />
         </nav>
       </header>
-
       <main className="pb-[60px]">
         <section className="mx-[32px] mt-[30px]">
           <Input
@@ -105,12 +122,12 @@ const Index = () => {
         <section className="mx-[32px] mt-[70px]">
           <RecentList recent={recent} />
         </section>
-        <section className="mx-[32px] mt-[70px]">
+        <section className="mt-[70px]">
           <RecommendList recommend={recommend} />
         </section>
       </main>
       <footer className="relative py-10  before:absolute before:top-0 before:w-full before:h-2.5 before:bg-slate-100 before:inline-block">
-        <div className="flex gap-4 text-xl font-bold text-slate-600 mb-5">
+        <div className="flex gap-4 text-xl font-bold text-slate-600 mb-5 px-8">
           <Link to="">이용약관</Link>
           <span className="text-slate-300 font-light">|</span>
           <Link to="">개인정보처리방침</Link>
@@ -119,8 +136,8 @@ const Index = () => {
           <span className="text-slate-300 font-light">|</span>
           <Link to="">위치서비스 이용약관</Link>
         </div>
-        <div>
-          <div className="flex items-center justify-between">
+        <div className="px-8">
+          <div className="flex items-center justify-between ">
             <h4 className="text-lg font-bold text-slate-600">(주) 쿼드러플</h4>
             <div className="flex gap-3">
               <Link
