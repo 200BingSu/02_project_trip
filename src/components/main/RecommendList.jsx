@@ -2,6 +2,7 @@ import React from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { ProductPic } from "../../constants/pic";
 
 const RecommendList = ({ recommend }) => {
   return (
@@ -37,7 +38,7 @@ const RecommendList = ({ recommend }) => {
               </Link>
             </div>
             <img
-              src={item.strfPic}
+              src={`${ProductPic}${item.strfId}${item.strfPic}`}
               alt={item.strfTitle}
               className="w-[400px] h-[300px] rounded-tr-[36px] rounded-bl-[36px]"
             />
