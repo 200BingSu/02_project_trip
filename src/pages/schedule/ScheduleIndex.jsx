@@ -8,9 +8,10 @@ import ScheduleDay from "../../components/scheduleboard/ScheduleDay";
 import axios from "axios";
 import jwtAxios from "../../apis/jwt";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { scheduleAtom } from "../../atoms/scheduleAtom";
+import { tripAtom } from "../../atoms/tripAtom";
 import { useEffect, useState } from "react";
 import { userAtom } from "../../atoms/userAtom";
+import { getCookie } from "../../utils/cookie";
 
 // dummy
 // const dummyData = {
@@ -149,10 +150,13 @@ const defaultData = {
   schedules: [],
 };
 const ScheduleIndex = () => {
+  const accessToken = getCookie("accessToken");
   // recoil
-  const { accessToken } = useRecoilValue(userAtom);
-  const [nowTripId, setNowTripId] = useRecoilState(scheduleAtom);
-
+  // const { accessToken } = useRecoilValue(userAtom);
+  const [nowTripId, setNowTripId] = useRecoilState(tripAtom);
+  useEffect(() => {
+    console.log("nowTripId", nowTripId);
+  }, [nowTripId]);
   //쿼리스트링
   const [searchParams] = useSearchParams();
   const tripId = searchParams.get("tripId");
@@ -178,7 +182,7 @@ const ScheduleIndex = () => {
   const getTrip = async () => {
     const sendData = { trip_id: tripId };
     try {
-      const res = await axios.get(`/api/trip?trip_id=${tripId}`, sendData, {
+      const res = await axios.get(`/api/trip?trip_id=${tripId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
