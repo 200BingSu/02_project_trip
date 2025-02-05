@@ -8,12 +8,19 @@ import { userAtom } from "../../atoms/userAtom";
 import { categoryKor } from "../../pages/contents/ContentIndex";
 import { ProductPic } from "../../constants/pic";
 
+import { useNavigate } from "react-router-dom";
+
+
 const SearchNone = ({ searchData, setSearchValue }) => {
   const accessToken = getCookie("accessToken");
   // recoil
   const { userId } = useRecoilValue(userAtom);
   const [popularData, setPopularData] = useState([]);
   const [recentContents, setRecentContents] = useState([]);
+
+  //useNavigate
+  const navigate = useNavigate();
+
   // 인기 검색어
   const getSearchBasicPopular = async () => {
     try {
@@ -55,6 +62,12 @@ const SearchNone = ({ searchData, setSearchValue }) => {
     setSearchValue(word.strfName);
     // 추가 동작 (예: 검색 실행, 페이지 이동 등)
   };
+
+  const handleClickList = item => {
+    console.log(item);
+    navigate(`/contents/index?strfId=${item.strfId}`);
+  };
+
   useEffect(() => {
     getSearchBasicPopular();
     getBasicList();
@@ -105,7 +118,9 @@ const SearchNone = ({ searchData, setSearchValue }) => {
                 <li
                   key={index}
                   className="flex cursor-pointer items-center justify-between"
-                  onClick={e => handleClickList(e)}
+
+                  onClick={() => handleClickList(item)}
+
                 >
                   <div className="flex gap-[15px]">
                     <div className="w-[80px] h-[80px]">
@@ -113,7 +128,9 @@ const SearchNone = ({ searchData, setSearchValue }) => {
                         className="w-full h-full object-cover"
                         src={
                           item.strfPic
-                            ? `${ProductPic}${strfId}/${item.strfPic}`
+
+                            ? `${ProductPic}${item.strfId}/${item.strfPic}`
+
                             : "/public/images/logo_icon_4.png"
                         }
                         alt={item.strfName}

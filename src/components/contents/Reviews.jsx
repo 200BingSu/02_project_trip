@@ -5,7 +5,12 @@ import ReviewImage from "./ReviewImage";
 import axios from "axios";
 import { data, useSearchParams } from "react-router-dom";
 
-const Reviews = () => {
+const Reviews = ({
+  reviewsData,
+  setReviewsData,
+  reviewIndex,
+  setReviewIndex,
+}) => {
   //useState
   const [selectedReview, setSelectedReview] = useState(null);
   const [reviewsData, setReviewsData] = useState([]);

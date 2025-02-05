@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { Skeleton } from "antd";
 import { FiSearch } from "react-icons/fi";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { GoThumbsup } from "react-icons/go";
 import { IoReaderOutline } from "react-icons/io5";
@@ -25,6 +25,8 @@ const ScheduleBoardIndex = () => {
   const locationState = location.state;
   console.log(locationState);
   //useState
+  const imgRef = useRef(null);
+  console.log(imgRef.current);
   const [filter, setFilter] = useState(0);
   const [allTripReview, setAllTripReview] = useState(null);
   useEffect(() => {
@@ -154,9 +156,10 @@ const ScheduleBoardIndex = () => {
                     {/* 이미지 */}
                     <div className="w-full h-[322px] bg-slate-200 rounded-2xl">
                       <img
-                        src={`${TripReviewPic}${item.tripId}${item.tripReviewPics[0]}`}
+                        src={`${TripReviewPic}${item.tripReviewId}/${item.tripReviewPics[0]}`}
                         alt="여행기 사진"
                         className="w-full h-full object-cover"
+                        ref={imgRef}
                       />
                     </div>
                     <h3 className="font-semibold text-[24px] text-slate-700">
