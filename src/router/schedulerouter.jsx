@@ -6,6 +6,7 @@ const scheduleRouter = () => {
     () => import("../pages/schedule/ScheduleIndex"),
   );
   const LazySelectDays = lazy(() => import("../pages/schedule/SelectDays"));
+  const LazyCalculation = lazy(() => import("../pages/schedule/Calculation"));
   return [
     {
       path: "index",
@@ -20,6 +21,14 @@ const scheduleRouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazySelectDays />
+        </Suspense>
+      ),
+    },
+    {
+      path: "calculation",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyCalculation />
         </Suspense>
       ),
     },
