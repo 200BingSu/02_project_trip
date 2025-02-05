@@ -18,7 +18,7 @@ const Calculation = () => {
         },
       });
       setAmount(res.data.data);
-      console.log("✅  res.data:", res.data.data);
+      // console.log("✅  res.data:", res.data.data);
     } catch (error) {
       console.log("✅  getExpenses  error:", error);
       setAmount(null); // 에러 발생 시 null로 초기화
