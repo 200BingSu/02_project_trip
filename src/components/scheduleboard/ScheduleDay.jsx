@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
 import { MEMO } from "../../constants/api";
 import { useRecoilValue } from "recoil";
-import { scheduleAtom } from "../../atoms/scheduleAtom";
+import { tripAtom } from "../../atoms/tripAtom";
 import MemoModal from "../schedule/MemoModal";
 
 // defaultData(days[0])
