@@ -46,12 +46,19 @@ import { userAtom } from "../../atoms/userAtom";
 import ContentsHeader from "../../components/layout/header/ContentsHeader";
 import ScheduleModal from "../../components/contents/ScheduleModal";
 import AmenityModal from "../../components/contents/AmenityModal";
-import { scheduleAtom } from "../../atoms/scheduleAtom";
+import { tripAtom } from "../../atoms/tripAtom";
 import jwtAxios from "../../apis/jwt";
 import { getCookie } from "../../utils/cookie";
 
 dayjs.extend(isBetween);
-
+// 카테고리 한글 변환
+export const categoryKor = category => {
+  if (category === "STAY") return "호텔";
+  if (category === "RESTAUR") return "식당";
+  if (category === "TOUR") return "관광지";
+  if (category === "FEST") return "축제";
+  if (category === null) return "카테고리";
+};
 const ContentIndex = () => {
   // 쿼리 스트링 조회
   const [searchParams] = useSearchParams();
@@ -61,9 +68,9 @@ const ContentIndex = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
 
   const accessToken = getCookie("accessToken");
-  console.log("토큰", accessToken);
-  const { nowTripId } = useRecoilValue(scheduleAtom);
-  console.log("현재 tripId:", nowTripId);
+  // console.log("토큰", accessToken);
+  const { nowTripId } = useRecoilValue(tripAtom);
+  // console.log("현재 tripId:", nowTripId);
   // useNavigate
   const navigate = useNavigate();
   const navigatePostReview = () => {
@@ -186,14 +193,7 @@ const ContentIndex = () => {
   }, []);
 
   //
-  // 카테고리 한글 변환
-  const categoryKor = category => {
-    if (category === "STAY") return "호텔";
-    if (category === "RESTAUR") return "식당";
-    if (category === "TOUR") return "관광지";
-    if (category === "FEST") return "축제";
-    if (category === null) return "카테고리";
-  };
+
   // 편의시설 아이콘
   const amenities = [
     { key: "침대", icon: <FaBed /> },
@@ -258,7 +258,7 @@ const ContentIndex = () => {
                 {contentData?.ratingAvg || "5.0"}
               </p>
               <p className="text-[16px] text-primary underline">
-                리뷰 {(reviewsData ? reviewsData.length : 0).toLocaleString()}개
+                {/* 리뷰 {(reviewsData ? reviewsData.length : 0).toLocaleString()}개 */}
               </p>
             </div>
             <p className="text-[16px] text-slate-300 font-light">|</p>

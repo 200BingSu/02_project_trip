@@ -8,139 +8,10 @@ import ScheduleDay from "../../components/scheduleboard/ScheduleDay";
 import axios from "axios";
 import jwtAxios from "../../apis/jwt";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { scheduleAtom } from "../../atoms/scheduleAtom";
+import { tripAtom } from "../../atoms/tripAtom";
 import { useEffect, useState } from "react";
 import { userAtom } from "../../atoms/userAtom";
-
-// dummy
-// const dummyData = {
-//   totalDistance: 0,
-//   totalDuration: 0,
-//   scheduleCnt: 12,
-//   memoCnt: 3,
-//   days: [
-//     {
-//       day: 1,
-//       weather: "맑음",
-//       schedules: [
-//         {
-//           scheduleId: 22,
-//           scheOrMemo: "SCHE",
-//           seq: 1,
-//           distance: 2.5,
-//           duration: 15,
-//           strfId: 499,
-//           strfTitle: "경북대학교 캠퍼스",
-//           category: "TOUR",
-//           address: "대구광역시 북구 산격동 1370-1",
-//           lat: "35.8907065",
-//           lng: "128.6100194",
-//           pathType: "WALK",
-//           tripId: 1,
-//           title: null,
-//           content: null,
-//         },
-//         {
-//           scheduleId: 25,
-//           scheOrMemo: "MEMO",
-//           seq: 4,
-//           distance: null,
-//           duration: null,
-//           strfId: null,
-//           strfTitle: null,
-//           category: null,
-//           address: null,
-//           lat: null,
-//           lng: null,
-//           pathType: null,
-//           tripId: 1,
-//           title: "여행 첫날 메모",
-//           content: "첫째 날 여행 계획 정리",
-//         },
-//       ],
-//     },
-//     {
-//       day: 2,
-//       weather: "흐림",
-//       schedules: [
-//         {
-//           scheduleId: 30,
-//           scheOrMemo: "SCHE",
-//           seq: 1,
-//           distance: 1.8,
-//           duration: 10,
-//           strfId: 500,
-//           strfTitle: "동성로 거리",
-//           category: "SHOPPING",
-//           address: "대구광역시 중구 동성로",
-//           lat: "35.8686",
-//           lng: "128.5975",
-//           pathType: "BUS",
-//           tripId: 1,
-//           title: null,
-//           content: null,
-//         },
-//         {
-//           scheduleId: 31,
-//           scheOrMemo: "SCHE",
-//           seq: 2,
-//           distance: 3.2,
-//           duration: 20,
-//           strfId: 501,
-//           strfTitle: "서문시장",
-//           category: "FOOD",
-//           address: "대구광역시 중구 큰장로26길",
-//           lat: "35.8700",
-//           lng: "128.5828",
-//           pathType: "SUBWAY",
-//           tripId: 1,
-//           title: null,
-//           content: null,
-//         },
-//       ],
-//     },
-//     {
-//       day: 3,
-//       weather: "비",
-//       schedules: [
-//         {
-//           scheduleId: 35,
-//           scheOrMemo: "SCHE",
-//           seq: 1,
-//           distance: 5.0,
-//           duration: 30,
-//           strfId: 502,
-//           strfTitle: "앞산공원",
-//           category: "NATURE",
-//           address: "대구광역시 남구 앞산순환로",
-//           lat: "35.8312",
-//           lng: "128.5938",
-//           pathType: "CAR",
-//           tripId: 1,
-//           title: null,
-//           content: null,
-//         },
-//         {
-//           scheduleId: 36,
-//           scheOrMemo: "MEMO",
-//           seq: 3,
-//           distance: null,
-//           duration: null,
-//           strfId: null,
-//           strfTitle: null,
-//           category: null,
-//           address: null,
-//           lat: null,
-//           lng: null,
-//           pathType: null,
-//           tripId: 1,
-//           title: "비 오는 날 여행",
-//           content: "우산 챙기기, 실내 관광지 찾기",
-//         },
-//       ],
-//     },
-//   ],
-// };
+import { getCookie } from "../../utils/cookie";
 
 // const dummyDays = dummyData.days;
 const defaultData = {
@@ -149,16 +20,18 @@ const defaultData = {
   schedules: [],
 };
 const ScheduleIndex = () => {
+  const accessToken = getCookie("accessToken");
   // recoil
-  const { accessToken } = useRecoilValue(userAtom);
-  const [nowTripId, setNowTripId] = useRecoilState(scheduleAtom);
+  const [trip, setTrip] = useRecoilState(tripAtom);
+  useEffect(() => {
+    console.log("trip", trip);
+  }, [trip]);
 
   //쿼리스트링
   const [searchParams] = useSearchParams();
   const tripId = searchParams.get("tripId");
   useEffect(() => {
-    setNowTripId(tripId);
-    console.log("tripId", nowTripId);
+    setTrip({ ...trip, nowTripId: tripId });
   }, []);
 
   // useNavigate
@@ -172,13 +45,12 @@ const ScheduleIndex = () => {
   // useState
   const [tripData, setTripData] = useState({});
   useEffect(() => {
-    // console.log(tripData);
+    console.log(tripData);
   }, [tripData]);
   // 여행 확인하기
   const getTrip = async () => {
-    const sendData = { trip_id: tripId };
     try {
-      const res = await axios.get(`/api/trip?trip_id=${tripId}`, sendData, {
+      const res = await axios.get(`/api/trip?trip_id=${tripId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -193,6 +65,7 @@ const ScheduleIndex = () => {
   useEffect(() => {
     getTrip();
   }, []);
+
   const tripDaysArr = tripData.days;
   return (
     <div>
@@ -250,7 +123,7 @@ const ScheduleIndex = () => {
             px-[15px] py-[10px] rounded-3xl
             text-slate-500 bg-slate-100"
           >
-            <AiOutlinePlus className="text-slate-300" /> {/*출발~*/}
+            <AiOutlinePlus className="text-slate-300" />
             가계부
           </button>
         </div>
@@ -271,7 +144,7 @@ const ScheduleIndex = () => {
                   data={item}
                   key={index}
                   startAt={tripData?.startAt}
-                  tripId={nowTripId}
+                  tripId={trip.nowTripId}
                 />
               );
             })

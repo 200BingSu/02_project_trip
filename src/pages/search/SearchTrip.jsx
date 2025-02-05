@@ -2,7 +2,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { scheduleAtom } from "../../atoms/scheduleAtom";
+import { tripAtom } from "../../atoms/tripAtom";
 import SearchBar from "../../components/search/SearchBar";
 import SearchList from "../../components/search/SearchList";
 import SearchNone from "../../components/search/SearchNone";
@@ -23,7 +23,7 @@ const strfArr = [
 
 const SearchTrip = () => {
   // recoil
-  const { nowTripId } = useRecoilValue(scheduleAtom);
+  const { nowTripId } = useRecoilValue(tripAtom);
   // 쿼리스트링
   const [searchParams] = useSearchParams();
   const tripId = parseInt(searchParams.get("tripId"));
