@@ -11,6 +11,7 @@ import SearchList from "../../components/search/SearchList";
 import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import jwtAxios from "../../apis/jwt";
+import { getCookie } from "../../utils/cookie";
 
 const SearchContents = () => {
   // 쿼리스트링
@@ -22,30 +23,21 @@ const SearchContents = () => {
   const [searchState, setSearchState] = useState(false); // 검색 전, 후 구분
   const [searchValue, setSearchValue] = useState(""); // 검색어
   const [searchData, setSearchData] = useState({});
-  const [popularData, setPopularData] = useState([]);
+
   // search api
-  const getSearch = useCallback(async () => {
-    try {
-      const res = await jwtAxios.get(`${SEARCH.search}`);
-      console.log("검색:", res.data);
-      setSearchData(res.data);
-    } catch (error) {
-      console.log("검색:", error);
-    }
-  }, []);
-  useEffect(() => {
-    getSearch();
-  }, []);
-  // 인기 검색어
-  const getSearchBasicPopular = async () => {
-    try {
-      const res = await axios.get(`/api/search/popular`);
-      const resultData = res.data;
-      setPopularData(resultData);
-    } catch (error) {
-      console.log("인기검색어", error);
-    }
-  };
+  // const getSearch = useCallback(async () => {
+  //   try {
+  //     const res = await axios.get(`${SEARCH.search}`);
+  //     console.log("검색:", res.data);
+  //     setSearchData(res.data);
+  //   } catch (error) {
+  //     console.log("검색:", error);
+  //   }
+  // }, []);
+  // useEffect(() => {
+  //   getSearch();
+  // }, []);
+
   // searchValue
   useEffect(() => {
     console.log("searchValue:", searchValue);
@@ -70,7 +62,7 @@ const SearchContents = () => {
       {searchState ? (
         <SearchList searchData={searchData} searchValue={searchValue} />
       ) : (
-        <SearchNone searchData={searchData} />
+        <SearchNone searchData={searchData} setSearchValue={setSearchValue} />
       )}
     </div>
   );

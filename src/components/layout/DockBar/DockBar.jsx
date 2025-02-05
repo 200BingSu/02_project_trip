@@ -17,7 +17,7 @@ const DockBar = React.memo(() => {
         검색
       </Link>
       <Link
-        to="/schedule"
+        to="/schedule/index?tripId=1"
         className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
       >
         <HiOutlineMap className="text-4xl" />

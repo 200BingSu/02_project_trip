@@ -10,10 +10,15 @@ import { WISHLIST } from "../../../constants/api";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getCookie } from "../../../utils/cookie";
 
 const ContentsHeader = ({ contentData, strfId }) => {
+  const accessToken = getCookie("accessToken");
   //recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  useEffect(() => {
+    console.log("userInfo", userInfo);
+  }, [userInfo]);
   //useNavigate
   const navigate = useNavigate();
   const navigateBack = () => {
@@ -42,9 +47,9 @@ const ContentsHeader = ({ contentData, strfId }) => {
     };
     console.log("찜하기 데이터:", sendData);
     try {
-      const res = await axios.post(`${WISHLIST.postWishList}`, sendData, {
+      const res = await axios.post(`/api/wish-list`, sendData, {
         headers: {
-          Authorization: `Bearer ${userInfo.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       console.log("찜하기", res.data);
@@ -58,7 +63,7 @@ const ContentsHeader = ({ contentData, strfId }) => {
       className={`px-[32px] 
         max-w-3xl w-full mx-auto
         flex items-center justify-between gap-10
-        fixed top-0 left-[50%] translate-x-[-50%] z-50 
+        fixed top-0 left-[50%] translate-x-[-50%] z-10 
         ${scrollY > 0 ? "bg-white" : null}`}
     >
       <div className="flex gap-[40px]">

@@ -46,24 +46,37 @@ import { userAtom } from "../../atoms/userAtom";
 import ContentsHeader from "../../components/layout/header/ContentsHeader";
 import ScheduleModal from "../../components/contents/ScheduleModal";
 import AmenityModal from "../../components/contents/AmenityModal";
-import { scheduleAtom } from "../../atoms/scheduleAtom";
+import { tripAtom } from "../../atoms/tripAtom";
 import jwtAxios from "../../apis/jwt";
 import { getCookie } from "../../utils/cookie";
+import PathModal from "../../components/schedule/PathModal";
 
 dayjs.extend(isBetween);
+const accessToken = getCookie("accessToken");
+
+// 카테고리 한글 변환
+export const categoryKor = category => {
+  if (category === "STAY") return "호텔";
+  if (category === "RESTAUR") return "식당";
+  if (category === "TOUR") return "관광지";
+  if (category === "FEST") return "축제";
+  if (category === null) return "카테고리";
+};
 
 const ContentIndex = () => {
   // 쿼리 스트링 조회
   const [searchParams] = useSearchParams();
   const strfType = searchParams.get("strf");
-  const strfId = searchParams.get("strfId");
+  const strfId = parseInt(searchParams.get("strfId"));
   // recoil
-  const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const { userId } = useRecoilValue(userAtom);
+  // console.log("userId", userId);
 
-  const accessToken = getCookie("accessToken");
-  console.log("토큰", accessToken);
-  const { nowTripId } = useRecoilValue(scheduleAtom);
-  console.log("현재 tripId:", nowTripId);
+  // console.log("토큰", accessToken);
+  const [tripId, setTripId] = useRecoilState(tripAtom);
+  useEffect(() => {
+    console.log("tripId", tripId);
+  }, [tripId]);
   // useNavigate
   const navigate = useNavigate();
   const navigatePostReview = () => {
@@ -78,11 +91,14 @@ const ContentIndex = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewsData, setReviewsData] = useState([]);
   const [reviewIndex, setReviewIndex] = useState(6);
+
+  const [openPathModal, setOpenPathModal] = useState(false);
+
   // useRef
   const imgRef = useRef(null);
-  useEffect(() => {
-    console.log(imgRef.current);
-  }, []);
+  // useEffect(() => {
+  //   console.log(imgRef.current);
+  // }, []);
   // 편의 시설 모달
   const showModal = () => {
     setIsModalOpen(true);
@@ -96,9 +112,10 @@ const ContentIndex = () => {
   };
   // 일정 등록 모달
   const showRegistModal = () => {
-    if (nowTripId === 0) {
+    if (tripId === 0) {
       setIsRegistModalOpen(true);
     } else {
+      setOpenPathModal(true);
     }
   };
   const handleRegistOk = () => {
@@ -122,7 +139,7 @@ const ContentIndex = () => {
   // 상품 조회(비회원)
   const getDetailGuest = async () => {
     const sendData = {
-      strfId: strfId,
+      strf_id: strfId,
     };
     console.log("sendData:", sendData);
     try {
@@ -131,7 +148,7 @@ const ContentIndex = () => {
         sendData,
       );
       const resultData = res.data.data;
-      console.log("resultData", resultData);
+      // console.log("resultData", resultData);
       setContentData(resultData);
     } catch (error) {
       console.log("상품조회", error);
@@ -140,22 +157,27 @@ const ContentIndex = () => {
   // 상품조회(회원)
   const getDetailMember = async () => {
     const sendData = {
-      strfId: strfId,
-      userId: userInfo.userId,
+      strf_id: strfId,
     };
-    console.log("sendData:", sendData);
+    // console.log("sendData:", sendData);
     try {
-      const res = await jwtAxios.get(
-        `/api/detail/member?user_id=${userInfo.userId}&strf_id=${strfId}`,
-        sendData,
+      const res = await axios.get(
+        `/api/detail/member?user_id=${userId}&strf_id=${strfId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
       );
+      console.log(res.data);
       const resultData = res.data.data;
-      console.log("resultData", resultData);
+      console.log("상품조회-회원", resultData);
       setContentData(resultData);
     } catch (error) {
-      console.log("상품조회", error);
+      console.log("상품조회-회원", error);
     }
   };
+
   //리뷰 조회
   const getReview = useCallback(async () => {
     const sendData = {
@@ -163,13 +185,10 @@ const ContentIndex = () => {
       size: 6,
       strfId: strfId,
     };
-    console.log("리뷰 불러오기 리퀘스트:", sendData);
+    // console.log("리뷰 불러오기 리퀘스트:", sendData);
     try {
-      const res = await axios.get(
-        `/api/review?page=1&size=6&strfId=${strfId}`,
-        sendData,
-      );
-      console.log("리뷰 더 불러오기:", res.data);
+      const res = await axios.get(`/api/review?page=1&size=6&strfId=${strfId}`);
+      // console.log("리뷰 더 불러오기:", res.data);
       setReviewsData(res.data.data);
       setReviewIndex(prev => prev + 10);
     } catch (error) {
@@ -186,14 +205,7 @@ const ContentIndex = () => {
   }, []);
 
   //
-  // 카테고리 한글 변환
-  const categoryKor = category => {
-    if (category === "STAY") return "호텔";
-    if (category === "RESTAUR") return "식당";
-    if (category === "TOUR") return "관광지";
-    if (category === "FEST") return "축제";
-    if (category === null) return "카테고리";
-  };
+
   // 편의시설 아이콘
   const amenities = [
     { key: "침대", icon: <FaBed /> },
@@ -225,7 +237,7 @@ const ContentIndex = () => {
       <div className="w-full h-[467px] bg-gray-200">
         <img
           src={`http://112.222.157.156:5221/strf/${strfId}/${contentData?.strfPics[0].pic}`}
-          alt="content-thumbnail"
+          alt={contentData?.strfTitle || ""}
           className="w-full h-full object-cover"
           ref={imgRef}
         />
@@ -392,7 +404,7 @@ const ContentIndex = () => {
       </div>
       {/* 일정 추가 및 리뷰쓰기 버튼 */}
       {accessToken ? (
-        <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 bg-white fixed bottom-0 left-[50%] translate-x-[-50%] z-30">
+        <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 bg-white fixed bottom-0 left-[50%] translate-x-[-50%] z-10">
           <button
             type="button"
             className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
@@ -422,6 +434,7 @@ const ContentIndex = () => {
       {isModalOpen ? (
         <AmenityModal handleCancel={handleCancel} amenities={amenities} />
       ) : null}
+      {openPathModal ? <PathModal /> : null}
     </div>
   );
 };

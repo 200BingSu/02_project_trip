@@ -14,14 +14,14 @@ import dayjs from "dayjs";
 import { TRIP } from "../../constants/api";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
-import { scheduleAtom } from "../../atoms/scheduleAtom";
+import { tripAtom } from "../../atoms/tripAtom";
 // 한글 로케일 등록
 registerLocale("ko", ko);
 
 const SelectDays = () => {
   //recoil
   const { accessToken } = useRecoilValue(userAtom);
-  const [tripId, setTripId] = useRecoilState(scheduleAtom);
+  const [tripId, setTripId] = useRecoilState(tripAtom);
   useEffect(() => {
     console.log(tripId);
   }, [tripId]);
