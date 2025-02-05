@@ -29,7 +29,7 @@ const ScheduleIndex = () => {
 
   //쿼리스트링
   const [searchParams] = useSearchParams();
-  const tripId = searchParams.get("tripId");
+  const tripId = parseInt(searchParams.get("tripId"));
   useEffect(() => {
     setTrip({ ...trip, nowTripId: tripId });
   }, []);
@@ -45,7 +45,7 @@ const ScheduleIndex = () => {
   // useState
   const [tripData, setTripData] = useState({});
   useEffect(() => {
-    console.log(tripData);
+    console.log("여행 데이터", tripData);
   }, [tripData]);
   // 여행 확인하기
   const getTrip = async () => {
@@ -55,7 +55,7 @@ const ScheduleIndex = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log("여행확인하기", res.data);
+      // console.log("여행확인하기", res.data);
       const resultData = res.data.data;
       setTripData(resultData);
     } catch (error) {
@@ -134,7 +134,7 @@ const ScheduleIndex = () => {
               newTrip={true}
               data={defaultData}
               startAt={tripData?.startAt}
-              tripId={nowTripId}
+              tripId={tripId.nowTripId}
             />
           ) : (
             tripDaysArr?.map((item, index) => {

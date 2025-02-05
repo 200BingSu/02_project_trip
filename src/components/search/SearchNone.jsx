@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import { RiCloseLargeFill } from "react-icons/ri";
@@ -7,6 +7,7 @@ import { useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 import { categoryKor } from "../../pages/contents/ContentIndex";
 import { ProductPic } from "../../constants/pic";
+import { useNavigate } from "react-router-dom";
 
 const SearchNone = ({ searchData, setSearchValue }) => {
   const accessToken = getCookie("accessToken");
@@ -14,11 +15,8 @@ const SearchNone = ({ searchData, setSearchValue }) => {
   const { userId } = useRecoilValue(userAtom);
   const [popularData, setPopularData] = useState([]);
   const [recentContents, setRecentContents] = useState([]);
-  //useRef
-  const imgRef = useRef(null);
-  useEffect(() => {
-    console.log("imgRef", imgRef.current);
-  }, [imgRef]);
+  //useNavigate
+  const navigate = useNavigate();
   // 인기 검색어
   const getSearchBasicPopular = async () => {
     try {
@@ -59,6 +57,10 @@ const SearchNone = ({ searchData, setSearchValue }) => {
     console.log("클릭한 인기 검색어:", word);
     setSearchValue(word.strfName);
     // 추가 동작 (예: 검색 실행, 페이지 이동 등)
+  };
+  const handleClickList = item => {
+    console.log(item);
+    navigate(`/contents/index?strfId=${item.strfId}`);
   };
   useEffect(() => {
     getSearchBasicPopular();
@@ -110,19 +112,18 @@ const SearchNone = ({ searchData, setSearchValue }) => {
                 <li
                   key={index}
                   className="flex cursor-pointer items-center justify-between"
-                  onClick={e => handleClickList(e)}
+                  onClick={() => handleClickList(item)}
                 >
                   <div className="flex gap-[15px]">
                     <div className="w-[80px] h-[80px]">
                       <img
                         className="w-full h-full object-cover"
                         src={
-                          item.strfPic !== null
+                          item.strfPic
                             ? `${ProductPic}${item.strfId}/${item.strfPic}`
                             : "/public/images/logo_icon_4.png"
                         }
                         alt={item.strfName}
-                        ref={imgRef}
                       />
                     </div>
                     {/* 정보 */}

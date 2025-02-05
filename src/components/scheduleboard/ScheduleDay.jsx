@@ -16,7 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
 import { MEMO } from "../../constants/api";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
 import MemoModal from "../schedule/MemoModal";
 
@@ -63,6 +63,83 @@ const defaultData = {
     },
   ],
 };
+// day 색깔
+export const dayTextColor = dayNum => {
+  switch (dayNum % 3) {
+    case 1:
+      return "text-primary";
+    case 2:
+      return "text-secondary2";
+    case 0:
+      return "text-secondary3";
+    default:
+      return "black";
+  }
+};
+export const dayBgColor = dayNum => {
+  switch (dayNum % 3) {
+    case 1:
+      return "bg-primary";
+    case 2:
+      return "bg-secondary2";
+    case 0:
+      return "bg-secondary3";
+    default:
+      return "black";
+  }
+};
+export const dayLineColor = dayNum => {
+  switch (dayNum % 3) {
+    case 1:
+      return "#0DD1FD";
+    case 2:
+      return "#6B4AD6";
+    case 0:
+      return "#FB653D";
+    default:
+      return "black";
+  }
+};
+// pathType 아이콘
+export const matchPathTypeIcon = pathType => {
+  switch (pathType) {
+    case "지하철": //지하철
+      return <FaTrainSubway />;
+    case "버스": //버스
+      return <BiSolidBus />;
+    case "버스+지하철": //버스+지하철
+      return <BiSolidBus />;
+    case "열차": //열차
+      return <BiSolidTrain />;
+    case "시외버스":
+      return <BiSolidBus />;
+    case "시외교통 복합(기차 + 시외버스)":
+      return <BiSolidTrain />;
+    case "항공": //항공
+      return <FaWalking />;
+    default:
+      return <BiNavigation />;
+  }
+};
+// 날씨 아이콘
+export const matchWeatherIcon = weather => {
+  switch (weather) {
+    case "sunny":
+      return <img src="/public/images/weathericon/sunny.svg" alt="sunny" />;
+    case "cloudy":
+      return <img src="/public/images/weathericon/cloudy.svg" alt="cloudy" />;
+    case "overcast":
+      return (
+        <img src="/public/images/weathericon/overcast.svg" alt="overcast" />
+      );
+    case "rain":
+      return <img src="/public/images/weathericon/rain.svg" alt="rain" />;
+    case "snow":
+      return <img src="/public/images/weathericon/snow.svg" alt="snow" />;
+    default:
+      return "";
+  }
+};
 
 /**
  * ### 인수
@@ -87,6 +164,8 @@ const ScheduleDay = ({
   const handleClickSchedule = item => {
     console.log(item);
   };
+  // recoil
+  const [trip, setTrip] = useRecoilState(tripAtom);
 
   const navigateSearchContents = () => {
     navigate(`/search/trip?tripId=${tripId}`);
@@ -106,11 +185,11 @@ const ScheduleDay = ({
   // 지도
   const scheduleArr = data?.schedules || [];
   const scheArr = scheduleArr.filter(item => item.scheOrMemo === "SCHE");
-  console.log(`${data.day} scheArr`, scheArr);
+  // console.log(`${data.day} scheArr`, scheArr);
   const positions = scheArr?.map((item, index) => {
     return { title: item.strfTitle, latlng: { lat: item.lat, lng: item.lng } };
   });
-  console.log("positions", positions);
+  // console.log("positions", positions);
   const lineData = [positions.map(pos => pos.latlng)];
   const getCenterPoint = positions => {
     if (!positions.length) return { lat: 37.5665, lng: 126.978 }; // 빈 배열 예외 처리
@@ -164,7 +243,7 @@ const ScheduleDay = ({
     const sendData = {
       trip_id: 1,
       day: data.day,
-      seq: data.schedules.length + 1,
+      seq: data.schedules.length,
       user_id: 1,
       title: "aa",
       content: "aaa",
@@ -176,86 +255,22 @@ const ScheduleDay = ({
       console.log("메모 추가", error);
     }
   };
+  // console.log(scheduleArr[scheduleArr.length].seq);
+  // 일정 추가 위해 출발
+  const handleClickAddBt = () => {
+    const lastSche = scheArr[scheArr.length - 1];
+    const lastSeq = scheduleArr[scheduleArr.length - 1]?.seq;
 
-  // day 색깔
-  const dayTextColor = dayNum => {
-    switch (dayNum % 3) {
-      case 1:
-        return "text-primary";
-      case 2:
-        return "text-secondary2";
-      case 0:
-        return "text-secondary3";
-      default:
-        return "black";
-    }
-  };
-  const dayBgColor = dayNum => {
-    switch (dayNum % 3) {
-      case 1:
-        return "bg-primary";
-      case 2:
-        return "bg-secondary2";
-      case 0:
-        return "bg-secondary3";
-      default:
-        return "black";
-    }
-  };
-  const dayLineColor = dayNum => {
-    switch (dayNum % 3) {
-      case 1:
-        return "#0DD1FD";
-      case 2:
-        return "#6B4AD6";
-      case 0:
-        return "#FB653D";
-      default:
-        return "black";
-    }
-  };
-  // pathType 아이콘
-  const matchPathTypeIcon = pathType => {
-    switch (pathType) {
-      case 1: //지하철
-        return <FaTrainSubway />;
-      case 2: //버스
-        return <BiSolidBus />;
-      case 3: //버스+지하철
-        return (
-          <div>
-            <BiSolidBus />
-            <FaTrainSubway />
-          </div>
-        );
-      case 11: //열차
-        return <BiSolidTrain />;
-      case 12: //고속/시외버스
-        return <BiSolidBus />;
-      case 13: //항공
-        return <FaWalking />;
-      default:
-        return <BiNavigation />;
-    }
-  };
-  // 날씨 아이콘
-  const matchWeatherIcon = weather => {
-    switch (weather) {
-      case "sunny":
-        return <img src="/public/images/weathericon/sunny.svg" alt="sunny" />;
-      case "cloudy":
-        return <img src="/public/images/weathericon/cloudy.svg" alt="cloudy" />;
-      case "overcast":
-        return (
-          <img src="/public/images/weathericon/overcast.svg" alt="overcast" />
-        );
-      case "rain":
-        return <img src="/public/images/weathericon/rain.svg" alt="rain" />;
-      case "snow":
-        return <img src="/public/images/weathericon/snow.svg" alt="snow" />;
-      default:
-        return "";
-    }
+    setTrip({
+      ...trip,
+      lastSeq: lastSeq,
+      nowTripId: tripId,
+      day: data.day,
+      prevScheName: lastSche.strfTitle,
+      prevSchelat: lastSche.lat,
+      prevSchelng: lastSche.lng,
+    });
+    navigateSearchContents();
   };
 
   return (
@@ -459,7 +474,7 @@ const ScheduleDay = ({
               w-full
               border border-slate-300
               text-slate-700 text-[22px] font-medium"
-              onClick={navigateSearchContents}
+              onClick={handleClickAddBt}
             >
               <FaLocationDot className="text-slate-400 text-[18px]" />
               일정 추가

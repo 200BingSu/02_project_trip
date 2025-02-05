@@ -16,39 +16,45 @@ import { getCookie } from "../../utils/cookie";
 const SearchContents = () => {
   // 쿼리스트링
   const [searchParams] = useSearchParams();
-
+  const accessToken = getCookie("accessToken");
   //useNavigate
   const navigate = useNavigate();
   // useState
   const [searchState, setSearchState] = useState(false); // 검색 전, 후 구분
   const [searchValue, setSearchValue] = useState(""); // 검색어
   const [searchData, setSearchData] = useState({});
-
-  // search api
-  // const getSearch = useCallback(async () => {
-  //   try {
-  //     const res = await axios.get(`${SEARCH.search}`);
-  //     console.log("검색:", res.data);
-  //     setSearchData(res.data);
-  //   } catch (error) {
-  //     console.log("검색:", error);
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   getSearch();
-  // }, []);
-
-  // searchValue
+  const [inputValue, setInputValue] = useState("");
   useEffect(() => {
-    console.log("searchValue:", searchValue);
-  }, [searchValue]);
-
+    console.log("searchData", searchData);
+  }, [searchData]);
   // 목록 클릭
   const handleClickList = item => {
     console.log(item.id);
   };
-  // 최근 검색어
-  const searchedTxts = searchData?.searchedTxts;
+  //입력 후 데이터 호출
+  const postSearchAll = async () => {
+    const sendData = { search_word: searchValue };
+    try {
+      const res = await axios.post(
+        `/api/search/all?search_word=${searchValue}`,
+        sendData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      setSearchData(resultData.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // searchValue
+  useEffect(() => {
+    console.log("searchValue:", searchValue);
+    postSearchAll();
+  }, [searchValue]);
 
   return (
     <div className="w-full flex flex-col gap-[30px]">
@@ -57,10 +63,16 @@ const SearchContents = () => {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         setSearchState={setSearchState}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
       />
       {/* 검색 결과 */}
       {searchState ? (
-        <SearchList searchData={searchData} searchValue={searchValue} />
+        <SearchList
+          searchData={searchData}
+          searchValue={searchValue}
+          setSearchData={setSearchData}
+        />
       ) : (
         <SearchNone searchData={searchData} setSearchValue={setSearchValue} />
       )}
