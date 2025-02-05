@@ -66,6 +66,7 @@ const SearchBar = React.memo(
               setSearchState(true);
             }
           }}
+
           onFocus={() => {
             setSearchBarFocus(true);
           }}
@@ -73,6 +74,7 @@ const SearchBar = React.memo(
             setSearchBarFocus(false);
           }}
           prefix={<FiSearch className="text-slate-400 text-2xl" />}
+
           className={`w-full h-[60px] px-[12px] ${inputValue ? "bg-white" : "bg-slate-100"}`}
         />
         {/* {searchBarFocus ? (

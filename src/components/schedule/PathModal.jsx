@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { BiNavigation } from "react-icons/bi";
 import { useRecoilState } from "recoil";
@@ -25,6 +26,7 @@ const PathModal = ({ contentData }) => {
     console.log(pathData);
   }, [pathData]);
 
+
   // 모달창
   const handleBackgroundClick = () => {
     setMemoModal(false);
@@ -34,6 +36,7 @@ const PathModal = ({ contentData }) => {
   };
   //   검색창
   const onChange = e => {};
+
   // 길찾기
   const getPathList = async () => {
     try {
@@ -103,6 +106,7 @@ const PathModal = ({ contentData }) => {
                 flex items-end justify-center
                 bg-[rgba(0,0,0,0.5)]
                 "
+
       onClick={() => {
         handleBackgroundClick();
       }}
@@ -179,6 +183,7 @@ const PathModal = ({ contentData }) => {
         >
           선택 완료
         </Button>
+
       </div>
     </div>
   );

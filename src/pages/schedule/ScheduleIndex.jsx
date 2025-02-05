@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import { userAtom } from "../../atoms/userAtom";
 import { getCookie } from "../../utils/cookie";
 
+
+
 // const dummyDays = dummyData.days;
 const defaultData = {
   day: 1,
@@ -22,10 +24,12 @@ const defaultData = {
 const ScheduleIndex = () => {
   const accessToken = getCookie("accessToken");
   // recoil
+
   const [trip, setTrip] = useRecoilState(tripAtom);
   useEffect(() => {
     console.log("trip", trip);
   }, [trip]);
+
 
   //쿼리스트링
   const [searchParams] = useSearchParams();

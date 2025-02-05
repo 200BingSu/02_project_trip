@@ -247,11 +247,10 @@ const PostReview = () => {
 
     // // 파일이 있으면 폼 데이터에 추가
     if (file && file.fileList && file.fileList.length > 0) {
-      file.fileList.forEach(file => {
-        formData.append("pics", file.originFileObj);
+      // file.fileList 배열을 순회하며 각 파일을 formData에 append
+      file.fileList.forEach(fileItem => {
+        formData.append("pics", fileItem.originFileObj);
       });
-    } else {
-      console.log("파일이 없습니다.");
     }
 
     const blob = formData.get("p");

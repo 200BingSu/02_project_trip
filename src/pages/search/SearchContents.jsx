@@ -23,6 +23,7 @@ const SearchContents = () => {
   const [searchState, setSearchState] = useState(false); // 검색 전, 후 구분
   const [searchValue, setSearchValue] = useState(""); // 검색어
   const [searchData, setSearchData] = useState({});
+
   const [inputValue, setInputValue] = useState("");
   useEffect(() => {
     console.log("searchData", searchData);
@@ -50,6 +51,7 @@ const SearchContents = () => {
       console.log(error);
     }
   };
+
   // searchValue
   useEffect(() => {
     console.log("searchValue:", searchValue);
