@@ -66,12 +66,18 @@ const SearchBar = React.memo(
               setSearchState(true);
             }
           }}
+
+          onFocus={() => {
+            setSearchBarFocus(true);
+          }}
+          onBlur={() => {
+            setSearchBarFocus(false);
+          }}
+          prefix={<FiSearch className="text-slate-400 text-2xl" />}
+
           className={`w-full h-[60px] px-[12px] ${inputValue ? "bg-white" : "bg-slate-100"}`}
         />
-        {inputValue ? null : (
-          <FiSearch className="text-[24px] text-gray-400 absolute top-[50%] translate-y-[-50%] right-[45px]" />
-        )}
-        {searchBarFocus ? (
+        {/* {searchBarFocus ? (
           <ul className="absolute top-[120%] translate-y-[-50%] left-[5px]">
             {recentText ? (
               recentText?.map((item, index) => {
@@ -81,7 +87,7 @@ const SearchBar = React.memo(
               <li className="text-slate-700 text-[16px]">데이터 없음</li>
             )}
           </ul>
-        ) : null}
+        ) : null} */}
       </div>
     );
   },

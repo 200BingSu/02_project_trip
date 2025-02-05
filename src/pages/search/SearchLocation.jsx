@@ -42,6 +42,7 @@ const SearchLocation = () => {
   const [selectedLocationId, setSelectedLocationId] = useState([]);
   const [searchState, setSearchState] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     console.log(searchValue);
@@ -92,6 +93,8 @@ const SearchLocation = () => {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         setSearchState={setSearchState}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
       />
       {/* 지역 목록 */}
       <ul className="flex flex-col gap-[20px] px-[32px] mb-[20px]">
