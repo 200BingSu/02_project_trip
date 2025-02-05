@@ -5,8 +5,12 @@ import axios from "axios";
 import {
   FaBath,
   FaBed,
+  FaComputer,
   FaFireExtinguisher,
+  FaHotTubPerson,
+  FaHouseFloodWater,
   FaLocationDot,
+  FaTrainSubway,
 } from "react-icons/fa6";
 import { FaSwimmingPool } from "react-icons/fa";
 import { Modal, Rate, Skeleton, Tabs } from "antd";
@@ -23,6 +27,7 @@ import {
   IoIosArrowDown,
   IoIosArrowRoundForward,
   IoIosArrowUp,
+  IoIosBed,
   IoIosClose,
 } from "react-icons/io";
 import dayjs from "dayjs";
@@ -49,8 +54,13 @@ import AmenityModal from "../../components/contents/AmenityModal";
 import { tripAtom } from "../../atoms/tripAtom";
 import jwtAxios from "../../apis/jwt";
 import { getCookie } from "../../utils/cookie";
+import PathModal from "../../components/schedule/PathModal";
+import { ProductPic } from "../../constants/pic";
+import { GiPillow } from "react-icons/gi";
 
 dayjs.extend(isBetween);
+const accessToken = getCookie("accessToken");
+
 // 카테고리 한글 변환
 export const categoryKor = category => {
   if (category === "STAY") return "호텔";
@@ -59,18 +69,21 @@ export const categoryKor = category => {
   if (category === "FEST") return "축제";
   if (category === null) return "카테고리";
 };
+
 const ContentIndex = () => {
   // 쿼리 스트링 조회
   const [searchParams] = useSearchParams();
   const strfType = searchParams.get("strf");
-  const strfId = searchParams.get("strfId");
+  const strfId = parseInt(searchParams.get("strfId"));
   // recoil
-  const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const { userId } = useRecoilValue(userAtom);
+  // console.log("userId", userId);
 
-  const accessToken = getCookie("accessToken");
   // console.log("토큰", accessToken);
-  const { nowTripId } = useRecoilValue(tripAtom);
-  // console.log("현재 tripId:", nowTripId);
+  const [tripId, setTripId] = useRecoilState(tripAtom);
+  useEffect(() => {
+    console.log("tripId", tripId);
+  }, [tripId]);
   // useNavigate
   const navigate = useNavigate();
   const navigatePostReview = () => {
@@ -85,11 +98,19 @@ const ContentIndex = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewsData, setReviewsData] = useState([]);
   const [reviewIndex, setReviewIndex] = useState(6);
+  const [openPathModal, setOpenPathModal] = useState(false);
+
+  useEffect(() => {
+    console.log("reviewsData", reviewsData);
+  }, [reviewsData]);
+  useEffect(() => {
+    console.log("contentData", contentData);
+  }, [contentData]);
   // useRef
   const imgRef = useRef(null);
-  useEffect(() => {
-    console.log(imgRef.current);
-  }, []);
+  // useEffect(() => {
+  //   console.log(imgRef.current);
+  // }, []);
   // 편의 시설 모달
   const showModal = () => {
     setIsModalOpen(true);
@@ -103,9 +124,10 @@ const ContentIndex = () => {
   };
   // 일정 등록 모달
   const showRegistModal = () => {
-    if (nowTripId === 0) {
+    if (tripId === 0) {
       setIsRegistModalOpen(true);
     } else {
+      setOpenPathModal(true);
     }
   };
   const handleRegistOk = () => {
@@ -129,7 +151,7 @@ const ContentIndex = () => {
   // 상품 조회(비회원)
   const getDetailGuest = async () => {
     const sendData = {
-      strfId: strfId,
+      strf_id: strfId,
     };
     console.log("sendData:", sendData);
     try {
@@ -138,7 +160,7 @@ const ContentIndex = () => {
         sendData,
       );
       const resultData = res.data.data;
-      console.log("resultData", resultData);
+      // console.log("resultData", resultData);
       setContentData(resultData);
     } catch (error) {
       console.log("상품조회", error);
@@ -147,22 +169,27 @@ const ContentIndex = () => {
   // 상품조회(회원)
   const getDetailMember = async () => {
     const sendData = {
-      strfId: strfId,
-      userId: userInfo.userId,
+      strf_id: strfId,
     };
-    console.log("sendData:", sendData);
+    // console.log("sendData:", sendData);
     try {
-      const res = await jwtAxios.get(
-        `/api/detail/member?user_id=${userInfo.userId}&strf_id=${strfId}`,
-        sendData,
+      const res = await axios.get(
+        `/api/detail/member?user_id=${userId}&strf_id=${strfId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
       );
+      // console.log(res.data);
       const resultData = res.data.data;
-      console.log("resultData", resultData);
+      // console.log("상품조회-회원", resultData);
       setContentData(resultData);
     } catch (error) {
-      console.log("상품조회", error);
+      console.log("상품조회-회원", error);
     }
   };
+
   //리뷰 조회
   const getReview = useCallback(async () => {
     const sendData = {
@@ -170,13 +197,10 @@ const ContentIndex = () => {
       size: 6,
       strfId: strfId,
     };
-    console.log("리뷰 불러오기 리퀘스트:", sendData);
+    // console.log("리뷰 불러오기 리퀘스트:", sendData);
     try {
-      const res = await axios.get(
-        `/api/review?page=1&size=6&strfId=${strfId}`,
-        sendData,
-      );
-      console.log("리뷰 더 불러오기:", res.data);
+      const res = await axios.get(`/api/review?page=1&size=6&strfId=${strfId}`);
+      // console.log("리뷰 더 불러오기:", res.data);
       setReviewsData(res.data.data);
       setReviewIndex(prev => prev + 10);
     } catch (error) {
@@ -186,32 +210,40 @@ const ContentIndex = () => {
   useEffect(() => {
     if (accessToken) {
       getDetailMember();
+      getReview();
     } else {
       getDetailGuest();
+      getReview();
     }
-    getReview();
   }, []);
 
   //
 
   // 편의시설 아이콘
   const amenities = [
-    { key: "침대", icon: <FaBed /> },
-    { key: "산", icon: <AiOutlineFundView /> },
-    { key: "와이파이", icon: <BiWifi /> },
-    { key: "조리도구", icon: <PiForkKnifeBold /> },
-    { key: "티비", icon: <PiMonitorBold /> },
-    { key: "욕실", icon: <FaBath /> },
-    { key: "냉난방", icon: <BsThermometerHalf /> },
-    { key: "세안도구", icon: <PiHandSoapBold /> },
-    { key: "세탁시설", icon: <PiWashingMachineBold /> },
-    { key: "냉장고", icon: <CgSmartHomeRefrigerator /> },
-    { key: "침구", icon: <BiBlanket /> },
-    { key: "가스레인지", icon: <PiCookingPot /> },
-    { key: "수영장", icon: <FaSwimmingPool /> },
-    { key: "화재 경보기", icon: <FaFireExtinguisher /> },
-    { key: "금고", icon: <AiOutlineSafety /> },
+    { amenity_id: 1, key: "트윈베드", icon: <IoIosBed /> },
+    { amenity_id: 2, key: "싱글베드", icon: <FaBed /> },
+    { amenity_id: 3, key: "와이파이", icon: <BiWifi /> },
+    { amenity_id: 4, key: "에어컨", icon: <BsThermometerHalf /> },
+    { amenity_id: 5, key: "난방", icon: <BsThermometerHalf /> },
+    { amenity_id: 6, key: "온수", icon: <BsThermometerHalf /> },
+    { amenity_id: 7, key: "TV", icon: <PiMonitorBold /> },
+    { amenity_id: 8, key: "컴퓨터", icon: <FaComputer /> },
+    { amenity_id: 9, key: "화재경보기", icon: <FaFireExtinguisher /> },
+    { amenity_id: 10, key: "세탁기", icon: <PiWashingMachineBold /> },
+    { amenity_id: 11, key: "금고", icon: <AiOutlineSafety /> },
+    { amenity_id: 12, key: "침구", icon: <BiBlanket /> },
+    { amenity_id: 13, key: "세안도구", icon: <PiHandSoapBold /> },
+    { amenity_id: 14, key: "욕조", icon: <FaBath /> },
+    { amenity_id: 15, key: "조리도구", icon: <PiForkKnifeBold /> },
+    { amenity_id: 16, key: "주방", icon: <PiCookingPot /> },
+    { amenity_id: 17, key: "오션뷰", icon: <FaHouseFloodWater /> },
+    { amenity_id: 18, key: "역세권", icon: <FaTrainSubway /> },
+    { amenity_id: 19, key: "핫터프", icon: <FaHotTubPerson /> },
+    { amenity_id: 20, key: "풀장", icon: <FaSwimmingPool /> },
+    { amenity_id: 21, key: "주차장", icon: <GiPillow /> },
   ];
+
   // 검색 지우기
   const onChange = key => {
     console.log(key);
@@ -224,8 +256,8 @@ const ContentIndex = () => {
       {/* 메인 썸네일 */}
       <div className="w-full h-[467px] bg-gray-200">
         <img
-          src={`http://112.222.157.156:5221/strf/${strfId}/${contentData?.strfPics[0].pic}`}
-          alt="content-thumbnail"
+          src={`${ProductPic}${strfId}/${contentData?.strfPics[0].pic}`}
+          alt={contentData?.strfTitle || ""}
           className="w-full h-full object-cover"
           ref={imgRef}
         />
@@ -271,7 +303,9 @@ const ContentIndex = () => {
               )}
 
               <p className="text-[16px] text-slate-700">
-                {(contentData?.wishCnt || 1000).toLocaleString()}
+                {contentData?.wishCnt === 0
+                  ? "0"
+                  : (contentData?.wishCnt || 0).toLocaleString()}
               </p>
             </div>
           </div>
@@ -392,7 +426,7 @@ const ContentIndex = () => {
       </div>
       {/* 일정 추가 및 리뷰쓰기 버튼 */}
       {accessToken ? (
-        <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 bg-white fixed bottom-0 left-[50%] translate-x-[-50%] z-30">
+        <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 bg-white fixed bottom-0 left-[50%] translate-x-[-50%] z-10">
           <button
             type="button"
             className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
@@ -422,6 +456,7 @@ const ContentIndex = () => {
       {isModalOpen ? (
         <AmenityModal handleCancel={handleCancel} amenities={amenities} />
       ) : null}
+      {openPathModal ? <PathModal contentData={contentData} /> : null}
     </div>
   );
 };

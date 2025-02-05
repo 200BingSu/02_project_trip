@@ -5,20 +5,41 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
+import axios from "axios";
+import { getCookie } from "../../utils/cookie";
 
 const SearchBar = React.memo(
   ({ searchValue, setSearchValue, setSearchState }) => {
+    const accessToken = getCookie("accessToken");
     //useNavigate
     const navigate = useNavigate();
     // useState
     const [searchBarFocus, setSearchBarFocus] = useState(false);
     const [inputValue, setInputValue] = useState("");
-    const [popularData, setPopularData] = useState([]);
-    useEffect(() => {
-      setInputValue(searchValue);
-    }, [searchValue]);
+    const [recentText, setRecentText] = useState([]);
     // 검색창 비우기
     const onChange = e => {};
+
+    // 최근 검색어
+    const getRecentText = async () => {
+      try {
+        const res = await axios.get(`/api/search/list`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        const resultData = res.data;
+        setRecentText(resultData.data);
+      } catch (error) {
+        console.log("최근 검색어 호출 결과:", error);
+      }
+    };
+    useEffect(() => {
+      getRecentText();
+    }, []);
+    useEffect(() => {
+      console.log("최근 검색어", recentText);
+    }, [recentText]);
 
     return (
       <div className="w-full px-[32px] py-[30px] flex items-center gap-[40px] relative ">
@@ -45,24 +66,26 @@ const SearchBar = React.memo(
               setSearchState(true);
             }
           }}
-          value={searchValue}
+          onFocus={() => {
+            setSearchBarFocus(true);
+          }}
+          onBlur={() => {
+            setSearchBarFocus(false);
+          }}
+          prefix={<FiSearch className="text-slate-400 text-2xl" />}
           className={`w-full h-[60px] px-[12px] ${inputValue ? "bg-white" : "bg-slate-100"}`}
         />
-        {inputValue ? null : (
-          <FiSearch className="text-[24px] text-gray-400 absolute top-[50%] translate-y-[-50%] right-[45px]" />
-        )}
-        {/* 이전 검색어 */}
-        {searchBarFocus ? (
+        {/* {searchBarFocus ? (
           <ul className="absolute top-[120%] translate-y-[-50%] left-[5px]">
-            {popularData ? (
-              popularData?.map((item, index) => {
-                return <li key={index}>{item.strfName}</li>;
+            {recentText ? (
+              recentText?.map((item, index) => {
+                return <li key={index}>{item}</li>;
               })
             ) : (
               <li className="text-slate-700 text-[16px]">데이터 없음</li>
             )}
           </ul>
-        ) : null}
+        ) : null} */}
       </div>
     );
   },

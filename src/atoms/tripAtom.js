@@ -4,6 +4,7 @@ export const tripAtom = atom({
   key: "tripAtom",
   default: {
     nowTripId: 0,
+    day: 0,
     lastSeq: 0,
     prevScheName: "",
     prevSchelat: 0,

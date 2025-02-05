@@ -55,9 +55,10 @@ const SearchTrip = () => {
     console.log("searchValue", searchValue);
   }, [searchValue]);
   useEffect(() => {
-    getSearchWord(selectedCate);
+    // getSearchWord(selectedCate);
   }, [selectedCate]);
-  //get/search/strf-list-basic
+
+  // 검색 결과 입력 전
   const getSearchBasic = async () => {
     const sendData = {
       trip_id: tripId,
@@ -76,7 +77,7 @@ const SearchTrip = () => {
       console.log("결과-입력 전:", error);
     }
   };
-  //api/search/strf-list-word
+  //검색 결과 입력 후
   const getSearchWord = async (cate = null) => {
     const sendData = {
       trip_id: tripId,
@@ -161,7 +162,7 @@ const SearchTrip = () => {
                   // } else if (index === 4) {
                   //   moveTo(festivalRef);
                   // }
-                  getSearchWord(strfArr[index].name);
+                  getSearchWord(strfArr[index].type);
                 }}
               >
                 {item.name}
