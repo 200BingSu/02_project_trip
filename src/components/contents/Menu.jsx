@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from "react";
-import { DatePicker, Skeleton, Space } from "antd";
+import { DatePicker, InputNumber, message, Skeleton, Space } from "antd";
 import { BiTime } from "react-icons/bi";
 import Partnership from "../common/Partnership";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,9 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import styled from "@emotion/styled";
 import { MenuPic } from "../../constants/pic";
+import { getCookie } from "../../utils/cookie";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../../atoms/userAtom";
 dayjs.extend(customParseFormat);
 
 //datePicker
@@ -48,10 +51,13 @@ const StyledRangePicker = styled(RangePicker)`
     justify-content: center;
     align-items: center;
     padding: 0 10px;
-    width: 100px;
+    width: 130px;
   }
 `;
 const Menu = ({ type = "STAY", strfId, contentData }) => {
+  const accessToken = getCookie("accessToken");
+  // recoil
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   // uesRef
   const imgRef = useRef(null);
   // console.log("이미지 주소", imgRef.current);
@@ -61,21 +67,43 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
   const navigateBooking = item => {
     navigate(`/booking/index?strfId=${strfId}`, {
       state: {
+        quantity: quantity,
         dates: dates,
         item: clickItem,
+        contentData: contentData,
       },
     });
+  };
+  // useMessage
+  const [messageApi, contextHolder] = message.useMessage();
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "입실일과 퇴실일은 입력해주셔야합니다.",
+    });
+  };
+  message.config({
+    top: 100,
+    duration: 3,
+    maxCount: 3,
+  });
+  // inputNum
+  const onChange = value => {
+    console.log("changed", value);
+    setQuantity(value);
   };
   //useState
   const [dates, setDates] = useState(null);
   const [clickItem, setClickItem] = useState({});
+  const [quantity, setQuantity] = useState(1);
   useEffect(() => {
     console.log("clickItem", clickItem);
   }, [clickItem]);
   const handleDateChange = (values, formatString) => {
     console.log("선택된 날짜:", values); // dayjs 객체 배열
     console.log("포맷된 날짜:", formatString); // 'YYYY-MM-DD' 형식의 문자열 배열
-    setDates(formatString);
+    const makeSecondFormatDates = formatString.map(item => item + ":00");
+    setDates(makeSecondFormatDates);
   };
   useEffect(() => {
     // console.log("dates", dates);
@@ -103,13 +131,27 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
                 variant="borderless"
                 onChange={handleDateChange}
                 separator={"~"}
+                showTime={{
+                  format: "HH:mm", // 시간과 분만 선택하도록 설정
+                  minuteStep: 10, // 분 단위로 선택
+                }}
+                format="YYYY-MM-DD HH:mm"
               />
             </div>
-            {/* <div className="w-full flex justify-center py-[20px] text-slate-700 text-[18px">
-              인원
-            </div> */}
+            <div className="w-full flex items-center justify-center gap-[10px] py-[20px] text-slate-700 text-[18px">
+              <p className="text-slate-700 text-[18px">인원</p>
+              <InputNumber
+                min={1}
+                // max={10}
+                defaultValue={1}
+                onChange={onChange}
+                className="w-[60px]"
+              />
+              <p className="text-slate-700 text-[18px">명</p>
+            </div>
           </div>
           <ul>
+            {contextHolder}
             {contentData ? (
               menuListArr.map((item, index) => {
                 return (
@@ -146,20 +188,27 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
                       </div>
                     </div>
                     {/* 객실 예약 */}
-                    <button
-                      type="button"
-                      className="px-[30px] py-[10px] bg-primary text-white rounded-lg text-[18px]"
-                      onClick={() => {
-                        // navigateBooking(item);
-                        handleClickItem(item);
-                      }}
-                    >
-                      예약하기
-                    </button>
+                    {userInfo.accessToken ? (
+                      <button
+                        type="button"
+                        className="px-[30px] py-[10px] bg-primary text-white rounded-lg text-[18px]"
+                        onClick={() => {
+                          // navigateBooking(item);
+                          if (dates === null) {
+                            error();
+                          } else {
+                            handleClickItem(item);
+                          }
+                        }}
+                      >
+                        예약하기
+                      </button>
+                    ) : null}
                   </li>
                 );
               })
             ) : (
+              // e데이터가 없음
               <li className="flex gap-[10px] px-[10px] py-[20px] justify-between items-end">
                 {/* 객실 정보 */}
                 <div className="flex flex-col gap-[15px]">

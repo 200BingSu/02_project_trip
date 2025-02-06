@@ -43,7 +43,7 @@ const RecentList = ({ recent }) => {
         {activeTabData?.recent.slice(0, 6).map(content => (
           <div
             key={content.strfId}
-            className="w-[50%] flex items-center gap-5 mb-5"
+            className="w-[50%] flex items-center gap-5 mb-5 cursor-pointer"
             onClick={() => {
               navigate(`/contents/index?strfId=${content.strfId}`);
             }}

@@ -3,10 +3,10 @@ import Loading from "../components/loading/Loading";
 
 const scheduleBoardRouter = () => {
   const LazyScheduleBoardIndex = lazy(
-    () => import("../pages/scheduleBoard/ScheduleBoardIndex"),
+    () => import("../pages/scheduleBoard/scheduleBoardIndex"),
   );
   const LazyScheduleDetail = lazy(
-    () => import("../pages/scheduleBoard/ScheduleDetail"),
+    () => import("../pages/scheduleBoard/scheduleDetail"),
   );
   const LazySchedulePost = lazy(
     () => import("../pages/scheduleBoard/PostBoard"),
