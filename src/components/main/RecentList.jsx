@@ -49,7 +49,7 @@ const RecentList = ({ recent }) => {
           >
             <div className="w-[164px] h-[164px] rounded-[16px] relative overflow-hidden flex-1">
               <img
-                src={`${ProductPic}${item.strfId}${content.strfPic}`}
+                src={`${ProductPic}${content.strfId}${content.strfPic}`}
                 alt={content.strfTitle}
                 className="h-full"
               />
