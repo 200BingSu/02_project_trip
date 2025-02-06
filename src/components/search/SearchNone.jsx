@@ -123,7 +123,7 @@ const SearchNone = ({ searchData, setSearchValue }) => {
 
                 >
                   <div className="flex gap-[15px]">
-                    <div className="w-[80px] h-[80px]">
+                    <div className="w-[80px] h-[80px] rounded-2xl overflow-hidden">
                       <img
                         className="w-full h-full object-cover"
                         src={

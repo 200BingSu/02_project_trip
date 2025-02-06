@@ -98,14 +98,15 @@ const ContentIndex = () => {
   const [isRegistModalOpen, setIsRegistModalOpen] = useState(false);
   const [openBusinessTime, setOpenBusinessTime] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [reviewsData, setReviewsData] = useState([]);
-  const [reviewIndex, setReviewIndex] = useState(6);
+
+  // const [reviewsData, setReviewsData] = useState([]);
+  // const [reviewIndex, setReviewIndex] = useState(6);
 
   const [openPathModal, setOpenPathModal] = useState(false);
 
-  useEffect(() => {
-    console.log("reviewsData", reviewsData);
-  }, [reviewsData]);
+  // useEffect(() => {
+  //   console.log("reviewsData", reviewsData);
+  // }, [reviewsData]);
   useEffect(() => {
     console.log("contentData", contentData);
   }, [contentData]);
@@ -197,29 +198,29 @@ const ContentIndex = () => {
   };
 
   //리뷰 조회
-  const getReview = useCallback(async () => {
-    const sendData = {
-      page: 1,
-      size: 6,
-      strfId: strfId,
-    };
-    // console.log("리뷰 불러오기 리퀘스트:", sendData);
-    try {
-      const res = await axios.get(`/api/review?page=1&size=6&strfId=${strfId}`);
-      // console.log("리뷰 더 불러오기:", res.data);
-      setReviewsData(res.data.data);
-      setReviewIndex(prev => prev + 10);
-    } catch (error) {
-      console.log("리뷰 더 불러오기:", error);
-    }
-  }, []);
+  // const getReview = useCallback(async () => {
+  //   const sendData = {
+  //     page: 1,
+  //     size: 6,
+  //     strfId: strfId,
+  //   };
+  //   // console.log("리뷰 불러오기 리퀘스트:", sendData);
+  //   try {
+  //     const res = await axios.get(`/api/review?page=1&size=6&strfId=${strfId}`);
+  //     // console.log("리뷰 더 불러오기:", res.data);
+  //     setReviewsData(res.data.data);
+  //     setReviewIndex(prev => prev + 10);
+  //   } catch (error) {
+  //     console.log("리뷰 더 불러오기:", error);
+  //   }
+  // }, []);
   useEffect(() => {
     if (accessToken) {
       getDetailMember();
-      getReview();
+      // getReview();
     } else {
       getDetailGuest();
-      getReview();
+      // getReview();
     }
   }, []);
 
@@ -298,7 +299,8 @@ const ContentIndex = () => {
                 {contentData?.ratingAvg || "5.0"}
               </p>
               <p className="text-[16px] text-primary underline">
-                {/* 리뷰 {(reviewsData ? reviewsData.length : 0).toLocaleString()}개 */}
+                리뷰{" "}
+                {(contentData ? contentData.reviewCnt : 0).toLocaleString()}개
               </p>
             </div>
             <p className="text-[16px] text-slate-300 font-light">|</p>
@@ -348,7 +350,11 @@ const ContentIndex = () => {
           </div>
         )}
         {/* 메뉴 */}
-        <Menu type={strfType} strfId={strfId} contentData={contentData} />
+        <Menu
+          type={contentData?.category}
+          strfId={strfId}
+          contentData={contentData}
+        />
         {/* 편의 시설 및 서비스 */}
         {strfType === "STAY" && (
           <div className="flex flex-col gap-[30px]">
@@ -425,10 +431,10 @@ const ContentIndex = () => {
         {isDetailOpen && <DetailInfo contentData={contentData} />}
         {!isDetailOpen && (
           <Reviews
-            reviewsData={reviewsData}
-            setReviewsData={setReviewsData}
-            reviewIndex={reviewIndex}
-            setReviewIndex={setReviewIndex}
+          // reviewsData={reviewsData}
+          // setReviewsData={setReviewsData}
+          // reviewIndex={reviewIndex}
+          // setReviewIndex={setReviewIndex}
           />
         )}
       </div>
