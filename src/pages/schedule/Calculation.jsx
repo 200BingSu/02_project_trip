@@ -4,10 +4,16 @@ import { useEffect, useState } from "react";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { getCookie } from "../../utils/cookie";
 import Bill from "./calculation/Bill";
+import { ProfilePic } from "../../constants/pic";
+import { userAtom } from "../../atoms/userAtom";
+import { useRecoilState } from "recoil";
+import SettlementStatement from "../../components/calculation/SettlementStatement";
 
 const Calculation = () => {
   const [amount, setAmount] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const [isBillOpen, setIsBillOpen] = useState(false);
+  const [isStatementOpen, setIsStatementOpen] = useState(false);
 
   const accessToken = getCookie("accessToken");
   const getExpenses = async () => {
@@ -18,7 +24,7 @@ const Calculation = () => {
         },
       });
       setAmount(res.data.data);
-      // console.log("✅  res.data:", res.data.data);
+      console.log("✅  res.data:", res.data.data);
     } catch (error) {
       console.log("✅  getExpenses  error:", error);
       setAmount(null); // 에러 발생 시 null로 초기화
@@ -26,87 +32,106 @@ const Calculation = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      getExpenses();
-    }, 5000); // 5초마다 getExpenses 호출
-
-    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
-  }, []);
-
-  useEffect(() => {
     getExpenses();
   }, []);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
   return (
-    <div>
+    <div className="bg-slate-100 pb-4">
       <TitleHeader
         icon={"back"}
         title={"가계부"}
         onClick={() => navigate(-1)}
+        className="!bg-slate-100"
       />
-      <div className="flex flex-col gap-8 mt-24 px-8 pb-36">
-        <h1 className="flex items-end gap-3">
-          <h2 className="text-4xl text-slate-700 font-bold">{amount?.title}</h2>
-          <span className="text-lg text-slate-400">{amount?.tripPeriod}</span>
-        </h1>
-        <div>
-          <h3 className="text-2xl text-slate-700">내가 쓴 금액</h3>
-          <h2 className="text-4xl font-semibold text-primary">
-            {amount?.myTotalPrice.toLocaleString()}원
-          </h2>
+      <div className="px-8">
+        <div className="bg-white rounded-3xl px-8">
+          <div className=" flex items-end gap-3 border-b  py-8 border-slate-200">
+            <h2 className="text-2xl text-slatr-700 font-bold">
+              {amount?.title}
+            </h2>
+            <span className="text-base text-slate-400">
+              {amount?.tripPeriod}
+            </span>
+          </div>
+          <div className="py-8 border-b border-slate-200">
+            <h3 className="text-xl font-semibold text-slate-700">
+              내가 쓴 금액
+            </h3>
+            <h2 className="text-4xl text-primary font-semibold">
+              {amount?.myTotalPrice.toLocaleString()}원
+            </h2>
+          </div>
+          <div className="py-8 flex">
+            <h1 className="text-lg text-slate-500 mr-auto">총 지출 금액</h1>
+            <span className="text-2xl text-slate-700 font-semibold">
+              {amount?.tripTotalPrice?.toLocaleString()}원
+            </span>
+          </div>
         </div>
-        <div className="cursor-pointer">
+        <div>
           {amount?.expensedList?.map(item => (
             <div
               key={item.deId}
-              className="flex items-center py-8  border-b border-slate-100 last:border-0"
+              className="cursor-pointer bg-white px-8 py-5 rounded-3xl mt-5"
+              onClick={() => setIsStatementOpen(true)}
             >
-              <div className="mr-auto w-2/4">
-                <p className="text-2xl font-semibold text-slate-700 ">
-                  {item.paidFor}
+              <p>{item.deId}</p>
+              <div className="">
+                <p className="text-lg text-slate-500">{item.paidFor}</p>
+                <p className="mt-1 text-3xl text-slate-700 font-semibold">
+                  {item.totalPrice?.toLocaleString()}원
                 </p>
-                {item.paidUserList.map((member, index) => (
-                  <span
-                    key={member.user_id}
-                    className="text-base text-slate-400"
-                  >
-                    {member.name}
-                    {index !== item.paidUserList.length - 1 && ", "}
+                <div className="flex items-center gap-3 mt-5">
+                  {item.paidUserList.slice(0, 3).map((member, index) => (
+                    <span
+                      key={member.user_id}
+                      className="inline-block w-14 h-14 !border-4 border-white rounded-full overflow-hidden -ml-9 first:ml-0 "
+                      style={{ zIndex: 9 - index }} // zIndex 값 동적 적용
+                    >
+                      <img
+                        src={
+                          `${ProfilePic}${member?.user_id}/${member?.profile_pic}` ||
+                          `/images/user.png`
+                        }
+                        alt={member.name}
+                      />
+                      {index !== item.paidUserList.length - 1 && ", "}
+                    </span>
+                  ))}
+                  <span className="text-lg text-slate-500 font-semibold">
+                    {item.paidUserList.length === 1
+                      ? `${item.paidUserList[0]?.name}`
+                      : `${item.paidUserList[0]?.name} 외 ${item.paidUserList.length - 1}명`}
                   </span>
-                ))}
+                </div>
               </div>
-              <p className="text-2xl font-semibold text-primary">
-                {item.totalPrice?.toLocaleString()}원
-              </p>
             </div>
           ))}
         </div>
         <Button
-          className="h-14 w-full border border-slate-300 rounded-lg text-slate-700 text-xl"
-          onClick={showModal}
+          type="primary"
+          className="sticky bottom-5 h-16 w-full rounded-2xl text-xl z-50 mt-5"
+          onClick={() => setIsBillOpen(true)}
         >
           비용 추가
         </Button>
-        <div className="fixed bottom-0 flex justify-center items-center max-w-3xl w-full h-[100px] bg-white z-[99] shadow-[0px_-10px_10px_-3px_rgba(99,99,99,0.05)]">
-          <h1 className="text-2xl text-slate-700 ">
-            총 지출액{" "}
-            <span className="text-primary font-semibold">
-              {amount?.tripTotalPrice?.toLocaleString()}
-            </span>
-            원
-          </h1>
-        </div>
       </div>
 
       <div>
         <Bill
           getCookie={getCookie}
-          showModal={showModal}
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
+          isBillOpen={isBillOpen}
+          setIsBillOpen={setIsBillOpen}
+          userInfo={userInfo}
+        />
+      </div>
+      <div>
+        <SettlementStatement
+          amount={amount}
+          setAmount={setAmount}
+          getCookie={getCookie}
+          isStatementOpen={isStatementOpen}
+          setIsStatementOpen={setIsStatementOpen}
         />
       </div>
     </div>

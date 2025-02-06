@@ -61,7 +61,7 @@ const ContentsHeader = ({ contentData, strfId }) => {
   return (
     <div
       className={`px-[32px] 
-        max-w-3xl w-full mx-auto
+        max-w-3xl w-full h-[60px] mx-auto
         flex items-center justify-between gap-10
         fixed top-0 left-[50%] translate-x-[-50%] z-10 
         ${scrollY > 0 ? "bg-white" : null}`}
