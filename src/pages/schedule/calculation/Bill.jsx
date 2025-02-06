@@ -6,17 +6,14 @@ import { userAtom } from "../../../atoms/userAtom";
 import { Modal, message } from "antd";
 
 const Bill = ({ getCookie, showModal, isModalOpen, setIsModalOpen }) => {
-  const [addition, setAddition] = useState(null);
   const [budgeting, setBudgeting] = useState([]);
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState(0);
   const [storeName, setStoreName] = useState("");
-  const accessToken = getCookie("accessToken");
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
-  const [useProfile, setUseProfile] = useState([]);
+  const accessToken = getCookie("accessToken");
 
-  const getBudgeting = async () => {
+  const getBudgeting = async numericPrice => {
     try {
-      const numericPrice = Number(price.replace(/,/g, "")); // 콤마 제거 후 숫자로 변환
       const res = await axios.get(
         `/api/expense/dutch?total_price=${numericPrice}&trip_id=1`,
         {
@@ -26,21 +23,26 @@ const Bill = ({ getCookie, showModal, isModalOpen, setIsModalOpen }) => {
         },
       );
       setBudgeting(res.data.data);
-      console.log("✅  getBudgeting :", res.data.data);
+      console.log(res.data);
+      console.log(res.data.data);
     } catch (error) {
       console.log("✅  getBudgeting  error:", error);
-      setBudgeting(null); // 에러 발생 시 null로 초기화
+      setBudgeting([]); // 에러 발생 시 빈 배열로 초기화
     }
   };
 
+  // price 값이 바뀔 때마다 실행
   useEffect(() => {
-    getBudgeting();
-  }, []);
+    if (price) {
+      let numericPrice = price ? 0 : Number(price.replace(/,/g, "")); // price가 0인 경우 기본값 0 설정
+      getBudgeting(numericPrice);
+    }
+  }, [price]);
 
   const setCalculation = async () => {
     const sendData = {
       trip_id: 1,
-      price_list: [...budgeting].map(item => ({
+      price_list: budgeting.map(item => ({
         userId: item.userId,
         price: item.price,
       })),
@@ -54,7 +56,6 @@ const Bill = ({ getCookie, showModal, isModalOpen, setIsModalOpen }) => {
           "Content-Type": "application/json",
         },
       });
-      console.log(res.data); // 응답 데이터를 출력하거나 처리
       message.success("추가 되었습니다");
       setIsModalOpen(false);
     } catch (error) {
@@ -63,16 +64,9 @@ const Bill = ({ getCookie, showModal, isModalOpen, setIsModalOpen }) => {
   };
 
   const handleChange = e => {
-    let rawValue = e.target.value.replace(/[^0-9]/g, ""); // 숫자만 허용
-    setPrice(rawValue); // 숫자 값 저장
+    let rawValue = e.target.value.replace(/[^0-9]/g, "");
+    setPrice(rawValue);
   };
-
-  const handleKeyDown = e => {
-    if (e.key === "Enter") {
-      getBudgeting();
-    }
-  };
-
   const handleOk = () => {
     if (!storeName) {
       message.error("내용을 입력해 주세요");
@@ -97,7 +91,6 @@ const Bill = ({ getCookie, showModal, isModalOpen, setIsModalOpen }) => {
       onCancel={handleCancel}
     >
       <div>
-        <label htmlFor=""></label>
         <input
           type="text"
           value={storeName}
@@ -110,7 +103,6 @@ const Bill = ({ getCookie, showModal, isModalOpen, setIsModalOpen }) => {
             placeholder="0"
             value={new Intl.NumberFormat().format(price)} // 세 자리마다 콤마 적용
             onChange={handleChange}
-            onKeyDown={handleKeyDown}
             className="w-full h-20 outline-none text-right font-semibold text-5xl text-slate-700 px-2"
           />
           원
