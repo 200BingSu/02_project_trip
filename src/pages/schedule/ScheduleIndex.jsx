@@ -13,8 +13,6 @@ import { useEffect, useState } from "react";
 import { userAtom } from "../../atoms/userAtom";
 import { getCookie } from "../../utils/cookie";
 
-
-
 // const dummyDays = dummyData.days;
 const defaultData = {
   day: 1,
@@ -29,7 +27,6 @@ const ScheduleIndex = () => {
   useEffect(() => {
     console.log("trip", trip);
   }, [trip]);
-
 
   //쿼리스트링
   const [searchParams] = useSearchParams();
@@ -133,12 +130,14 @@ const ScheduleIndex = () => {
         </div>
         {/* 맵, 일정 */}
         <div className="flex flex-col gap-[50px]">
-          {tripDaysArr?.length === 0 ? (
+          {tripDaysArr === null ? (
             <ScheduleDay
               newTrip={true}
               data={defaultData}
               startAt={tripData?.startAt}
-              tripId={tripId.nowTripId}
+              tripId={tripId}
+              getTrip={getTrip}
+              setTripData={setTripData}
             />
           ) : (
             tripDaysArr?.map((item, index) => {
@@ -148,7 +147,9 @@ const ScheduleIndex = () => {
                   data={item}
                   key={index}
                   startAt={tripData?.startAt}
-                  tripId={trip.nowTripId}
+                  tripId={tripId}
+                  getTrip={getTrip}
+                  setTripData={setTripData}
                 />
               );
             })

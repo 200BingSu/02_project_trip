@@ -20,17 +20,6 @@ const strfArr = [
   { type: "FEST", name: "축제" },
 ];
 const SearchList = ({ searchValue, searchData, setSearchData }) => {
-  // useRef
-  // const topRef = useRef(null);
-  // const stayRef = useRef(null);
-  // const tourRef = useRef(null);
-  // const restaurantRef = useRef(null);
-  // const festivalRef = useRef(null);
-  // const moveTo = ref => {
-  // console.log(ref);
-  //   console.log(`${ref}로 이동`);
-  //   ref.current.scrollIntoView({ behavior: "smooth" });
-  // };
   // useState
   const [selectedCate, setSelectedCate] = useState(0);
 
@@ -40,21 +29,6 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
     search_word: searchValue,
     last_index: null,
   };
-
-  // getSearchList
-  // const getSearchList = async data => {
-  //   console.log("data:", data);
-  //   try {
-  //     const res = await axios.get(`${SEARCH.searchList}`, data);
-  //     console.log("카테고리 검색:", res.data);
-  //     setsearchData(res.data);
-  //   } catch (error) {
-  //     console.log("카테고리 검색:", error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   getSearchList(initRequestData);
-  // }, []);
 
   const tourData = searchData?.filter(item => item.category === "TOUR");
   const stayData = searchData?.filter(item => item.category === "STAY");

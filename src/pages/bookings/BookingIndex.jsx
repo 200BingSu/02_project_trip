@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import SelectCoupon from "../../components/booking/SelectCoupon";
 import { IoIosArrowDown } from "react-icons/io";
 import { Button, Checkbox, Radio } from "antd";
+import { getCookie } from "../../utils/cookie";
 
 const CheckboxGroup = Checkbox.Group;
 const plainOptions = [
@@ -40,6 +41,8 @@ const BookingIndex = () => {
   const strfId = searchParams.get("strfId");
   //recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  //쿠키
+  const accessToken = getCookie("accessToken");
   //useNavigate
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,59 +54,112 @@ const BookingIndex = () => {
   const navigateCompleteBooking = () => {
     navigate(`/booking/complete`);
   };
-  const dates = locationState.dates;
-  const itemData = locationState.item;
+
   // useState
   const [userData, setUserData] = useState({});
+  //    쿠폰
   const [showCouponModal, setShowCouponModal] = useState(false);
+  const [couponList, setCouponList] = useState([]);
+  const [selectCoupon, setSelectCoupon] = useState({});
+  //    체크박스
   const [checkedList, setCheckedList] = useState(defaultCheckedList);
   const [checkAll, setCheckAll] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
-  // useRef
-
-  // getUserInfo
+  //    금액
+  const [discount, setDiscount] = useState(0);
+  const [finallPrice, setFinallPrice] = useState(
+    locationState?.item.menuPrice || 0,
+  );
+  useEffect(() => {
+    console.log("userData", userData);
+  }, [userData]);
+  useEffect(() => {
+    console.log("couponList", couponList);
+  }, [couponList]);
+  useEffect(() => {
+    console.log("selectCoupon", selectCoupon);
+    if (selectCoupon.discountPer) {
+      setDiscount(selectCoupon.discountPer);
+    } else {
+      setDiscount(0);
+    }
+  }, [selectCoupon]);
+  useEffect(() => {
+    setFinallPrice(
+      locationState?.item.menuPrice -
+        (discount / 100) * locationState?.item.menuPrice,
+    );
+  }, [discount]);
+  // 유저 정보 불러오기
   const getUserInfo = async () => {
     try {
-      const res = await axios.get(`${USER.getUserInfo}`, {
+      const res = await axios.get(`/api/user/userInfo`, {
         headers: {
-          Authorization: `Bearer ${userInfo.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log("찜하기", res.data);
-      const filterData = {
-        name: res.data.name,
-        email: res.data.email,
-      };
-      setUserData(filterData);
+      const resultData = res.data;
+      setUserData(resultData.data);
     } catch (error) {
       console.log("회원 정보:", error);
     }
   };
-  //postBooking
+  // 사용 가능한 쿠폰 불러오기
+  const getAbleCouponList = async () => {
+    try {
+      const res = await axios.get(`/api/coupon/available-coupons`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log(res.data);
+      const resultData = res.data;
+      setCouponList(resultData.data.coupons);
+    } catch (error) {
+      console.log("쿠폰 불러오기 결과:", error);
+    }
+  };
+
+  //예약하기
   const postBooking = async () => {
     const sendData = {
-      checkIn: locationState.dates[0],
-      checkOut: locationState.dates[1],
-      finalPayment: 50000,
+      strf_id: locationState.contentData.strfId,
+      check_in: locationState.dates[0],
+      check_out: locationState.dates[1],
+      coupon_id: parseInt(selectCoupon.couponId),
+      actual_paid: finallPrice,
+      order_list: [
+        {
+          menuId: locationState.item.menuId,
+          quantity: locationState.quantity,
+        },
+      ],
     };
     console.log("sendData", sendData);
     try {
-      const res = await axios.get(
-        `/api/booking?checkIn=${sendData.checkIn}&checkOut=${sendData.checkOut}&finalPayment=${sendData.finalPayment}`,
-        {
-          headers: {
-            Authorization: `Bearer ${userInfo.accessToken}`,
-          },
+      const res = await axios.post(`/api/booking`, sendData, {
+        headers: {
+          Authorization: `Bearer ${userInfo.accessToken}`,
         },
-      );
-      console.log("찜하기", res.data);
-      const filterData = {
-        name: res.data.name,
-        email: res.data.email,
-      };
-      setUserData(filterData);
+      });
+      console.log("예약하기 결과", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공" && resultData.data) {
+        console.log("카카오페이먼트 도전");
+        const paymentWindow = window.open(
+          resultData.data,
+          "_blank",
+          "width=500,height=700",
+        );
+
+        if (!paymentWindow) {
+          alert("팝업이 차단되었습니다. 팝업 차단을 해제해주세요.");
+        }
+      } else {
+        alert("결제 요청 실패");
+      }
     } catch (error) {
-      console.log("회원 정보:", error);
+      console.log("예약하기 결과:", error);
     }
   };
   const onChange = list => {
@@ -117,6 +173,12 @@ const BookingIndex = () => {
     setIndeterminate(false);
     setCheckAll(isChecked);
   };
+
+  // 화면 최초 실행
+  useEffect(() => {
+    getUserInfo();
+    getAbleCouponList();
+  }, []);
   return (
     <div>
       <TitleHeader icon="back" onClick={navigateBack} />
@@ -124,32 +186,40 @@ const BookingIndex = () => {
         {/* 예약 정보 */}
         <div className="px-[32px] py-[30px] flex flex-col gap-[30px] border-b-[10px] border-slate-100">
           <h2 className="pb-[20px] text-[24px] text-slate-700 font-semibold">
-            업체 이름
+            {locationState?.contentData.strfTitle || "업체이름"}
           </h2>
           <ul className="flex flex-col gap-[20px]">
             <li className="flex items-center">
               <h4 className="w-1/2 text-[18px] text-slate-700 font-semibold">
                 객실명
               </h4>
-              <p className="w-1/2 text-[18px] text-slate-700">객실명</p>
+              <p className="w-1/2 text-[18px] text-slate-700">
+                {locationState?.item.menuTitle || "객실명"}
+              </p>
             </li>
             <li className="flex items-center">
               <h4 className="w-1/2 text-[18px] text-slate-700 font-semibold">
                 입실일
               </h4>
-              <p className="w-1/2 text-[18px] text-primary">입실일</p>
+              <p className="w-1/2 text-[18px] text-primary">
+                {locationState?.dates[0]}
+              </p>
             </li>
             <li className="flex items-center">
               <h4 className="w-1/2 text-[18px] text-slate-700 font-semibold">
                 퇴실일
               </h4>
-              <p className="w-1/2 text-[18px] text-slate-700">퇴실일</p>
+              <p className="w-1/2 text-[18px] text-slate-700">
+                {locationState?.dates[1]}
+              </p>
             </li>
             <li className="flex items-center">
               <h4 className="w-1/2 text-[18px] text-slate-700 font-semibold">
                 인원
               </h4>
-              <p className="w-1/2 text-[18px] text-slate-700">n명</p>
+              <p className="w-1/2 text-[18px] text-slate-700">
+                {locationState?.quantity}명
+              </p>
             </li>
           </ul>
         </div>
@@ -167,7 +237,7 @@ const BookingIndex = () => {
                 type="text"
                 className="flex-grow text-[18px] text-slate-400 
                           border border-slate-300 rounded-lg
-                          px-[10px] py-[10px]"
+                          px-[10px] py-[10px] outline-none bg-slate-100"
                 value={userData?.name || "이름입니다."}
                 readOnly
               />
@@ -180,12 +250,12 @@ const BookingIndex = () => {
                 type="text"
                 className="flex-grow text-[18px] text-slate-400 
                           border border-slate-300 rounded-lg
-                          px-[10px] py-[10px]"
+                          px-[10px] py-[10px] outline-none bg-slate-100"
                 value={userData?.email || "이메일입니다."}
                 readOnly
               />
             </li>
-            <li className="flex items-center gap-[50px]">
+            {/* <li className="flex items-center gap-[50px]">
               <h4 className="text-[18px] text-slate-700 font-semibold">
                 휴대폰
               </h4>
@@ -197,13 +267,13 @@ const BookingIndex = () => {
                 value={userData?.tell || "휴대폰 번호입니다."}
                 readOnly
               />
-            </li>
+            </li> */}
           </ul>
         </div>
         {/* 할인쿠폰 */}
         <div className="px-[32px] py-[30px] flex flex-col gap-[30px] border-b-[10px] border-slate-100">
           <h2 className="pb-[20px] text-[24px] text-slate-700 font-semibold">
-            예약자 정보 입력
+            할인쿠폰
           </h2>
           <button
             type="button"
@@ -215,7 +285,11 @@ const BookingIndex = () => {
             flex items-center justify-between"
           >
             <p className="text-[16px] text-slate-500">
-              사용 가능한 쿠폰이 없어요.
+              {selectCoupon.title
+                ? selectCoupon.title
+                : couponList.length > 0
+                  ? `사용 가능한 쿠폰이 ${couponList.length}개 있어요.`
+                  : "사용 가능한 쿠폰이 없어요."}
             </p>
             <IoIosArrowDown className="text-[18px] text-slate-400" />
           </button>
@@ -231,7 +305,7 @@ const BookingIndex = () => {
                 예약 금액
               </h4>
               <p className="text-[18px] text-slate-700">
-                {(locationState?.price || 50000).toLocaleString()}원
+                {(locationState?.item.menuPrice || 0).toLocaleString()}원
               </p>
             </li>
             <li className="w-full flex items-center justify-between">
@@ -239,7 +313,7 @@ const BookingIndex = () => {
                 쿠폰 할인
               </h4>
               <p className="text-[18px] text-slate-700">
-                - {(0).toLocaleString()}원
+                {discount === 0 ? "-" : `${discount}%`}
               </p>
             </li>
             <li className="w-full flex items-center justify-between">
@@ -247,7 +321,17 @@ const BookingIndex = () => {
                 총 결제 금액
               </h4>
               <p className="text-[24px] text-primary font-semibold">
-                <span>{(locationState?.price || 50000).toLocaleString()}</span>
+                <span>
+                  {/* {(
+                    locationState?.item.menuPrice -
+                    (selectCoupon.discountPer / 100) *
+                      locationState?.item.menuPrice
+                  ).toLocaleString()} */}
+                  {(
+                    locationState?.item.menuPrice -
+                    (discount / 100) * locationState?.item.menuPrice
+                  ).toLocaleString()}
+                </span>
                 원
               </p>
             </li>
@@ -354,7 +438,6 @@ const BookingIndex = () => {
             onClick={() => {
               if (checkAll) {
                 postBooking();
-                navigateCompleteBooking();
               }
             }}
           >
@@ -364,7 +447,12 @@ const BookingIndex = () => {
       </div>
       {/* 모달창 */}
       {showCouponModal ? (
-        <SelectCoupon setShowCouponModal={setShowCouponModal} />
+        <SelectCoupon
+          setShowCouponModal={setShowCouponModal}
+          couponList={couponList}
+          selectCoupon={selectCoupon}
+          setSelectCoupon={setSelectCoupon}
+        />
       ) : null}
     </div>
   );

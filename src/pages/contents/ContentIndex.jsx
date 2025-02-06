@@ -59,7 +59,6 @@ import PathModal from "../../components/schedule/PathModal";
 import { ProductPic } from "../../constants/pic";
 import { GiPillow } from "react-icons/gi";
 
-
 dayjs.extend(isBetween);
 const accessToken = getCookie("accessToken");
 
@@ -173,9 +172,6 @@ const ContentIndex = () => {
   };
   // 상품조회(회원)
   const getDetailMember = async () => {
-    const sendData = {
-      strf_id: strfId,
-    };
     // console.log("sendData:", sendData);
     try {
       const res = await axios.get(
@@ -259,13 +255,15 @@ const ContentIndex = () => {
   return (
     <div className="relative pb-[70px]">
       {/* 헤더 */}
-      <ContentsHeader contentData={contentData} strfId={strfId} />
+      <ContentsHeader
+        contentData={contentData}
+        strfId={strfId}
+        getDetailMember={getDetailMember}
+      />
       {/* 메인 썸네일 */}
       <div className="w-full h-[467px] bg-gray-200">
         <img
-
           src={`${ProductPic}${strfId}/${contentData?.strfPics[0].pic}`}
-
           alt={contentData?.strfTitle || ""}
           className="w-full h-full object-cover"
           ref={imgRef}
@@ -307,7 +305,7 @@ const ContentIndex = () => {
             {/* 찜하기 */}
             <div className="flex gap-[5px] items-center">
               {contentData?.wishIn ? (
-                <AiFillHeart className="text-color-secondary3" />
+                <AiFillHeart className="text-secondary3" />
               ) : (
                 <AiOutlineHeart className="text-slate-400" />
               )}
@@ -472,7 +470,6 @@ const ContentIndex = () => {
       ) : null}
 
       {openPathModal ? <PathModal contentData={contentData} /> : null}
-
     </div>
   );
 };
