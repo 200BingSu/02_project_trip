@@ -5,20 +5,19 @@ import { ProfilePic } from "../../constants/pic";
 import { BiSolidEditAlt } from "react-icons/bi";
 
 const SettlementStatement = ({
-  amount,
-  setAmount,
+  deId,
   getCookie,
   isStatementOpen,
   setIsStatementOpen,
-  deId,
 }) => {
   const [isReceipt, setIsReceipt] = useState([]);
   const accessToken = getCookie("accessToken");
   console.log("deId 내놔", deId);
   const getStatement = async () => {
+    if (!isStatementOpen || !deId) return; // ✅ deId가 없으면 요청하지 않음
     try {
       const res = await axios.get(
-        `/api/expense/select?de_id=${amount.deId}&trip_id=1`,
+        `/api/expense/select?de_id=${deId}&trip_id=1`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -36,7 +35,7 @@ const SettlementStatement = ({
 
   useEffect(() => {
     getStatement();
-  }, []);
+  }, [deId]);
 
   const handleOk = () => {
     setIsStatementOpen(false);

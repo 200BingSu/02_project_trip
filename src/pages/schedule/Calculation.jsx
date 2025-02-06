@@ -1,19 +1,22 @@
 import { Button } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../../atoms/userAtom";
+import SettlementStatement from "../../components/calculation/SettlementStatement";
 import TitleHeader from "../../components/layout/header/TitleHeader";
+import { ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import Bill from "./calculation/Bill";
-import { ProfilePic } from "../../constants/pic";
-import { userAtom } from "../../atoms/userAtom";
-import { useRecoilState } from "recoil";
-import SettlementStatement from "../../components/calculation/SettlementStatement";
+import { useNavigate } from "react-router-dom";
 
 const Calculation = () => {
-  const [amount, setAmount] = useState(null);
+  const [amount, setAmount] = useState({});
+  const [selectedDeId, setSelectedDeId] = useState(null); // ✅ 선택된 deId 상태 추가
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [isBillOpen, setIsBillOpen] = useState(false);
   const [isStatementOpen, setIsStatementOpen] = useState(false);
+  const navigate = useNavigate();
 
   const accessToken = getCookie("accessToken");
   const getExpenses = async () => {
@@ -46,7 +49,7 @@ const Calculation = () => {
       <div className="px-8">
         <div className="bg-white rounded-3xl px-8">
           <div className=" flex items-end gap-3 border-b  py-8 border-slate-200">
-            <h2 className="text-2xl text-slatr-700 font-bold">
+            <h2 className="text-2xl text-slate-700 font-bold">
               {amount?.title}
             </h2>
             <span className="text-base text-slate-400">
@@ -58,7 +61,7 @@ const Calculation = () => {
               내가 쓴 금액
             </h3>
             <h2 className="text-4xl text-primary font-semibold">
-              {amount?.myTotalPrice.toLocaleString()}원
+              {amount?.myTotalPrice?.toLocaleString()}원
             </h2>
           </div>
           <div className="py-8 flex">
@@ -73,9 +76,11 @@ const Calculation = () => {
             <div
               key={item.deId}
               className="cursor-pointer bg-white px-8 py-5 rounded-3xl mt-5"
-              onClick={() => setIsStatementOpen(true)}
+              onClick={() => {
+                setIsStatementOpen(true);
+                setSelectedDeId(item.deId);
+              }}
             >
-              <p>{item.deId}</p>
               <div className="">
                 <p className="text-lg text-slate-500">{item.paidFor}</p>
                 <p className="mt-1 text-3xl text-slate-700 font-semibold">
@@ -123,12 +128,12 @@ const Calculation = () => {
           isBillOpen={isBillOpen}
           setIsBillOpen={setIsBillOpen}
           userInfo={userInfo}
+          getExpenses={getExpenses} // getExpenses 함수 전달
         />
       </div>
       <div>
         <SettlementStatement
-          amount={amount}
-          setAmount={setAmount}
+          deId={selectedDeId} // ✅ 선택된 deId 전달
           getCookie={getCookie}
           isStatementOpen={isStatementOpen}
           setIsStatementOpen={setIsStatementOpen}

@@ -5,7 +5,13 @@ import { FaCheck } from "react-icons/fa";
 import { ProfilePic } from "../../../constants/pic";
 import "../../../styles/antd-css.css";
 
-const Bill = ({ getCookie, isBillOpen, setIsBillOpen, userInfo }) => {
+const Bill = ({
+  getCookie,
+  isBillOpen,
+  setIsBillOpen,
+  userInfo,
+  getExpenses,
+}) => {
   const [budgeting, setBudgeting] = useState([]);
   const [isValue, setIsValue] = useState("0");
   const [storeName, setStoreName] = useState("");
@@ -45,6 +51,7 @@ const Bill = ({ getCookie, isBillOpen, setIsBillOpen, userInfo }) => {
       });
       message.success("추가 되었습니다");
       setIsBillOpen(false);
+      getExpenses(); // ✅ 데이터 새로 요청
     } catch (error) {
       console.log("✅  error:", error.response?.data, sendData); // 서버에서 반환된 에러 메시지
     }
