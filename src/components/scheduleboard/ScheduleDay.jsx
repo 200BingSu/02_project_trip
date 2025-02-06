@@ -20,6 +20,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
 import MemoModal from "../schedule/MemoModal";
 
+
 // defaultData(days[0])
 const defaultData = {
   day: 1,
@@ -141,6 +142,7 @@ export const matchWeatherIcon = weather => {
   }
 };
 
+
 /**
  * ### 인수
  * #### data
@@ -159,6 +161,11 @@ const ScheduleDay = ({
   startAt,
   tripId,
 }) => {
+  //recoil
+  const [trip, setTrip] = useRecoilState(tripAtom);
+  useEffect(() => {
+    console.log("trip", trip);
+  }, [trip]);
   //useNavigate
   const navigate = useNavigate();
   const handleClickSchedule = item => {
@@ -169,6 +176,8 @@ const ScheduleDay = ({
 
   const navigateSearchContents = () => {
     navigate(`/search/trip?tripId=${tripId}`);
+    console.log(data);
+    setTrip({ nowTripId: tripId, lastSeq: data.schedules.length });
   };
   //useState
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -179,7 +188,7 @@ const ScheduleDay = ({
   const [dayData, setDayData] = useState();
   const [memoModal, setMemoModal] = useState(false);
   useEffect(() => {
-    console.log("메모 모달창", memoModal);
+    // console.log("메모 모달창", memoModal);
   }, [memoModal]);
 
   // 지도

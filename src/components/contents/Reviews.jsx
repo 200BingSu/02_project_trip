@@ -5,6 +5,7 @@ import ReviewImage from "./ReviewImage";
 import axios from "axios";
 import { data, useSearchParams } from "react-router-dom";
 
+
 const Reviews = () =>
   // {
   // reviewsData,
@@ -45,6 +46,7 @@ const Reviews = () =>
       }
     }, []);
 
+
     useEffect(() => {
       getReview();
     }, []);
@@ -55,6 +57,7 @@ const Reviews = () =>
         <p>
           {/* <span>{(contentData?.ratingTotalCnt || 1000).toLocaleString()}</span>
         개의 리뷰 */}
+
         </p>
         {/* 리뷰 리스트 */}
         {reviewsData ? (
@@ -138,5 +141,6 @@ const Reviews = () =>
       </div>
     );
   };
+
 
 export default memo(Reviews);

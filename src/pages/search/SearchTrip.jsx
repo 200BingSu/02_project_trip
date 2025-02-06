@@ -34,6 +34,7 @@ const SearchTrip = () => {
   //useNavigate
   const navigate = useNavigate();
   const navigateContent = strfId => {
+    console.log(strfId);
     navigate(`/contents/index?strfId=${strfId}`);
   };
   // useState

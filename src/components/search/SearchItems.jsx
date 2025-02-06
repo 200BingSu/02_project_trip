@@ -6,6 +6,7 @@ import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import { ProductPic } from "../../constants/pic";
 
+
 const SearchItems = forwardRef(
   ({ type, data, searchValue, setSearchData }, ref) => {
     //useNavigate
@@ -13,6 +14,7 @@ const SearchItems = forwardRef(
     const handleClickList = item => {
       console.log("클릭된 아이템", item);
       navigate(`/contents?strfId=${item.strfId}`);
+
     };
     // useState
     const [dataIndex, setDataIndex] = useState(4);

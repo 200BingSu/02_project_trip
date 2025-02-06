@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { Rate } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const RecentList = ({ recent }) => {
+  // navigate
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("STAY");
 
   const categoryNameMap = {
@@ -40,10 +43,13 @@ const RecentList = ({ recent }) => {
           <div
             key={content.strfId}
             className="w-[50%] flex items-center gap-5 mb-5"
+            onClick={() => {
+              navigate(`/contents/index?strfId=${content.strfId}`);
+            }}
           >
             <div className="w-[164px] h-[164px] rounded-[16px] relative overflow-hidden flex-1">
               <img
-                src={content.strfPic}
+                src={`${ProductPic}${item.strfId}${content.strfPic}`}
                 alt={content.strfTitle}
                 className="h-full"
               />
