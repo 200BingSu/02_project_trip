@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import styled from "@emotion/styled";
+import { MenuPic } from "../../constants/pic";
 dayjs.extend(customParseFormat);
 
 //datePicker
@@ -51,6 +52,9 @@ const StyledRangePicker = styled(RangePicker)`
   }
 `;
 const Menu = ({ type = "STAY", strfId, contentData }) => {
+  // uesRef
+  const imgRef = useRef(null);
+  // console.log("이미지 주소", imgRef.current);
   const menuListArr = contentData?.menu;
   // useNavigate
   const navigate = useNavigate();
@@ -58,13 +62,16 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
     navigate(`/booking/index?strfId=${strfId}`, {
       state: {
         dates: dates,
-        // item: item },
+        item: clickItem,
       },
     });
   };
   //useState
   const [dates, setDates] = useState(null);
-
+  const [clickItem, setClickItem] = useState({});
+  useEffect(() => {
+    console.log("clickItem", clickItem);
+  }, [clickItem]);
   const handleDateChange = (values, formatString) => {
     console.log("선택된 날짜:", values); // dayjs 객체 배열
     console.log("포맷된 날짜:", formatString); // 'YYYY-MM-DD' 형식의 문자열 배열
@@ -74,6 +81,15 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
     // console.log("dates", dates);
   }, [dates]);
 
+  const handleClickItem = async item => {
+    // console.log(item);
+    setClickItem(item);
+  };
+  useEffect(() => {
+    if (clickItem && Object.keys(clickItem).length > 0) {
+      navigateBooking(clickItem.strfId);
+    }
+  }, [clickItem]);
   return (
     <div className="flex flex-col gap-[30px]">
       {/* 메뉴: 숙소 */}
@@ -97,32 +113,45 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
             {contentData ? (
               menuListArr.map((item, index) => {
                 return (
-                  <li className="flex gap-[10px] px-[10px] py-[20px] justify-between items-end">
+                  <li className="flex gap-[10px] px-[10px] py-[20px] justify-between items-center">
                     {/* 객실 정보 */}
-                    <div className="flex flex-col gap-[15px]">
-                      <div className="flex flex-col gap-[5px]">
-                        <p className="text-[28px] font-semibold text-slate-700">
-                          {item.menuTitle}
-                        </p>
-                        {/* <div className="flex gap-[5px] items-center">
-                          <BiTime className="text-[24px] text-slate-500" />
-                          <p className="text-[18px] text-slate-500">
-                            <span>입실 시간</span>
-                            <span>-</span>
-                            <span>퇴실 시간</span>
-                          </p>
-                        </div> */}
+                    <div className="flex gap-[15px] ">
+                      {/* 이미지 */}
+                      <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
+                        <img
+                          src={`${MenuPic}${contentData.strfId}/menu/${item.menuPic}`}
+                          alt={item.menuTitle}
+                          className="w-full h-full object-cover"
+                          ref={imgRef}
+                        />
                       </div>
-                      <p className="text-[24px] font-semibold text-slate-700">
-                        {item.price.toLocaleString()}원
-                      </p>
+                      {/* 정보 */}
+                      <div className="flex flex-col justify-center">
+                        <div className="flex flex-col gap-[5px]">
+                          <p className="text-[28px] font-semibold text-slate-700">
+                            {item.menuTitle}
+                          </p>
+                          {/* <div className="flex gap-[5px] items-center">
+                            <BiTime className="text-[24px] text-slate-500" />
+                            <p className="text-[18px] text-slate-500">
+                              <span>입실 시간</span>
+                              <span>-</span>
+                              <span>퇴실 시간</span>
+                            </p>
+                          </div> */}
+                        </div>
+                        <p className="text-[24px] font-semibold text-slate-700">
+                          {item.menuPrice.toLocaleString()}원
+                        </p>
+                      </div>
                     </div>
                     {/* 객실 예약 */}
                     <button
                       type="button"
                       className="px-[30px] py-[10px] bg-primary text-white rounded-lg text-[18px]"
-                      onClick={item => {
-                        navigateBooking(item);
+                      onClick={() => {
+                        // navigateBooking(item);
+                        handleClickItem(item);
                       }}
                     >
                       예약하기
@@ -156,7 +185,8 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
                   type="button"
                   className="px-[30px] py-[10px] bg-primary text-white rounded-lg text-[18px]"
                   onClick={item => {
-                    navigateBooking(item);
+                    handleClickItem(item);
+                    // navigateBooking(item);
                   }}
                 >
                   예약하기
