@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BiSolidShareAlt } from "react-icons/bi";
 import { CgMenuGridO } from "react-icons/cg";
 import { HiOutlineMap } from "react-icons/hi2";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoCloseSharp, IoReaderOutline } from "react-icons/io5";
-
 
 /**
  * ## props
@@ -93,10 +92,30 @@ export const RightContent = React.memo(
  */
 const TitleHeader = React.memo(
   ({ icon, title, onClick, rightContent = null }) => {
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        // 스크롤 위치가 0보다 크면 isScrolled를 true로 설정
+        if (window.scrollY > 0) {
+          setIsScrolled(true);
+        } else {
+          setIsScrolled(false);
+        }
+      };
+      // 스크롤 이벤트 리스너 추가
+      window.addEventListener("scroll", handleScroll);
+
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }, []);
+
     return (
       <div
-        className="flex max-w-3xl w-full mx-auto items-center justify-between 
-    h-[60px] px-[30px] bg-white fixed top-0 left-[50%] translate-x-[-50%] z-10"
+        className={`flex max-w-3xl w-full mx-auto items-center justify-between 
+    h-[60px] px-[30px] sticky top-0 left-0 z-10 transition-colors duration-100 ${isScrolled ? "bg-white" : "bg-transparent"}`} // 스크롤 상태에 따라 배경색 변경
       >
         {/* 좌측 */}
         <div className="flex gap-10 items-center">
