@@ -55,8 +55,10 @@ import { tripAtom } from "../../atoms/tripAtom";
 import jwtAxios from "../../apis/jwt";
 import { getCookie } from "../../utils/cookie";
 import PathModal from "../../components/schedule/PathModal";
+
 import { ProductPic } from "../../constants/pic";
 import { GiPillow } from "react-icons/gi";
+
 
 dayjs.extend(isBetween);
 const accessToken = getCookie("accessToken");
@@ -96,8 +98,10 @@ const ContentIndex = () => {
   const [isRegistModalOpen, setIsRegistModalOpen] = useState(false);
   const [openBusinessTime, setOpenBusinessTime] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
   // const [reviewsData, setReviewsData] = useState([]);
   // const [reviewIndex, setReviewIndex] = useState(6);
+
   const [openPathModal, setOpenPathModal] = useState(false);
 
   // useEffect(() => {
@@ -106,6 +110,7 @@ const ContentIndex = () => {
   useEffect(() => {
     console.log("contentData", contentData);
   }, [contentData]);
+
   // useRef
   const imgRef = useRef(null);
   // useEffect(() => {
@@ -181,9 +186,11 @@ const ContentIndex = () => {
           },
         },
       );
+
       // console.log(res.data);
       const resultData = res.data.data;
       // console.log("상품조회-회원", resultData);
+
       setContentData(resultData);
     } catch (error) {
       console.log("상품조회-회원", error);
@@ -256,7 +263,9 @@ const ContentIndex = () => {
       {/* 메인 썸네일 */}
       <div className="w-full h-[467px] bg-gray-200">
         <img
+
           src={`${ProductPic}${strfId}/${contentData?.strfPics[0].pic}`}
+
           alt={contentData?.strfTitle || ""}
           className="w-full h-full object-cover"
           ref={imgRef}
@@ -461,7 +470,9 @@ const ContentIndex = () => {
       {isModalOpen ? (
         <AmenityModal handleCancel={handleCancel} amenities={amenities} />
       ) : null}
+
       {openPathModal ? <PathModal contentData={contentData} /> : null}
+
     </div>
   );
 };

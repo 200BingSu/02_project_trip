@@ -1,6 +1,6 @@
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ProfilePic } from "../../constants/pic";
@@ -14,11 +14,20 @@ const UserEdit = () => {
   const [useProfile, setUseProfile] = useState({
     name: "",
     email: "",
-    profilePic: null,
+    profilePic: "",
   });
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState("/images/user.png");
+  // 처음에 보여주는 이미지로서 서버에서 이미지를 가져옮
+  const [originImg, setOriginImg] = useState(null);
+
   const [file, setFile] = useState(null);
   const [newName, setNewName] = useState("");
+
+  const imgRef = useRef(null);
+  useEffect(() => {
+    console.log(imgRef.current);
+  }, [imgRef]);
+
   const navigate = useNavigate();
 
   const getUserInfo = async () => {
@@ -30,7 +39,14 @@ const UserEdit = () => {
       });
       setUseProfile(res.data.data);
       setNewName(res.data.data.name);
-      setPreview(res.data.data.profilePic || "/images/user.png");
+      // 새로운 이미지로 교체
+      setPreview(res.data.data.profilePic);
+      // 처음에 화면에 보일때 API 호출 후 최초 오리지널 이미지를 경로로 담는다.
+      setOriginImg(
+        `${ProfilePic}${userInfo.userId}/${res.data.data.profilePic}`,
+      );
+      console.log("res.data", res.data.data.profilePic);
+      // console.log("setPreview", setPreview);
     } catch (error) {
       console.log(error);
     }
@@ -44,11 +60,20 @@ const UserEdit = () => {
 
     const formData = new FormData();
     if (file) formData.append("profilePic", file);
+    // console.log("useProfile.email ", useProfile.email);
+    // console.log("newName ", newName);
+
+    const requestData = {
+      email: useProfile.email,
+      name: newName,
+    };
+    // console.log("requestData ", requestData);
+    // console.log("userInfo.accessToken ", userInfo.accessToken);
+    // JSON 데이터를 FormData에 추가
     formData.append(
       "p",
-      JSON.stringify({
-        email: useProfile.email,
-        name: newName,
+      new Blob([JSON.stringify(requestData)], {
+        type: "application/json",
       }),
     );
 
@@ -68,19 +93,31 @@ const UserEdit = () => {
 
   const handleFileChange = e => {
     const selectedFile = e.target.files[0];
+    console.log("selectedFile : ", selectedFile);
     if (selectedFile) {
       setFile(selectedFile);
       const objectUrl = URL.createObjectURL(selectedFile);
+      console.log("objectUrl : ", objectUrl);
       setPreview(objectUrl);
+      // 새로운 이미지를 선택했으므로 원래 이미지는 없는 것 처럼 처리한다.
+      setOriginImg(null);
     }
   };
+
+  useEffect(() => {
+    console.log("Updated preview:", preview);
+  }, [preview]);
 
   useEffect(() => {
     getUserInfo();
   }, []);
 
+  console.log("originImg", originImg);
+
   return (
     <div>
+      <p>preview : {preview} </p>
+
       <TitleHeader
         icon={""}
         title={"프로필 설정"}
@@ -91,9 +128,10 @@ const UserEdit = () => {
           <div className="relative">
             <div className="mx-auto w-32 h-32 rounded-full overflow-hidden">
               <img
-                src={preview}
+                src={originImg ? originImg : preview}
                 alt="User-Profile"
                 className="w-full h-full object-cover"
+                ref={imgRef}
               />
             </div>
 

@@ -15,13 +15,17 @@ import { TRIP } from "../../constants/api";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 import { tripAtom } from "../../atoms/tripAtom";
+
 import { getCookie } from "../../utils/cookie";
+
 // 한글 로케일 등록
 registerLocale("ko", ko);
 
 const SelectDays = () => {
   const accessToken = getCookie("accessToken");
   //recoil
+
+
   const [tripId, setTripId] = useRecoilState(tripAtom);
   useEffect(() => {
     // console.log(tripId);
