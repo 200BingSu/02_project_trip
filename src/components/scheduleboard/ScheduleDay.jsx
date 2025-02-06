@@ -19,7 +19,8 @@ import { MEMO } from "../../constants/api";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
 import MemoModal from "../schedule/MemoModal";
-
+import { getCookie } from "../../utils/cookie";
+import axios from "axios";
 
 // defaultData(days[0])
 const defaultData = {
@@ -142,7 +143,6 @@ export const matchWeatherIcon = weather => {
   }
 };
 
-
 /**
  * ### 인수
  * #### data
@@ -160,9 +160,12 @@ const ScheduleDay = ({
   newTrip = false,
   startAt,
   tripId,
+  getTrip,
+  setTripData,
 }) => {
   //recoil
   const [trip, setTrip] = useRecoilState(tripAtom);
+  const accessToken = getCookie("accessToken");
   useEffect(() => {
     console.log("trip", trip);
   }, [trip]);
@@ -171,8 +174,6 @@ const ScheduleDay = ({
   const handleClickSchedule = item => {
     console.log(item);
   };
-  // recoil
-  const [trip, setTrip] = useRecoilState(tripAtom);
 
   const navigateSearchContents = () => {
     navigate(`/search/trip?tripId=${tripId}`);
@@ -194,7 +195,7 @@ const ScheduleDay = ({
   // 지도
   const scheduleArr = data?.schedules || [];
   const scheArr = scheduleArr.filter(item => item.scheOrMemo === "SCHE");
-  // console.log(`${data.day} scheArr`, scheArr);
+  console.log(`${data.day} scheArr`, scheArr);
   const positions = scheArr?.map((item, index) => {
     return { title: item.strfTitle, latlng: { lat: item.lat, lng: item.lng } };
   });
@@ -247,39 +248,45 @@ const ScheduleDay = ({
     return <div>지도를 불러오는 중입니다...</div>;
   }
   //
-  //메모 추가하기
-  const postMemo = async () => {
-    const sendData = {
-      trip_id: 1,
-      day: data.day,
-      seq: data.schedules.length,
-      user_id: 1,
-      title: "aa",
-      content: "aaa",
-    };
-    try {
-      const res = await jwtAxios.post(`${MEMO.postMemo}`);
-      console.log("메모 추가", res.data);
-    } catch (error) {
-      console.log("메모 추가", error);
-    }
-  };
+
   // console.log(scheduleArr[scheduleArr.length].seq);
   // 일정 추가 위해 출발
   const handleClickAddBt = () => {
     const lastSche = scheArr[scheArr.length - 1];
     const lastSeq = scheduleArr[scheduleArr.length - 1]?.seq;
-
+    console.log("lastSche", lastSche);
+    console.log("lastSeq", lastSeq);
     setTrip({
       ...trip,
       lastSeq: lastSeq,
       nowTripId: tripId,
       day: data.day,
-      prevScheName: lastSche.strfTitle,
-      prevSchelat: lastSche.lat,
-      prevSchelng: lastSche.lng,
+      prevScheName: scheArr.length > 0 ? lastSche.strfTitle : "",
+      prevSchelat: scheArr.length > 0 ? lastSche.lat : "",
+      prevSchelng: scheArr.length > 0 ? lastSche.lng : "",
     });
-    navigateSearchContents();
+    // navigateSearchContents();
+  };
+  // 메모 삭제
+  const deleteMemo = async item => {
+    console.log(item);
+    try {
+      const res = await axios.delete(
+        `/api/memo/delete?memoId=${item.scheduleMemoId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log(res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        getTrip();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -351,7 +358,6 @@ const ScheduleDay = ({
             return (
               <li
                 key={index}
-                onClick={item => handleClickSchedule(item)}
                 className="flex flex-col gap-[30px] justify-center "
               >
                 {/* 일정 또는 메모 */}
@@ -431,6 +437,9 @@ const ScheduleDay = ({
                         {item.title}
                       </p>
                       <p className="text-[14px]">{item.content}</p>
+                      <button type="button" onClick={() => deleteMemo(item)}>
+                        삭제
+                      </button>
                     </div>
                   </div>
                 )}
@@ -506,7 +515,15 @@ const ScheduleDay = ({
         ) : null}
       </div>
       {/* 모달창 */}
-      {memoModal ? <MemoModal setMemoModal={setMemoModal} /> : null}
+      {memoModal ? (
+        <MemoModal
+          setMemoModal={setMemoModal}
+          tripId={tripId}
+          data={data}
+          getTrip={getTrip}
+          setTripData={setTripData}
+        />
+      ) : null}
     </div>
   );
 };

@@ -6,7 +6,6 @@ import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import { ProductPic } from "../../constants/pic";
 
-
 const SearchItems = forwardRef(
   ({ type, data, searchValue, setSearchData }, ref) => {
     //useNavigate
@@ -14,7 +13,6 @@ const SearchItems = forwardRef(
     const handleClickList = item => {
       console.log("클릭된 아이템", item);
       navigate(`/contents?strfId=${item.strfId}`);
-
     };
     // useState
     const [dataIndex, setDataIndex] = useState(4);
@@ -22,11 +20,11 @@ const SearchItems = forwardRef(
       console.log(dataIndex);
     }, [dataIndex]);
 
-    // 더보기 api
+    // 카테고리 별 더보기
     const getSearchListMore = async data => {
       try {
         const res = await axios.get(
-          `/api/search/category?category=${type}&start_idx=${dataIndex}&size=10`,
+          `/api/search/category?last_index=${dataIndex}&category=${type}&search_word=%EB%B6%80%EC%82%B0`,
         );
         console.log("더보기 결과:", res.data);
         const resultData = res.data;

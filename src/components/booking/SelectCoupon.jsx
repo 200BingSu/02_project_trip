@@ -1,10 +1,21 @@
-const SelectCoupon = ({ setShowCouponModal }) => {
+import dayjs from "dayjs";
+
+const SelectCoupon = ({
+  setShowCouponModal,
+  couponList,
+  selectCoupon,
+  setSelectCoupon,
+}) => {
   const handleBackgroundClick = () => {
     setShowCouponModal(false);
   };
 
   const handleModalClick = e => {
     e.stopPropagation();
+  };
+  const handleClickList = item => {
+    setSelectCoupon(item);
+    setShowCouponModal(false);
   };
   return (
     <div
@@ -21,21 +32,32 @@ const SelectCoupon = ({ setShowCouponModal }) => {
           px-[20px] py-[30px] w-full
           rounded-t-3xl
         bg-white"
+        onClick={handleModalClick}
       >
         <h2 className="text-[24px] text-slate-700 font-semibold">쿠폰 선택</h2>
-        <ul>
-          <li
-            className="flex flex-col gap-[20px]
-                          px-[20px] py-[20px]"
-          >
-            <p className="text-[28px] text-primary font-bold">금액</p>
-            <div className="flex flex-col gap-[5px]">
-              <h4 className="text-[20px] text-slate-700 font-semibold">
-                [웰컴 기프트] 숙소 할인 {(12000).toLocaleString()}원
-              </h4>
-              <p className="text-[18px] text-slate-400">유효기간</p>
-            </div>
-          </li>
+        <ul className="max-h-[411px] overflow-y-scroll">
+          {couponList.map((item, index) => {
+            return (
+              <li
+                className="flex flex-col gap-[20px]
+                          px-[20px] py-[20px] "
+                key={index}
+                onClick={() => handleClickList(item)}
+              >
+                <p className="text-[28px] text-primary font-bold">
+                  {item.discountPer}%
+                </p>
+                <div className="flex flex-col gap-[5px]">
+                  <h4 className="text-[20px] text-slate-700 font-semibold">
+                    {item.title}
+                  </h4>
+                  <p className="text-[18px] text-slate-400">
+                    {`${dayjs(item.expiredAt).format("YYYY-MM-DD")} 사용 가능`}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

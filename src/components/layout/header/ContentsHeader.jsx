@@ -12,10 +12,11 @@ import { userAtom } from "../../../atoms/userAtom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCookie } from "../../../utils/cookie";
 
-const ContentsHeader = ({ contentData, strfId }) => {
+const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   const accessToken = getCookie("accessToken");
   //recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const userId = userInfo.userId;
   useEffect(() => {
     console.log("userInfo", userInfo);
   }, [userInfo]);
@@ -43,7 +44,7 @@ const ContentsHeader = ({ contentData, strfId }) => {
   // postWishList
   const postWishList = async () => {
     const sendData = {
-      strf_id: strfId,
+      strfId: strfId,
     };
     console.log("찜하기 데이터:", sendData);
     try {
@@ -53,6 +54,10 @@ const ContentsHeader = ({ contentData, strfId }) => {
         },
       });
       console.log("찜하기", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        getDetailMember();
+      }
     } catch (error) {
       console.log("찜하기", error);
     }

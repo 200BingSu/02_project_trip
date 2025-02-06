@@ -1,3 +1,4 @@
+// bookingRouter 수정
 import { lazy, Suspense } from "react";
 import Loading from "../components/loading/Loading";
 
