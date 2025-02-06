@@ -1,9 +1,16 @@
 import { Input } from "antd";
+import axios from "axios";
 import { useState } from "react";
+import { getCookie } from "../../utils/cookie";
+import { useRecoilState } from "recoil";
+import { tripAtom } from "../../atoms/tripAtom";
 
-const MemoModal = ({ setMemoModal }) => {
+const MemoModal = ({ setMemoModal, tripId, data, getTrip, setTripData }) => {
+  // recoil
+  const [trip, setTrip] = useRecoilState(tripAtom);
+  const accessToken = getCookie("accessToken");
   //useState
-  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   // 모달창
   const handleBackgroundClick = () => {
     setMemoModal(false);
@@ -12,8 +19,33 @@ const MemoModal = ({ setMemoModal }) => {
     e.stopPropagation();
   };
   //   검색창
-  const onChange = e => {};
-
+  const onChange = e => {
+    setContent(e.target.value);
+  };
+  //메모 추가하기
+  const postMemo = async content => {
+    const sendData = {
+      trip_id: trip.nowTripId,
+      day: data.day,
+      seq: 1,
+      content: content,
+    };
+    console.log(sendData);
+    try {
+      const res = await axios.post(`/api/memo/post`, sendData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      // console.log("메모 추가", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        getTrip();
+      }
+    } catch (error) {
+      console.log("메모 추가", error);
+    }
+  };
   return (
     <div
       className="fixed top-0 left-[50%] translate-x-[-50%] z-10
@@ -31,14 +63,22 @@ const MemoModal = ({ setMemoModal }) => {
         onClick={handleModalClick}
       >
         <Input
-          placeholder="메모 제목"
+          placeholder="메모를 입력해주세요."
           variant="borderless"
           allowClear
           onChange={e => {
-            handleModalClick();
-            onChange();
+            onChange(e);
           }}
         />
+        <button
+          type="button"
+          onClick={() => {
+            postMemo(content);
+            setMemoModal(false);
+          }}
+        >
+          확인
+        </button>
       </div>
     </div>
   );

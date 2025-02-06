@@ -9,17 +9,17 @@ import scheduleBoardRouter from "./scheduleboardrouter";
 import signUpRouter from "./signuprouter";
 import Layout from "../components/layout/Layout";
 import searchRouter from "./searchrouter";
-import bookingRouter from "./bookingrouter";
 import { getCookie } from "../utils/cookie";
 import { userAtom } from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
 import contentsRouter from "./contentsrouter";
 import usertrouter from "./usertrouter";
+import bookingRouter from "./bookingrouter";
 
 // lazys
 
 const LazyHome = lazy(() => import("../pages/Index"));
-const LazyBooking = lazy(() => import("../pages/bookings/BookingIndex"));
+const LazyBooking = lazy(() => import("../pages/bookings/Booking"));
 const LazyBudget = lazy(() => import("../pages/budget/BudgetIndex"));
 const LazyBusiness = lazy(() => import("../pages/business/BusinessIndex"));
 const LazyCoupon = lazy(() => import("../pages/coupon/CouponIndex"));
@@ -29,7 +29,7 @@ const LazyNotification = lazy(
 const LazyPayment = lazy(() => import("../pages/payment/PaymentIndex"));
 const LazySchedule = lazy(() => import("../pages/schedule/Schedule"));
 const LazyScheduleBoard = lazy(
-  () => import("../pages/scheduleBoard/ScheduleBoard"),
+  () => import("../pages/scheduleBoard/scheduleBoard"),
 );
 const LazySearch = lazy(() => import("../pages/search/SearchIndex"));
 const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
@@ -75,6 +75,7 @@ const router = createBrowserRouter([
         ),
         children: bookingRouter(),
       },
+
       {
         path: "/budget",
         element: (

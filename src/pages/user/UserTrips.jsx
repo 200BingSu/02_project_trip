@@ -95,7 +95,7 @@ const UserTrips = () => {
         </ul>
       </div>
       {/* 여행 목록 */}
-      <div className="px-[28px]">
+      <div className="px-[28px] mb-[40px]">
         {/* 다가오는 여행 */}
         {category === 0 && (
           <ul className="flex flex-col gap-[40px]">

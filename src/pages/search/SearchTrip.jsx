@@ -12,6 +12,7 @@ import { Input, Rate } from "antd";
 import { FiSearch } from "react-icons/fi";
 import SearchItems from "../../components/search/SearchItems";
 import { AiFillHeart, AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
+import { getCookie } from "../../utils/cookie";
 
 const strfArr = [
   { type: null, name: "전체" },
@@ -22,6 +23,7 @@ const strfArr = [
 ];
 
 const SearchTrip = () => {
+  const accessToken = getCookie("accessToken");
   // recoil
   const { nowTripId } = useRecoilValue(tripAtom);
   // 쿼리스트링
@@ -69,7 +71,11 @@ const SearchTrip = () => {
     try {
       const res = await axios.get(
         `/api/search/strf-list-basic?trip_id=${tripId}&last_index=0`,
-        sendData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
       );
       const resultData = res.data;
       console.log("결과-입력 전:", resultData);

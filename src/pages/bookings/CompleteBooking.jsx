@@ -4,10 +4,13 @@ import TitleHeader from "../../components/layout/header/TitleHeader";
 const CompleteBooking = () => {
   //useNavigate
   const navigate = useNavigate();
+  const navigateHome = () => {
+    navigate("/");
+  };
   return (
     <div>
-      <TitleHeader icon="back" title="결제완료" />
-      <div className="mt-[91px] px-[32px] flex flex-col gap-[31px] items-center">
+      <TitleHeader icon="close" title="결제완료" onClick={navigateHome} />
+      <div className="mt-[91px] px-[32px] flex flex-col gap-[31px] items-center mb-[30px]">
         {/* 이미지 */}
         <div>
           <img src="/public/images/booking/complete.svg" alt="" />
@@ -53,28 +56,28 @@ const CompleteBooking = () => {
           </li>
         </ul>
         {/* 체크인, 체크아웃 */}
-        <ul className="flex ">
+        <ul className="flex w-full">
           <li
             className="border border-slate-100 py-[30px]
-                        flex flex-col gap-[10px]"
+                        flex flex-col gap-[10px] w-full items-center justify-center"
           >
             <p className="text-[24px] text-slate-400 font-bold">체크인</p>
             <p className="text-[24px] text-slate-700">날짜, 요일, 시간</p>
           </li>
           <li
             className="border border-slate-100 py-[30px]
-                        flex flex-col gap-[10px]"
+                        flex flex-col gap-[10px] w-full items-center justify-center"
           >
             <p className="text-[24px] text-slate-400 font-bold">체크인</p>
             <p className="text-[24px] text-slate-700">날짜, 요일, 시간</p>
           </li>
         </ul>
         {/* 버튼 */}
-        <div className="flex gap-[10px]">
+        <div className="flex gap-[10px] w-full">
           <button
             type="button"
             className="px-[15px] py-[30px] rounded-lg border border-slate-300
-            text-[24px] font-semibold text-slate-700"
+            text-[24px] font-semibold text-slate-700 w-full"
           >
             예약 확인하기
           </button>
@@ -84,7 +87,7 @@ const CompleteBooking = () => {
               navigate("/");
             }}
             className="px-[15px] py-[30px] rounded-lg border border-slate-300
-            text-[24px] font-semibold text-slate-700"
+            text-[24px] font-semibold text-slate-700 w-full"
           >
             메인으로 가기
           </button>
