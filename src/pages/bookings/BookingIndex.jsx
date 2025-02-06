@@ -51,6 +51,8 @@ const BookingIndex = () => {
   const navigateCompleteBooking = () => {
     navigate(`/booking/complete`);
   };
+  const dates = locationState.dates;
+  const itemData = locationState.item;
   // useState
   const [userData, setUserData] = useState({});
   const [showCouponModal, setShowCouponModal] = useState(false);

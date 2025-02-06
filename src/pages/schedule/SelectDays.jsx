@@ -24,13 +24,13 @@ const SelectDays = () => {
   //recoil
   const [tripId, setTripId] = useRecoilState(tripAtom);
   useEffect(() => {
-    console.log(tripId);
+    // console.log(tripId);
   }, [tripId]);
   //useNavigate
   const navigate = useNavigate();
   const location = useLocation();
   const locationData = location.state;
-  console.log("locationData", locationData);
+  // console.log("locationData", locationData);
   const locationIdArr = locationData?.map((item, index) => {
     return item.locationId;
   });
@@ -52,7 +52,7 @@ const SelectDays = () => {
     const startAt = dayjs(startDate).format("YYYY-MM-DD");
     const endAt = dayjs(endDate).format("YYYY-MM-DD");
     const sendData = {
-      location_id: locationIdArr[0],
+      location_id: locationIdArr,
       title: tripTitle,
       start_at: startAt,
       end_at: endAt,
@@ -110,7 +110,7 @@ const SelectDays = () => {
   };
   useEffect(() => {
     // console.log("시작일", startDate);
-    console.log("종료일", endDate);
+    // console.log("종료일", endDate);
   }, [endDate]);
 
   return (
