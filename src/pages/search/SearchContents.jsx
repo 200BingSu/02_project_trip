@@ -22,7 +22,7 @@ const SearchContents = () => {
   // useState
   const [searchState, setSearchState] = useState(false); // 검색 전, 후 구분
   const [searchValue, setSearchValue] = useState(""); // 검색어
-  const [searchData, setSearchData] = useState({});
+  const [searchData, setSearchData] = useState([]);
 
   const [inputValue, setInputValue] = useState("");
   useEffect(() => {
@@ -34,19 +34,20 @@ const SearchContents = () => {
   };
   //입력 후 데이터 호출
   const postSearchAll = async () => {
-    const sendData = { search_word: searchValue };
+    const sendData = { search_word: searchValue, last_index: 1 };
     try {
       const res = await axios.post(
-        `/api/search/all?search_word=${searchValue}`,
-        sendData,
+        `/api/search/all?search_word=${searchValue}&last_index=1`,
+        { ...sendData },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         },
       );
+      console.log("검색 결과 호출", res.data);
       const resultData = res.data;
-      setSearchData(resultData.data);
+      setSearchData([...searchData, ...resultData.data]);
     } catch (error) {
       console.log(error);
     }
@@ -76,7 +77,13 @@ const SearchContents = () => {
           setSearchData={setSearchData}
         />
       ) : (
-        <SearchNone searchData={searchData} setSearchValue={setSearchValue} />
+        <SearchNone
+          setSearchState={setSearchState}
+          searchData={searchData}
+          setSearchData={setSearchData}
+          setSearchValue={setSearchValue}
+          searchValue={searchValue}
+        />
       )}
     </div>
   );

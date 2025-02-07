@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import styled from "@emotion/styled";
-import { MenuPic } from "../../constants/pic";
+import { MenuPic, ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
@@ -152,10 +152,13 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
           </div>
           <ul>
             {contextHolder}
-            {contentData ? (
+            {Array.isArray(menuListArr) ? (
               menuListArr.map((item, index) => {
                 return (
-                  <li className="flex gap-[10px] px-[10px] py-[20px] justify-between items-center">
+                  <li
+                    key={index}
+                    className="flex gap-[10px] px-[10px] py-[20px] justify-between items-center"
+                  >
                     {/* 객실 정보 */}
                     <div className="flex gap-[15px] ">
                       {/* 이미지 */}
@@ -250,55 +253,48 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
         <div className="w-full flex flex-col gap-[20px]">
           <h2 className="text-[28px] font-semibold text-slate-700">대표메뉴</h2>
           <ul className="flex gap-[20px] flex-wrap">
-            <li className="flex flex-col gap-[10px]">
-              <div className="w-full h-[300px] bg-slate-200 rounded-[16px]">
-                <Skeleton.Image
-                  active={false}
-                  size="large"
-                  style={{ width: "342px", height: "300px" }}
-                />
-              </div>
-              <p className="text-[24px] text-slate-700">메뉴 이름</p>
-              <p className="text-[18px] text-slate-700 font-semibold">가격</p>
-            </li>
-            <li className="flex flex-col gap-[10px]">
-              <div className="w-full h-[300px] bg-slate-200 rounded-[16px]">
-                <Skeleton.Image
-                  active={false}
-                  size="large"
-                  style={{ width: "342px", height: "300px" }}
-                />
-              </div>
-              <p className="text-[24px] text-slate-700">메뉴 이름</p>
-              <p className="text-[18px] text-slate-700 font-semibold">가격</p>
-            </li>
-            <li className="flex flex-col gap-[10px]">
-              <div className="w-full h-[300px] bg-slate-200 rounded-[16px]">
-                <Skeleton.Image
-                  active={false}
-                  size="large"
-                  style={{ width: "342px", height: "300px" }}
-                />
-              </div>
-              <p className="text-[24px] text-slate-700">메뉴 이름</p>
-              <p className="text-[18px] text-slate-700 font-semibold">가격</p>
-            </li>
-            <li className="flex flex-col gap-[10px]">
-              <div className="w-full h-[300px] bg-slate-200 rounded-[16px]">
-                <Skeleton.Image
-                  active={false}
-                  size="large"
-                  style={{ width: "342px", height: "300px" }}
-                />
-              </div>
-              <p className="text-[24px] text-slate-700">메뉴 이름</p>
-              <p className="text-[18px] text-slate-700 font-semibold">가격</p>
-            </li>
+            {contentData ? (
+              menuListArr.map((item, index) => {
+                return (
+                  <li className="min-w-[342px] w-full flex flex-col flex-1 gap-[10px]">
+                    {/* 이미지 */}
+                    <div className="w-full h-[300px] bg-slate-200 rounded-[16px] overflow-hidden">
+                      <img
+                        src={`${MenuPic}${contentData.strfId}/menu/${item.menuPic}`}
+                        alt={item.menuTitle}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {/* 정보 */}
+                    <div>
+                      <p className="text-[24px] text-slate-700">
+                        {item.menuTitle}
+                      </p>
+                      <p className="text-[18px] text-slate-700 font-semibold">
+                        {item.menuPrice.toLocaleString()}원
+                      </p>
+                    </div>
+                  </li>
+                );
+              })
+            ) : (
+              <li className="flex flex-col gap-[10px]">
+                <div className="w-full h-[300px] bg-slate-200 rounded-[16px]">
+                  <Skeleton.Image
+                    active={false}
+                    size="large"
+                    style={{ width: "342px", height: "300px" }}
+                  />
+                </div>
+                <p className="text-[24px] text-slate-700">메뉴 이름</p>
+                <p className="text-[18px] text-slate-700 font-semibold">가격</p>
+              </li>
+            )}
           </ul>
         </div>
       )}
       {/* 메뉴: 관광지 */}
-      {type === "TOUR" && (
+      {type === "TOUR" && contentData.menu.length > 0 ? (
         <div className="w-full flex flex-col gap-[20px]">
           <h2 className="text-[28px] font-semibold text-slate-700">예매</h2>
           <ul>
@@ -322,7 +318,7 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
             </li>
           </ul>
         </div>
-      )}
+      ) : null}
       {/* 메뉴: 축제 */}
       {type === "FESTIVAL" && (
         <div className="w-full flex flex-col gap-[20px]">
