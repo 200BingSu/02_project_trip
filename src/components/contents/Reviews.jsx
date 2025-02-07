@@ -3,8 +3,9 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { LiaComment } from "react-icons/lia";
 import ReviewImage from "./ReviewImage";
 import axios from "axios";
-import { data, useSearchParams } from "react-router-dom";
-
+import { data, useNavigate, useSearchParams } from "react-router-dom";
+import { getCookie } from "../../utils/cookie";
+import TitleHeader from "../layout/header/TitleHeader";
 
 const Reviews = () =>
   // {
@@ -14,10 +15,13 @@ const Reviews = () =>
   // setReviewIndex,
   // }
   {
+    // 쿠키
+    const accessToken = getCookie("accessToken");
+
     //useState
     const [selectedReview, setSelectedReview] = useState(null);
     const [reviewsData, setReviewsData] = useState([]);
-    const [reviewIndex, setReviewIndex] = useState(6);
+    const [reviewIndex, setReviewIndex] = useState(0);
     //쿼리스트링
     const [searchParams] = useSearchParams();
     const strfId = searchParams.get("strfId");
@@ -25,27 +29,29 @@ const Reviews = () =>
     useEffect(() => {
       console.log("리뷰 목록:", reviewsData);
     }, [reviewsData]);
+    // useEffect(() => {
+    //   console.log("reviewIndex:", reviewIndex);
+    // }, [reviewIndex]);
 
     //getReviews
     const getReview = useCallback(async () => {
-      const sendData = {
-        page: 1,
-        size: reviewIndex,
-        strfId: parseInt(strfId),
-      };
-      // console.log("리뷰 불러오기 리퀘스트:", sendData);
+      console.log("지금 보내는 lastIndex", reviewIndex);
       try {
         const res = await axios.get(
-          `/api/review?page=1&size=${reviewIndex}&strfId=${strfId}`,
+          `/api/review?strf_id=${strfId}&last_index=${reviewIndex}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
         );
-        console.log("리뷰 더 불러오기:", res.data);
-        setReviewsData(res.data.data);
+        console.log("리뷰 불러오기:", res.data);
+        setReviewsData([...reviewsData, ...res.data]);
         setReviewIndex(prev => prev + 10);
       } catch (error) {
-        console.log("리뷰 더 불러오기:", error);
+        console.log("리뷰 불러오기:", error);
       }
     }, []);
-
 
     useEffect(() => {
       getReview();
@@ -57,7 +63,6 @@ const Reviews = () =>
         <p>
           {/* <span>{(contentData?.ratingTotalCnt || 1000).toLocaleString()}</span>
         개의 리뷰 */}
-
         </p>
         {/* 리뷰 리스트 */}
         {reviewsData ? (
@@ -120,7 +125,10 @@ const Reviews = () =>
                     </button>
                   </div>
                   {/* 사진 */}
-                  <ReviewImage imgArr={item.reviewPics} />
+                  <ReviewImage
+                    imgArr={item.reviewPic}
+                    reviewId={item.reviewId}
+                  />
                 </li>
               );
             })}
@@ -141,6 +149,5 @@ const Reviews = () =>
       </div>
     );
   };
-
 
 export default memo(Reviews);

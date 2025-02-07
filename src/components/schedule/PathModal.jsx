@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { BiNavigation } from "react-icons/bi";
 import { useRecoilState } from "recoil";
@@ -9,27 +8,36 @@ import { getCookie } from "../../utils/cookie";
 import { matchPathTypeIcon } from "../scheduleboard/ScheduleDay";
 import dayjs from "dayjs";
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
-const PathModal = ({ contentData }) => {
+const PathModal = ({
+  contentData,
+  selectPath,
+  setSelectPath,
+  setOpenPathModal,
+}) => {
   // cookie
   const accessToken = getCookie("accessToken");
   //recoil
   const [trip, setTrip] = useRecoilState(tripAtom);
-
+  // useNavigate
+  const navigate = useNavigate();
+  const navigateTrip = () => {
+    navigate(`/schedule/index?tripId=${trip.nowTripId}`);
+  };
   useEffect(() => {
     console.log("trip", trip);
   }, [trip]);
   //useState
   const [pathData, setPathData] = useState();
-  const [selectPath, setSelectPath] = useState({});
+
   useEffect(() => {
     console.log(pathData);
   }, [pathData]);
 
-
   // 모달창
   const handleBackgroundClick = () => {
-    setMemoModal(false);
+    setOpenPathModal(false);
   };
   const handleModalClick = e => {
     e.stopPropagation();
@@ -49,6 +57,7 @@ const PathModal = ({ contentData }) => {
         },
       );
       const resultData = res.data;
+      console.log("길찾기 결과", resultData);
       setPathData(resultData.data);
     } catch (error) {
       console.log("길찾기 결과", error);
@@ -70,11 +79,15 @@ const PathModal = ({ contentData }) => {
     };
     console.log("sendData", sendData);
     try {
-      const res = await axios.post(`/api/schedule`, sendData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      const res = await axios.post(
+        `/api/schedule`,
+        { ...sendData },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
       console("일정등록 결과", res.data);
     } catch (error) {
       console.log("일정등록 결과", error);
@@ -106,7 +119,6 @@ const PathModal = ({ contentData }) => {
                 flex items-end justify-center
                 bg-[rgba(0,0,0,0.5)]
                 "
-
       onClick={() => {
         handleBackgroundClick();
       }}
@@ -183,7 +195,6 @@ const PathModal = ({ contentData }) => {
         >
           선택 완료
         </Button>
-
       </div>
     </div>
   );

@@ -207,16 +207,25 @@ import axios from "axios";
 import { REVIEW } from "../../constants/api";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
+import TitleHeader from "../../components/layout/header/TitleHeader";
+import { getCookie } from "../../utils/cookie";
 
 const PostReview = () => {
+  const accessToken = getCookie("accessToken");
   // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   useEffect(() => {
     console.log(userInfo);
   }, [userInfo]);
+  //useNavigate
+  const navigate = useNavigate();
+  const navigateBack = () => {
+    navigate(-1);
+  };
   const [form] = Form.useForm();
+  //useState
   const [fileList, setFileList] = useState([]);
   //쿼리스트링
   const [searchParmas] = useSearchParams();
@@ -259,15 +268,11 @@ const PostReview = () => {
     }
     console.log("보낸 데이터", [...formData]);
     try {
-      const response = await jwtAxios.post(
-        `${REVIEW.postReview}`,
-        formData,
-        //   {
-        //   headers: {
-        //     "Content-Type": "multipart/form-data",
-        //   },
-        // }
-      );
+      const response = await axios.post(`${REVIEW.postReview}`, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       console.log(response.data);
     } catch (error) {
       console.error(error);
@@ -275,44 +280,47 @@ const PostReview = () => {
   };
 
   return (
-    <Form
-      form={form}
-      onFinish={onFinish}
-      layout="vertical"
-      initialValues={{ userId: userInfo.userId, strfId: strfId }}
-    >
-      <Form.Item label="userId" name="userId">
-        <Input value={userInfo.userId} />
-      </Form.Item>
-      <Form.Item label="strfId" name="strfId">
-        <Input value={strfId} />
-      </Form.Item>
-      <Form.Item label="rating" name="rating">
-        <Rate />
-      </Form.Item>
+    <div>
+      <TitleHeader icon="back" onClick={navigateBack} />
+      <Form
+        form={form}
+        onFinish={onFinish}
+        layout="vertical"
+        initialValues={{ userId: userInfo.userId, strfId: strfId }}
+      >
+        <Form.Item label="userId" name="userId">
+          <Input value={userInfo.userId} />
+        </Form.Item>
+        <Form.Item label="strfId" name="strfId">
+          <Input value={strfId} />
+        </Form.Item>
+        <Form.Item label="rating" name="rating">
+          <Rate />
+        </Form.Item>
 
-      <Form.Item label="content" name="content">
-        <Input.TextArea rows={4} />
-      </Form.Item>
+        <Form.Item label="content" name="content">
+          <Input.TextArea rows={4} />
+        </Form.Item>
 
-      <Form.Item label="Upload" name="file">
-        <Upload
-          listType="picture"
-          beforeUpload={() => false} // 파일 자동 업로드 방지
-          fileList={fileList}
-          onChange={handleChange}
-          multiple
-        >
-          <Button icon={<UploadOutlined />}>Click to Upload</Button>
-        </Upload>
-      </Form.Item>
+        <Form.Item label="Upload" name="file">
+          <Upload
+            listType="picture"
+            beforeUpload={() => false} // 파일 자동 업로드 방지
+            fileList={fileList}
+            onChange={handleChange}
+            multiple
+          >
+            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+          </Upload>
+        </Form.Item>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 

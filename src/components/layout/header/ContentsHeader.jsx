@@ -48,11 +48,15 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
     };
     console.log("찜하기 데이터:", sendData);
     try {
-      const res = await axios.post(`/api/wish-list`, sendData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      const res = await axios.post(
+        `/api/wish-list`,
+        { ...sendData },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
       console.log("찜하기", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {

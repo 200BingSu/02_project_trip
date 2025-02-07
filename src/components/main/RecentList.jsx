@@ -4,7 +4,14 @@ import { Rate } from "antd";
 import { useNavigate } from "react-router-dom";
 import { ProductPic } from "../../constants/pic";
 
-const RecentList = ({ recent }) => {
+const RecentList = ({
+  recent,
+  getMainList,
+  setFestivities,
+  setLocations,
+  setRecent,
+  setRecommend,
+}) => {
   // navigate
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("STAY");
@@ -16,6 +23,33 @@ const RecentList = ({ recent }) => {
   };
 
   const activeTabData = recent.find(item => item.category === activeTab);
+
+  // 찜하기
+  const postWishList = async item => {
+    const sendData = {
+      strfId: item.strfId,
+    };
+    console.log("찜하기 데이터:", sendData);
+    try {
+      const res = await axios.post(
+        `/api/wish-list`,
+        { ...sendData },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log("찜하기", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        getMainList();
+      }
+    } catch (error) {
+      console.log("찜하기", error);
+    }
+  };
+
   // recent가 비어있으면 null을 반환하여 아무것도 렌더링하지 않음
   if (!recent || recent.length === 0) {
     return null;
@@ -50,11 +84,14 @@ const RecentList = ({ recent }) => {
           >
             <div className="w-[164px] h-[164px] rounded-[16px] relative overflow-hidden flex-1">
               <img
-                src={`${ProductPic}${content.strfId}${content.strfPic}`}
+                src={`${ProductPic}${content.strfId}/${content.strfPic}`}
                 alt={content.strfTitle}
                 className="h-full"
               />
-              <i className="absolute top-2.5 right-2.5 cursor-pointer">
+              <i
+                className="absolute top-2.5 right-2.5 cursor-pointer"
+                onClick={() => postWishList(item)}
+              >
                 {content.wishIn ? (
                   <AiFillHeart className="text-secondary3 text-xl" />
                 ) : (

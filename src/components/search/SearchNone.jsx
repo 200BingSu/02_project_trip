@@ -10,8 +10,13 @@ import { ProductPic } from "../../constants/pic";
 
 import { useNavigate } from "react-router-dom";
 
-
-const SearchNone = ({ searchData, setSearchValue }) => {
+const SearchNone = ({
+  searchData,
+  setSearchData,
+  setSearchValue,
+  searchValue,
+  setSearchState,
+}) => {
   const accessToken = getCookie("accessToken");
   // recoil
   const { userId } = useRecoilValue(userAtom);
@@ -60,12 +65,32 @@ const SearchNone = ({ searchData, setSearchValue }) => {
   const handleClickWord = word => {
     console.log("클릭한 인기 검색어:", word);
     setSearchValue(word.strfName);
+    // navigate(`/contents/index?strfId=${item.strfId}`);
     // 추가 동작 (예: 검색 실행, 페이지 이동 등)
   };
 
   const handleClickList = item => {
     console.log(item);
     navigate(`/contents/index?strfId=${item.strfId}`);
+  };
+  //검색어 클릭
+  const postSearchAll = async () => {
+    const sendData = { search_word: searchValue };
+    try {
+      const res = await axios.post(
+        `/api/search/all?search_word=${searchValue}`,
+        { ...sendData },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      setSearchData(resultData.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -118,9 +143,7 @@ const SearchNone = ({ searchData, setSearchValue }) => {
                 <li
                   key={index}
                   className="flex cursor-pointer items-center justify-between"
-
                   onClick={() => handleClickList(item)}
-
                 >
                   <div className="flex gap-[15px]">
                     <div className="w-[80px] h-[80px] rounded-2xl overflow-hidden">
@@ -128,9 +151,7 @@ const SearchNone = ({ searchData, setSearchValue }) => {
                         className="w-full h-full object-cover"
                         src={
                           item.strfPic
-
                             ? `${ProductPic}${item.strfId}/${item.strfPic}`
-
                             : "/public/images/logo_icon_4.png"
                         }
                         alt={item.strfName}
