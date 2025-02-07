@@ -13,7 +13,18 @@ const UserTrips = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [useProfile, setUseProfile] = useState([]);
   const [tripListData, setTripListData] = useState({});
+
   const [form] = Form.useForm();
+
+  const [code, setCode] = useState("");
+  const [category, setCategory] = useState(0);
+  useEffect(() => {
+    console.log("tripListData", tripListData);
+  }, [tripListData]);
+  useEffect(() => {
+    console.log("카테고리", category);
+  }, [category]);
+  // 미완료 여행 목록 불러오기
 
   const getTripList = async () => {
     try {
@@ -32,6 +43,24 @@ const UserTrips = () => {
       console.log("여행 목록 불러오기:", error);
     }
   };
+
+  // 구성원 추가
+  const postTripUser = async () => {
+    const sendData = {
+      inviteKey: code,
+    };
+    try {
+      const res = await axios.post(`/api/trip/user`, sendData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("구성원추가", res.data);
+    } catch (error) {
+      console.log("구성원 추가", error);
+    }
+  };
+
 
   useEffect(() => {
     if (userInfo.accessToken) {
@@ -81,6 +110,12 @@ const UserTrips = () => {
         <Input
           placeholder="친구와 여행을 함께하기 위해 코드를 입력해주세요"
           className="px-[32px] py-[20px] h-[79px]"
+          onChange={e => setCode(e.target.value)}
+          onKeyDown={e => {
+            if (e.code === "Enter") {
+              postTripUser();
+            }
+          }}
         />
       </div>
       {/* 여행 리스트 카테고리 */}
@@ -110,7 +145,13 @@ const UserTrips = () => {
           <ul className="flex flex-col gap-[40px]">
             {tripListData?.beforeTripList?.map((item, index) => {
               return (
-                <li className="flex items-center justify-between" key={index}>
+                <li
+                  className="flex items-center justify-between"
+                  key={index}
+                  onClick={() => {
+                    navigateGoTrip(item);
+                  }}
+                >
                   {/* 좌측 */}
                   <div className="flex items-center gap-[29px]">
                     {/* 이미지 */}
@@ -128,12 +169,7 @@ const UserTrips = () => {
                     </div>
                   </div>
                   {/* 우측 */}
-                  <button
-                    className="w-[36px] h-[36px] bg-slate-100 px-[10px] py-[10px] rounded-full"
-                    onClick={() => {
-                      navigateGoTrip(item);
-                    }}
-                  >
+                  <button className="w-[36px] h-[36px] bg-slate-100 px-[10px] py-[10px] rounded-full">
                     <AiOutlinePlus className="text-slate-400" />
                   </button>
                 </li>
@@ -146,7 +182,13 @@ const UserTrips = () => {
           <ul className="flex flex-col gap-[40px]">
             {tripListData.afterTripList?.map((item, index) => {
               return (
-                <li className="flex items-center justify-between" key={index}>
+                <li
+                  className="flex items-center justify-between"
+                  key={index}
+                  onClick={() => {
+                    navigateGoTrip(item);
+                  }}
+                >
                   {/* 좌측 */}
                   <div className="flex items-center gap-[29px]">
                     {/* 이미지 */}
@@ -164,12 +206,7 @@ const UserTrips = () => {
                     </div>
                   </div>
                   {/* 우측 */}
-                  <button
-                    className="w-[36px] h-[36px] bg-slate-100 px-[10px] py-[10px] rounded-full"
-                    onClick={() => {
-                      navigateGoTrip(item);
-                    }}
-                  >
+                  <button className="w-[36px] h-[36px] bg-slate-100 px-[10px] py-[10px] rounded-full">
                     <AiOutlinePlus className="text-slate-400" />
                   </button>
                 </li>

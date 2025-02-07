@@ -13,7 +13,7 @@ import {
   FaTrainSubway,
 } from "react-icons/fa6";
 import { FaSwimmingPool } from "react-icons/fa";
-import { Modal, Rate, Skeleton, Tabs } from "antd";
+import { message, Modal, Rate, Skeleton, Tabs } from "antd";
 import {
   AiFillHeart,
   AiOutlineFundView,
@@ -72,6 +72,17 @@ export const categoryKor = category => {
 };
 
 const ContentIndex = () => {
+  // antD
+  const [messageApi, contextHolder] = message.useMessage();
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "일정 추가가 완료되었습니다",
+      style: {
+        marginTop: "20vh",
+      },
+    });
+  };
   // 쿼리 스트링 조회
   const [searchParams] = useSearchParams();
   const strfType = searchParams.get("strf");
@@ -81,23 +92,27 @@ const ContentIndex = () => {
   // console.log("userId", userId);
 
   // console.log("토큰", accessToken);
-  const [tripId, setTripId] = useRecoilState(tripAtom);
+  const [trip, setTrip] = useRecoilState(tripAtom);
   useEffect(() => {
-    console.log("tripId", tripId);
-  }, [tripId]);
+    console.log("trip", trip);
+  }, [trip]);
   // useNavigate
   const navigate = useNavigate();
   const navigatePostReview = () => {
     navigate(`/contents/postreview?strfId=${strfId}`, { state: contentData });
   };
+  const navigateTrip = () => {
+    navigate(`/schedule/index?tripId=${trip.nowTripId}`);
+  };
   //useState
-  const [contentData, setContentData] = useState(null);
+  const [contentData, setContentData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(true);
   const [isRegistModalOpen, setIsRegistModalOpen] = useState(false);
   const [openBusinessTime, setOpenBusinessTime] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-
+  const [selectPath, setSelectPath] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   // const [reviewsData, setReviewsData] = useState([]);
   // const [reviewIndex, setReviewIndex] = useState(6);
 
@@ -126,12 +141,45 @@ const ContentIndex = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  // 일정 등록 모달
+  // 일정 등록
+  const postSchedule = async () => {
+    const sendData = {
+      seq: trip.lastSeq + 1,
+      day: trip.day ? trip.day : 1,
+      time: selectPath.totalTime ? selectPath.totalTime : null,
+      distance: selectPath.totalDistance ? selectPath.totalDistance : null,
+      strf_id: contentData.strfId,
+      trip_id: trip.nowTripId,
+      path_type: selectPath.path_type ? selectPath.path_type : null,
+    };
+    console.log("sendData", sendData);
+    try {
+      const res = await axios.post(
+        `/api/schedule`,
+        { ...sendData },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log("일정등록 결과", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        success();
+      }
+    } catch (error) {
+      console.log("일정등록 결과", error);
+    }
+  };
+  // 일정 추가 클릭
   const showRegistModal = () => {
-    if (tripId === 0) {
+    if (trip.nowTripId === 0) {
       setIsRegistModalOpen(true);
-    } else {
+    } else if (trip.lastSeq !== 0) {
       setOpenPathModal(true);
+    } else {
+      postSchedule();
     }
   };
   const handleRegistOk = () => {
@@ -165,6 +213,7 @@ const ContentIndex = () => {
       );
       const resultData = res.data.data;
       // console.log("resultData", resultData);
+
       setContentData(resultData);
     } catch (error) {
       console.log("상품조회", error);
@@ -174,18 +223,15 @@ const ContentIndex = () => {
   const getDetailMember = async () => {
     // console.log("sendData:", sendData);
     try {
-      const res = await axios.get(
-        `/api/detail/member?user_id=${userId}&strf_id=${strfId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      const res = await axios.get(`/api/detail/member?&strf_id=${strfId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+      });
 
       // console.log(res.data);
       const resultData = res.data.data;
-      // console.log("상품조회-회원", resultData);
+      console.log("상품조회-회원", resultData);
 
       setContentData(resultData);
     } catch (error) {
@@ -263,7 +309,11 @@ const ContentIndex = () => {
       {/* 메인 썸네일 */}
       <div className="w-full h-[467px] bg-gray-200">
         <img
-          src={`${ProductPic}${strfId}/${contentData?.strfPics[0].pic}`}
+          src={
+            contentData?.strfPics?.[0]?.pic
+              ? `${ProductPic}${strfId}/${contentData.strfPics[0].pic}`
+              : ""
+          }
           alt={contentData?.strfTitle || ""}
           className="w-full h-full object-cover"
           ref={imgRef}
@@ -298,7 +348,11 @@ const ContentIndex = () => {
               </p>
               <p className="text-[16px] text-primary underline">
                 리뷰{" "}
-                {(contentData ? contentData.reviewCnt : 0).toLocaleString()}개
+                {(contentData.reviewCnt
+                  ? contentData.reviewCnt
+                  : 0
+                ).toLocaleString()}
+                개
               </p>
             </div>
             <p className="text-[16px] text-slate-300 font-light">|</p>
@@ -469,7 +523,14 @@ const ContentIndex = () => {
         <AmenityModal handleCancel={handleCancel} amenities={amenities} />
       ) : null}
 
-      {openPathModal ? <PathModal contentData={contentData} /> : null}
+      {openPathModal ? (
+        <PathModal
+          setOpenPathModal={setOpenPathModal}
+          contentData={contentData}
+          selectPath={selectPath}
+          setSelectPath={setSelectPath}
+        />
+      ) : null}
     </div>
   );
 };

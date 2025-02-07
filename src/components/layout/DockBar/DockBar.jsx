@@ -4,9 +4,30 @@ import { FiSearch } from "react-icons/fi";
 import { IoReaderOutline } from "react-icons/io5";
 import { RiMapPinUserFill } from "react-icons/ri";
 import { HiOutlineMap } from "react-icons/hi2";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { tripAtom } from "../../../atoms/tripAtom";
+import { userAtom } from "../../../atoms/userAtom";
+import { message } from "antd";
 
 const DockBar = React.memo(() => {
+  //recoil
+  const { userId, accessToken } = useRecoilValue(userAtom);
+  //useNavigate
+  const navigate = useNavigate();
+  //antD
+  const [messageApi, contextHolder] = message.useMessage();
+  const info = () => {
+    console.log("info 작동");
+    messageApi.open({
+      type: "info",
+      content: "로그인이 필요한 서비스입니다.",
+      style: {
+        marginTop: "20vh",
+      },
+    });
+  };
+
   return (
     <div className="flex max-w-3xl w-full h-[100px] sticky bottom-0 left-0 bg-white z-50 shadow-[0px_-4px_8px_0px_rgba(99,99,99,0.05)]">
       <Link
@@ -16,13 +37,20 @@ const DockBar = React.memo(() => {
         <FiSearch className="text-4xl" />
         검색
       </Link>
-      <Link
-        to="/search/location"
+      <button
+        type="button"
+        onClick={() => {
+          if (userId === 0) {
+            info();
+          } else {
+            navigate("/search/location");
+          }
+        }}
         className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
       >
         <HiOutlineMap className="text-4xl" />
         일정
-      </Link>
+      </button>
       <Link
         to="/"
         className="bg-primary text-white w-[102px] h-[102px] rounded-full flex flex-col justify-center items-center gap-1.5 relative bottom-5"

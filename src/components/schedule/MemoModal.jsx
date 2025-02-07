@@ -6,6 +6,7 @@ import { useRecoilState } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
 
 const MemoModal = ({ setMemoModal, tripId, data, getTrip, setTripData }) => {
+  console.log("메모에서 읽는 data", data);
   // recoil
   const [trip, setTrip] = useRecoilState(tripAtom);
   const accessToken = getCookie("accessToken");
@@ -24,19 +25,25 @@ const MemoModal = ({ setMemoModal, tripId, data, getTrip, setTripData }) => {
   };
   //메모 추가하기
   const postMemo = async content => {
+    const lastSeq =
+      data.schedules.length > 0 ? data.schedules[schedules.length - 1].seq : 0;
     const sendData = {
       trip_id: trip.nowTripId,
       day: data.day,
-      seq: 1,
+      seq: lastSeq + 1,
       content: content,
     };
     console.log(sendData);
     try {
-      const res = await axios.post(`/api/memo/post`, sendData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      const res = await axios.post(
+        `/api/memo/post`,
+        { ...sendData },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
       // console.log("메모 추가", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {

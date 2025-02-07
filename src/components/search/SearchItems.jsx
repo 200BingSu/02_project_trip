@@ -5,9 +5,23 @@ import { useNavigate } from "react-router-dom";
 import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import { ProductPic } from "../../constants/pic";
+import { getCookie } from "../../utils/cookie";
 
 const SearchItems = forwardRef(
-  ({ type, data, searchValue, setSearchData }, ref) => {
+  (
+    {
+      type,
+      name,
+      data,
+      searchValue,
+      searchData,
+      setSearchData,
+      setSelectedCate,
+    },
+    ref,
+  ) => {
+    // 쿠키
+    const accessToken = getCookie("accessToken");
     //useNavigate
     const navigate = useNavigate();
     const handleClickList = item => {
@@ -24,33 +38,43 @@ const SearchItems = forwardRef(
     const getSearchListMore = async data => {
       try {
         const res = await axios.get(
-          `/api/search/category?last_index=${dataIndex}&category=${type}&search_word=%EB%B6%80%EC%82%B0`,
+          `/api/search/category?last_index=${dataIndex}&category=${type}&search_word=${searchValue}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
         );
         console.log("더보기 결과:", res.data);
         const resultData = res.data;
-        setSearchData(resultData.data);
+        setSearchData([...searchData, ...resultData.data]);
+        setDataIndex(prev => prev + 10);
       } catch (error) {
         console.log("더보기 에러:", error);
       }
     };
     // 더보기 버튼 클릭
     const handleClickButton = () => {
-      getSearchListMore();
-      setDataIndex(prev => prev + 4);
+      console.log(type);
+      setSelectedCate(type);
+      // if (type === "all") {
+      //   moveTo();
+      // }
+      // getSearchListMore();
     };
 
     return (
       <div ref={ref} className="flex flex-col gap-[20px] items-center">
         <h2 className="w-full text-[24px] font-semibold text-slate-700">
-          {type}
+          {name}
         </h2>
         <ul className="w-full flex flex-col gap-[20px] mb-[30px]">
           {data ? (
-            data.map(item => {
+            data.map((item, index) => {
               return (
                 <li
-                  className="flex gap-[20px] items-center"
-                  key={item.strfId}
+                  className="flex gap-[20px] items-center cursor-pointer"
+                  key={index}
                   onClick={() => {
                     handleClickList(item);
                   }}
