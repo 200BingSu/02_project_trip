@@ -1,36 +1,20 @@
-import { useNavigate } from "react-router-dom";
-import TitleHeader from "../../components/layout/header/TitleHeader";
 import { Form, Input } from "antd";
-import axios from "axios";
-import { getCookie } from "../../utils/cookie";
 import { useEffect, useState } from "react";
-import { LocationPic } from "../../constants/pic";
 import { AiOutlinePlus } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../../atoms/userAtom";
+import TitleHeader from "../../components/layout/header/TitleHeader";
+import { ProfilePic } from "../../constants/pic";
+import { getCookie } from "../../utils/cookie";
 
 const categoryArr = ["다가오는 여행", "완료된 여행"];
 const UserTrips = () => {
-  const [form] = Form.useForm();
-  const accessToken = getCookie("accessToken");
-  // useNavigate
-  const navigate = useNavigate();
-  const navigateBack = () => {
-    navigate(-1);
-  };
-  const navigateGoTrip = item => {
-    console.log(item);
-    navigate(`/schedule/index?tripId=${item.tripId}`);
-  };
-  //useState
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const [useProfile, setUseProfile] = useState([]);
   const [tripListData, setTripListData] = useState({});
+  const [form] = Form.useForm();
 
-  const [category, setCategory] = useState(0);
-  useEffect(() => {
-    console.log("tripListData", tripListData);
-  }, [tripListData]);
-  useEffect(() => {
-    console.log("카테고리", category);
-  }, [category]);
-  // 미완료 여행 목록 불러오기
   const getTripList = async () => {
     try {
       const res = await axios.get(`/api/trip-list`, {
@@ -48,23 +32,48 @@ const UserTrips = () => {
       console.log("여행 목록 불러오기:", error);
     }
   };
+
   useEffect(() => {
-    getTripList();
+    if (userInfo.accessToken) {
+      getTripList();
+    }
   }, []);
+  // useNavigate
+  const navigate = useNavigate();
+  const navigateBack = () => {
+    navigate(-1);
+  };
+  const navigateGoTrip = item => {
+    console.log(item);
+    navigate(`/schedule/index?tripId=${item.tripId}`);
+  };
+
+  const [category, setCategory] = useState(0);
+
+  useEffect(() => {
+    console.log("카테고리", category);
+  }, [category]);
+  // 미완료 여행 목록 불러오기
+
+  console.log("✅  useProfile:", useProfile);
+  console.log("tripListData", tripListData);
 
   return (
     <div className="flex flex-col gap-[30px]">
       <TitleHeader icon="back" title="여행" onClick={navigateBack} />
       {/* 유저 정보 */}
-      <div
-        className="mt-[90px] flex flex-col gap-[14px] items-center justify-center
-                        w-full"
-      >
+      <div className="mt-[90px] flex flex-col gap-[14px] items-center justify-center w-full">
         {/* 프로필 이미지 */}
         <div className="w-[120px] h-[120px] rounded-full overflow-hidden bg-slate-100">
-          <img src="" alt="유저 이미지" className="w-full h-full" />
+          <img
+            src={`${ProfilePic}${userInfo?.userId}/${useProfile?.profilePic}`}
+            alt="유저 이미지"
+            className="w-full h-full"
+          />
         </div>
-        <p className="text-[30px] text-slate-700 font-bold">닉네임</p>
+        <p className="text-[30px] text-slate-700 font-bold">
+          {/* {useProfile?.name} */}
+        </p>
       </div>
       {/* 여행코드 입력창 */}
       <div className="px-[32px] flex flex-col gap-[5px]">
@@ -99,7 +108,7 @@ const UserTrips = () => {
         {/* 다가오는 여행 */}
         {category === 0 && (
           <ul className="flex flex-col gap-[40px]">
-            {tripListData.beforeTripList?.map((item, index) => {
+            {tripListData?.beforeTripList?.map((item, index) => {
               return (
                 <li className="flex items-center justify-between" key={index}>
                   {/* 좌측 */}
@@ -172,4 +181,5 @@ const UserTrips = () => {
     </div>
   );
 };
+
 export default UserTrips;

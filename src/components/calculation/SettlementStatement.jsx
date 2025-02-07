@@ -3,18 +3,30 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { ProfilePic } from "../../constants/pic";
 import { BiSolidEditAlt } from "react-icons/bi";
+import ModifySalculation from "./ModifySalculation";
 
 const SettlementStatement = ({
   deId,
   getCookie,
   isStatementOpen,
   setIsStatementOpen,
+  isValue,
+  setIsValue,
+  storeName,
+  setStoreName,
+  budgeting,
+  setBudgeting,
+  paidUserList,
+  getExpenses,
+  setPaidUserList,
+  getBudgeting,
 }) => {
+  console.log("SettlementStatement : ", deId);
   const [isReceipt, setIsReceipt] = useState([]);
+  const [isModifyOpen, setIsModifyOpen] = useState(false);
   const accessToken = getCookie("accessToken");
-  console.log("deId 내놔", deId);
+
   const getStatement = async () => {
-    if (!isStatementOpen || !deId) return; // ✅ deId가 없으면 요청하지 않음
     try {
       const res = await axios.get(
         `/api/expense/select?de_id=${deId}&trip_id=1`,
@@ -24,26 +36,29 @@ const SettlementStatement = ({
           },
         },
       );
+      console.log("✅ 최신 데이터:", res.data.data);
       setIsReceipt(res.data.data);
-      console.log("isReceipt", isReceipt);
-      console.log("amount", amount);
-      console.log("✅  getStatement :", res.data.data);
     } catch (error) {
       console.log("✅  error:", error);
     }
   };
 
   useEffect(() => {
-    getStatement();
-  }, [deId]);
+    if (isStatementOpen && deId && accessToken) {
+      console.log("🔵 SettlementStatement getStatement 실행 중...");
+      getStatement();
+    }
+  }, [isStatementOpen]); // ✅ 모달이 열릴 때(getStatement 실행)
 
   const handleOk = () => {
     setIsStatementOpen(false);
+    setIsModifyOpen(true);
   };
 
   const handleCancel = () => {
     setIsStatementOpen(false);
   };
+
   return (
     <div>
       <Modal
@@ -69,12 +84,12 @@ const SettlementStatement = ({
             <h2 className="text-xl text-slate-500 font-semibold py-5 border-y-2 border-dashed border-slate-300">
               결제 금액
             </h2>
-            <div className="py-5">
+            <div className="py-5 flex items-center">
               <p className="text-xl text-slate-700 font-semibold mr-auto">
                 총 지출액
               </p>
               <p className="text-2xl font-bold text-slate-700">
-                {isReceipt.totalPrice}
+                {isReceipt.totalPrice?.toLocaleString()}원
               </p>
             </div>
           </div>
@@ -96,13 +111,33 @@ const SettlementStatement = ({
                       {item.name}
                     </p>
                   </div>
-                  <p className="text-2xl  text-slate-500">{item.price}원</p>
+                  <p className="text-2xl  text-slate-500">
+                    {item.price?.toLocaleString()}원
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </Modal>
+      <ModifySalculation
+        getCookie={getCookie}
+        getExpenses={getExpenses}
+        isModifyOpen={isModifyOpen}
+        setIsModifyOpen={setIsModifyOpen}
+        isReceipt={isReceipt}
+        setIsReceipt={setIsReceipt}
+        isValue={isValue}
+        setIsValue={setIsValue}
+        storeName={storeName}
+        setStoreName={setStoreName}
+        budgeting={budgeting}
+        setBudgeting={setBudgeting}
+        deId={deId}
+        paidUserList={paidUserList}
+        setPaidUserList={setPaidUserList}
+        getBudgeting={getBudgeting}
+      />
     </div>
   );
 };

@@ -1,6 +1,10 @@
-import { Button } from "antd";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { Button, message } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { FaTrashAlt } from "react-icons/fa";
+import { IoMdMore } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 import SettlementStatement from "../../components/calculation/SettlementStatement";
@@ -8,7 +12,6 @@ import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import Bill from "./calculation/Bill";
-import { useNavigate } from "react-router-dom";
 
 const Calculation = () => {
   const [amount, setAmount] = useState({});
@@ -16,6 +19,11 @@ const Calculation = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [isBillOpen, setIsBillOpen] = useState(false);
   const [isStatementOpen, setIsStatementOpen] = useState(false);
+  const [isValue, setIsValue] = useState("");
+  const [storeName, setStoreName] = useState("");
+  const [budgeting, setBudgeting] = useState([]);
+  const [paidUserList, setPaidUserList] = useState([]);
+
   const navigate = useNavigate();
 
   const accessToken = getCookie("accessToken");
@@ -27,15 +35,51 @@ const Calculation = () => {
         },
       });
       setAmount(res.data.data);
-      console.log("✅  res.data:", res.data.data);
+      console.log("✅  getExpenses:", res.data.data);
     } catch (error) {
       console.log("✅  getExpenses  error:", error);
       setAmount(null); // 에러 발생 시 null로 초기화
     }
   };
 
+  const getBudgeting = async () => {
+    try {
+      const res = await axios.get(`/api/expense/trip_user?trip_id=1`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("getBudgeting res", res);
+      setBudgeting(res.data.data);
+    } catch (error) {
+      console.log("✅  getBudgeting  error:", error);
+      setBudgeting([]);
+    }
+  };
+
+  const deleteExpenses = async deId => {
+    try {
+      const res = await axios.delete(`/api/expense`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        data: {
+          de_id: deId,
+          trip_id: 1,
+        },
+      });
+      message.success("삭제되었습니다.");
+      getExpenses();
+    } catch (error) {
+      console.log("✅  error:", error);
+      message.error("삭제에 실패했습니다.");
+    }
+  };
+
   useEffect(() => {
     getExpenses();
+    getBudgeting();
   }, []);
 
   return (
@@ -75,13 +119,16 @@ const Calculation = () => {
           {amount?.expensedList?.map(item => (
             <div
               key={item.deId}
-              className="cursor-pointer bg-white px-8 py-5 rounded-3xl mt-5"
-              onClick={() => {
-                setIsStatementOpen(true);
-                setSelectedDeId(item.deId);
-              }}
+              className="flex justify-between cursor-pointer bg-white px-8 py-5 rounded-3xl mt-5"
             >
-              <div className="">
+              <div
+                className="w-full"
+                onClick={() => {
+                  console.log("여기 클릭", item.deId);
+                  setSelectedDeId(item.deId);
+                  setIsStatementOpen(true);
+                }}
+              >
                 <p className="text-lg text-slate-500">{item.paidFor}</p>
                 <p className="mt-1 text-3xl text-slate-700 font-semibold">
                   {item.totalPrice?.toLocaleString()}원
@@ -110,6 +157,34 @@ const Calculation = () => {
                   </span>
                 </div>
               </div>
+              <Menu as="div" className="relative inline-block text-left">
+                <div>
+                  <MenuButton>
+                    <IoMdMore
+                      aria-hidden="true"
+                      className="size-9 text-slate-400"
+                    />
+                  </MenuButton>
+                </div>
+
+                <MenuItems
+                  transition
+                  className="absolute right-0 z-10  py-2 px-5 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                  onClick={e => {
+                    e.stopPropagation(); // 부모 요소의 onClick 이벤트가 실행되지 않도록 함
+                    deleteExpenses(item.deId);
+                  }}
+                >
+                  <div>
+                    <MenuItem>
+                      <p className="w-14 flex items-center gap-2 text-base text-error data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden z-[99]">
+                        <FaTrashAlt />
+                        삭제
+                      </p>
+                    </MenuItem>
+                  </div>
+                </MenuItems>
+              </Menu>
             </div>
           ))}
         </div>
@@ -121,22 +196,39 @@ const Calculation = () => {
           비용 추가
         </Button>
       </div>
-
       <div>
         <Bill
           getCookie={getCookie}
           isBillOpen={isBillOpen}
           setIsBillOpen={setIsBillOpen}
           userInfo={userInfo}
-          getExpenses={getExpenses} // getExpenses 함수 전달
+          getExpenses={getExpenses}
+          isValue={isValue}
+          setIsValue={setIsValue}
+          storeName={storeName}
+          setStoreName={setStoreName}
+          budgeting={budgeting}
+          setBudgeting={setBudgeting}
+          paidUserList={paidUserList}
+          setPaidUserList={setPaidUserList}
         />
       </div>
       <div>
         <SettlementStatement
-          deId={selectedDeId} // ✅ 선택된 deId 전달
+          getBudgeting={getBudgeting}
+          deId={selectedDeId}
           getCookie={getCookie}
           isStatementOpen={isStatementOpen}
           setIsStatementOpen={setIsStatementOpen}
+          isValue={isValue}
+          getExpenses={getExpenses}
+          setIsValue={setIsValue}
+          storeName={storeName}
+          setStoreName={setStoreName}
+          budgeting={budgeting}
+          setBudgeting={setBudgeting}
+          paidUserList={paidUserList}
+          setPaidUserList={setPaidUserList}
         />
       </div>
     </div>

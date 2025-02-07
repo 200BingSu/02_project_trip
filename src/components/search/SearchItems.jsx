@@ -12,7 +12,7 @@ const SearchItems = forwardRef(
     const navigate = useNavigate();
     const handleClickList = item => {
       console.log("클릭된 아이템", item);
-      navigate(`/contents?strfId=${item.strfId}`);
+      navigate(`/contents/index?strfId=${item.strfId}`);
     };
     // useState
     const [dataIndex, setDataIndex] = useState(4);
@@ -52,7 +52,7 @@ const SearchItems = forwardRef(
                   className="flex gap-[20px] items-center"
                   key={item.strfId}
                   onClick={() => {
-                    handleClickList();
+                    handleClickList(item);
                   }}
                 >
                   {/* 썸네일 */}
