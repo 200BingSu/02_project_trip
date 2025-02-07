@@ -9,9 +9,11 @@ import axios from "axios";
 import jwtAxios from "../../apis/jwt";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { userAtom } from "../../atoms/userAtom";
 import { getCookie } from "../../utils/cookie";
+import { Dropdown, Input } from "antd";
+import { MdContentCopy } from "react-icons/md";
 
 // const dummyDays = dummyData.days;
 const defaultData = {
@@ -22,7 +24,6 @@ const defaultData = {
 const ScheduleIndex = () => {
   const accessToken = getCookie("accessToken");
   // recoil
-
   const [trip, setTrip] = useRecoilState(tripAtom);
   useEffect(() => {
     console.log("trip", trip);
@@ -45,9 +46,67 @@ const ScheduleIndex = () => {
   };
   // useState
   const [tripData, setTripData] = useState({});
+  const [title, setTitle] = useState(tripData.title);
+  const [addLink, setAddLink] = useState("");
+  const [edit, setEdit] = useState(false);
   useEffect(() => {
     console.log("여행 데이터", tripData);
   }, [tripData]);
+  useEffect(() => {
+    console.log("링크", addLink);
+  }, [addLink]);
+  useEffect(() => {
+    console.log("title", title);
+  }, [title]);
+  // 여행 수정
+  const onChange = e => {
+    setTitle(e.target.value);
+  };
+
+  // URL
+  const getAddLink = async () => {
+    try {
+      const res = await axios.get(`/api/trip/add-link?trip_id=${tripId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log(res.data);
+      setAddLink(res.data.data);
+    } catch (error) {
+      console.log("초대코드", error);
+    }
+  };
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(addLink);
+      console.log("복사 성공");
+    } catch (err) {
+      console.error("복사 실패:", err);
+    }
+  };
+  const items = [
+    {
+      label: (
+        <div
+          onClick={() => handleCopy()}
+          className="flex flex-col gap-[10px] items-center justify-center"
+        >
+          <p className="bg-slate-100 px-[15px] py-[10px] rounded-lg text-slate-600">
+            {addLink}
+          </p>
+          <p className="flex items-center gap-1 border-b border-slate-300">
+            <i className="text-slate-500">
+              <MdContentCopy />
+            </i>
+            <span className="text-slate-500">초대코드 복사하기</span>
+          </p>
+        </div>
+      ),
+      key: "0",
+    },
+  ];
+
   // 여행 확인하기
   const getTrip = async () => {
     try {
@@ -56,7 +115,7 @@ const ScheduleIndex = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      // console.log("여행확인하기", res.data);
+      console.log("여행확인하기", res.data);
       const resultData = res.data.data;
       setTripData(resultData);
     } catch (error) {
@@ -65,6 +124,9 @@ const ScheduleIndex = () => {
   };
   useEffect(() => {
     getTrip();
+    if (tripData) {
+      setTitle(tripData.title);
+    }
   }, []);
 
   const tripDaysArr = tripData.days;
@@ -75,7 +137,7 @@ const ScheduleIndex = () => {
         onClick={navigateBack}
         rightContent={
           <RightContent
-            icon1={true}
+            icon1={false}
             icon2={true}
             icon2Click={navigatePostBoard}
             icon3={true}
@@ -95,21 +157,44 @@ const ScheduleIndex = () => {
               <IoSettingsOutline className="text-[24px] text-slate-300 bg-white" />
             </button>
           </div>
-          <h2 className="text-[36px] text-slate-700 font-bold">
-            {tripData.title}
-          </h2>
+          {edit ? (
+            <Input
+              placeholder="메모를 입력해주세요."
+              variant="borderless"
+              allowClear
+              onChange={e => {
+                onChange(e);
+              }}
+            />
+          ) : (
+            <h2 className="text-[36px] text-slate-700 font-bold">
+              {tripData.title}
+            </h2>
+          )}
         </div>
         {/* 버튼 */}
         <div className="flex items-center gap-[10px] px-[32px]">
-          <button
-            type="button"
-            className="flex items-center gap-[10px] 
+          <Dropdown
+            menu={{
+              items,
+            }}
+            trigger={["click"]}
+            overlayStyle={{ marginTop: "10px" }}
+          >
+            <a onClick={e => e.preventDefault()}>
+              <button
+                type="button"
+                className="flex items-center gap-[10px] 
             px-[15px] py-[10px] rounded-3xl
             text-white bg-primary"
-          >
-            <AiOutlinePlus /> 일행 추가하기
-          </button>
-          <button
+                onClick={() => getAddLink()}
+              >
+                <AiOutlinePlus />
+                초대 코드
+              </button>
+            </a>
+          </Dropdown>
+          {/* <button
             type="button"
             className="flex items-center gap-[10px] 
             px-[15px] py-[10px] rounded-3xl
@@ -117,7 +202,7 @@ const ScheduleIndex = () => {
           >
             <AiOutlinePlus className="text-slate-300" />
             숙소
-          </button>
+          </button> */}
           <button
             type="button"
             className="flex items-center gap-[10px] 

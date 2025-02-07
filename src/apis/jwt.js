@@ -25,7 +25,7 @@ const failReq = err => {
 const beforeRes = async res => {
   console.log("2. 요청의 결과 전처리", res);
   const result = await axios.get(`/api/user/access-token`);
-  setCookie(`accessToken`, result.data.accessToken);
+  setCookie(`accessToken`, result.data);
   return res;
 };
 // 리스폰스 실패
@@ -33,7 +33,7 @@ const beforeRes = async res => {
 const failRes = async err => {
   console.log(`failRes 에러`, err);
   const result = await axios.get(`/api/user/access-token`);
-  setCookie(`accessToken`, result.data.accessToken);
+  setCookie(`accessToken`, result.data);
   return Promise.reject(err);
 };
 

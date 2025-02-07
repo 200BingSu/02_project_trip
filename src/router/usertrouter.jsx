@@ -5,6 +5,8 @@ const usertrouter = () => {
   // const LazyUserIndex = lazy(() => import("../pages/user/UserIndex"));
   const LazyUserEdit = lazy(() => import("../pages/user/UserEdit"));
   const LazyUserTrips = lazy(() => import("../pages/user/UserTrips"));
+  const LazyUserBooking = lazy(() => import("../pages/user/UserBooking"));
+  const LazyUserWishList = lazy(() => import("../pages/user/UserWishList"));
   return [
     // {
     //   path: "mypage",
@@ -27,6 +29,22 @@ const usertrouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazyUserTrips />
+        </Suspense>
+      ),
+    },
+    {
+      path: "userbooking",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyUserBooking />
+        </Suspense>
+      ),
+    },
+    {
+      path: "userwishlist",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyUserWishList />
         </Suspense>
       ),
     },

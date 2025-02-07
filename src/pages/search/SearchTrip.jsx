@@ -1,7 +1,7 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
 import SearchBar from "../../components/search/SearchBar";
 import SearchList from "../../components/search/SearchList";
@@ -13,6 +13,7 @@ import { FiSearch } from "react-icons/fi";
 import SearchItems from "../../components/search/SearchItems";
 import { AiFillHeart, AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
 import { getCookie } from "../../utils/cookie";
+import { ProductPic } from "../../constants/pic";
 
 const strfArr = [
   { type: null, name: "전체" },
@@ -25,6 +26,10 @@ const strfArr = [
 const SearchTrip = () => {
   const accessToken = getCookie("accessToken");
   // recoil
+  const [trip, setTrip] = useRecoilState(tripAtom);
+  useEffect(() => {
+    console.log("trip", trip);
+  }, [trip]);
   const { nowTripId } = useRecoilValue(tripAtom);
   // 쿼리스트링
   const [searchParams] = useSearchParams();
@@ -194,8 +199,8 @@ const SearchTrip = () => {
                 {/* 썸네일 */}
                 <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px]">
                   <img
-                    src={item.picTitle}
-                    alt="thumbnail"
+                    src={`${ProductPic}${item.strfId}/${item.picTitle}`}
+                    alt={item.title}
                     className="w-full h-full object-cover"
                   />
                 </div>

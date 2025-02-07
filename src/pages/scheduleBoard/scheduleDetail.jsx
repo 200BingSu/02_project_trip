@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import TitleHeader, {
   RightContent,
 } from "../../components/layout/header/TitleHeader";
@@ -8,6 +8,10 @@ import { IoReaderOutline } from "react-icons/io5";
 import ScheduleDay from "../../components/scheduleboard/ScheduleDay";
 import { Button } from "antd";
 import { AiOutlineImport } from "react-icons/ai";
+import { Swiper } from "swiper/react";
+import axios from "axios";
+import { getCookie } from "../../utils/cookie";
+import { useEffect, useState } from "react";
 
 //dummyData
 const dummyData = [
@@ -188,11 +192,42 @@ const dummyData = [
 ];
 
 const ScheduleDetail = () => {
+  const accessToken = getCookie("accessToken");
+  // 쿼리스트링
+  const [searchParams] = useSearchParams();
+  const tripId = searchParams.get("tripId");
+  const TripReviewId = searchParams.get("TripReviewId");
   //useNavigate
   const navigate = useNavigate();
   const handleNavigateBack = () => {
     navigate(-1);
   };
+  //useState
+  const [tripReviewData, setTripReviewData] = useState({});
+  useEffect(() => {
+    console.log("tripReviewData", tripReviewData);
+  }, [tripReviewData]);
+  //다른 사용자의 여행기 조회
+  const getOtherTripReview = async () => {
+    try {
+      const res = await axios.get(
+        `/api/trip-review/otherTripReview?tripReviewId=${TripReviewId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      // console.log("다른 사람 여행기 조회", res.data);
+      const resultData = res.data;
+      setTripReviewData(resultData.data);
+    } catch (error) {
+      console.log("다른 사람 여행기 조회", error);
+    }
+  };
+  useEffect(() => {
+    getOtherTripReview();
+  }, []);
   return (
     <div>
       <TitleHeader
@@ -202,6 +237,9 @@ const ScheduleDetail = () => {
       />
       <div className="flex flex-col px-[32px] py-[30px] gap-[30px] mt-[60px]">
         {/* 이미지 */}
+        <Swiper slidesPerView={1} spaceBetween={16} className="mySwiper">
+          {}
+        </Swiper>
         <div className="h-[406px] bg-slate-200">
           <img src="#" alt="thum" className="w-full h-full object-cover" />
         </div>
