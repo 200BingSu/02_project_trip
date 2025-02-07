@@ -163,6 +163,7 @@ const ScheduleDay = ({
   getTrip,
   setTripData,
 }) => {
+  console.log("data", data);
   //recoil
   const [trip, setTrip] = useRecoilState(tripAtom);
   const accessToken = getCookie("accessToken");
@@ -178,7 +179,7 @@ const ScheduleDay = ({
   const navigateSearchContents = () => {
     navigate(`/search/trip?tripId=${tripId}`);
     console.log(data);
-    setTrip({ nowTripId: tripId, lastSeq: data.schedules.length });
+    // setTrip({ ...trip, nowTripId: tripId, lastSeq: data.schedules.length });
   };
   //useState
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -256,6 +257,7 @@ const ScheduleDay = ({
     const lastSeq = scheduleArr[scheduleArr.length - 1]?.seq;
     console.log("lastSche", lastSche);
     console.log("lastSeq", lastSeq);
+    // console.log(data.day);
     setTrip({
       ...trip,
       lastSeq: lastSeq,
@@ -265,8 +267,9 @@ const ScheduleDay = ({
       prevSchelat: scheArr.length > 0 ? lastSche.lat : "",
       prevSchelng: scheArr.length > 0 ? lastSche.lng : "",
     });
-    // navigateSearchContents();
+    navigateSearchContents();
   };
+
   // 메모 삭제
   const deleteMemo = async item => {
     console.log(item);

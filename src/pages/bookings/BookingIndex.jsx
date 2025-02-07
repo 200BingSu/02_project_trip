@@ -112,7 +112,7 @@ const BookingIndex = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log(res.data);
+      console.log("쿠폰 불러오기", res.data);
       const resultData = res.data;
       setCouponList(resultData.data.coupons);
     } catch (error) {
@@ -137,11 +137,15 @@ const BookingIndex = () => {
     };
     console.log("sendData", sendData);
     try {
-      const res = await axios.post(`/api/booking`, sendData, {
-        headers: {
-          Authorization: `Bearer ${userInfo.accessToken}`,
+      const res = await axios.post(
+        `/api/booking`,
+        { ...sendData },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.accessToken}`,
+          },
         },
-      });
+      );
       console.log("예약하기 결과", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공" && resultData.data) {

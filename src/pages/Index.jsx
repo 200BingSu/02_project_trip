@@ -120,7 +120,14 @@ const Index = () => {
           <img src="/images/main-banner.png" alt="" />
         </section>
         <section className="mx-[32px] mt-[70px]">
-          <RecentList recent={recent} />
+          <RecentList
+            recent={recent}
+            getMainList={getMainList}
+            setFestivities={setFestivities}
+            setLocations={setLocations}
+            setRecent={setRecent}
+            setRecommend={setRecommend}
+          />
         </section>
         <section className="mt-[70px]">
           <RecommendList recommend={recommend} />
