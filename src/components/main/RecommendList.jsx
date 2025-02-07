@@ -5,6 +5,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { ProductPic } from "../../constants/pic";
 
 const RecommendList = ({ recommend }) => {
+  if (!recommend || recommend.length === 0) {
+    return null;
+  }
   return (
     <div>
       <h1 className="text-3xl font-bold mx-[32px]">
@@ -19,6 +22,7 @@ const RecommendList = ({ recommend }) => {
             key={item.strfId}
             className="!flex align-middle justify-center gap-8 mt-12 px-8"
           >
+            <p></p>
             <div className="mt-12 w-[50%]">
               <span className="bg-slate-800 text-white py-1 px-3 rounded-2xl font-light text-xs">
                 {item.locationTitle}
@@ -38,7 +42,7 @@ const RecommendList = ({ recommend }) => {
               </Link>
             </div>
             <img
-              src={`${ProductPic}${item.strfId}${item.strfPic}`}
+              src={`${ProductPic}${item.strfId}/${item.strfPic}`}
               alt={item.strfTitle}
               className="w-[400px] h-[300px] rounded-tr-[36px] rounded-bl-[36px]"
             />
