@@ -11,36 +11,28 @@ const Bill = ({
   setIsBillOpen,
   userInfo,
   getExpenses,
+  isValue,
+  setIsValue,
+  storeName,
+  setStoreName,
+  budgeting,
+  setBudgeting,
+  paidUserList,
+  setPaidUserList,
 }) => {
-  const [budgeting, setBudgeting] = useState([]);
-  const [isValue, setIsValue] = useState("0");
-  const [storeName, setStoreName] = useState("");
+  const [checkedItems, setCheckedItems] = useState({});
   const accessToken = getCookie("accessToken");
-  const [checked, setChecked] = useState({});
-  const [paidUserList, setPaidUserList] = useState([]);
-
-  const getBudgeting = async () => {
-    try {
-      const res = await axios.get(`/api/expense/trip_user?trip_id=1`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      console.log("res", res);
-      setBudgeting(res.data.data);
-    } catch (error) {
-      console.log("✅  getBudgeting  error:", error);
-      setBudgeting([]); // 에러 발생 시 빈 배열로 초기화
-    }
-  };
 
   const setCalculation = async () => {
     const sendData = {
       trip_id: 1,
       total_price: isValue,
-      paid_user_list: paidUserList,
+      paid_user_list: Object.keys(checkedItems)
+        .filter(userId => checkedItems[userId])
+        .map(Number),
       paid_for: storeName,
     };
+
     console.log("sendData", sendData);
     try {
       const res = await axios.post("/api/expense", sendData, {
@@ -50,63 +42,29 @@ const Bill = ({
         },
       });
       message.success("추가 되었습니다");
-      setIsBillOpen(false);
+      handleCancel(); // 모달 닫기 및 상태 초기화
       getExpenses(); // ✅ 데이터 새로 요청
     } catch (error) {
       console.log("✅  error:", error.response?.data, sendData); // 서버에서 반환된 에러 메시지
     }
   };
 
-  useEffect(() => {
-    getBudgeting();
-  }, []);
-
-  const handleCheck = user_id => {
-    setChecked(prev => {
-      const newCheckedItems = {
-        ...prev,
-        [user_id]: !prev[user_id],
-      };
-
-      const paidUsers = Object.keys(newCheckedItems).filter(
-        id => newCheckedItems[id],
-      );
-      setPaidUserList(paidUsers);
-
-      console.log("paid_user_list:", paidUsers);
-
-      return newCheckedItems;
-    });
+  const handleChangeChecked = userId => {
+    setCheckedItems(prev => ({ ...prev, [userId]: !prev[userId] }));
   };
 
   const handleOk = () => {
-    if (!storeName) {
-      message.error("내용을 입력해 주세요");
-      return;
-    }
-    if (Number(isValue) < 1000) {
-      message.error("가격은 1000원 이상이어야 합니다");
-      return;
-    }
-    setCalculation(); // ✅ 정산하기 버튼 클릭 시 실행
-    setIsValue("0");
-    setStoreName("");
-    setChecked({});
-    setPaidUserList([]);
+    if (!storeName.trim()) return message.error("내용을 입력해 주세요");
+    if (Number(isValue) < 1000)
+      return message.error("가격은 1000원 이상이어야 합니다");
+    setCalculation();
   };
 
   const handleCancel = () => {
     setIsBillOpen(false);
     setIsValue("0");
     setStoreName("");
-    setChecked({});
-    setPaidUserList([]);
-  };
-
-  const handleChange = e => {
-    let inputValue = e.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
-    if (inputValue === "") inputValue = "0"; // 빈 값이면 "0" 유지
-    setIsValue(inputValue);
+    setCheckedItems({});
   };
 
   return (
@@ -124,18 +82,21 @@ const Bill = ({
         </Button>,
       ]}
     >
+      {/* 지출 금액 */}
       <p className="text-lg text-slate-500 font-semibold px-8">지출 금액</p>
       <label htmlFor="" className="flex px-8 mt-3 mb-10">
         <input
           type="text"
           name="expenditurePice"
           value={isValue}
-          onChange={handleChange}
+          placeholder="0"
+          onChange={e => setIsValue(e.target.value.replace(/\D/g, ""))}
           className="w-11/12 !border-none !border-transparent outline-0 !shadow-none text-4xl font-bold text-slate-700 !text-right  "
         />
         <span className="text-4xl font-bold text-slate-700">원</span>
       </label>
 
+      {/* 지출 내용 */}
       <label
         htmlFor=""
         className="text-lg text-slate-500 font-semibold px-8 w-full inline-block"
@@ -149,6 +110,8 @@ const Bill = ({
           className="h-20 w-full border border-slate-300 rounded-2xl px-5 mt-3 text-2xl text-slate-700 outline-none"
         />
       </label>
+
+      {/* 참여자 목록 */}
       <div>
         <p className="px-8 w-full py-5 border-y border-slate-200 text-lg font-semibold text-slate-500 mt-8">
           참여자
@@ -172,16 +135,12 @@ const Bill = ({
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                checked={checked[item.user_id] || false} // 개별 상태 적용
-                onChange={() => handleCheck(item.user_id)}
                 className="peer hidden"
+                checked={checkedItems[item.user_id] || false}
+                onChange={() => handleChangeChecked(user_id)}
               />
-              <div className="w-11 h-11 bg-slate-100  rounded-full flex items-center justify-center transition duration-300 peer-checked:bg-primary2 peer-checked:bg-opacity-50">
-                <FaCheck
-                  className={`text-2xl duration-300 ${
-                    checked[item.user_id] ? "text-primary" : "text-slate-400"
-                  }`}
-                />
+              <div className="w-11 h-11 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center transition duration-300 peer-checked:bg-primary2 peer-checked:text-primary peer-checked:bg-opacity-50">
+                <FaCheck className="text-2xl duration-75" />
               </div>
             </label>
           </div>

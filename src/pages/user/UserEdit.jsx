@@ -23,11 +23,6 @@ const UserEdit = () => {
   const [file, setFile] = useState(null);
   const [newName, setNewName] = useState("");
 
-  const imgRef = useRef(null);
-  useEffect(() => {
-    console.log(imgRef.current);
-  }, [imgRef]);
-
   const navigate = useNavigate();
 
   const getUserInfo = async () => {
@@ -116,8 +111,6 @@ const UserEdit = () => {
 
   return (
     <div>
-      <p>preview : {preview} </p>
-
       <TitleHeader
         icon={""}
         title={"프로필 설정"}
@@ -131,7 +124,6 @@ const UserEdit = () => {
                 src={originImg ? originImg : preview}
                 alt="User-Profile"
                 className="w-full h-full object-cover"
-                ref={imgRef}
               />
             </div>
 

@@ -1,42 +1,43 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { AiFillSetting, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 import { BiBell, BiShow, BiSolidCoupon } from "react-icons/bi";
 import { BsCashStack } from "react-icons/bs";
-import { CgClose } from "react-icons/cg";
 import { GoDiscussionOutdated } from "react-icons/go";
 import { HiOutlineMap } from "react-icons/hi2";
+import { IoIosArrowRoundForward } from "react-icons/io";
 import { IoCloseSharp, IoReaderOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
-import { removeCookie } from "../../utils/cookie";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import UserEdit from "./UserEdit";
-import { IoIosArrowRoundForward } from "react-icons/io";
-import { RiCloseLargeFill } from "react-icons/ri";
 import { ProfilePic } from "../../constants/pic";
+import { getCookie, removeCookie } from "../../utils/cookie";
+import UserRecentList from "./UserRecentList";
+import UserTrips from "./UserTrips";
 
 const UserIndex = ({ isOpen, onClose }) => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [useProfile, setUseProfile] = useState([]);
 
+  const accessToken = getCookie("accessToken");
+
   const getUserInfo = async () => {
     try {
       const res = await axios.get(`/api/user/userInfo`, {
         headers: {
-          Authorization: `Bearer ${userInfo.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log("데이터 뽑았음?", res.data);
       setUseProfile(res.data.data);
-      console.log("내용물 진짜 출력 된거임?", res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getUserInfo();
+    if (userInfo.accessToken) {
+      getUserInfo();
+    }
   }, []);
 
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ const UserIndex = ({ isOpen, onClose }) => {
   const handleUserEdit = () => {
     navigate("user/useredit", { state: useProfile });
   };
-  console.log(`${ProfilePic}${userInfo.userId}/${useProfile?.profilePic}`);
+
   return (
     <div
       className={`overflow-hidden max-w-3xl w-full fixed left-1/2 -translate-x-1/2 inset-0 z-[99] flex justify-end transition-opacity duration-300 ${
@@ -191,7 +192,7 @@ const UserIndex = ({ isOpen, onClose }) => {
             지역 상품권
           </Link>
           <Link
-            to=""
+            to="/user/recentlist"
             className="flex items-center py-5 text-2xl text-slate-700 font-normal"
           >
             <BiShow className="text-4xl text-slate-400 mr-4" />
