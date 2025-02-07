@@ -17,6 +17,9 @@ const SearchBar = React.memo(
     const [searchBarFocus, setSearchBarFocus] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const [recentText, setRecentText] = useState([]);
+    useEffect(() => {
+      console.log("recentText", recentText);
+    }, [recentText]);
     // 검색창 비우기
     const onChange = e => {};
 
@@ -29,7 +32,11 @@ const SearchBar = React.memo(
           },
         });
         const resultData = res.data;
-        setRecentText(resultData.data);
+        console.log(resultData);
+        const filterArr = resultData.data.filter(item => {
+          return item.txt !== "";
+        });
+        setRecentText(filterArr);
       } catch (error) {
         console.log("최근 검색어 호출 결과:", error);
       }
@@ -66,28 +73,40 @@ const SearchBar = React.memo(
               setSearchState(true);
             }
           }}
-
           onFocus={() => {
             setSearchBarFocus(true);
           }}
-          onBlur={() => {
-            setSearchBarFocus(false);
-          }}
-          prefix={<FiSearch className="text-slate-400 text-2xl" />}
+          // onBlur={() => {
 
+          // }}
+          prefix={<FiSearch className="text-slate-400 text-2xl" />}
           className={`w-full h-[60px] px-[12px] ${inputValue ? "bg-white" : "bg-slate-100"}`}
         />
-        {/* {searchBarFocus ? (
-          <ul className="absolute top-[120%] translate-y-[-50%] left-[5px]">
+        {searchBarFocus ? (
+          <div
+            className="absolute top-[90%] translate-y-[0] left-[0]
+          w-full flex justify-center items-center gap-[20px]"
+          >
             {recentText ? (
               recentText?.map((item, index) => {
-                return <li key={index}>{item}</li>;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setSearchValue(item.txt);
+                      setSearchState(true);
+                      setSearchBarFocus(false);
+                    }}
+                  >
+                    {item.txt}
+                  </button>
+                );
               })
             ) : (
               <li className="text-slate-700 text-[16px]">데이터 없음</li>
             )}
-          </ul>
-        ) : null} */}
+          </div>
+        ) : null}
       </div>
     );
   },

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { ReviewPic } from "../../constants/pic";
 
 const ReviewImage = ({ imgArr, reviewId }) => {
-  const imgArrLeng = imgArr.length;
+  const imgArrLeng = imgArr?.length;
   const imgRef = useRef(null);
   useEffect(() => {
     console.log(imgRef.current);
@@ -14,7 +14,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="w-full h-full bg-slate-200">
             <img
               src={`${ReviewPic}${reviewId}/${imgArr[0].pic}`}
-              alt={`${imgArr[0].reviewId}`}
+              alt={`${reviewId}`}
               ref={imgRef}
               className="w-full h-full object-cover"
             />

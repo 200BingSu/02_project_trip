@@ -141,7 +141,7 @@ const UserIndex = ({ isOpen, onClose }) => {
                 여행
               </Link>
               <Link
-                to=""
+                to="/user/userwishlist"
                 className="w-1/4 text-center text-lg text-slate-500 font-normal relative after:absolute after:top-1/2 after:-translate-y-1/2 after:right-0 after: after:bg-slate-200 after:w-[1px] after:h-14"
               >
                 <AiOutlineHeart className="w-full text-4xl text-slate-700 mb-2" />
@@ -167,7 +167,7 @@ const UserIndex = ({ isOpen, onClose }) => {
         <p className="w-full h-[10px] bg-slate-100"></p>
         <div className="w-full px-8 py-8">
           <Link
-            to=""
+            to="/user/userbooking"
             className="flex items-center py-5 text-2xl text-slate-700 font-normal"
           >
             <GoDiscussionOutdated className="text-4xl text-slate-400 mr-4" />
