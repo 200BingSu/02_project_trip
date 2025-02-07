@@ -10,10 +10,7 @@ const LocationList = ({ locations }) => {
       </h1>
       <Swiper slidesPerView={4} spaceBetween={16} className="mySwiper ">
         {locations.map((item, index) => (
-          <SwiperSlide
-            key={item.locationDetailId}
-            className="relative pt-[40px]"
-          >
+          <SwiperSlide key={item.locationId} className="relative pt-[40px]">
             <p className="absolute z-[999] bg-secondary3 text-white w-[36px] h-[36px] leading-[36px] rounded-full left-1/2 top-[24px] -translate-x-1/2 text-center inline-block text-lg">
               {index + 1}
             </p>
