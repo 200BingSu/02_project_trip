@@ -22,7 +22,7 @@ import MemoModal from "../schedule/MemoModal";
 import { getCookie } from "../../utils/cookie";
 import axios from "axios";
 import { ProductPic } from "../../constants/pic";
-import { categoryKor } from "../../pages/contents/ContentIndex";
+import { categoryKor } from "../../utils/match";
 import {
   dayBgColor,
   dayLineColor,
@@ -340,7 +340,7 @@ const ScheduleDay = ({
                   px-[40px] py-[20px] w-full rounded-2xl
                   bg-slate-50 "
                     >
-                      <div>
+                      <div className="flex flex-col gap-[10px]">
                         <p className="flex gap-[5px] text-slate-700">
                           <IoReaderOutline className="text-slate-300 text-[18px]" />
                           {item.title}
