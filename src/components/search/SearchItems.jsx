@@ -1,11 +1,12 @@
 import { Rate, Skeleton } from "antd";
 import React, { forwardRef, memo, useEffect, useState } from "react";
-import { AiTwotoneHeart } from "react-icons/ai";
+import { AiFillHeart, AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import { ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
+import { categoryKor } from "../../pages/contents/ContentIndex";
 
 const SearchItems = forwardRef(
   (
@@ -20,6 +21,7 @@ const SearchItems = forwardRef(
     },
     ref,
   ) => {
+    console.log("현재 data로 들어오는 내용:", data);
     // 쿠키
     const accessToken = getCookie("accessToken");
     //useNavigate
@@ -101,10 +103,12 @@ const SearchItems = forwardRef(
                     {/* 카테고리, 지역 */}
                     <div className="flex gap-[5px] items-center">
                       <p className="text-[14px] text-slate-500">
-                        {data.category}
+                        {categoryKor(item.category)}
                       </p>
                       <p className="text-[14px] text-slate-500">|</p>
-                      <p className="text-[14px] text-slate-500">지역</p>
+                      <p className="text-[14px] text-slate-500">
+                        {item.locationName}
+                      </p>
                     </div>
                     {/* 별점 */}
                     <div className="flex gap-[5px] items-center">
@@ -119,9 +123,11 @@ const SearchItems = forwardRef(
                     {/* 찜하기 */}
                     <div className="flex gap-[5px] items-center">
                       <div>
-                        <AiTwotoneHeart
-                          className={`${item.wishIn ? "text-color-secondary3" : "text-slate-400"}`}
-                        />
+                        {item.wishIn ? (
+                          <AiFillHeart className="text-secondary3" />
+                        ) : (
+                          <AiOutlineHeart className="text-slate-400" />
+                        )}
                       </div>
                       <p className="text-[12px] text-slate-500">
                         {item.wishlistCount.toLocaleString()}
