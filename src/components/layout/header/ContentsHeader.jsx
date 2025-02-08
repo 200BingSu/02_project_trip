@@ -23,9 +23,17 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   //useNavigate
   const navigate = useNavigate();
   const navigateBack = () => {
-    navigate(-1);
+    if (locationState) {
+      navigate(-1, { state: { ...locationState } });
+    } else {
+      navigate(-1);
+    }
   };
+  //useLocation
+  //useLocation
   const location = useLocation();
+  const locationState = location.state;
+  console.log("locationState", locationState);
   const nowUrl = location.search;
   // console.log("URL:", nowUrl);
   const localeIp = `http://localhost:5173/contents/index?${nowUrl}`;
