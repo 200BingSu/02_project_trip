@@ -9,6 +9,7 @@ import { IoReaderOutline } from "react-icons/io5";
 import axios from "axios";
 import { ProfilePic, TripReviewPic } from "../../constants/pic";
 
+const filterArr = ["popular", "latest"];
 const ScheduleBoardIndex = () => {
   //useNavigate
   const navigate = useNavigate();
@@ -25,18 +26,23 @@ const ScheduleBoardIndex = () => {
   };
   const location = useLocation();
   const locationState = location.state;
-  console.log(locationState);
+  // console.log(locationState);
   //useState
   const imgRef = useRef(null);
   // console.log(imgRef.current);
   const [filter, setFilter] = useState(0);
   const [allTripReview, setAllTripReview] = useState([]);
+  const [allCount, setAllCount] = useState(0);
 
   // 인덱스
-  const [pageNumber, setPageNumber] = useState(1);
-  useEffect(() => {
-    console.log("pageNumber", pageNumber);
-  }, []);
+  const [popularPageNumber, setPopularPageNumber] = useState(1);
+  const [latestPageNum, setLatestPageNum] = useState(1);
+  // useEffect(() => {
+  //   console.log("popularPageNumber", popularPageNumber);
+  // }, [popularPageNumber]);
+  // useEffect(() => {
+  //   console.log("popularPageNumber", popularPageNumber);
+  // }, [popularPageNumber]);
   useEffect(() => {
     console.log("여행기 배열", allTripReview);
   }, [allTripReview]);
@@ -46,26 +52,47 @@ const ScheduleBoardIndex = () => {
    * - "latest": 최신순
    * - "popular": 추천순
    */
-  const getAllTripReview = async (type = "popular") => {
-    console.log("부르는 페이지:", pageNumber);
+  const getAllTripReview = async (filter = 0) => {
+    if (filterArr[filter] === "popular") {
+      console.log(`${filterArr[filter]} 부르는 페이지:`, popularPageNumber);
+    }
+    if (filterArr[filter] === "latest") {
+      console.log(`${filterArr[filter]} 부르는 페이지:`, latestPageNum);
+    }
     try {
       const res = await axios.get(
-        `/api/trip-review/allTripReview?orderType=${type}&pageNumber=${pageNumber}`,
+        `/api/trip-review/allTripReview?orderType=${filterArr[filter]}&pageNumber=${filterArr[filter] === "popular" ? popularPageNumber : latestPageNum}`,
       );
-      console.log(`여행기 모두 불러오기 ${type}`, res.data);
+      console.log(`여행기 모두 불러오기 ${filterArr[filter]}`, res.data);
       const resultData = res.data;
       setAllTripReview([...allTripReview, ...resultData.data]);
       if (resultData.code === "200 성공") {
-        setPageNumber(prev => prev + 1);
+        filterArr[filter] === "popular"
+          ? setPopularPageNumber(prev => prev + 1)
+          : setLatestPageNum(prev => prev + 1);
       }
     } catch (error) {
-      console.log(`여행기 모두 불러오기 ${type}`, error);
+      console.log(`여행기 모두 불러오기 ${filterArr[filter]}`, error);
+    }
+  };
+  const getTripReviewCount = async () => {
+    try {
+      const res = await axios.get(`/api/trip-review/allTripReviewCount`);
+      console.log(res.data);
+      const resultData = res.data;
+      setAllCount(resultData.data);
+    } catch (error) {
+      console.log("여행기 개수", error);
     }
   };
   useEffect(() => {
     getAllTripReview();
+    getTripReviewCount();
   }, []);
-
+  useEffect(() => {
+    setAllTripReview([]); // 상태 초기화
+    getAllTripReview(filterArr[filter]);
+  }, [filter]); // filter가 변경될 때마다 실행
   return (
     <div>
       <TitleHeader onClick={navigateBack} title="여행기" icon="back" />
@@ -94,6 +121,7 @@ const ScheduleBoardIndex = () => {
                 className={`${filter === 0 ? "text-primary" : "text-slate-300"}`}
                 onClick={() => {
                   setFilter(0);
+                  setLatestPageNum(1);
                   getAllTripReview("popular");
                 }}
               >
@@ -107,6 +135,7 @@ const ScheduleBoardIndex = () => {
                 className={`${filter === 1 ? "text-primary" : "text-slate-300"}`}
                 onClick={() => {
                   setFilter(1);
+                  setPopularPageNumber(1);
                   getAllTripReview("latest");
                 }}
               >
@@ -114,7 +143,7 @@ const ScheduleBoardIndex = () => {
               </button>
             </li>
           </ul>
-          <p>총 {allTripReview?.length.toLocaleString()}건</p>
+          <p>총 {allCount?.toLocaleString()}건</p>
         </div>
         {/* 여행기 목록 */}
         <ul className="flex flex-col gap-[30px]">
@@ -145,12 +174,12 @@ const ScheduleBoardIndex = () => {
                     </div>
                     {/* 조회수, 좋아요, 여행기 작성수 */}
                     <ul className="flex gap-[10px] items-center">
-                      {/* <li className="flex gap-[5px] items-center">
+                      <li className="flex gap-[5px] items-center">
                         <BiShow className="text-slate-300 text-[18px]" />
                         <p className="text-slate-500 font-bold text-[14px]">
-                          조회수
+                          {item.recentCount}
                         </p>
-                      </li> */}
+                      </li>
                       <li className="flex gap-[5px] items-center">
                         <GoThumbsup className="text-slate-300 text-[18px]" />
                         <p className="text-slate-500 font-bold text-[14px]">
@@ -160,7 +189,7 @@ const ScheduleBoardIndex = () => {
                       <li className="flex gap-[5px] items-center">
                         <IoReaderOutline className="text-slate-300 text-[18px]" />
                         <p className="text-slate-500 font-bold text-[14px]">
-                          {item.reviewCount?.toLocaleString()}
+                          {item.scrapCount?.toLocaleString()}
                         </p>
                       </li>
                     </ul>
@@ -257,7 +286,7 @@ const ScheduleBoardIndex = () => {
           <Button
             variant="outlined"
             className="w-full"
-            onClick={() => getAllTripReview()}
+            onClick={() => getAllTripReview(filter)}
           >
             더보기
           </Button>

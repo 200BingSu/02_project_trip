@@ -61,7 +61,7 @@ const SearchContents = () => {
   // searchValue
   useEffect(() => {
     // console.log("searchValue:", searchValue);
-    postSearchAll();
+    // postSearchAll();
   }, [searchValue]);
 
   return (

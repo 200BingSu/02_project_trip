@@ -21,19 +21,21 @@ const SearchItems = forwardRef(
     },
     ref,
   ) => {
-    console.log("현재 data로 들어오는 내용:", data);
+    // console.log("현재 data로 들어오는 내용:", data);
     // 쿠키
     const accessToken = getCookie("accessToken");
     //useNavigate
     const navigate = useNavigate();
     const handleClickList = item => {
-      console.log("클릭된 아이템", item);
-      navigate(`/contents/index?strfId=${item.strfId}`);
+      // console.log("클릭된 아이템", item);
+      navigate(`/contents/index?strfId=${item.strfId}`, {
+        state: { searchValue: searchValue },
+      });
     };
     // useState
-    const [dataIndex, setDataIndex] = useState(4);
+    const [dataIndex, setDataIndex] = useState(0);
     useEffect(() => {
-      console.log(dataIndex);
+      // console.log(dataIndex);
     }, [dataIndex]);
 
     // 카테고리 별 더보기
@@ -62,7 +64,7 @@ const SearchItems = forwardRef(
       // if (type === "all") {
       //   moveTo();
       // }
-      // getSearchListMore();
+      getSearchListMore();
     };
 
     return (
@@ -194,7 +196,7 @@ const SearchItems = forwardRef(
           type="button"
           className="px-[20px] py-[10px] border border-slate-300 
         rounded-[24px] text-[16px] font-semibold text-slate-600"
-          onClick={handleClickButton}
+          onClick={() => handleClickButton(type)}
         >
           {type} 검색결과 더보기
         </button>
