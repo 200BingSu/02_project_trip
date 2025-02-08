@@ -111,14 +111,14 @@ const RecentList = ({
               <p>
                 <Rate disabled allowHalf defaultValue={content.averageRating} />
               </p>
-              <p className="flex text-slate-400 text-sm align-middle gap-1">
+              <div className="flex text-slate-400 text-sm align-middle gap-1">
                 {content.wishIn ? (
                   <AiFillHeart className="text-secondary3 text-xl" />
                 ) : (
                   <AiOutlineHeart className="text-slate-400 text-xl" />
                 )}
                 {content.wishCnt}
-              </p>
+              </div>
             </div>
           </div>
         ))}

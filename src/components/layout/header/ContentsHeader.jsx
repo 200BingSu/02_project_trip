@@ -88,11 +88,14 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
         </div>
       </div>
       <div className="flex gap-[20px]">
-        <div className="text-[36px] cursor-pointer " onClick={postWishList}>
-          <AiOutlineHeart
-            className={scrollY > 0 ? "text-slate-700" : "text-white"}
-          />
-        </div>
+        {userId !== 0 ? (
+          <div className="text-[36px] cursor-pointer " onClick={postWishList}>
+            <AiOutlineHeart
+              className={scrollY > 0 ? "text-slate-700" : "text-white"}
+            />
+          </div>
+        ) : null}
+
         <div className="text-[36px] cursor-pointer">
           <AiOutlineImport
             className={scrollY > 0 ? "text-slate-700" : "text-white"}
