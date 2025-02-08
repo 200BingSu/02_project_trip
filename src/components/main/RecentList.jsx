@@ -78,15 +78,15 @@ const RecentList = ({
           <div
             key={content.strfId}
             className="w-[50%] flex items-center gap-5 mb-5 cursor-pointer"
-            onClick={() => {
-              navigate(`/contents/index?strfId=${content.strfId}`);
-            }}
+            // onClick={() => {
+            //   navigate(`/contents/index?strfId=${content.strfId}`);
+            // }}
           >
             <div className="w-[164px] h-[164px] rounded-[16px] relative overflow-hidden flex-1">
               <img
                 src={`${ProductPic}${content.strfId}/${content.strfPic}`}
                 alt={content.strfTitle}
-                className="h-full"
+                className="w-full h-full object-cover"
               />
               <i
                 className="absolute top-2.5 right-2.5 cursor-pointer"
