@@ -9,7 +9,13 @@ import axios from "axios";
 import { getCookie } from "../../utils/cookie";
 
 const SearchBar = React.memo(
-  ({ searchValue, setSearchValue, setSearchState }) => {
+  ({
+    searchValue,
+    setSearchValue,
+    setSearchState,
+    searchData,
+    setSearchData,
+  }) => {
     const accessToken = getCookie("accessToken");
     //useNavigate
     const navigate = useNavigate();
@@ -18,7 +24,7 @@ const SearchBar = React.memo(
     const [inputValue, setInputValue] = useState("");
     const [recentText, setRecentText] = useState([]);
     useEffect(() => {
-      console.log("recentText", recentText);
+      // console.log("recentText", recentText);
     }, [recentText]);
     // 검색창 비우기
     const onChange = e => {};
@@ -42,10 +48,32 @@ const SearchBar = React.memo(
       }
     };
     useEffect(() => {
-      getRecentText();
+      if (accessToken) {
+        getRecentText();
+      }
     }, []);
+    //검색어 클릭
+    const postSearchAll = async () => {
+      const sendData = { search_word: searchValue };
+      try {
+        const res = await axios.post(
+          `/api/search/all?search_word=${searchValue}`,
+          { ...sendData },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        const resultData = res.data;
+        console.log(resultData);
+        setSearchData("최근 검색어 클릭 결과", resultData.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     useEffect(() => {
-      console.log("최근 검색어", recentText);
+      // console.log("최근 검색어", recentText);
     }, [recentText]);
 
     return (
@@ -76,9 +104,6 @@ const SearchBar = React.memo(
           onFocus={() => {
             setSearchBarFocus(true);
           }}
-          // onBlur={() => {
-
-          // }}
           prefix={<FiSearch className="text-slate-400 text-2xl" />}
           className={`w-full h-[60px] px-[12px] ${inputValue ? "bg-white" : "bg-slate-100"}`}
         />
@@ -96,7 +121,9 @@ const SearchBar = React.memo(
                       setSearchValue(item.txt);
                       setSearchState(true);
                       setSearchBarFocus(false);
+                      postSearchAll(item.txt);
                     }}
+                    className="text-slate-600"
                   >
                     {item.txt}
                   </button>

@@ -78,15 +78,15 @@ const RecentList = ({
           <div
             key={content.strfId}
             className="w-[50%] flex items-center gap-5 mb-5 cursor-pointer"
-            onClick={() => {
-              navigate(`/contents/index?strfId=${content.strfId}`);
-            }}
+            // onClick={() => {
+            //   navigate(`/contents/index?strfId=${content.strfId}`);
+            // }}
           >
             <div className="w-[164px] h-[164px] rounded-[16px] relative overflow-hidden flex-1">
               <img
                 src={`${ProductPic}${content.strfId}/${content.strfPic}`}
                 alt={content.strfTitle}
-                className="h-full"
+                className="w-full h-full object-cover"
               />
               <i
                 className="absolute top-2.5 right-2.5 cursor-pointer"
@@ -111,14 +111,14 @@ const RecentList = ({
               <p>
                 <Rate disabled allowHalf defaultValue={content.averageRating} />
               </p>
-              <p className="flex text-slate-400 text-sm align-middle gap-1">
+              <div className="flex text-slate-400 text-sm align-middle gap-1">
                 {content.wishIn ? (
                   <AiFillHeart className="text-secondary3 text-xl" />
                 ) : (
                   <AiOutlineHeart className="text-slate-400 text-xl" />
                 )}
                 {content.wishCnt}
-              </p>
+              </div>
             </div>
           </div>
         ))}
