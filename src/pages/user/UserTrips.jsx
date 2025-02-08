@@ -8,11 +8,12 @@ import TitleHeader from "../../components/layout/header/TitleHeader";
 import { LocationPic, ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import axios from "axios";
+import jwtAxios from "../../apis/jwt";
 
 const categoryArr = ["다가오는 여행", "완료된 여행"];
 const UserTrips = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
-  const [useProfile, setUseProfile] = useState([]);
+  const [useProfile, setUseProfile] = useState({});
   const [tripListData, setTripListData] = useState({});
 
   const [form] = Form.useForm();
@@ -24,13 +25,11 @@ const UserTrips = () => {
   }, [tripListData]);
 
   useEffect(() => {}, [category]);
-  // 미완료 여행 목록 불러오기
-
 
   // 여행 목록 불러오기
   const getTripList = async () => {
     try {
-      const res = await axios.get(`/api/trip-list`, {
+      const res = await jwtAxios.get(`/api/trip-list`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -62,10 +61,21 @@ const UserTrips = () => {
       console.log("구성원 추가", error);
     }
   };
-
+  // 유저 데이터 불러오기
+  const getUserInfo = async () => {
+    try {
+      const res = await jwtAxios.get(`/api/user/userInfo`);
+      console.log(res.data);
+      const resultData = res.data;
+      setUseProfile(resultData.data);
+    } catch (error) {
+      console.log("유저 정보", error);
+    }
+  };
   useEffect(() => {
     if (userInfo.accessToken) {
       getTripList();
+      getUserInfo();
     }
   }, []);
   // useNavigate
@@ -78,7 +88,6 @@ const UserTrips = () => {
     navigate(`/schedule/index?tripId=${item.tripId}`);
   };
 
-
   useEffect(() => {
     // console.log("카테고리", category);
   }, [category]);
@@ -86,7 +95,6 @@ const UserTrips = () => {
 
   // console.log("✅  useProfile:", useProfile);
   // console.log("tripListData", tripListData);
-
 
   return (
     <div className="flex flex-col gap-[30px]">
@@ -156,10 +164,11 @@ const UserTrips = () => {
                   {/* 좌측 */}
                   <div className="flex items-center gap-[29px]">
                     {/* 이미지 */}
-                    <div className="w-[100px] h-[100px] bg-slate-100 rounded-full">
+                    <div className="w-[100px] h-[100px] bg-slate-100 rounded-full overflow-hidden">
                       <img
-                        src={`${LocationPic}/${item.locationPiclocationPic}`}
+                        src={`${LocationPic}${item.locationPic}`}
                         alt={item.title}
+                        className="w-full h-full"
                       />
                     </div>
                     {/* 정보 */}

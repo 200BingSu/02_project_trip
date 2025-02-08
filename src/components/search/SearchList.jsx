@@ -37,10 +37,18 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
     last_index: null,
   };
 
-  const tourData = searchData?.filter(item => item.category === "TOUR");
-  const stayData = searchData?.filter(item => item.category === "STAY");
-  const restaurData = searchData?.filter(item => item.category === "RESTAUR");
-  const festData = searchData?.filter(item => item.category === "FEST");
+  const tourData = Array.isArray(searchData)
+    ? searchData.filter(item => item.category === "TOUR")
+    : [];
+  const stayData = Array.isArray(searchData)
+    ? searchData.filter(item => item.category === "STAY")
+    : [];
+  const restaurData = Array.isArray(searchData)
+    ? searchData.filter(item => item.category === "RESTAUR")
+    : [];
+  const festData = Array.isArray(searchData)
+    ? searchData.filter(item => item.category === "FEST")
+    : [];
 
   return (
     <div className="px-[32px] py-[30px] flex flex-col gap-[30px]">

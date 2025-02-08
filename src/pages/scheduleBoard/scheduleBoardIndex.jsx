@@ -160,7 +160,7 @@ const ScheduleBoardIndex = () => {
                       <li className="flex gap-[5px] items-center">
                         <IoReaderOutline className="text-slate-300 text-[18px]" />
                         <p className="text-slate-500 font-bold text-[14px]">
-                          {item.reviewCount.toLocaleString()}
+                          {item.reviewCount?.toLocaleString()}
                         </p>
                       </li>
                     </ul>

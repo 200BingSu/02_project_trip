@@ -132,30 +132,30 @@ const ScheduleIndex = () => {
 
   const tripDaysArr = tripData.days;
   // 날짜 계산
-  const getDateArray = (startDate, endDate) => {
-    if (!startDate || !endDate) {
-      console.log("🚨 startDate 또는 endDate가 없습니다.");
-      return [];
-    }
+  // const getDateArray = (startDate, endDate) => {
+  //   if (!startDate || !endDate) {
+  //     console.log("startDate 또는 endDate가 없음");
+  //     return [];
+  //   }
 
-    const start = dayjs(startDate, "YYYY-MM-DD");
-    const end = dayjs(endDate, "YYYY-MM-DD");
+  //   const start = dayjs(startDate, "YYYY-MM-DD");
+  //   const end = dayjs(endDate, "YYYY-MM-DD");
 
-    console.log("start:", start.format("YYYY-MM-DD"));
-    console.log("end:", end.format("YYYY-MM-DD"));
+  //   console.log("start:", start.format("YYYY-MM-DD"));
+  //   console.log("end:", end.format("YYYY-MM-DD"));
 
-    const dateArray = [];
-    let currentDate = start;
+  //   const dateArray = [];
+  //   let currentDate = start;
 
-    while (currentDate.isBefore(end, "day") || currentDate.isSame(end, "day")) {
-      dateArray.push(currentDate.format("YYYY-MM-DD"));
-      currentDate = currentDate.add(1, "day");
-    }
+  //   while (currentDate.isBefore(end, "day") || currentDate.isSame(end, "day")) {
+  //     dateArray.push(currentDate.format("YYYY-MM-DD"));
+  //     currentDate = currentDate.add(1, "day");
+  //   }
 
-    return dateArray;
-  };
-  const dateArr = getDateArray(tripData.startAt, tripData.endAt);
-  console.log("dateArr", dateArr);
+  //   return dateArray;
+  // };
+  // const dateArr = getDateArray(tripData.startAt, tripData.endAt);
+  // console.log("dateArr", dateArr);
 
   return (
     <div>
