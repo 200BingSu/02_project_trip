@@ -22,6 +22,9 @@ const strfArr = [
 const SearchList = ({ searchValue, searchData, setSearchData }) => {
   // useState
   const [selectedCate, setSelectedCate] = useState(0);
+  useEffect(() => {
+    console.log("selectedCate", selectedCate);
+  }, [selectedCate]);
   // useRef
   const topRef = useRef(null);
 
@@ -75,6 +78,7 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
             type={strfArr[1].type}
             name={strfArr[1].name}
             data={tourData}
+            setSelectedCate={setSelectedCate}
             searchValue={searchValue}
             searchData={searchData}
             setSearchData={setSearchData}
@@ -83,6 +87,7 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
             type={strfArr[2].type}
             name={strfArr[2].name}
             data={stayData}
+            setSelectedCate={setSelectedCate}
             searchValue={searchValue}
             searchData={searchData}
             setSearchData={setSearchData}
@@ -91,6 +96,7 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
             type={strfArr[3].type}
             name={strfArr[3].name}
             data={restaurData}
+            setSelectedCate={setSelectedCate}
             searchValue={searchValue}
             searchData={searchData}
             setSearchData={setSearchData}
@@ -99,6 +105,7 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
             type={strfArr[4].type}
             name={strfArr[4].name}
             data={festData}
+            setSelectedCate={setSelectedCate}
             searchValue={searchValue}
             searchData={searchData}
             setSearchData={setSearchData}
