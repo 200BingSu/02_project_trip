@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
-import { ProfilePic } from "../../constants/pic";
+import { LocationPic, ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import Footer from "../Footer";
+import axios from "axios";
 
 const categoryArr = ["다가오는 여행", "완료된 여행"];
 const UserTrips = () => {
@@ -16,15 +17,17 @@ const UserTrips = () => {
   const [tripListData, setTripListData] = useState({});
 
   const [form] = Form.useForm();
-
+  const accessToken = getCookie("accessToken");
   const [code, setCode] = useState("");
   const [category, setCategory] = useState(0);
   useEffect(() => {
     console.log("tripListData", tripListData);
   }, [tripListData]);
+
   useEffect(() => {}, [category]);
   // 미완료 여행 목록 불러오기
 
+  // 여행 목록 불러오기
   const getTripList = async () => {
     try {
       const res = await axios.get(`/api/trip-list`, {
@@ -75,8 +78,13 @@ const UserTrips = () => {
     navigate(`/schedule/index?tripId=${item.tripId}`);
   };
 
-  console.log("✅  useProfile:", useProfile);
-  console.log("tripListData", tripListData);
+  useEffect(() => {
+    // console.log("카테고리", category);
+  }, [category]);
+  // 미완료 여행 목록 불러오기
+
+  // console.log("✅  useProfile:", useProfile);
+  // console.log("tripListData", tripListData);
 
   return (
     <div className="flex flex-col gap-[30px]">
@@ -134,7 +142,10 @@ const UserTrips = () => {
                   <div className="flex items-center gap-[29px]">
                     {/* 이미지 */}
                     <div className="w-[100px] h-[100px] bg-slate-100 rounded-full">
-                      <img src="" alt="" />
+                      <img
+                        src={`${LocationPic}/${item.locationPiclocationPic}`}
+                        alt={item.title}
+                      />
                     </div>
                     {/* 정보 */}
                     <div className="flex flex-col gap-[5px]">

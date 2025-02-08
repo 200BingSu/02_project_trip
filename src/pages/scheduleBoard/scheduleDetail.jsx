@@ -8,10 +8,11 @@ import { IoReaderOutline } from "react-icons/io5";
 import ScheduleDay from "../../components/scheduleboard/ScheduleDay";
 import { Button } from "antd";
 import { AiOutlineImport } from "react-icons/ai";
-import { Swiper } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
 import { useEffect, useState } from "react";
+import { TripReviewPic } from "../../constants/pic";
 
 //dummyData
 const dummyData = [
@@ -228,6 +229,7 @@ const ScheduleDetail = () => {
   useEffect(() => {
     getOtherTripReview();
   }, []);
+  console.log(tripReviewData[0]?.tripReviewPics);
   return (
     <div>
       <TitleHeader
@@ -238,28 +240,45 @@ const ScheduleDetail = () => {
       <div className="flex flex-col px-[32px] py-[30px] gap-[30px] mt-[60px]">
         {/* 이미지 */}
         <Swiper slidesPerView={1} spaceBetween={16} className="mySwiper">
-          {}
+          {tripReviewData[0]?.tripReviewPics.map((item, index) => {
+            return (
+              <SwiperSlide key={index} className="h-[406px] bg-slate-200">
+                <img
+                  src={`${TripReviewPic}${tripReviewData[0].tripReviewId}/${item}`}
+                  alt="thum"
+                  className="w-full h-full object-cover"
+                />
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
-        <div className="h-[406px] bg-slate-200">
-          <img src="#" alt="thum" className="w-full h-full object-cover" />
-        </div>
+
         {/* info */}
         <div className="flex flex-col gap-[10px]">
-          <p className="text-[18px] text-slate-700">작성일자</p>
+          {/* <p className="text-[18px] text-slate-700">작성일자</p> */}
           <div>
-            <h2 className="font-bold text-[36px] text-slate-700">제목</h2>
+            <h2 className="font-bold text-[36px] text-slate-700">
+              {tripReviewData[0]?.title}
+            </h2>
             <ul className="flex gap-[10px] items-center">
               <li className="flex gap-[5px] items-center">
                 <BiShow className="text-slate-300 text-[18px]" />
-                <p className="text-slate-500 font-bold text-[14px]">조회수</p>
+                <p className="text-slate-500 font-bold text-[14px]">
+                  {tripReviewData[0]?.recentCount}
+                </p>
               </li>
               <li className="flex gap-[5px] items-center">
                 <GoThumbsup className="text-slate-300 text-[18px]" />
-                <p className="text-slate-500 font-bold text-[14px]">좋아요</p>
+                <p className="text-slate-500 font-bold text-[14px]">
+                  {tripReviewData[0]?.likeCount}
+                </p>
               </li>
               <li className="flex gap-[5px] items-center">
                 <IoReaderOutline className="text-slate-300 text-[18px]" />
-                <p className="text-slate-500 font-bold text-[14px]">작성수</p>
+                <p className="text-slate-500 font-bold text-[14px]">
+                  {" "}
+                  {tripReviewData[0]?.scrapCount}
+                </p>
               </li>
             </ul>
           </div>
