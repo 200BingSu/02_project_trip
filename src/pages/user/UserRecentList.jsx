@@ -55,12 +55,18 @@ const UserRecentList = () => {
 
   const deleteRecent = async item => {
     console.log("isRecents.strfId", item.strfId);
+    const sendData = { strf_id: item.strfId };
     try {
-      const res = await axios.patch(`/api/recent/hide?strf_id=${item.strfId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      const res = await axios.patch(
+        `/api/recent/hide?strf_id=${item.strfId}`,
+        { ...sendData },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
+      console.log("숨기기 결과", res.data);
     } catch (error) {
       console.log("✅  error:", error);
     }

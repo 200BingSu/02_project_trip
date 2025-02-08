@@ -14,6 +14,7 @@ import { userAtom } from "../../atoms/userAtom";
 import { getCookie } from "../../utils/cookie";
 import { Dropdown, Input } from "antd";
 import { MdContentCopy } from "react-icons/md";
+import dayjs from "dayjs";
 
 // const dummyDays = dummyData.days;
 const defaultData = {
@@ -130,6 +131,32 @@ const ScheduleIndex = () => {
   }, []);
 
   const tripDaysArr = tripData.days;
+  // 날짜 계산
+  const getDateArray = (startDate, endDate) => {
+    if (!startDate || !endDate) {
+      console.log("🚨 startDate 또는 endDate가 없습니다.");
+      return [];
+    }
+
+    const start = dayjs(startDate, "YYYY-MM-DD");
+    const end = dayjs(endDate, "YYYY-MM-DD");
+
+    console.log("start:", start.format("YYYY-MM-DD"));
+    console.log("end:", end.format("YYYY-MM-DD"));
+
+    const dateArray = [];
+    let currentDate = start;
+
+    while (currentDate.isBefore(end, "day") || currentDate.isSame(end, "day")) {
+      dateArray.push(currentDate.format("YYYY-MM-DD"));
+      currentDate = currentDate.add(1, "day");
+    }
+
+    return dateArray;
+  };
+  const dateArr = getDateArray(tripData.startAt, tripData.endAt);
+  console.log("dateArr", dateArr);
+
   return (
     <div>
       <TitleHeader
