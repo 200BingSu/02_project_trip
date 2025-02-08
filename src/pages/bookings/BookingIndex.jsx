@@ -126,7 +126,9 @@ const BookingIndex = () => {
       strf_id: locationState.contentData.strfId,
       check_in: locationState.dates[0],
       check_out: locationState.dates[1],
-      coupon_id: parseInt(selectCoupon.couponId),
+      coupon_id: isNaN(parseInt(selectCoupon.couponId))
+        ? null
+        : parseInt(selectCoupon.couponId),
       actual_paid: finallPrice,
       order_list: [
         {
@@ -282,11 +284,14 @@ const BookingIndex = () => {
           <button
             type="button"
             onClick={() => {
-              setShowCouponModal(true);
+              if (couponList.length > 0) {
+                setShowCouponModal(true);
+              }
             }}
-            className="px-[12px] py-[8px] h-[60px] rounded-lg
+            className={`px-[12px] py-[8px] h-[60px] rounded-lg
             border border-slate-300
-            flex items-center justify-between"
+            flex items-center justify-between
+            ${couponList.length > 0 ? "bg-white" : "bg-slate-200"}`}
           >
             <p className="text-[16px] text-slate-500">
               {selectCoupon.title

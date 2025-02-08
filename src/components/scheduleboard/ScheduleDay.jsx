@@ -21,127 +21,18 @@ import { tripAtom } from "../../atoms/tripAtom";
 import MemoModal from "../schedule/MemoModal";
 import { getCookie } from "../../utils/cookie";
 import axios from "axios";
+import { ProductPic } from "../../constants/pic";
+import { categoryKor } from "../../pages/contents/ContentIndex";
+import {
+  dayBgColor,
+  dayLineColor,
+  dayTextColor,
+  matchPathTypeIcon,
+  matchWeatherIcon,
+} from "../../utils/match";
+import { RiCloseLargeFill } from "react-icons/ri";
 
 // defaultData(days[0])
-const defaultData = {
-  day: 1,
-  weather: "sunny",
-  schedules: [
-    {
-      seq: 1,
-      strfId: 9,
-      strfTitle: "제목",
-      category: "카테고리",
-      address: "주소",
-      lat: 37.570083,
-      lng: 126.99022,
-      distance: 2000,
-      duration: 30,
-      pathType: "도보",
-    },
-    {
-      seq: 2,
-      strfId: 9,
-      strfTitle: "제목",
-      category: "카테고리",
-      address: "주소",
-      lat: 37.570083,
-      lng: 126.99022,
-      distance: 2000,
-      duration: 30,
-      pathType: "도보",
-    },
-    {
-      seq: 3,
-      strfId: 9,
-      strfTitle: "제목",
-      category: "카테고리",
-      address: "주소",
-      lat: 37.570083,
-      lng: 126.99022,
-      distance: 2000,
-      duration: 30,
-      pathType: "도보",
-    },
-  ],
-};
-// day 색깔
-export const dayTextColor = dayNum => {
-  switch (dayNum % 3) {
-    case 1:
-      return "text-primary";
-    case 2:
-      return "text-secondary2";
-    case 0:
-      return "text-secondary3";
-    default:
-      return "black";
-  }
-};
-export const dayBgColor = dayNum => {
-  switch (dayNum % 3) {
-    case 1:
-      return "bg-primary";
-    case 2:
-      return "bg-secondary2";
-    case 0:
-      return "bg-secondary3";
-    default:
-      return "black";
-  }
-};
-export const dayLineColor = dayNum => {
-  switch (dayNum % 3) {
-    case 1:
-      return "#0DD1FD";
-    case 2:
-      return "#6B4AD6";
-    case 0:
-      return "#FB653D";
-    default:
-      return "black";
-  }
-};
-// pathType 아이콘
-export const matchPathTypeIcon = pathType => {
-  switch (pathType) {
-    case "지하철": //지하철
-      return <FaTrainSubway />;
-    case "버스": //버스
-      return <BiSolidBus />;
-    case "버스+지하철": //버스+지하철
-      return <BiSolidBus />;
-    case "열차": //열차
-      return <BiSolidTrain />;
-    case "시외버스":
-      return <BiSolidBus />;
-    case "시외교통 복합(기차 + 시외버스)":
-      return <BiSolidTrain />;
-    case "항공": //항공
-      return <FaWalking />;
-    default:
-      return <BiNavigation />;
-  }
-};
-// 날씨 아이콘
-export const matchWeatherIcon = weather => {
-  switch (weather) {
-    case "sunny":
-      return <img src="/public/images/weathericon/sunny.svg" alt="sunny" />;
-    case "cloudy":
-      return <img src="/public/images/weathericon/cloudy.svg" alt="cloudy" />;
-    case "overcast":
-      return (
-        <img src="/public/images/weathericon/overcast.svg" alt="overcast" />
-      );
-    case "rain":
-      return <img src="/public/images/weathericon/rain.svg" alt="rain" />;
-    case "snow":
-      return <img src="/public/images/weathericon/snow.svg" alt="snow" />;
-    default:
-      return "";
-  }
-};
 
 /**
  * ### 인수
@@ -162,8 +53,10 @@ const ScheduleDay = ({
   tripId,
   getTrip,
   setTripData,
+  index,
+  date,
 }) => {
-  console.log("data", data);
+  // console.log("data", data);
   //recoil
   const [trip, setTrip] = useRecoilState(tripAtom);
   const accessToken = getCookie("accessToken");
@@ -196,7 +89,7 @@ const ScheduleDay = ({
   // 지도
   const scheduleArr = data?.schedules || [];
   const scheArr = scheduleArr.filter(item => item.scheOrMemo === "SCHE");
-  console.log(`${data.day} scheArr`, scheArr);
+  // console.log(`${data.day} scheArr`, scheArr);
   const positions = scheArr?.map((item, index) => {
     return { title: item.strfTitle, latlng: { lat: item.lat, lng: item.lng } };
   });
@@ -254,7 +147,7 @@ const ScheduleDay = ({
   // 일정 추가 위해 출발
   const handleClickAddBt = () => {
     const lastSche = scheArr[scheArr.length - 1];
-    const lastSeq = scheduleArr[scheduleArr.length - 1]?.seq;
+    const lastSeq = scheduleArr[scheduleArr.length - 1]?.seq || 0;
     console.log("lastSche", lastSche);
     console.log("lastSeq", lastSeq);
     // console.log(data.day);
@@ -291,7 +184,11 @@ const ScheduleDay = ({
       console.log(error);
     }
   };
-
+  // 일정 클릭
+  const handleClickList = item => {
+    console.log(item);
+    navigate(`/contents/index?strfId=${item.strfId}`);
+  };
   return (
     <div className="flex flex-col gap-[30px]">
       {/* 라인 */}
@@ -346,11 +243,11 @@ const ScheduleDay = ({
         {/* Day, 날짜, 날씨 */}
         <div className="flex gap-[10px] items-center">
           <h3
-            className={`font-work-sans text-[24px] font-bold ${dayTextColor(data?.day)} `}
+            className={`font-work-sans text-[24px] font-bold ${dayTextColor(data.day || index + 1)} `}
           >
-            Day {data?.day}
+            Day {data.day || index + 1}
           </h3>
-          <span className="text-[18px] text-slate-700">{startAt}</span>
+          <span className="text-[18px] text-slate-700">{date}</span>
           <div className="w-[30px] h-[30px] flex items-center justify-center text-[30px]">
             {matchWeatherIcon(data?.weather)}
           </div>
@@ -366,7 +263,10 @@ const ScheduleDay = ({
                 {/* 일정 또는 메모 */}
                 {item.scheOrMemo === "SCHE" ? (
                   // 일정
-                  <div className="flex gap-[30px] items-center">
+                  <div
+                    className="flex gap-[30px] items-center cursor-pointer"
+                    onClick={() => handleClickList(item)}
+                  >
                     <div
                       className={`w-[30px] h-[30px]
                                   flex items-center justify-center  
@@ -379,8 +279,12 @@ const ScheduleDay = ({
                     {/* 일정 정보 */}
                     <div className="flex gap-[20px] items-center">
                       {/* 이미지 */}
-                      <div className="w-[60px] h-[60px] bg-slate-200 rounded-lg">
-                        <img src="" alt="thum" />
+                      <div className="w-[60px] h-[60px] bg-slate-200 rounded-lg overflow-hidden">
+                        <img
+                          src={`${ProductPic}${item.strfId}/${item.picName}`}
+                          alt="thum"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       {/* 정보 */}
                       <div>
@@ -389,13 +293,14 @@ const ScheduleDay = ({
                         </h4>
                         <div className="flex gap-[10px] items-center">
                           <p className="text-[14px] text-slate-500">
-                            {item.category}
+                            {categoryKor(item.category)}
                           </p>
                           <div className="flex gap-[10px] items-center">
                             <div className="flex gap-[5px] items-center">
                               <Rate
+                                disabled
                                 count={1}
-                                value={0}
+                                value={item.reviewed ? 1 : 0}
                                 style={{
                                   width: "16px",
                                   height: "16px",
@@ -404,17 +309,17 @@ const ScheduleDay = ({
                                   justifyContent: "center",
                                 }}
                               />
-                              <p className="text-[12px] text-slate-500">평점</p>
+                              {/* <p className="text-[12px] text-slate-500">평점</p>
                               <p className="text-[12px] text-slate-500">
                                 ({(1000).toLocaleString()})
-                              </p>
+                              </p> */}
                             </div>
-                            <p className="flex gap-[5px] items-center">
+                            {/* <p className="flex gap-[5px] items-center">
                               <AiTwotoneHeart className="text-[16px]" />
                               <span className="text-[12px] text-slate-500">
                                 찜하기 수
                               </span>
-                            </p>
+                            </p> */}
                           </div>
                         </div>
                       </div>
@@ -431,17 +336,20 @@ const ScheduleDay = ({
                     </div>
                     {/* 내용 */}
                     <div
-                      className="flex flex-col gap-[10px] justify-center
-                  px-[20px] py-[20px] w-full rounded-2xl
+                      className="flex  gap-[10px] justify-between
+                  px-[40px] py-[20px] w-full rounded-2xl
                   bg-slate-50 "
                     >
-                      <p className="flex gap-[5px] text-slate-700">
-                        <IoReaderOutline className="text-slate-300 text-[18px]" />
-                        {item.title}
-                      </p>
-                      <p className="text-[14px]">{item.content}</p>
+                      <div>
+                        <p className="flex gap-[5px] text-slate-700">
+                          <IoReaderOutline className="text-slate-300 text-[18px]" />
+                          {item.title}
+                        </p>
+                        <p className="text-[14px]">{item.content}</p>
+                      </div>
+
                       <button type="button" onClick={() => deleteMemo(item)}>
-                        삭제
+                        <RiCloseLargeFill className="text-slate-500" />
                       </button>
                     </div>
                   </div>
@@ -471,7 +379,7 @@ const ScheduleDay = ({
                       className={`${item.pathType === null ? "text-[14px] text-slate-600 h-[18px]" : "text-[14px] text-slate-400 h-[18px]"}`}
                     >
                       {item.duration}
-                      {item.pathType ? "분" : "길찾기"}
+                      {item.pathType > 0 ? "분" : ""}
                     </div>
                   </div>
                 </div>

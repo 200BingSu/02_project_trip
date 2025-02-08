@@ -65,7 +65,9 @@ const UserRecentList = () => {
   };
 
   const deleteRecent = async item => {
+
     console.log("isRecents.strfId", item.strfId, accessToken);
+
     const sendData = { strf_id: item.strfId };
     try {
       const res = await axios.patch(
@@ -78,7 +80,9 @@ const UserRecentList = () => {
         },
       );
       console.log("숨기기 결과", res.data);
+
       getRecentList(); // Call getRecentList after deleting
+
     } catch (error) {
       console.log("✅  error:", error);
     }
