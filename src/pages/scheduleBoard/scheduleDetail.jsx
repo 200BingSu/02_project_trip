@@ -237,12 +237,20 @@ const ScheduleDetail = () => {
         onClick={handleNavigateBack}
         rightContent={<RightContent icon1={true} icon4={true} />}
       />
-      <div className="flex flex-col px-[32px] py-[30px] gap-[30px] mt-[60px]">
+      {/* 여행기 */}
+      <div className="flex flex-col px-[32px] py-[30px] gap-[30px]">
         {/* 이미지 */}
-        <Swiper slidesPerView={1} spaceBetween={16} className="mySwiper">
+        <Swiper
+          slidesPerView={1}
+          spaceBetween={0}
+          className="mySwiper w-[708px] h-[406px] px-[32px]"
+        >
           {tripReviewData[0]?.tripReviewPics.map((item, index) => {
             return (
-              <SwiperSlide key={index} className="h-[406px] bg-slate-200">
+              <SwiperSlide
+                key={index}
+                className="max-w-3xl h-[406px] bg-slate-200"
+              >
                 <img
                   src={`${TripReviewPic}${tripReviewData[0].tripReviewId}/${item}`}
                   alt="thum"
@@ -285,15 +293,10 @@ const ScheduleDetail = () => {
         </div>
         {/* 소개 */}
         <div>
-          <p>
-            창의성을 높이는 일상 속 습관은 아이디어 발상 기법과 창의적 사고
-            훈련을 포함합니다. 아이디어 발상 기법으로는 브레인스토밍, 마인드맵,
-            SCAMPER 등이 있으며, 이는 새로운 아이디어를 창출하는 데 도움을
-            줍니다. 창의적 사고 훈련은 기존의 사고 방식을 벗어나 다양한 관점에서
-            문제를 바라보는 능력을 키웁니다. 일상 속에서 이러한 습관을
-            지속적으로 실천하면 창의성을 자연스럽게 향상시킬 수 있습니다.
-          </p>
+          <p>{tripReviewData[0]?.content}</p>
         </div>
+      </div>
+      <div>
         {/* 일정 */}
         <div className="flex flex-col gap-[50px]">
           {dummyData.map((item, index) => {

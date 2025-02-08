@@ -5,10 +5,11 @@ import { RiCloseLargeFill } from "react-icons/ri";
 import { getCookie } from "../../utils/cookie";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
-import { categoryKor } from "../../pages/contents/ContentIndex";
+
 import { ProductPic } from "../../constants/pic";
 
 import { useNavigate } from "react-router-dom";
+import { categoryKor } from "../../utils/match";
 
 const SearchNone = ({
   searchData,
@@ -69,7 +70,6 @@ const SearchNone = ({
     console.log("클릭한 인기 검색어:", word);
     setSearchValue(word.strfName);
     navigate(`/contents/index?strfId=${word.strfId}`);
-    // 추가 동작 (예: 검색 실행, 페이지 이동 등)
   };
 
   const handleClickList = item => {
@@ -95,7 +95,46 @@ const SearchNone = ({
       console.log(error);
     }
   };
-
+  // 최근 본 목록 개별 삭제
+  const patchRecentList = async item => {
+    const sendData = { strf_id: item.strfId };
+    try {
+      const res = await axios.patch(
+        `/api/recent/hide?strf_id=${item.strfId}`,
+        { ...sendData },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log(res.data);
+      if (res.data) {
+        getBasicList();
+      }
+    } catch (error) {
+      console.log("개별 삭제", error);
+    }
+  };
+  const patchRecentListAll = async () => {
+    try {
+      const res = await axios.patch(
+        `/api/recent/hide/all`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log(res.data);
+      if (res.data) {
+        getBasicList();
+      }
+    } catch (error) {
+      console.log("개별 삭제", error);
+    }
+  };
   useEffect(() => {
     getSearchBasicPopular();
     if (accessToken) {
@@ -137,90 +176,71 @@ const SearchNone = ({
             <h2 className="text-[24px] font-semibold text-slate-700">
               최근 본 목록
             </h2>
-            <button type="button" className="text-slate-400 text-[18px]">
+            <button
+              type="button"
+              className="text-slate-400 text-[18px]"
+              onClick={() => patchRecentListAll()}
+            >
               모두 삭제
             </button>
           </div>
           {/* 최근 본 목록 목록 */}
           <ul className="flex flex-col gap-[20px]">
-            {recentContents ? (
-              recentContents?.map((item, index) => {
-                return (
-                  <li
-                    key={index}
-                    className="flex cursor-pointer items-center justify-between"
-                    onClick={() => handleClickList(item)}
-                  >
-                    <div className="flex gap-[15px]">
-                      <div className="w-[80px] h-[80px] rounded-2xl overflow-hidden">
-                        <img
-                          className="w-full h-full object-cover"
-                          src={
-                            item.strfPic
-                              ? `${ProductPic}${item.strfId}/${item.strfPic}`
-                              : "/public/images/logo_icon_4.png"
-                          }
-                          alt={item.strfName}
-                        />
-                      </div>
-                      {/* 정보 */}
-                      <div className="flex flex-col gap-[5px] justify-center">
-                        {/* 제목 */}
-                        <div className="text-[18px] text-slate-700 font-semibold">
-                          {item.strfName}
-                        </div>
-                        {/* 카테고리, 지역 */}
-                        <div className="flex gap-[5px]">
-                          <span className="text-slate-500 text-[14px]">
-                            {categoryKor(item.category)}
-                          </span>
-                          <span className="text-slate-500 text-[14px]">•</span>
-                          <span className="text-slate-500 text-[14px]">
-                            {item.locationTitle}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 삭제 버튼 */}
-                    <button
-                      type="button"
-                      className="text-slate-400 text-[20px]"
+            {recentContents
+              ? recentContents?.map((item, index) => {
+                  return (
+                    <li
+                      key={index}
+                      className="flex cursor-pointer items-center justify-between"
                     >
-                      <RiCloseLargeFill />
-                    </button>
-                  </li>
-                );
-              })
-            ) : (
-              <li className="flex cursor-pointer justify-between items-center">
-                <div className="flex gap-[15px]">
-                  {/* 썸네일 */}
-                  <div className="w-[80px] h-[80px] rounded-[16px] overflow-hidden bg-slate-200">
-                    {/* <img className="w-full h-full object-cover" src="#" alt="" /> */}
-                  </div>
-                  {/* 정보 */}
-                  <div className="flex flex-col gap-[5px] justify-center">
-                    {/* 제목 */}
-                    <div className="text-[18px] text-slate-700 font-semibold">
-                      제목
-                    </div>
-                    {/* 카테고리, 지역 */}
-                    <div className="flex gap-[5px]">
-                      <span className="text-slate-500 text-[14px]">
-                        카테고리
-                      </span>
-                      <span className="text-slate-500 text-[14px]">•</span>
-                      <span className="text-slate-500 text-[14px]">지역</span>
-                    </div>
-                  </div>
-                </div>
-                {/* 삭제 버튼 */}
-                <button type="button" className="text-slate-400 text-[20px]">
-                  <RiCloseLargeFill />
-                </button>
-              </li>
-            )}
+                      <div
+                        className="flex gap-[15px]"
+                        onClick={() => handleClickList(item)}
+                      >
+                        <div className="w-[80px] h-[80px] rounded-2xl overflow-hidden">
+                          <img
+                            className="w-full h-full object-cover"
+                            src={
+                              item.strfPic
+                                ? `${ProductPic}${item.strfId}/${item.strfPic}`
+                                : "/public/images/logo_icon_4.png"
+                            }
+                            alt={item.strfName}
+                          />
+                        </div>
+                        {/* 정보 */}
+                        <div className="flex flex-col gap-[5px] justify-center">
+                          {/* 제목 */}
+                          <div className="text-[18px] text-slate-700 font-semibold">
+                            {item.strfName}
+                          </div>
+                          {/* 카테고리, 지역 */}
+                          <div className="flex gap-[5px]">
+                            <span className="text-slate-500 text-[14px]">
+                              {categoryKor(item.category)}
+                            </span>
+                            <span className="text-slate-500 text-[14px]">
+                              •
+                            </span>
+                            <span className="text-slate-500 text-[14px]">
+                              {item.locationTitle}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 삭제 버튼 */}
+                      <button
+                        type="button"
+                        className="text-slate-400 text-[20px]"
+                        onClick={() => patchRecentList(item)}
+                      >
+                        <RiCloseLargeFill />
+                      </button>
+                    </li>
+                  );
+                })
+              : null}
           </ul>
         </div>
       ) : null}
