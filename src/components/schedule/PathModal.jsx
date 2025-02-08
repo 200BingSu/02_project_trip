@@ -5,10 +5,11 @@ import { tripAtom } from "../../atoms/tripAtom";
 import axios from "axios";
 import { FaLocationDot } from "react-icons/fa6";
 import { getCookie } from "../../utils/cookie";
-import { matchPathTypeIcon } from "../scheduleboard/ScheduleDay";
+
 import dayjs from "dayjs";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { matchPathTypeIcon } from "../../utils/match";
 
 const PathModal = ({
   contentData,
@@ -20,6 +21,17 @@ const PathModal = ({
   const accessToken = getCookie("accessToken");
   //recoil
   const [trip, setTrip] = useRecoilState(tripAtom);
+  // anstD message
+  const [messageApi, contextHolder] = message.useMessage();
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "This is an error message",
+      style: {
+        marginTop: "20vh",
+      },
+    });
+  };
   // useNavigate
   const navigate = useNavigate();
   const navigateTrip = () => {
@@ -30,7 +42,7 @@ const PathModal = ({
   }, [trip]);
   //useState
   const [pathData, setPathData] = useState();
-
+  const [nowSelected, setNowSelected] = useState(null);
   useEffect(() => {
     console.log(pathData);
   }, [pathData]);
@@ -88,7 +100,16 @@ const PathModal = ({
           },
         },
       );
-      console("일정등록 결과", res.data);
+      console.log("일정등록 결과", res.data);
+      const resultData = res.data;
+      if (resultData.code === "500 서버에러") {
+        error();
+        setOpenPathModal(false);
+      }
+      if (resultData.code === "200 성공") {
+        setOpenPathModal(false);
+        navigate(`/schedule/index?tripId=${trip.nowTripId}`);
+      }
     } catch (error) {
       console.log("일정등록 결과", error);
     }
@@ -155,11 +176,15 @@ const PathModal = ({
           {pathData?.map((item, index) => {
             return (
               <li
-                className="flex gap-[20px] items-center 
+                className={`flex gap-[20px] items-center 
                           px-[20px] py-[10px]
                           hover:bg-slate-50 cursor-pointer
-                            rounded-lg"
-                onClick={() => handleClickList(item)}
+                            rounded-lg
+                            ${index === nowSelected ? "bg-slate-100" : "bg-white"}`}
+                onClick={() => {
+                  handleClickList(item);
+                  setNowSelected(index);
+                }}
                 key={index}
               >
                 {/* 좌 */}

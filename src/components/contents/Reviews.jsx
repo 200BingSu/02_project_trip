@@ -39,11 +39,11 @@ const Reviews = () =>
       try {
         const res = await axios.get(
           `/api/review?strf_id=${strfId}&last_index=${reviewIndex}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          },
+          // {
+          //   headers: {
+          //     Authorization: `Bearer ${accessToken}`,
+          //   },
+          // },
         );
         console.log("리뷰 불러오기:", res.data);
         setReviewsData([...reviewsData, ...res.data]);
