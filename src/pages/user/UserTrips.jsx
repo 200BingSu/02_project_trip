@@ -21,9 +21,7 @@ const UserTrips = () => {
   useEffect(() => {
     console.log("tripListData", tripListData);
   }, [tripListData]);
-  useEffect(() => {
-    console.log("카테고리", category);
-  }, [category]);
+  useEffect(() => {}, [category]);
   // 미완료 여행 목록 불러오기
 
   const getTripList = async () => {
@@ -61,7 +59,6 @@ const UserTrips = () => {
     }
   };
 
-
   useEffect(() => {
     if (userInfo.accessToken) {
       getTripList();
@@ -76,13 +73,6 @@ const UserTrips = () => {
     console.log(item);
     navigate(`/schedule/index?tripId=${item.tripId}`);
   };
-
-  const [category, setCategory] = useState(0);
-
-  useEffect(() => {
-    console.log("카테고리", category);
-  }, [category]);
-  // 미완료 여행 목록 불러오기
 
   console.log("✅  useProfile:", useProfile);
   console.log("tripListData", tripListData);
