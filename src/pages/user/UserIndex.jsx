@@ -101,7 +101,7 @@ const UserIndex = ({ isOpen, onClose }) => {
                         : `/images/user.png`
                     }
                     alt="User-Profile"
-                    className="h-full object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
 

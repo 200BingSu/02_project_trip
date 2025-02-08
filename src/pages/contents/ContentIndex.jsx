@@ -176,10 +176,11 @@ const ContentIndex = () => {
   const showRegistModal = () => {
     if (trip.nowTripId === 0) {
       setIsRegistModalOpen(true);
-    } else if (trip.lastSeq !== 0) {
+    } else if (trip.lastSeq > 1) {
       setOpenPathModal(true);
     } else {
       postSchedule();
+      navigate(`/schedule/index?tripId=${trip.nowTripId}`);
     }
   };
   const handleRegistOk = () => {

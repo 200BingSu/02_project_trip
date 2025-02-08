@@ -26,7 +26,7 @@ const SearchContents = () => {
 
   const [inputValue, setInputValue] = useState("");
   useEffect(() => {
-    console.log("searchData", searchData);
+    // console.log("searchData", searchData);
   }, [searchData]);
   // 목록 클릭
   const handleClickList = item => {
@@ -34,20 +34,21 @@ const SearchContents = () => {
   };
   //입력 후 데이터 호출
   const postSearchAll = async () => {
-    const sendData = { search_word: searchValue, last_index: 1 };
+    const sendData = { search_word: searchValue, last_index: 0 };
+    console.log("검색:", sendData);
     try {
       const res = await axios.post(
         `/api/search/all?search_word=${searchValue}&last_index=1`,
         { ...sendData },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${accessToken}`,
+        //   },
+        // },
       );
       console.log("검색 결과 호출", res.data);
       const resultData = res.data;
-      setSearchData([...searchData, ...resultData.data]);
+      setSearchData([...resultData.data]);
     } catch (error) {
       console.log(error);
     }
@@ -55,7 +56,7 @@ const SearchContents = () => {
 
   // searchValue
   useEffect(() => {
-    console.log("searchValue:", searchValue);
+    // console.log("searchValue:", searchValue);
     postSearchAll();
   }, [searchValue]);
 
@@ -68,12 +69,14 @@ const SearchContents = () => {
         setSearchState={setSearchState}
         inputValue={inputValue}
         setInputValue={setInputValue}
+        searchData={searchData}
+        setSearchData={setSearchData}
       />
       {/* 검색 결과 */}
       {searchState ? (
         <SearchList
-          searchData={searchData}
           searchValue={searchValue}
+          searchData={searchData}
           setSearchData={setSearchData}
         />
       ) : (
