@@ -149,7 +149,7 @@ const UserIndex = ({ isOpen, onClose }) => {
                 찜하기
               </Link>
               <Link
-                to=""
+                to="/user/userreview"
                 className="w-1/4 text-center text-lg text-slate-500 font-normal relative after:absolute after:top-1/2 after:-translate-y-1/2 after:right-0 after: after:bg-slate-200 after:w-[1px] after:h-14"
               >
                 <AiOutlineStar className="w-full text-4xl text-slate-700 mb-2" />

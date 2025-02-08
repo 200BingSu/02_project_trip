@@ -10,6 +10,7 @@ import { ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import { Button, Modal } from "antd";
 import { LiaComment } from "react-icons/lia";
+import Footer from "../Footer";
 
 const UserRecentList = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
@@ -194,7 +195,7 @@ const UserRecentList = () => {
           ))}
         </div>
       )}
-
+      <Footer />
       <Modal
         open={isModalOpen}
         onOk={handleOk}

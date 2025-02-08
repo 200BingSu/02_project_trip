@@ -7,6 +7,7 @@ import { userAtom } from "../../atoms/userAtom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { LocationPic, ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
+import Footer from "../Footer";
 import axios from "axios";
 import jwtAxios from "../../apis/jwt";
 
@@ -25,6 +26,7 @@ const UserTrips = () => {
   }, [tripListData]);
 
   useEffect(() => {}, [category]);
+
 
   // 여행 목록 불러오기
   const getTripList = async () => {
@@ -99,20 +101,7 @@ const UserTrips = () => {
   return (
     <div className="flex flex-col gap-[30px]">
       <TitleHeader icon="back" title="여행" onClick={navigateBack} />
-      {/* 유저 정보 */}
-      <div className="mt-[90px] flex flex-col gap-[14px] items-center justify-center w-full">
-        {/* 프로필 이미지 */}
-        <div className="w-[120px] h-[120px] rounded-full overflow-hidden bg-slate-100">
-          <img
-            src={`${ProfilePic}${userInfo?.userId}/${useProfile?.profilePic}`}
-            alt="유저 이미지"
-            className="w-full h-full"
-          />
-        </div>
-        <p className="text-[30px] text-slate-700 font-bold">
-          {/* {useProfile?.name} */}
-        </p>
-      </div>
+
       {/* 여행코드 입력창 */}
       <div className="px-[32px] flex flex-col gap-[5px]">
         <p className="text-slate-500 text-[18px] font-semibold">여행코드</p>
@@ -228,6 +217,7 @@ const UserTrips = () => {
           </ul>
         )}
       </div>
+      <Footer />
     </div>
   );
 };
