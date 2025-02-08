@@ -98,6 +98,7 @@ const SearchBar = React.memo(
           onKeyDown={e => {
             if (e.code === "Enter") {
               setSearchValue(e.target.value);
+              setSearchBarFocus(false);
               setSearchState(true);
             }
           }}

@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { CONTENT, TRIP } from "../../constants/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
@@ -58,18 +58,10 @@ import PathModal from "../../components/schedule/PathModal";
 
 import { ProductPic } from "../../constants/pic";
 import { GiPillow } from "react-icons/gi";
+import { categoryKor } from "../../utils/match";
 
 dayjs.extend(isBetween);
 const accessToken = getCookie("accessToken");
-
-// 카테고리 한글 변환
-export const categoryKor = category => {
-  if (category === "STAY") return "호텔";
-  if (category === "RESTAUR") return "식당";
-  if (category === "TOUR") return "관광지";
-  if (category === "FEST") return "축제";
-  if (category === null) return "카테고리";
-};
 
 const ContentIndex = () => {
   // antD
@@ -104,6 +96,9 @@ const ContentIndex = () => {
   const navigateTrip = () => {
     navigate(`/schedule/index?tripId=${trip.nowTripId}`);
   };
+  //useLocation
+  const location = useLocation();
+  const locationState = location.state;
   //useState
   const [contentData, setContentData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);

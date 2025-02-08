@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
 import { ProductPic } from "../../constants/pic";
-import { categoryKor } from "../contents/ContentIndex";
+
 import { AiFillHeart, AiTwotoneHeart } from "react-icons/ai";
+import { categoryKor } from "../../utils/match";
 
 const UserWishList = () => {
   const accessToken = getCookie("accessToken");
@@ -35,7 +36,7 @@ const UserWishList = () => {
       //   console.log(res.data);
       const resultData = res.data;
       setWishListData([...wishListData, ...resultData]);
-      setLastIndex(prev => prev + 10);
+      // setLastIndex(prev => prev + 10);
     } catch (error) {
       console.log("찜목록 불러오기", error);
     }
