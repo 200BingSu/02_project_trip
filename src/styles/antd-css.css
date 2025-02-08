@@ -21,3 +21,7 @@
   height: 60px;
   font-size: 18px;
 }
+.ant-rate-star,
+.ant-rate-star-full {
+  margin-inline-end: 0 !important;
+}

@@ -78,9 +78,9 @@ const RecentList = ({
           <div
             key={content.strfId}
             className="w-[50%] flex items-center gap-5 mb-5 cursor-pointer"
-            // onClick={() => {
-            //   navigate(`/contents/index?strfId=${content.strfId}`);
-            // }}
+            onClick={() => {
+              navigate(`/contents/index?strfId=${content.strfId}`);
+            }}
           >
             <div className="w-[164px] h-[164px] rounded-[16px] relative overflow-hidden flex-1">
               <img
