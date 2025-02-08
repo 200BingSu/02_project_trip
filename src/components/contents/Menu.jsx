@@ -298,24 +298,57 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
         <div className="w-full flex flex-col gap-[20px]">
           <h2 className="text-[28px] font-semibold text-slate-700">예매</h2>
           <ul>
-            <li className="flex py-[30px] border-b border-slate-200 items-center justify-between">
-              <div className="flex flex-col gap-[10px]">
-                <div className="flex gap-[5px] items-center">
-                  <p className="text-[24px] text-slate-700">메뉴 이름</p>
-                  <Partnership />
-                </div>
+            {contentData ? (
+              menuListArr.map((item, index) => {
+                return (
+                  <li
+                    key={index}
+                    className="flex py-[30px] border-b border-slate-200 items-center justify-between"
+                  >
+                    <div className="flex flex-col gap-[10px]">
+                      <div className="flex gap-[5px] items-center">
+                        <p className="text-[24px] text-slate-700">
+                          {item.menuTitle}
+                        </p>
+                        <Partnership />
+                      </div>
 
-                <p className="text-[18px] text-slate-700 font-semibold">가격</p>
-                <p className="text-[18px] text-slate-400">유효기간</p>
-              </div>
-              <div className="w-[150px] h-[150px] bg-slate-200 rounded-[16px] overflow-hidden">
-                <Skeleton.Image
-                  active={false}
-                  size="large"
-                  style={{ width: "150px", height: "150px" }}
-                />
-              </div>
-            </li>
+                      <p className="text-[18px] text-slate-700 font-semibold">
+                        {item.menuPrice.toLocaleString()}원
+                      </p>
+                      {/* <p className="text-[18px] text-slate-400">유효기간</p> */}
+                    </div>
+                    <div className="w-[150px] h-[150px] bg-slate-200 rounded-[16px] overflow-hidden">
+                      <img
+                        src={`${MenuPic}${contentData.strfId}/menu/${item.menuPic}`}
+                        alt={item.menuTitle}
+                      />
+                    </div>
+                  </li>
+                );
+              })
+            ) : (
+              <li className="flex py-[30px] border-b border-slate-200 items-center justify-between">
+                <div className="flex flex-col gap-[10px]">
+                  <div className="flex gap-[5px] items-center">
+                    <p className="text-[24px] text-slate-700">메뉴 이름</p>
+                    <Partnership />
+                  </div>
+
+                  <p className="text-[18px] text-slate-700 font-semibold">
+                    가격
+                  </p>
+                  <p className="text-[18px] text-slate-400">유효기간</p>
+                </div>
+                <div className="w-[150px] h-[150px] bg-slate-200 rounded-[16px] overflow-hidden">
+                  <Skeleton.Image
+                    active={false}
+                    size="large"
+                    style={{ width: "150px", height: "150px" }}
+                  />
+                </div>
+              </li>
+            )}
           </ul>
         </div>
       ) : null}
@@ -326,24 +359,56 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
             이용 요금 안내
           </h2>
           <ul>
-            <li className="flex py-[30px] border-b border-slate-200 items-center justify-between">
-              <div className="flex flex-col gap-[10px]">
-                <div className="flex gap-[5px] items-center">
-                  <p className="text-[24px] text-slate-700">메뉴 이름</p>
-                  <Partnership />
-                </div>
+            {contentData ? (
+              menuListArr.map((item, index) => {
+                return (
+                  <li className="flex py-[30px] border-b border-slate-200 items-center justify-between">
+                    <div className="flex flex-col gap-[10px]">
+                      <div className="flex gap-[5px] items-center">
+                        <p className="text-[24px] text-slate-700">
+                          {" "}
+                          {item.menuTitle}
+                        </p>
+                        <Partnership />
+                      </div>
 
-                <p className="text-[18px] text-slate-700 font-semibold">가격</p>
-                <p className="text-[18px] text-slate-400">유효기간</p>
-              </div>
-              <div className="w-[150px] h-[150px] bg-slate-200 rounded-[16px] overflow-hidden">
-                <Skeleton.Image
-                  active={false}
-                  size="large"
-                  style={{ width: "150px", height: "150px" }}
-                />
-              </div>
-            </li>
+                      <p className="text-[18px] text-slate-700 font-semibold">
+                        {item.menuPrice.toLocaleString()}원
+                      </p>
+                      {/* <p className="text-[18px] text-slate-400">유효기간</p> */}
+                    </div>
+                    <div className="w-[150px] h-[150px] bg-slate-200 rounded-[16px] overflow-hidden">
+                      <Skeleton.Image
+                        active={false}
+                        size="large"
+                        style={{ width: "150px", height: "150px" }}
+                      />
+                    </div>
+                  </li>
+                );
+              })
+            ) : (
+              <li className="flex py-[30px] border-b border-slate-200 items-center justify-between">
+                <div className="flex flex-col gap-[10px]">
+                  <div className="flex gap-[5px] items-center">
+                    <p className="text-[24px] text-slate-700">메뉴 이름</p>
+                    <Partnership />
+                  </div>
+
+                  <p className="text-[18px] text-slate-700 font-semibold">
+                    가격
+                  </p>
+                  <p className="text-[18px] text-slate-400">유효기간</p>
+                </div>
+                <div className="w-[150px] h-[150px] bg-slate-200 rounded-[16px] overflow-hidden">
+                  <Skeleton.Image
+                    active={false}
+                    size="large"
+                    style={{ width: "150px", height: "150px" }}
+                  />
+                </div>
+              </li>
+            )}
           </ul>
         </div>
       )}
