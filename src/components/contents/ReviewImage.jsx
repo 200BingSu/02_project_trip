@@ -4,9 +4,9 @@ import { ReviewPic } from "../../constants/pic";
 const ReviewImage = ({ imgArr, reviewId }) => {
   const imgArrLeng = imgArr?.length;
   const imgRef = useRef(null);
-  useEffect(() => {
-    console.log(imgRef.current);
-  }, [imgRef]);
+  // useEffect(() => {
+  //   console.log(imgRef.current);
+  // }, [imgRef]);
   return (
     <div>
       {imgArrLeng === 1 && (
