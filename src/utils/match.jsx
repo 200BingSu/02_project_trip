@@ -85,3 +85,12 @@ export const matchWeatherIcon = weather => {
       return "";
   }
 };
+
+// 카테고리 한글 변환
+export const categoryKor = category => {
+  if (category === "STAY") return "호텔";
+  if (category === "RESTAUR") return "식당";
+  if (category === "TOUR") return "관광지";
+  if (category === "FEST") return "축제";
+  if (category === null) return "카테고리";
+};

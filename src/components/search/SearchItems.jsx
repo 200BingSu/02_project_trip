@@ -6,7 +6,7 @@ import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import { ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
-import { categoryKor } from "../../pages/contents/ContentIndex";
+import { categoryKor } from "../../utils/match";
 
 const SearchItems = forwardRef(
   (
