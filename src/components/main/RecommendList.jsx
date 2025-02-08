@@ -1,6 +1,6 @@
 import React from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ProductPic } from "../../constants/pic";
 
@@ -8,6 +8,8 @@ const RecommendList = ({ recommend }) => {
   if (!recommend || recommend.length === 0) {
     return null;
   }
+  const navigate = useNavigate();
+
   return (
     <div>
       <h1 className="text-3xl font-bold mx-[32px]">
@@ -20,7 +22,8 @@ const RecommendList = ({ recommend }) => {
         {recommend.map(item => (
           <SwiperSlide
             key={item.strfId}
-            className="!flex align-middle justify-center gap-8 mt-12 px-8"
+            className="!flex align-middle justify-center gap-8 mt-12 px-8 cursor-pointer"
+            onClick={() => navigate(`/contents/index?strfId=${item.strfId}`)}
           >
             <p></p>
             <div className="mt-12 w-[50%]">

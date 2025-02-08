@@ -1,14 +1,13 @@
+import { message } from "antd";
 import React from "react";
 import { BsFillPatchPlusFill } from "react-icons/bs";
 import { FiSearch } from "react-icons/fi";
 import { IoReaderOutline } from "react-icons/io5";
 import { RiMapPinUserFill } from "react-icons/ri";
-import { HiOutlineMap } from "react-icons/hi2";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { tripAtom } from "../../../atoms/tripAtom";
+import { useRecoilValue } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
-import { message } from "antd";
+import { LuMapPinned } from "react-icons/lu";
 
 const DockBar = React.memo(() => {
   //recoil
@@ -48,7 +47,7 @@ const DockBar = React.memo(() => {
         }}
         className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
       >
-        <HiOutlineMap className="text-4xl" />
+        <LuMapPinned className="text-4xl" />
         일정
       </button>
       <Link

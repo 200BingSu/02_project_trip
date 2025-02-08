@@ -12,6 +12,7 @@ import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import jwtAxios from "../../apis/jwt";
 import { getCookie } from "../../utils/cookie";
+import DockBar from "../../components/layout/DockBar/DockBar";
 
 const SearchContents = () => {
   // 쿼리스트링
@@ -91,6 +92,7 @@ const SearchContents = () => {
           searchValue={searchValue}
         />
       )}
+      <DockBar />
     </div>
   );
 };
