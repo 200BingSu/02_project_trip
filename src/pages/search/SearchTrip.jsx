@@ -197,7 +197,7 @@ const SearchTrip = () => {
                 }}
               >
                 {/* 썸네일 */}
-                <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px]">
+                <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px] overflow-hidden">
                   <img
                     src={`${ProductPic}${item.strfId}/${item.picTitle}`}
                     alt={item.title}

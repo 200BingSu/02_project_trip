@@ -88,7 +88,14 @@ const Index = () => {
         className={`flex h-[60px] items-center px-[32px] max-w-3xl w-full duration-300 ${scrollY ? "fixed top-0 " : "relative"} z-50 bg-white `}
       >
         <h1 className="w-[160px] mr-auto">
-          <img src="/images/logo_1.png" alt="main_logo" />
+          <img
+            src="/images/logo_1.png"
+            alt="main_logo"
+            className="cursor-pointer"
+            onClick={() => {
+              navigate("/");
+            }}
+          />
         </h1>
         <nav className=" flex gap-[16px]">
           <BiBell className="text-3xl text-slate-400 cursor-pointer" />
