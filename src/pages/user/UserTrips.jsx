@@ -23,6 +23,10 @@ const UserTrips = () => {
     console.log("tripListData", tripListData);
   }, [tripListData]);
 
+  useEffect(() => {}, [category]);
+  // 미완료 여행 목록 불러오기
+
+
   // 여행 목록 불러오기
   const getTripList = async () => {
     try {
@@ -74,6 +78,7 @@ const UserTrips = () => {
     navigate(`/schedule/index?tripId=${item.tripId}`);
   };
 
+
   useEffect(() => {
     // console.log("카테고리", category);
   }, [category]);
@@ -81,6 +86,7 @@ const UserTrips = () => {
 
   // console.log("✅  useProfile:", useProfile);
   // console.log("tripListData", tripListData);
+
 
   return (
     <div className="flex flex-col gap-[30px]">

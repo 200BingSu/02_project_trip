@@ -11,9 +11,7 @@ const UserBooking = () => {
   //useState
   const [category, setCategory] = useState(0);
   const [bookingData, setBookingData] = useState({});
-  useEffect(() => {
-    console.log("카테고리", category);
-  }, [category]);
+  useEffect(() => {}, [category]);
   return (
     <div className="flex flex-col gap-[30px]">
       <TitleHeader icon="back" title="여행" onClick={navigateBack} />
