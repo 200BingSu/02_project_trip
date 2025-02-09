@@ -1,7 +1,16 @@
+import { useNavigate } from "react-router-dom";
+
 const ScheduleModal = ({ handleRegistCancel }) => {
+  //useNavigate
+  const navigate = useNavigate();
+  const navigateToSchedule = () => {
+    navigate("/search/location");
+  };
   return (
     <div
       className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white
+
+
           w-[468px]
           flex flex-col gap-[36px] pt-[40px] rounded-2xl
         "
@@ -24,6 +33,7 @@ const ScheduleModal = ({ handleRegistCancel }) => {
         <button
           type="button"
           className="flex justify-center w-full text-primary text-[24px]"
+          onClick={navigateToSchedule}
         >
           일정 등록
         </button>
