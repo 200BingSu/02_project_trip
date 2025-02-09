@@ -1,6 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
+  AiFillHeart,
   AiOutlineHeart,
   AiOutlineImport,
   AiTwotoneHeart,
@@ -11,6 +12,8 @@ import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCookie } from "../../../utils/cookie";
+import { Dropdown } from "antd";
+import { MdContentCopy } from "react-icons/md";
 
 const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   const accessToken = getCookie("accessToken");
@@ -29,14 +32,45 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
       navigate(-1);
     }
   };
-  //useLocation
+
   //useLocation
   const location = useLocation();
   const locationState = location.state;
-  console.log("locationState", locationState);
+  // console.log("locationState", locationState);
   const nowUrl = location.search;
   // console.log("URL:", nowUrl);
-  const localeIp = `http://localhost:5173/contents/index?${nowUrl}`;
+  const localeIp = `${window.location.origin}/contents/index?${nowUrl}`;
+  //복사하기
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(addLink);
+      console.log("복사 성공");
+    } catch (err) {
+      console.error("복사 실패:", err);
+    }
+  };
+
+  const items = [
+    {
+      label: (
+        <div
+          onClick={() => handleCopy()}
+          className="flex flex-col gap-[10px] items-center justify-center"
+        >
+          <p className="bg-slate-100 px-[15px] py-[10px] rounded-lg text-slate-600">
+            {localeIp}
+          </p>
+          <p className="flex items-center gap-1 border-b border-slate-300">
+            <i className="text-slate-500">
+              <MdContentCopy />
+            </i>
+            <span className="text-slate-500">URL 복사하기</span>
+          </p>
+        </div>
+      ),
+      key: "0",
+    },
+  ];
   // useState
   const [scrollY, setScrollY] = useState(0);
   // scrollY 이벤트
@@ -95,23 +129,44 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
           {contentData?.strfTitle || "제목"}
         </div>
       </div>
-      <div className="flex gap-[20px]">
+      <div className="flex gap-[20px] items-center">
         {userId !== 0 ? (
-          <div className="text-[36px] cursor-pointer " onClick={postWishList}>
-            <AiOutlineHeart
-              className={scrollY > 0 ? "text-slate-700" : "text-white"}
-            />
-          </div>
+          contentData?.wishIn ? (
+            <div className="text-[36px] cursor-pointer " onClick={postWishList}>
+              <AiFillHeart
+                className={scrollY > 0 ? "text-slate-700" : "text-white"}
+              />
+            </div>
+          ) : (
+            <div className="text-[36px] cursor-pointer " onClick={postWishList}>
+              <AiOutlineHeart
+                className={scrollY > 0 ? "text-slate-700" : "text-white"}
+              />
+            </div>
+          )
         ) : null}
 
-        <div className="text-[36px] cursor-pointer">
-          <AiOutlineImport
-            className={scrollY > 0 ? "text-slate-700" : "text-white"}
-          />
+        <div className="text-[36px] cursor-pointer items-center">
+          <Dropdown
+            menu={{
+              items,
+            }}
+            trigger={["click"]}
+            overlayStyle={{ marginTop: "10px" }}
+            className="flex items-center"
+          >
+            <a onClick={e => e.preventDefault()}>
+              <button type="button">
+                <AiOutlineImport
+                  className={scrollY > 0 ? "text-slate-700" : "text-white"}
+                />
+              </button>
+            </a>
+          </Dropdown>
         </div>
       </div>
     </div>
   );
 };
 
-export default ContentsHeader;
+export default memo(ContentsHeader);

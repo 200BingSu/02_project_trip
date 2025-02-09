@@ -360,10 +360,7 @@ const BookingIndex = () => {
                   value: 1,
                   label: (
                     <div className="flex items-center gap-[10px] pl-[20px]">
-                      <img
-                        src="/public/images/booking/kakao.svg"
-                        alt="kakaopay"
-                      />
+                      <img src="/images/booking/kakao.svg" alt="kakaopay" />
                       <p className="text-[18px] text-slate-700">카카오페이</p>
                     </div>
                   ),

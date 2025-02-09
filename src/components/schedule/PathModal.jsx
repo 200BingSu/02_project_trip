@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import { matchPathTypeIcon } from "../../utils/match";
 
 const PathModal = ({
+  pathData,
+  setPathData,
   contentData,
   selectPath,
   setSelectPath,
@@ -41,7 +43,7 @@ const PathModal = ({
     console.log("trip", trip);
   }, [trip]);
   //useState
-  const [pathData, setPathData] = useState();
+  // const [pathData, setPathData] = useState();
   const [nowSelected, setNowSelected] = useState(null);
   useEffect(() => {
     console.log(pathData);
@@ -104,6 +106,9 @@ const PathModal = ({
       const resultData = res.data;
       if (resultData.code === "500 서버에러") {
         error();
+        setOpenPathModal(false);
+      }
+      if (resultData.code === "400 거리가 너무 가깝거나 잘못된 값입니다.") {
         setOpenPathModal(false);
       }
       if (resultData.code === "200 성공") {

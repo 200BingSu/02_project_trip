@@ -197,9 +197,13 @@ const ScheduleBoardIndex = () => {
                   {/* content */}
                   <div className="flex flex-col gap-[20px]">
                     {/* 이미지 */}
-                    <div className="w-full h-[322px] bg-slate-200 rounded-2xl">
+                    <div className="w-full h-[322px] bg-slate-200 rounded-2xl overflow-hidden">
                       <img
-                        src={`${TripReviewPic}${item.tripReviewId}/${item.tripReviewPics[0]}`}
+                        src={
+                          item.tripReviewPics !== null
+                            ? `${TripReviewPic}${item.tripReviewId}/${item.tripReviewPics[0]}`
+                            : ``
+                        }
                         alt="여행기 사진"
                         className="w-full h-full object-cover"
                         ref={imgRef}
