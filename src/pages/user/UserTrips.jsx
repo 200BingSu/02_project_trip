@@ -1,5 +1,5 @@
-import { Form, Input } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Form, Input, Tooltip } from "antd";
+import { useEffect, useMemo, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -10,6 +10,7 @@ import { getCookie } from "../../utils/cookie";
 import Footer from "../Footer";
 import axios from "axios";
 import jwtAxios from "../../apis/jwt";
+import { FaRegQuestionCircle } from "react-icons/fa";
 
 const categoryArr = ["다가오는 여행", "완료된 여행"];
 const UserTrips = () => {
@@ -99,8 +100,19 @@ const UserTrips = () => {
   }, [category]);
   // 미완료 여행 목록 불러오기
 
-  // console.log("✅  useProfile:", useProfile);
-  // console.log("tripListData", tripListData);
+  //antD 툴팁 설정
+  const [arrow, setArrow] = useState("Show");
+  const mergedArrow = useMemo(() => {
+    if (arrow === "Hide") {
+      return false;
+    }
+    if (arrow === "Show") {
+      return true;
+    }
+    return {
+      pointAtCenter: true,
+    };
+  }, [arrow]);
 
   return (
     <div className="flex flex-col gap-[30px]">
@@ -108,7 +120,16 @@ const UserTrips = () => {
 
       {/* 여행코드 입력창 */}
       <div className="px-[32px] flex flex-col gap-[5px]">
-        <p className="text-slate-500 text-[18px] font-semibold">여행코드</p>
+        <div className="flex items-center gap-[5px]">
+          <p className="text-slate-500 text-[18px] font-semibold">여행코드</p>
+          <Button type="Outlined" className="group flex items-center focus:">
+            <FaRegQuestionCircle className="text-[18px] text-slate-300 group-hover:text-[#b8c8d1] transition-all duration-300" />
+            <p className="text-slate-300 w-0 group-hover:w-[350px] overflow-hidden transition-all duration-300">
+              생성된 일정에서 일정 코드를 받아 친구를 초대해보세요!
+            </p>
+          </Button>
+        </div>
+
         <Input
           placeholder="친구와 여행을 함께하기 위해 코드를 입력해주세요"
           className="px-[32px] py-[20px] h-[79px]"

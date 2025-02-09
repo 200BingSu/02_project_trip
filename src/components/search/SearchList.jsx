@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import SearchItems from "./SearchItems";
 import axios from "axios";
 import { SEARCH } from "../../constants/api";
+import { LiaComment } from "react-icons/lia";
 
 // 카테고리 목록
 /**
@@ -60,7 +61,7 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
     : [];
 
   return (
-    <div className="px-[32px] py-[30px] flex flex-col gap-[30px]">
+    <div className="px-[32px] py-[30px] flex flex-col gap-[30px] min-h-screen">
       {/* 카테고리 */}
       <ul className="flex gap-[10px]" ref={topRef}>
         {strfArr.map((item, index) => {
@@ -79,10 +80,11 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
       </ul>
       {/* 검색 결과 */}
       {searchData.length === 0 ? (
-        <div className="flex justify-center items-center h-[500px]">
-          <p className="text-[20px] font-semibold text-slate-500">
-            검색 결과가 없습니다.
-          </p>
+        <div className="flex flex-col gap-[20px] items-center py-[100px]">
+          <i className="text-slate-300 text-[100px] ">
+            <LiaComment />
+          </i>
+          <p className="text-slate-400 text-[20px]">검색 결과가 없습니다.</p>
         </div>
       ) : (
         <>
