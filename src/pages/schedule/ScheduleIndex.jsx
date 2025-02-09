@@ -15,6 +15,7 @@ import { getCookie } from "../../utils/cookie";
 import { Dropdown, Input } from "antd";
 import { MdContentCopy } from "react-icons/md";
 import dayjs from "dayjs";
+import Loading from "../../components/loading/Loading";
 
 // const dummyDays = dummyData.days;
 const defaultData = {
@@ -47,6 +48,7 @@ const ScheduleIndex = () => {
   };
   // useState
   const [tripData, setTripData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState(tripData.title);
   const [addLink, setAddLink] = useState("");
   const [edit, setEdit] = useState(false);
@@ -119,6 +121,9 @@ const ScheduleIndex = () => {
       console.log("여행확인하기", res.data);
       const resultData = res.data.data;
       setTripData(resultData);
+      if (resultData) {
+        setIsLoading(true);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -131,143 +136,124 @@ const ScheduleIndex = () => {
   }, []);
 
   const tripDaysArr = tripData.days;
-  // 날짜 계산
-  // const getDateArray = (startDate, endDate) => {
-  //   if (!startDate || !endDate) {
-  //     console.log("startDate 또는 endDate가 없음");
-  //     return [];
-  //   }
-
-  //   const start = dayjs(startDate, "YYYY-MM-DD");
-  //   const end = dayjs(endDate, "YYYY-MM-DD");
-
-  //   console.log("start:", start.format("YYYY-MM-DD"));
-  //   console.log("end:", end.format("YYYY-MM-DD"));
-
-  //   const dateArray = [];
-  //   let currentDate = start;
-
-  //   while (currentDate.isBefore(end, "day") || currentDate.isSame(end, "day")) {
-  //     dateArray.push(currentDate.format("YYYY-MM-DD"));
-  //     currentDate = currentDate.add(1, "day");
-  //   }
-
-  //   return dateArray;
-  // };
-  // const dateArr = getDateArray(tripData.startAt, tripData.endAt);
-  // console.log("dateArr", dateArr);
 
   return (
     <div>
-      <TitleHeader
-        icon="back"
-        onClick={navigateBack}
-        rightContent={
-          <RightContent
-            icon1={false}
-            icon2={true}
-            icon3Click={navigatePostBoard}
-            icon3={true}
-            icon4={true}
+      {isLoading ? (
+        <>
+          <TitleHeader
+            icon="back"
+            onClick={navigateBack}
+            rightContent={
+              <RightContent
+                icon1={false}
+                icon2={true}
+                icon3Click={navigatePostBoard}
+                icon3={true}
+                icon4={true}
+              />
+            }
           />
-        }
-      />
-      {/* 내용 */}
-      <div className="flex flex-col gap-[30px] py-[30px]">
-        {/* 제목 */}
-        <div className="mt-[60px] flex flex-col gap-[10px] px-[32px]">
-          <div className="flex items-center justify-between">
-            <p className="text-[18px] text-slate-700 ">
-              <span>{tripData.startAt}</span>-<span>{tripData.endAt}</span>
-            </p>
-            <button type="button">
-              <IoSettingsOutline className="text-[24px] text-slate-300 bg-white" />
-            </button>
-          </div>
-          {edit ? (
-            <Input
-              placeholder="메모를 입력해주세요."
-              variant="borderless"
-              allowClear
-              onChange={e => {
-                onChange(e);
-              }}
-            />
-          ) : (
-            <h2 className="text-[36px] text-slate-700 font-bold">
-              {tripData.title}
-            </h2>
-          )}
-        </div>
-        {/* 버튼 */}
-        <div className="flex items-center gap-[10px] px-[32px]">
-          <Dropdown
-            menu={{
-              items,
-            }}
-            trigger={["click"]}
-            overlayStyle={{ marginTop: "10px" }}
-          >
-            <a onClick={e => e.preventDefault()}>
+          {/* 내용 */}
+          <div className="flex flex-col gap-[30px] py-[30px]">
+            {/* 제목 */}
+            <div className="mt-[60px] flex flex-col gap-[10px] px-[32px]">
+              <div className="flex items-center justify-between">
+                <p className="text-[18px] text-slate-700 ">
+                  <span>{tripData.startAt}</span>-<span>{tripData.endAt}</span>
+                </p>
+                <button type="button">
+                  <IoSettingsOutline className="text-[24px] text-slate-300 bg-white" />
+                </button>
+              </div>
+              {edit ? (
+                <Input
+                  placeholder="메모를 입력해주세요."
+                  variant="borderless"
+                  allowClear
+                  onChange={e => {
+                    onChange(e);
+                  }}
+                />
+              ) : (
+                <h2 className="text-[36px] text-slate-700 font-bold">
+                  {tripData.title}
+                </h2>
+              )}
+            </div>
+            {/* 버튼 */}
+            <div className="flex items-center gap-[10px] px-[32px]">
+              <Dropdown
+                menu={{
+                  items,
+                }}
+                trigger={["click"]}
+                overlayStyle={{ marginTop: "10px" }}
+              >
+                <a onClick={e => e.preventDefault()}>
+                  <button
+                    type="button"
+                    className="flex items-center gap-[10px] 
+                px-[15px] py-[10px] rounded-3xl
+                text-white bg-primary"
+                    onClick={() => getAddLink()}
+                  >
+                    <AiOutlinePlus />
+                    초대 코드
+                  </button>
+                </a>
+              </Dropdown>
+              {/* <button
+                type="button"
+                className="flex items-center gap-[10px] 
+                px-[15px] py-[10px] rounded-3xl
+                text-slate-500 bg-slate-100"
+              >
+                <AiOutlinePlus className="text-slate-300" />
+                숙소
+              </button> */}
               <button
                 type="button"
                 className="flex items-center gap-[10px] 
-            px-[15px] py-[10px] rounded-3xl
-            text-white bg-primary"
-                onClick={() => getAddLink()}
+                px-[15px] py-[10px] rounded-3xl
+                text-slate-500 bg-slate-100"
               >
-                <AiOutlinePlus />
-                초대 코드
+                <AiOutlinePlus className="text-slate-300" />
+                가계부
               </button>
-            </a>
-          </Dropdown>
-          {/* <button
-            type="button"
-            className="flex items-center gap-[10px] 
-            px-[15px] py-[10px] rounded-3xl
-            text-slate-500 bg-slate-100"
-          >
-            <AiOutlinePlus className="text-slate-300" />
-            숙소
-          </button> */}
-          <button
-            type="button"
-            className="flex items-center gap-[10px] 
-            px-[15px] py-[10px] rounded-3xl
-            text-slate-500 bg-slate-100"
-          >
-            <AiOutlinePlus className="text-slate-300" />
-            가계부
-          </button>
-        </div>
-        {/* 맵, 일정 */}
-        <div className="flex flex-col gap-[50px]">
-          {tripDaysArr === null ? (
-            <ScheduleDay
-              newTrip={true}
-              data={defaultData}
-              startAt={tripData?.startAt}
-              tripId={tripId}
-              getTrip={getTrip}
-              setTripData={setTripData}
-            />
-          ) : (
-            tripDaysArr?.map((item, index) => {
-              return (
+            </div>
+            {/* 맵, 일정 */}
+            <div className="flex flex-col gap-[50px]">
+              {tripDaysArr === null ? (
                 <ScheduleDay
                   newTrip={true}
-                  data={item}
-                  key={index}
+                  data={defaultData}
                   startAt={tripData?.startAt}
                   tripId={tripId}
                   getTrip={getTrip}
                   setTripData={setTripData}
                 />
-              );
-            })
-          )}
-        </div>
-      </div>
+              ) : (
+                tripDaysArr?.map((item, index) => {
+                  return (
+                    <ScheduleDay
+                      newTrip={true}
+                      data={item}
+                      key={index}
+                      startAt={tripData?.startAt}
+                      tripId={tripId}
+                      getTrip={getTrip}
+                      setTripData={setTripData}
+                    />
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </>
+      ) : (
+        <Loading />
+      )}
     </div>
   );
 };

@@ -46,7 +46,7 @@ const PostReview = () => {
       content: content,
     };
     const formData = new FormData();
-    setFileList(file.fileList);
+    setFileList(file?.fileList ? file.fileList : []);
     formData.append(
       "p",
       new Blob([JSON.stringify(pData)], { type: "application/json" }),
@@ -105,15 +105,32 @@ const PostReview = () => {
           </Form.Item>
           <Form.Item
             name="rating"
-            className="flex flex-col justify-center items-center gap-[10px]"
+            className="flex flex-col justify-center items-center gap-[10px] text-slate-300"
+            rules={[
+              {
+                required: true,
+                message: "별점을 입력해주세요.",
+              },
+            ]}
+            validateStatus="error"
+            help={
+              <div className="text-center mt-[10px] text-slate-300">
+                별점을 입력해주세요.
+              </div>
+            }
           >
             <Rate style={{ fontSize: 54 }} />
-            <p className="text-slate-300 text-center mt-[10px]">
-              별점을 선택해주세요
-            </p>
           </Form.Item>
 
-          <Form.Item name="content">
+          <Form.Item
+            name="content"
+            rules={[
+              {
+                required: true,
+                message: "리뷰 내용은 필수 작성 항목입니다.",
+              },
+            ]}
+          >
             <h3 className="mb-[10px] text-slate-700 text-[24px] font-semibold">
               리뷰를 남겨주세요.
             </h3>

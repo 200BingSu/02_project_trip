@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./header/Header";
 import MainHeader from "./header/MainHeader";
 import Footer from "./footer/Footer";
+import DockBar from "./DockBar/DockBar";
 
 const Layout = () => {
   const path = window.location.pathname;
@@ -11,7 +12,7 @@ const Layout = () => {
       <div>
         <Outlet />
       </div>
-      {/* <Footer /> */}
+      {/* <DockBar /> */}
     </div>
   );
 };
