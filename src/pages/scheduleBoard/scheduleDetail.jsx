@@ -14,184 +14,7 @@ import { getCookie } from "../../utils/cookie";
 import { useEffect, useState } from "react";
 import { TripReviewPic } from "../../constants/pic";
 import jwtAxios from "../../apis/jwt";
-
-//dummyData
-const dummyData = [
-  {
-    day: 1,
-    weather: "cloudy",
-    schedules: [
-      {
-        seq: 1,
-        strfId: 9,
-        strfTitle: "청계천",
-        category: "산책",
-        address: "서울 종로구",
-        lat: 37.570083,
-        lng: 126.99022,
-        distance: 2000,
-        duration: 30,
-        pathType: "도보",
-      },
-      {
-        seq: 2,
-        strfId: 10,
-        strfTitle: "이태원 거리",
-        category: "쇼핑",
-        address: "서울 용산구",
-        lat: 37.534246,
-        lng: 126.999658,
-        distance: 3500,
-        duration: 40,
-        pathType: "버스",
-      },
-      {
-        seq: 3,
-        strfId: 11,
-        strfTitle: "롯데월드타워",
-        category: "관광",
-        address: "서울 송파구",
-        lat: 37.513344,
-        lng: 127.102213,
-        distance: 8000,
-        duration: 70,
-        pathType: "지하철",
-      },
-      {
-        seq: 4,
-        strfId: 12,
-        strfTitle: "서울숲",
-        category: "산책",
-        address: "서울 성동구",
-        lat: 37.544481,
-        lng: 127.046803,
-        distance: 5000,
-        duration: 60,
-        pathType: "지하철",
-      },
-    ],
-  },
-  {
-    day: 2,
-    weather: "sunny",
-    schedules: [
-      {
-        seq: 1,
-        strfId: 2,
-        strfTitle: "서울 타워",
-        category: "관광",
-        address: "서울 용산구",
-        lat: 37.551229,
-        lng: 126.988205,
-        distance: 3000,
-        duration: 50,
-        pathType: "지하철",
-      },
-      {
-        seq: 2,
-        strfId: 3,
-        strfTitle: "홍대 거리",
-        category: "쇼핑",
-        address: "서울 마포구",
-        lat: 37.557242,
-        lng: 126.924647,
-        distance: 2500,
-        duration: 40,
-        pathType: "버스",
-      },
-    ],
-  },
-  {
-    day: 3,
-    weather: "rain",
-    schedules: [
-      {
-        seq: 1,
-        strfId: 4,
-        strfTitle: "경복궁",
-        category: "관광",
-        address: "서울 종로구",
-        lat: 37.577602,
-        lng: 126.976944,
-        distance: 2000,
-        duration: 60,
-        pathType: "지하철",
-      },
-      {
-        seq: 2,
-        strfId: 5,
-        strfTitle: "북촌 한옥마을",
-        category: "문화",
-        address: "서울 종로구",
-        lat: 37.579616,
-        lng: 126.985017,
-        distance: 1000,
-        duration: 30,
-        pathType: "도보",
-      },
-    ],
-  },
-  {
-    day: 4,
-    weather: "snow",
-    schedules: [
-      {
-        seq: 1,
-        strfId: 6,
-        strfTitle: "남산 서울타워",
-        category: "관광",
-        address: "서울 용산구",
-        lat: 37.551157,
-        lng: 126.988197,
-        distance: 4000,
-        duration: 45,
-        pathType: "버스",
-      },
-      {
-        seq: 2,
-        strfId: 7,
-        strfTitle: "명동",
-        category: "쇼핑",
-        address: "서울 중구",
-        lat: 37.56362,
-        lng: 126.985002,
-        distance: 500,
-        duration: 20,
-        pathType: "도보",
-      },
-    ],
-  },
-  {
-    day: 5,
-    weather: "partly cloudy",
-    schedules: [
-      {
-        seq: 1,
-        strfId: 8,
-        strfTitle: "서울역사박물관",
-        category: "문화",
-        address: "서울 중구",
-        lat: 37.551244,
-        lng: 126.972204,
-        distance: 1500,
-        duration: 60,
-        pathType: "도보",
-      },
-      {
-        seq: 2,
-        strfId: 9,
-        strfTitle: "청계천",
-        category: "산책",
-        address: "서울 종로구",
-        lat: 37.570083,
-        lng: 126.99022,
-        distance: 2000,
-        duration: 30,
-        pathType: "도보",
-      },
-    ],
-  },
-];
+import SelectTrip from "../../components/scheduleboard/SelectTrip";
 
 const ScheduleDetail = () => {
   const accessToken = getCookie("accessToken");
@@ -207,10 +30,10 @@ const ScheduleDetail = () => {
   //useState
   const [tripReviewData, setTripReviewData] = useState({});
   const [tripData, setTripData] = useState({});
-  const [tripListData, setTripListData] = useState([]);
+  const [openSelectTripModal, setOpenSelectTripModal] = useState(false);
 
   useEffect(() => {
-    console.log("tripReviewData", tripReviewData);
+    // console.log("tripReviewData", tripReviewData);
   }, [tripReviewData]);
   //다른 사용자의 여행기 조회
   const getOtherTripReview = async () => {
@@ -233,11 +56,7 @@ const ScheduleDetail = () => {
   // 여행 확인하기
   const getTrip = async () => {
     try {
-      const res = await axios.get(`/api/trip?trip_id=${tripId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const res = await jwtAxios.get(`/api/trip?trip_id=${tripId}`);
       console.log("여행확인하기", res.data);
       const resultData = res.data.data;
       setTripData(resultData);
@@ -249,28 +68,15 @@ const ScheduleDetail = () => {
   useEffect(() => {
     getOtherTripReview();
     getTrip();
-    getTripList();
   }, []);
 
-  // 여행 목록 불러오기
-  const getTripList = async () => {
-    try {
-      const res = await jwtAxios.get(`/api/trip-list`);
-      console.log(res.data);
-      const resultData = res.data;
-      const beforeArr = resultData.beforeTripList;
-      setTripListData(beforeArr);
-    } catch (error) {
-      console.log("여행 목록 불러오기:", error);
-    }
-  };
   // console.log(tripReviewData[0]?.tripReviewPics);
   return (
     <div>
       <TitleHeader
         icon="back"
         onClick={handleNavigateBack}
-        rightContent={<RightContent icon1={true} icon4={true} />}
+        rightContent={<RightContent />}
       />
       {/* 여행기 */}
       <div className="flex flex-col px-[32px] py-[30px] gap-[30px]">
@@ -278,7 +84,8 @@ const ScheduleDetail = () => {
         <Swiper
           slidesPerView={1}
           spaceBetween={0}
-          className="mySwiper w-[708px] h-[406px] px-[32px]"
+          loop={true}
+          className="mySwiper w-full h-[406px] px-[32px] overflow-hidden"
         >
           {tripReviewData.length > 0
             ? tripReviewData[0]?.tripReviewPics?.map((item, index) => {
@@ -351,16 +158,27 @@ const ScheduleDetail = () => {
       {/* 버튼 */}
       <div className="px-[32px] mb-[30px]">
         <Button
-          type="primary"
+          variant="filled"
           className="flex gap-[10px] py-[10px] h-auto w-full"
+          onClick={() => setOpenSelectTripModal(true)}
+          classNames={`bg-slate-100`}
         >
           <AiOutlineImport className="w-[30px] h-[30px] text-white" />
-          <span className="font-semibold text-[24px] text-white">
-            내 일정에 담기
+
+          <span className="font-semibold text-[24px] text-slate-400">
+            업데이트 예정인 메뉴입니다
           </span>
         </Button>
       </div>
+      {openSelectTripModal && (
+        <SelectTrip
+          openSelectTripModal={openSelectTripModal}
+          setOpenSelectTripModal={setOpenSelectTripModal}
+          tripLocationList={tripData?.tripLocationList}
+        />
+      )}
     </div>
   );
 };
+
 export default ScheduleDetail;

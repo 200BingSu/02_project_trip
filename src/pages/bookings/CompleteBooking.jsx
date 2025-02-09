@@ -24,7 +24,7 @@ const CompleteBooking = () => {
       <div className="mt-[91px] px-[32px] flex flex-col gap-[31px] items-center mb-[30px]">
         {/* 이미지 */}
         <div>
-          <img src="/public/images/booking/complete.svg" alt="" />
+          <img src="/images/booking/complete.svg" alt="" />
         </div>
         {/* text */}
         <div className="flex flex-col items-center">

@@ -22,11 +22,10 @@ const UserTrips = () => {
   const [code, setCode] = useState("");
   const [category, setCategory] = useState(0);
   useEffect(() => {
-    console.log("tripListData", tripListData);
+    // console.log("tripListData", tripListData);
   }, [tripListData]);
 
   useEffect(() => {}, [category]);
-
 
   // 여행 목록 불러오기
   const getTripList = async () => {
@@ -58,7 +57,12 @@ const UserTrips = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log("구성원추가", res.data);
+      // console.log("구성원추가", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        getTripList();
+        navigate(`/schedule/index?tripId=${resultData.data}`);
+      }
     } catch (error) {
       console.log("구성원 추가", error);
     }
@@ -67,7 +71,7 @@ const UserTrips = () => {
   const getUserInfo = async () => {
     try {
       const res = await jwtAxios.get(`/api/user/userInfo`);
-      console.log(res.data);
+      // console.log(res.data);
       const resultData = res.data;
       setUseProfile(resultData.data);
     } catch (error) {

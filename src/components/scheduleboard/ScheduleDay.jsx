@@ -62,7 +62,7 @@ const ScheduleDay = ({
   const [trip, setTrip] = useRecoilState(tripAtom);
   const accessToken = getCookie("accessToken");
   useEffect(() => {
-    console.log("trip", trip);
+    // console.log("trip", trip);
   }, [trip]);
   //useNavigate
   const navigate = useNavigate();
@@ -139,7 +139,13 @@ const ScheduleDay = ({
   console.log("평균 거리:", averageDistance);
   // 레벨 조절기
   const getKakaoMapLevel = averageDistance => {
-    return averageDistance > 20000 ? 10 : averageDistance > 10000 ? 9 : 5;
+    return averageDistance > 20000
+      ? 10
+      : averageDistance > 10000
+        ? 9
+        : averageDistance > 5000
+          ? 8
+          : 5;
   };
 
   useEffect(() => {
