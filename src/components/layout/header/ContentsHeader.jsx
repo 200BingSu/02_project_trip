@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   AiOutlineHeart,
   AiOutlineImport,
@@ -114,4 +114,4 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   );
 };
 
-export default ContentsHeader;
+export default memo(ContentsHeader);

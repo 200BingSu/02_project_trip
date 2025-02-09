@@ -55,6 +55,7 @@ const ScheduleDay = ({
   setTripData,
   index,
   date,
+  readOnly = false,
 }) => {
   // console.log("data", data);
   //recoil
@@ -82,6 +83,7 @@ const ScheduleDay = ({
   });
   const [dayData, setDayData] = useState();
   const [memoModal, setMemoModal] = useState(false);
+
   useEffect(() => {
     // console.log("메모 모달창", memoModal);
   }, [memoModal]);
@@ -89,6 +91,7 @@ const ScheduleDay = ({
   // 지도
   const scheduleArr = data?.schedules || [];
   const scheArr = scheduleArr.filter(item => item.scheOrMemo === "SCHE");
+
   // console.log(`${data.day} scheArr`, scheArr);
   const positions = scheArr?.map((item, index) => {
     return { title: item.strfTitle, latlng: { lat: item.lat, lng: item.lng } };
@@ -121,6 +124,22 @@ const ScheduleDay = ({
       lat: center.lat / validPositions.length,
       lng: center.lng / validPositions.length,
     };
+  };
+  // 거리 계산해서 레벨 조절하기
+  const validDistances = scheduleArr
+    .filter(item => item.distance !== null)
+    .map(item => item.distance);
+
+  const averageDistance =
+    validDistances.length > 0
+      ? validDistances.reduce((sum, distance) => sum + distance, 0) /
+        validDistances.length
+      : 0;
+
+  console.log("평균 거리:", averageDistance);
+  // 레벨 조절기
+  const getKakaoMapLevel = averageDistance => {
+    return averageDistance > 20000 ? 10 : averageDistance > 10000 ? 9 : 5;
   };
 
   useEffect(() => {
@@ -192,25 +211,15 @@ const ScheduleDay = ({
   return (
     <div className="flex flex-col gap-[30px]">
       {/* 라인 */}
-      {/* <div className="h-[10px] bg-slate-100"></div> */}
+      <div className="h-[10px] bg-slate-100"></div>
       {/* 맵 */}
       {showMap ? (
         <div className="h-[292px] px-[32px]">
           <Map
             center={getCenterPoint(positions)}
             style={{ width: "100%", height: "100%", borderRadius: "8px" }}
-            level={8}
+            level={getKakaoMapLevel(averageDistance)}
           >
-            {/* {scheduleArr.map((item, index) => {
-              return;
-            })} */}
-            {/* {positions.map((position, index) => (
-            <MapMarker
-              key={`${position.title}-${position.latlng}`}
-              position={position.latlng} // 마커를 표시할 위치
-              title={position.title} // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-            />
-          ))} */}
             {positions.map((position, index) => (
               <CustomOverlayMap
                 key={`${position.title}-${index}`} // Unique key for each custom overlay
@@ -255,6 +264,9 @@ const ScheduleDay = ({
         {/* 일정 목록 */}
         <ul className="relative flex flex-col gap-[30px]">
           {scheduleArr?.map((item, index) => {
+            const scheIndex = scheArr.findIndex(
+              scheItem => scheItem.scheduleMemoId === item.scheduleMemoId,
+            );
             return (
               <li
                 key={index}
@@ -265,7 +277,9 @@ const ScheduleDay = ({
                   // 일정
                   <div
                     className="flex gap-[30px] items-center cursor-pointer"
-                    onClick={() => handleClickList(item)}
+                    onClick={() => {
+                      handleClickList(item);
+                    }}
                   >
                     <div
                       className={`w-[30px] h-[30px]
@@ -274,7 +288,7 @@ const ScheduleDay = ({
                                   text-[16px] text-white font-medium
                                   ${dayBgColor(data?.day)}`}
                     >
-                      {index + 1}
+                      {scheIndex !== -1 ? scheIndex + 1 : "없음"}
                     </div>
                     {/* 일정 정보 */}
                     <div className="flex gap-[20px] items-center">
@@ -325,8 +339,9 @@ const ScheduleDay = ({
                       </div>
                     </div>
                   </div>
-                ) : (
+                ) : readOnly ? null : (
                   // 메모
+
                   <div className="flex gap-[30px] items-center">
                     {/* 점 */}
                     <div className="w-[30px] h-[30px] flex items-center justify-center">
@@ -356,33 +371,35 @@ const ScheduleDay = ({
                 )}
 
                 {/* path_type */}
-                <div className="flex items-center">
-                  {/* 점 */}
-                  <div className="w-[30px] h-[30px] flex items-center justify-center">
-                    <div
-                      className={`w-[10px] h-[10px] flex items-center justify-center rounded-full  text-[16px] text-white font-medium ${dayBgColor(data?.day)}`}
-                    ></div>
-                  </div>
-                  {/* type */}
-                  <div
-                    className={`${item.pathType === null ? "h-[38px] flex gap-[10px] items-center px-[10px] bg-slate-50 rounded-2xl cursor-pointer" : "h-[38px] flex gap-[10px] items-center px-[10px] bg-white rounded-2xl"}`}
-                    onClick={() => {
-                      console.log(item);
-                    }}
-                  >
-                    <div
-                      className={`${item.pathType === null ? "text-slate-600 h-[18px]" : "text-slate-400 h-[18px]"}`}
-                    >
-                      {matchPathTypeIcon(item.pathType)}
+                {item.scheOrMemo === "SCHE" ? (
+                  <div className="flex items-center">
+                    {/* 점 */}
+                    <div className="w-[30px] h-[30px] flex items-center justify-center">
+                      <div
+                        className={`w-[10px] h-[10px] flex items-center justify-center rounded-full  text-[16px] text-white font-medium ${dayBgColor(data?.day)}`}
+                      ></div>
                     </div>
+                    {/* type */}
                     <div
-                      className={`${item.pathType === null ? "text-[14px] text-slate-600 h-[18px]" : "text-[14px] text-slate-400 h-[18px]"}`}
+                      className={`${item.pathType === null ? "h-[38px] flex gap-[10px] items-center px-[10px] bg-slate-50 rounded-2xl cursor-pointer" : "h-[38px] flex gap-[10px] items-center px-[10px] bg-white rounded-2xl"}`}
+                      onClick={() => {
+                        console.log(item);
+                      }}
                     >
-                      {item.duration}
-                      {item.pathType > 0 ? "분" : ""}
+                      <div
+                        className={`${item.pathType === null ? "text-slate-600 h-[18px]" : "text-slate-400 h-[18px]"}`}
+                      >
+                        {matchPathTypeIcon(item.pathType)}
+                      </div>
+                      <div
+                        className={`${item.pathType === null ? "text-[14px] text-slate-600 h-[18px]" : "text-[14px] text-slate-400 h-[18px]"}`}
+                      >
+                        {item.duration}
+                        {item.pathType > 0 ? "분" : ""}
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : null}
               </li>
             );
           })}
