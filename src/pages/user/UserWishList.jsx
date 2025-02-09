@@ -17,7 +17,7 @@ const UserWishList = () => {
     navigate(-1);
   };
   const navigateContent = item => {
-    navigate(`/contents/index?strfId=${item.strf_id}`);
+    navigate(`/contents/index?strfId=${item.strfId}`);
   };
   //useState
   const [lastIndex, setLastIndex] = useState(1);
@@ -28,15 +28,15 @@ const UserWishList = () => {
   // 찜 목록
   const getWishList = async () => {
     try {
-      const res = await axios.get(`/api/wish-list?last_index=${lastIndex}`, {
+      const res = await axios.get(`/api/wish-list?start_idx=${lastIndex}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       //   console.log(res.data);
       const resultData = res.data;
-      setWishListData([...wishListData, ...resultData]);
-      // setLastIndex(prev => prev + 10);
+      setWishListData([...wishListData, ...resultData.data]);
+      setLastIndex(prev => prev + 10);
     } catch (error) {
       console.log("찜목록 불러오기", error);
     }
@@ -59,7 +59,7 @@ const UserWishList = () => {
                 {/* 썸네일 */}
                 <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px] overflow-hidden">
                   <img
-                    src={`${ProductPic}${item.strf_id}/${item.strfPic}`}
+                    src={`${ProductPic}${item.strfId}/${item.strfPic}`}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -69,7 +69,7 @@ const UserWishList = () => {
                   {/* 제목, 지역 제휴 */}
                   <div className="flex gap-[5px] items-center ">
                     <h3 className="text-[20px] font-semibold text-slate-700">
-                      {item.title}
+                      {item.strfTitle}
                     </h3>
                     {/* <div className="h-[14px] px-[5px] py-[3px] bg-[#FDB4A1] bg-opacity-50 text-secondary3_3 text-[8px] font-semibold flex items-center justify-center line-height-[100%]">
                       지역 제휴
@@ -82,7 +82,7 @@ const UserWishList = () => {
                     </p>
                     <p className="text-[14px] text-slate-500">|</p>
                     <p className="text-[14px] text-slate-500">
-                      {item.locationTitle}
+                      {item.locationName}
                     </p>
                   </div>
                   {/* 별점 */}

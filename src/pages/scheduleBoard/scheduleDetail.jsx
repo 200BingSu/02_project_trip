@@ -13,6 +13,7 @@ import axios from "axios";
 import { getCookie } from "../../utils/cookie";
 import { useEffect, useState } from "react";
 import { TripReviewPic } from "../../constants/pic";
+import jwtAxios from "../../apis/jwt";
 
 //dummyData
 const dummyData = [
@@ -205,6 +206,9 @@ const ScheduleDetail = () => {
   };
   //useState
   const [tripReviewData, setTripReviewData] = useState({});
+  const [tripData, setTripData] = useState({});
+  const [tripListData, setTripListData] = useState([]);
+
   useEffect(() => {
     console.log("tripReviewData", tripReviewData);
   }, [tripReviewData]);
@@ -226,10 +230,41 @@ const ScheduleDetail = () => {
       console.log("다른 사람 여행기 조회", error);
     }
   };
+  // 여행 확인하기
+  const getTrip = async () => {
+    try {
+      const res = await axios.get(`/api/trip?trip_id=${tripId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("여행확인하기", res.data);
+      const resultData = res.data.data;
+      setTripData(resultData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getOtherTripReview();
+    getTrip();
+    getTripList();
   }, []);
-  console.log(tripReviewData[0]?.tripReviewPics);
+
+  // 여행 목록 불러오기
+  const getTripList = async () => {
+    try {
+      const res = await jwtAxios.get(`/api/trip-list`);
+      console.log(res.data);
+      const resultData = res.data;
+      const beforeArr = resultData.beforeTripList;
+      setTripListData(beforeArr);
+    } catch (error) {
+      console.log("여행 목록 불러오기:", error);
+    }
+  };
+  // console.log(tripReviewData[0]?.tripReviewPics);
   return (
     <div>
       <TitleHeader
@@ -245,20 +280,22 @@ const ScheduleDetail = () => {
           spaceBetween={0}
           className="mySwiper w-[708px] h-[406px] px-[32px]"
         >
-          {tripReviewData[0]?.tripReviewPics.map((item, index) => {
-            return (
-              <SwiperSlide
-                key={index}
-                className="max-w-3xl h-[406px] bg-slate-200"
-              >
-                <img
-                  src={`${TripReviewPic}${tripReviewData[0].tripReviewId}/${item}`}
-                  alt="thum"
-                  className="w-full h-full object-cover"
-                />
-              </SwiperSlide>
-            );
-          })}
+          {tripReviewData.length > 0
+            ? tripReviewData[0]?.tripReviewPics?.map((item, index) => {
+                return (
+                  <SwiperSlide
+                    key={index}
+                    className="max-w-3xl h-[406px] bg-slate-200"
+                  >
+                    <img
+                      src={`${TripReviewPic}${tripReviewData[0].tripReviewId}/${item}`}
+                      alt="thum"
+                      className="w-full h-full object-cover"
+                    />
+                  </SwiperSlide>
+                );
+              })
+            : null}
         </Swiper>
 
         {/* info */}
@@ -296,15 +333,27 @@ const ScheduleDetail = () => {
           <p>{tripReviewData[0]?.content}</p>
         </div>
       </div>
+      {/* 일정 */}
       <div>
-        {/* 일정 */}
         <div className="flex flex-col gap-[50px]">
-          {dummyData.map((item, index) => {
-            return <ScheduleDay data={dummyData[index]} key={index} />;
+          {tripData?.days?.map((item, index) => {
+            return (
+              <ScheduleDay
+                data={item}
+                key={index}
+                newTrip={false}
+                readOnly={true}
+              />
+            );
           })}
         </div>
-        {/* 버튼 */}
-        <Button type="primary" className="flex gap-[10px] py-[10px] h-auto">
+      </div>
+      {/* 버튼 */}
+      <div className="px-[32px] mb-[30px]">
+        <Button
+          type="primary"
+          className="flex gap-[10px] py-[10px] h-auto w-full"
+        >
           <AiOutlineImport className="w-[30px] h-[30px] text-white" />
           <span className="font-semibold text-[24px] text-white">
             내 일정에 담기
