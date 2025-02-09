@@ -124,12 +124,12 @@ const PostReview = () => {
 
           <Form.Item
             name="content"
-            rules={[
-              {
-                required: true,
-                message: "리뷰 내용은 필수 작성 항목입니다.",
-              },
-            ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "리뷰 내용은 필수 작성 항목입니다.",
+            //   },
+            // ]}
           >
             <h3 className="mb-[10px] text-slate-700 text-[24px] font-semibold">
               리뷰를 남겨주세요.
