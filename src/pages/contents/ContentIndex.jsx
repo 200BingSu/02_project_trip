@@ -78,7 +78,7 @@ const ContentIndex = () => {
   };
   // 쿼리 스트링 조회
   const [searchParams] = useSearchParams();
-  const strfType = searchParams.get("strf");
+
   const strfId = parseInt(searchParams.get("strfId"));
   // recoil
   const { userId } = useRecoilValue(userAtom);
@@ -365,14 +365,14 @@ const ContentIndex = () => {
               </div>
               {/* 영업 시간 */}
               <BusinessTime
-                type={strfType}
+                type={contentData?.category}
                 contentData={contentData}
                 openBusinessTime={openBusinessTime}
                 setOpenBusinessTime={setOpenBusinessTime}
               />
             </div>
             {/* 쿠폰 */}
-            {strfType === "STAY" && (
+            {/* {contentData?.category === "STAY" && (
               <div className="w-full flex flex-col gap-[30px]">
                 <div
                   className="w-full flex gap-[10px] 
@@ -389,10 +389,10 @@ const ContentIndex = () => {
                     쿠폰 받기
                   </button>
                 </div>
-                {/* 라인 */}
+               
                 <div className="w-full h-[10px] bg-slate-100"></div>
               </div>
-            )}
+            )} */}
             {/* 메뉴 */}
             <Menu
               type={contentData?.category}
@@ -400,7 +400,7 @@ const ContentIndex = () => {
               contentData={contentData}
             />
             {/* 편의 시설 및 서비스 */}
-            {strfType === "STAY" && (
+            {contentData?.category === "STAY" && (
               <div className="flex flex-col gap-[30px]">
                 <div className="flex flex-col gap-[20px]">
                   <div className="flex gap-[5px] items-center justify-between">
@@ -487,10 +487,12 @@ const ContentIndex = () => {
           </div>
           {/* 일정 추가 및 리뷰쓰기 버튼 */}
           {accessToken ? (
-            <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 bg-white fixed bottom-0 left-[50%] translate-x-[-50%] z-10">
+            <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 fixed bottom-[100px] left-[50%] translate-x-[-50%] z-10">
               <button
                 type="button"
-                className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
+                className="w-full flex gap-[10px] py-[10px] 
+                border border-slate-300 rounded-lg items-center justify-center
+                bg-white"
                 onClick={showRegistModal}
               >
                 <FaLocationDot className="text-slate-400" />
@@ -500,7 +502,9 @@ const ContentIndex = () => {
               </button>
               <button
                 type="button"
-                className="w-full flex gap-[10px] py-[10px] border border-slate-300 rounded-lg items-center justify-center"
+                className="w-full flex gap-[10px] py-[10px] 
+                border border-slate-300 rounded-lg items-center justify-center
+                bg-white"
                 onClick={() => {
                   showReviewModal();
                 }}
