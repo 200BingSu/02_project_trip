@@ -1,0 +1,42 @@
+.custom-modal .ant-modal-footer {
+  display: flex;
+  margin-top: 30px !important;
+  padding: 0 32px !important;
+}
+
+.custom-modal .ant-modal-close {
+  top: 14px !important;
+}
+.custom-modal .ant-modal-content {
+  padding: 20px 0 !important;
+}
+.custom-modal .ant-modal-title {
+  padding: 0 32px 20px;
+}
+
+.custom-modal .ant-btn,
+.custom-modal .ant-btn-default,
+.custom-modal .ant-btn-color-default,
+.custom-modal .ant-btn-variant-outlined {
+  width: 100%;
+  height: 60px;
+  font-size: 18px;
+}
+.custom-rate .ant-rate-star,
+.custom-rate .ant-rate-star-zero {
+  margin-inline-end: 3px !important;
+}
+
+.custom-tabs .ant-tabs-nav-list {
+  width: 100% !important;
+}
+.custom-tabs .ant-tabs-tab,
+.custom-tabs .ant-tabs-tab-active {
+  width: 100% !important;
+}
+
+.custom-tabs .ant-tabs-ink-bar,
+.custom-tabs .ant-tabs-ink-bar-animated {
+  width: 100% !important;
+  left: 0;
+}

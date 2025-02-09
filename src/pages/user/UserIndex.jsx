@@ -10,33 +10,53 @@ import { IoCloseSharp, IoReaderOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
-import { ProfilePic } from "../../constants/pic";
+import { LocationPic, ProfilePic } from "../../constants/pic";
 import { getCookie, removeCookie } from "../../utils/cookie";
 import UserRecentList from "./UserRecentList";
 import UserTrips from "./UserTrips";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 const UserIndex = ({ isOpen, onClose }) => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [useProfile, setUseProfile] = useState([]);
+  const [coupon, setCoupon] = useState("");
 
   const accessToken = getCookie("accessToken");
 
   const getUserInfo = async () => {
     try {
-      const res = await axios.get(`/api/user/userInfo`, {
+      const res = await axios.get(`/api/home/user`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+
+      console.log("✅  getUserInfo  res.data.data:", res.data.data);
       setUseProfile(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const getCoupon = async () => {
+    try {
+      const res = await axios.get(`/api/coupon/available-coupons`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("✅  getCoupon  res.data.data:", res.data.data);
+      setCoupon(res.data.data);
+    } catch (error) {
+      console.log("✅  getCoupon  error:", error);
+    }
+  };
+
   useEffect(() => {
     if (userInfo.accessToken) {
       getUserInfo();
+      getCoupon();
     }
   }, []);
 
@@ -108,20 +128,28 @@ const UserIndex = ({ isOpen, onClose }) => {
                 <h1 className="text-3xl font-bold text-slate-700 mt-4 text-center">
                   {useProfile.name}
                 </h1>
-                <div className="flex items-center justify-between bg-slate-100 mt-5 px-5 h-20 rounded-[36px] relative">
-                  <span className="absolute top-[-16px] left-1/2 -translate-x-1/2 block w-0 h-0 border-transparent border-solid border-l-[12px] border-r-[12px] border-b-[20px] border-b-slate-100 z-[1]"></span>
-                  <div className="flex items-center">
-                    <img
-                      src="https://picsum.photos/200"
-                      alt=""
-                      className="w-8 h-8 rounded-full mr-3"
-                    />
-                    <span className="text-xl text-slate-700 font-normal">
-                      제주도 여행
-                    </span>
-                  </div>
-                  <span className="text-xl text-primary font-medium">D-2</span>
-                </div>
+                <Swiper slidesPerView={1} className="mySwiper">
+                  {useProfile.tripList?.map(content => (
+                    <SwiperSlide key={content.tripId}>
+                      <span className="absolute top-0 left-1/2 -translate-x-1/2 block w-0 h-0 border-transparent border-solid border-l-[12px] border-r-[12px] border-b-[20px] border-b-slate-100 z-[1]" />
+                      <div className="flex items-center justify-between bg-slate-100 mt-5 px-5 h-20 rounded-[36px] relative">
+                        <div className="flex items-center">
+                          <img
+                            src={`${LocationPic}${content.locationPic}`}
+                            alt=""
+                            className="w-8 h-8 rounded-full mr-3"
+                          />
+                          <span className="text-xl text-slate-700 font-normal">
+                            {content.title}
+                          </span>
+                        </div>
+                        <span className="text-xl text-primary font-medium">
+                          {content.dday > 0 ? `D-${content.dday}` : "여행중"}
+                        </span>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
               </div>
             ) : (
               <Link
@@ -175,13 +203,13 @@ const UserIndex = ({ isOpen, onClose }) => {
             내예약
           </Link>
           <Link
-            to=""
+            to="/user/usercoupon"
             className="flex items-center py-5 text-2xl text-slate-700 font-normal"
           >
             <BiSolidCoupon className="text-4xl text-slate-400 mr-4" />
             쿠폰함
             <span className="ml-auto w-9 h-6 rounded-2xl text-sm text-center leading-[1.45rem] text-primary3 bg-[#A5EEFE]/50">
-              10
+              {coupon.availableCouponCount}
             </span>
           </Link>
           <Link
