@@ -6,7 +6,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ReviewPic } from "../../constants/pic";
-import "../../styles/antd-css.css";
+import "../../styles/antd-styles.css";
 import { getCookie } from "../../utils/cookie";
 
 // ✅ DynamicGrid 컴포넌트 추가
@@ -49,7 +49,7 @@ const DynamicGrid = ({ images }) => {
 
 const UserrRview = () => {
   const [reviewInfo, setReviewInfo] = useState([]);
-  const [lastIndex, setLastIndex] = useState(0); // lastIndex 상태 추가
+  const [lastIndex, setLastIndex] = useState(5); // lastIndex 상태 추가
   const accessToken = getCookie("accessToken");
 
   // 사용자 리뷰를 가져오가가
@@ -97,14 +97,10 @@ const UserrRview = () => {
               </h1>
               <div className="flex items-center gap-3 mb-8">
                 <Rate
-                  className="flex items-center gap-1"
+                  className="custom-rate flex items-center gap-1"
+                  disabled
                   allowHalf
                   defaultValue={item.rating}
-                  character={
-                    <span className="me-0 mr-1">
-                      <AiFillStar className="text-2xl" />
-                    </span>
-                  }
                 />
                 <p className="text-slate-500 text-xl">
                   {item.reviewWriteDate.split(" ")[0]}
@@ -118,7 +114,7 @@ const UserrRview = () => {
             </div>
           );
         })}
-        <button onClick={() => setLastIndex(prev => prev + 10)}>
+        <button onClick={() => setLastIndex(prev => prev + 5)}>
           <AiOutlinePlus />
           더보기
         </button>
