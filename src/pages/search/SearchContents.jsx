@@ -60,8 +60,8 @@ const SearchContents = () => {
 
   // searchValue
   useEffect(() => {
-    // console.log("searchValue:", searchValue);
-    // postSearchAll();
+    console.log("searchValue:", searchValue);
+    postSearchAll();
   }, [searchValue]);
 
   return (

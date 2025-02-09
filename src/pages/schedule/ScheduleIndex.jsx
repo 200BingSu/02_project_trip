@@ -43,7 +43,7 @@ const ScheduleIndex = () => {
     navigate(-1);
   };
   const navigatePostBoard = () => {
-    navigate(`/scheduleboard/schedulePost`);
+    navigate(`/scheduleboard/schedulePost?tripId=${tripId}`);
   };
   // useState
   const [tripData, setTripData] = useState({});
@@ -166,7 +166,7 @@ const ScheduleIndex = () => {
           <RightContent
             icon1={false}
             icon2={true}
-            icon2Click={navigatePostBoard}
+            icon3Click={navigatePostBoard}
             icon3={true}
             icon4={true}
           />

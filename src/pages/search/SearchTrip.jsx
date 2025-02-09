@@ -72,18 +72,13 @@ const SearchTrip = () => {
       trip_id: tripId,
       last_index: lastIndex,
     };
-    console.log("검색 리퀘스트 데이터", sendData);
+    // console.log("검색 리퀘스트 데이터", sendData);
     try {
-      const res = await axios.get(
+      const res = await jwtAxios.get(
         `/api/search/strf-list-basic?trip_id=${tripId}&last_index=0`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
       );
       const resultData = res.data;
-      console.log("결과-입력 전:", resultData);
+      // console.log("결과-입력 전:", resultData);
       setSearchData(resultData.data);
     } catch (error) {
       console.log("결과-입력 전:", error);
@@ -99,12 +94,12 @@ const SearchTrip = () => {
     };
     console.log("검색 리퀘스트 데이터", sendData);
     try {
-      const res = await axios.get(
+      const res = await jwtAxios.get(
         `/api/search/strf-list-word?trip_id=${tripId}&last_index=${lastIndex}&search_word=${searchValue}`,
         sendData,
       );
       const resultData = res.data;
-      console.log("결과-입력 후:", resultData);
+      // console.log("결과-입력 후:", resultData);
       setSearchData(resultData.data);
     } catch (error) {
       console.log("결과-입력 후:", error);
@@ -258,7 +253,7 @@ const SearchTrip = () => {
             {/* 썸네일 */}
             <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px]">
               <img
-                src="public/images/logo_icon_4.png"
+                src="/images/logo_icon_4.png"
                 alt="thumbnail"
                 className="w-full h-full object-cover"
               />
