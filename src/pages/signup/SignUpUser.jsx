@@ -45,7 +45,7 @@ const SignUpUser = () => {
   const [validateStatus, setValidateStatus] = useState(null); // validateStatus 상태
   const [policyType, setPolicyType] = useState("required");
   const [showPolicy, setShowPolicy] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState(false);
   // useNavigate
   const navigate = useNavigate();
   const handleClickNavigate = data => {
@@ -113,7 +113,7 @@ const SignUpUser = () => {
       postEmail({ email: email });
       handleClickNavigate(filterData);
     } else {
-      console.log("제출 조건에 맞지 않음");
+      setErrorMessage(true);
     }
   };
 
@@ -241,7 +241,7 @@ const SignUpUser = () => {
           <Checkbox.Group
             value={selectedValues}
             onChange={handleChange}
-            className="flex flex-col gap-[10px] mb-[74px] w-full"
+            className="flex flex-col gap-[10px] mb-[20px] w-full"
           >
             <Checkbox value="required-1">[필수] 만 14세 이상입니다.</Checkbox>
             <div className="w-full flex justify-between">
@@ -287,10 +287,18 @@ const SignUpUser = () => {
               [선택] 이벤트 및 할인 혜택 안내 동의
             </Checkbox>
           </Checkbox.Group>
+          {errorMessage ? (
+            <p className="text-secondary3 text-[14px] font-medium mb-[74px]">
+              * 필수 약관을 모두 동의해야 제출 가능합니다.
+            </p>
+          ) : null}
           {/* 약관 보기 */}
           {showPolicy ? (
             <Policy policyType={policyType} setShowPolicy={setShowPolicy} />
           ) : null}
+
+          {/* 필수 약관을 모두 동의해야 제출 가능 메세지 */}
+
           {/* 제출 버튼 */}
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit" block className="h-[60px]">

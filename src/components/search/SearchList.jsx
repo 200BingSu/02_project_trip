@@ -22,9 +22,15 @@ const strfArr = [
 const SearchList = ({ searchValue, searchData, setSearchData }) => {
   // useState
   const [selectedCate, setSelectedCate] = useState(0);
+  const [dataIndex, setDataIndex] = useState(0);
   useEffect(() => {
     console.log("selectedCate", selectedCate);
+    setDataIndex(0);
   }, [selectedCate]);
+  useEffect(() => {
+    console.log("searchData", searchData);
+  }, [searchData]);
+
   // useRef
   const topRef = useRef(null);
 
@@ -72,93 +78,129 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
         })}
       </ul>
       {/* 검색 결과 */}
-      {selectedCate === 0 && (
-        <div>
-          <SearchItems
-            type={strfArr[1].type}
-            name={strfArr[1].name}
-            data={tourData}
-            setSelectedCate={setSelectedCate}
-            searchValue={searchValue}
-            searchData={searchData}
-            setSearchData={setSearchData}
-          />
-          <SearchItems
-            type={strfArr[2].type}
-            name={strfArr[2].name}
-            data={stayData}
-            setSelectedCate={setSelectedCate}
-            searchValue={searchValue}
-            searchData={searchData}
-            setSearchData={setSearchData}
-          />
-          <SearchItems
-            type={strfArr[3].type}
-            name={strfArr[3].name}
-            data={restaurData}
-            setSelectedCate={setSelectedCate}
-            searchValue={searchValue}
-            searchData={searchData}
-            setSearchData={setSearchData}
-          />
-          <SearchItems
-            type={strfArr[4].type}
-            name={strfArr[4].name}
-            data={festData}
-            setSelectedCate={setSelectedCate}
-            searchValue={searchValue}
-            searchData={searchData}
-            setSearchData={setSearchData}
-          />
+      {searchData.length === 0 ? (
+        <div className="flex justify-center items-center h-[500px]">
+          <p className="text-[20px] font-semibold text-slate-500">
+            검색 결과가 없습니다.
+          </p>
         </div>
-      )}
-      {selectedCate === 1 && (
-        <div>
-          <SearchItems
-            type="TOUR"
-            data={tourData}
-            searchValue={searchValue}
-            searchData={searchData}
-            setSearchData={setSearchData}
-            setSelectedCate={setSelectedCate}
-          />
-        </div>
-      )}
-      {selectedCate === 2 && (
-        <div>
-          <SearchItems
-            type="STAY"
-            data={stayData}
-            searchValue={searchValue}
-            searchData={searchData}
-            setSearchData={setSearchData}
-            setSelectedCate={setSelectedCate}
-          />
-        </div>
-      )}
-      {selectedCate === 3 && (
-        <div>
-          <SearchItems
-            type="RESTAUR"
-            data={restaurData}
-            searchValue={searchValue}
-            searchData={searchData}
-            setSearchData={setSearchData}
-            setSelectedCate={setSelectedCate}
-          />
-        </div>
-      )}
-      {selectedCate === 4 && (
-        <div>
-          <SearchItems
-            type="FEST"
-            data={festData}
-            searchValue={searchValue}
-            searchData={searchData}
-            setSearchData={setSearchData}
-            setSelectedCate={setSelectedCate}
-          />
-        </div>
+      ) : (
+        <>
+          {" "}
+          {selectedCate === 0 && (
+            <div>
+              <SearchItems
+                type={strfArr[1].type}
+                name={strfArr[1].name}
+                data={tourData}
+                setSelectedCate={setSelectedCate}
+                searchValue={searchValue}
+                searchData={searchData}
+                setSearchData={setSearchData}
+                dataIndex={dataIndex}
+                setDataIndex={setDataIndex}
+                category={1}
+              />
+              <SearchItems
+                type={strfArr[2].type}
+                name={strfArr[2].name}
+                data={stayData}
+                setSelectedCate={setSelectedCate}
+                searchValue={searchValue}
+                searchData={searchData}
+                setSearchData={setSearchData}
+                dataIndex={dataIndex}
+                setDataIndex={setDataIndex}
+                category={2}
+              />
+              <SearchItems
+                type={strfArr[3].type}
+                name={strfArr[3].name}
+                data={restaurData}
+                setSelectedCate={setSelectedCate}
+                searchValue={searchValue}
+                searchData={searchData}
+                setSearchData={setSearchData}
+                dataIndex={dataIndex}
+                setDataIndex={setDataIndex}
+                category={3}
+              />
+
+              <SearchItems
+                type={strfArr[4].type}
+                name={strfArr[4].name}
+                data={festData}
+                setSelectedCate={setSelectedCate}
+                searchValue={searchValue}
+                searchData={searchData}
+                setSearchData={setSearchData}
+                dataIndex={dataIndex}
+                setDataIndex={setDataIndex}
+                category={4}
+              />
+            </div>
+          )}
+          {selectedCate === 1 && (
+            <div>
+              <SearchItems
+                type="TOUR"
+                data={tourData}
+                searchValue={searchValue}
+                searchData={searchData}
+                setSearchData={setSearchData}
+                dataIndex={dataIndex}
+                setDataIndex={setDataIndex}
+                setSelectedCate={setSelectedCate}
+                category={1}
+              />
+            </div>
+          )}
+          {selectedCate === 2 && (
+            <div>
+              <SearchItems
+                type="STAY"
+                data={stayData}
+                searchValue={searchValue}
+                searchData={searchData}
+                setSearchData={setSearchData}
+                dataIndex={dataIndex}
+                setDataIndex={setDataIndex}
+                setSelectedCate={setSelectedCate}
+                category={2}
+              />
+            </div>
+          )}
+          {selectedCate === 3 && (
+            <div>
+              <SearchItems
+                type="RESTAUR"
+                data={restaurData}
+                searchValue={searchValue}
+                searchData={searchData}
+                setSearchData={setSearchData}
+                dataIndex={dataIndex}
+                setDataIndex={setDataIndex}
+                setSelectedCate={setSelectedCate}
+                category={3}
+              />
+            </div>
+          )}
+          {selectedCate === 4 && (
+            <div>
+              <SearchItems
+                type="FEST"
+                data={festData}
+                searchValue={searchValue}
+                searchData={searchData}
+                setSearchData={setSearchData}
+                dataIndex={dataIndex}
+                setDataIndex={setDataIndex}
+                setSelectedCate={setSelectedCate}
+                category={4}
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   );

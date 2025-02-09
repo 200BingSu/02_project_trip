@@ -25,7 +25,6 @@ const SelectDays = () => {
   const accessToken = getCookie("accessToken");
   //recoil
 
-
   const [tripId, setTripId] = useRecoilState(tripAtom);
   useEffect(() => {
     // console.log(tripId);

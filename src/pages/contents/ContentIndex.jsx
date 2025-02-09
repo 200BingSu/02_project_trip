@@ -109,17 +109,19 @@ const ContentIndex = () => {
   const [isLoading, setIsLoading] = useState(false);
   // const [reviewsData, setReviewsData] = useState([]);
   // const [reviewIndex, setReviewIndex] = useState(6);
+  const [pathCode, setPathCode] = useState("");
+  const [pathData, setPathData] = useState();
 
   const [openPathModal, setOpenPathModal] = useState(false);
   useEffect(() => {
-    console.log("로딩", isLoading);
+    // console.log("로딩", isLoading);
   }, [isLoading]);
 
   // useEffect(() => {
   //   console.log("reviewsData", reviewsData);
   // }, [reviewsData]);
   useEffect(() => {
-    console.log("contentData", contentData);
+    getPathList();
   }, [contentData]);
 
   // useRef
@@ -151,15 +153,7 @@ const ContentIndex = () => {
     };
     console.log("sendData", sendData);
     try {
-      const res = await axios.post(
-        `/api/schedule`,
-        { ...sendData },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
+      const res = await jwtAxios.post(`/api/schedule`, { ...sendData });
       console.log("일정등록 결과", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
@@ -173,7 +167,7 @@ const ContentIndex = () => {
   const showRegistModal = () => {
     if (trip.nowTripId === 0) {
       setIsRegistModalOpen(true);
-    } else if (trip.lastSeq > 1) {
+    } else if (trip.lastSeq > 0 && pathCode === "200 성공") {
       setOpenPathModal(true);
     } else {
       postSchedule();
@@ -203,7 +197,6 @@ const ContentIndex = () => {
     const sendData = {
       strf_id: strfId,
     };
-    console.log("sendData:", sendData);
     try {
       const res = await axios.get(
         `/api/detail/member/non?strf_id=${strfId}`,
@@ -215,6 +208,7 @@ const ContentIndex = () => {
       setContentData(resultData);
       if (res.data.code === "200 성공") {
         setIsLoading(true);
+        getPathList();
       }
     } catch (error) {
       console.log("상품조회", error);
@@ -224,13 +218,9 @@ const ContentIndex = () => {
   const getDetailMember = async () => {
     // console.log("sendData:", sendData);
     try {
-      const res = await axios.get(`/api/detail/member?&strf_id=${strfId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const res = await jwtAxios.get(`/api/detail/member?&strf_id=${strfId}`);
       const resultData = res.data.data;
-      console.log("상품조회-회원", resultData);
+      // console.log("상품조회-회원", resultData);
       setContentData(resultData);
       if (res.data.code === "200 성공") {
         setIsLoading(true);
@@ -240,23 +230,22 @@ const ContentIndex = () => {
     }
   };
 
-  //리뷰 조회
-  // const getReview = useCallback(async () => {
-  //   const sendData = {
-  //     page: 1,
-  //     size: 6,
-  //     strfId: strfId,
-  //   };
-  //   // console.log("리뷰 불러오기 리퀘스트:", sendData);
-  //   try {
-  //     const res = await axios.get(`/api/review?page=1&size=6&strfId=${strfId}`);
-  //     // console.log("리뷰 더 불러오기:", res.data);
-  //     setReviewsData(res.data.data);
-  //     setReviewIndex(prev => prev + 10);
-  //   } catch (error) {
-  //     console.log("리뷰 더 불러오기:", error);
-  //   }
-  // }, []);
+  // 길찾기
+  const getPathList = async () => {
+    try {
+      const res = await jwtAxios.get(
+        `/api/transport/get?startLngSX=${trip.prevSchelng}&startLatSY=${trip.prevSchelat}&endLngEX=${contentData.longitude}&endLatEY=${contentData.latit}`,
+      );
+      const resultData = res.data;
+      console.log("길찾기 결과", resultData);
+      setPathCode(resultData.code);
+
+      setPathData(resultData.data);
+    } catch (error) {
+      console.log("길찾기 결과", error);
+    }
+  };
+
   useEffect(() => {
     if (accessToken) {
       getDetailMember();
@@ -535,6 +524,8 @@ const ContentIndex = () => {
 
           {openPathModal ? (
             <PathModal
+              pathData={pathData}
+              setPathData={setPathData}
               setOpenPathModal={setOpenPathModal}
               contentData={contentData}
               selectPath={selectPath}

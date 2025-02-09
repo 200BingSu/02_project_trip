@@ -58,7 +58,7 @@ const SearchLocation = () => {
   const getLocationList = async () => {
     try {
       const res = await axios.get(TRIP.getLocationList);
-      console.log("지역 목록 조회:", res.data);
+      // console.log("지역 목록 조회:", res.data);
       setLocationData(res.data);
     } catch (error) {
       console.log("지역 목록 조회:", error);

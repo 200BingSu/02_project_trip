@@ -60,9 +60,12 @@ const SingInIndex = () => {
       >
         <div className="w-[330px] h-[50px] mb-[20px]">
           <img
-            src="/public/images/logo_1.png"
-            alt="로고 이미지"
-            className="w-full h-full"
+            src="/images/logo_1.png"
+            alt="main_logo"
+            className="cursor-pointer"
+            onClick={() => {
+              navigate("/");
+            }}
           />
         </div>
       </div>

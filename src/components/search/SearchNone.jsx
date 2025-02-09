@@ -203,7 +203,7 @@ const SearchNone = ({
                             src={
                               item.strfPic
                                 ? `${ProductPic}${item.strfId}/${item.strfPic}`
-                                : "/public/images/logo_icon_4.png"
+                                : "/images/logo_icon_4.png"
                             }
                             alt={item.strfName}
                           />

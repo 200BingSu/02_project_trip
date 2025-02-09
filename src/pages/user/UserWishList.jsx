@@ -47,7 +47,7 @@ const UserWishList = () => {
   return (
     <div>
       <TitleHeader icon="back" onClick={navigateBack} title="찜 목록" />
-      <div className="px-[32px] flex flex-col gap-[50px] mt-[60px]">
+      <div className="px-[32px] flex flex-col gap-[50px] mt-[60px] ">
         <ul className="w-full flex flex-col gap-[20px] mb-[30px]">
           {wishListData.map((item, index) => {
             return (
@@ -110,7 +110,7 @@ const UserWishList = () => {
           })}
         </ul>
       </div>
-      <div className="px-[32px] flex items-center justify-center">
+      <div className="px-[32px] pb-[40px] flex items-center justify-center">
         <Button
           variant="outlined"
           onClick={() => {

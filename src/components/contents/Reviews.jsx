@@ -3,9 +3,10 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { LiaComment } from "react-icons/lia";
 import ReviewImage from "./ReviewImage";
 import axios from "axios";
-import { data, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getCookie } from "../../utils/cookie";
 import TitleHeader from "../layout/header/TitleHeader";
+import { ProfilePic } from "../../constants/pic";
 
 const Reviews = () =>
   // {
@@ -39,11 +40,6 @@ const Reviews = () =>
       try {
         const res = await axios.get(
           `/api/review?strf_id=${strfId}&last_index=${reviewIndex}`,
-          // {
-          //   headers: {
-          //     Authorization: `Bearer ${accessToken}`,
-          //   },
-          // },
         );
         console.log("리뷰 불러오기:", res.data);
         setReviewsData([...reviewsData, ...res.data]);
@@ -78,8 +74,12 @@ const Reviews = () =>
                     {/* 프로필, 닉네임, 리뷰 수 */}
                     <div className="flex gap-[15px] items-center justify-between">
                       <div className="flex gap-[10px] items-center">
-                        <div className="w-[50px] h-[50px] rounded-full">
-                          <img src={item.writerUserPic} alt="pofilePic" />
+                        <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
+                          <img
+                            src={`${ProfilePic}${item.writerUserId}/${item.writerUserPic}`}
+                            alt="pofilePic"
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         <p className="font-semibold text-slate-700 text-[18px]">
                           {item.writerUserName}
@@ -139,13 +139,22 @@ const Reviews = () =>
             <li className="flex flex-col gap-[20px] py-[30px] border-b border-slate-200"></li>
           </ul>
         )}
-        <button
-          type="button"
-          className="w-full py-[20px] rounded-lg border border-slate-300"
-          onClick={getReview}
-        >
-          리뷰 더보기
-        </button>
+        {reviewsData.length > 0 ? (
+          <button
+            type="button"
+            className="w-full py-[20px] rounded-lg border border-slate-300"
+            onClick={getReview}
+          >
+            리뷰 더보기
+          </button>
+        ) : (
+          <div className="flex flex-col gap-[20px] justify-center items-center">
+            <i className="text-slate-300 text-[100px]">
+              <LiaComment />
+            </i>
+            <p className="text-slate-400 text-[20px]">리뷰가 없습니다.</p>
+          </div>
+        )}
       </div>
     );
   };
