@@ -132,6 +132,7 @@ const ModifySalculation = ({
       open={isModifyOpen}
       onCancel={handleCancel}
       onOk={handleOk}
+      className="custom-modal"
     >
       <p className="text-lg text-slate-500 font-semibold px-8">지출 금액</p>
       <label htmlFor="" className="flex px-8 mt-3 mb-10">

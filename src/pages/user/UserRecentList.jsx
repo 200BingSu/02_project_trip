@@ -8,9 +8,10 @@ import { userAtom } from "../../atoms/userAtom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
-import { Button, Modal } from "antd";
+import { Button, Modal, Rate } from "antd";
 import { LiaComment } from "react-icons/lia";
 import Footer from "../Footer";
+import "../../styles/antd-styles.css";
 
 const UserRecentList = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
@@ -66,7 +67,6 @@ const UserRecentList = () => {
   };
 
   const deleteRecent = async item => {
-
     console.log("isRecents.strfId", item.strfId, accessToken);
 
     const sendData = { strf_id: item.strfId };
@@ -83,7 +83,6 @@ const UserRecentList = () => {
       console.log("숨기기 결과", res.data);
 
       getRecentList(); // Call getRecentList after deleting
-
     } catch (error) {
       console.log("✅  error:", error);
     }
@@ -141,7 +140,9 @@ const UserRecentList = () => {
             <span className=" text-slate-500 mr-auto ">
               최근 본 상품은 최대 10개 까지 출력됩니다.
             </span>
-            <Button onClick={showModal}>전체 삭제</Button>
+            <Button onClick={showModal} className="px-4 h-8">
+              전체 삭제
+            </Button>
           </div>
           {isRecents?.map(item => (
             <div
@@ -168,8 +169,12 @@ const UserRecentList = () => {
               </p> */}
                 <div>
                   <p className="flex items-center text-slate-400 text-sm gap-1 mb-2">
-                    <AiFillStar className="text-lg text-primary" />
-                    <span>{item.ratingAvg}</span>
+                    <Rate
+                      disabled
+                      allowHalf
+                      defaultValue={item.ratingAvg}
+                      className="custom-rate"
+                    />
                     <span>({item.reviewCnt})</span>
                   </p>
                   <p className="flex items-center text-slate-400 text-sm gap-1">
