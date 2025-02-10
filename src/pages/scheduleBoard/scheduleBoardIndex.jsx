@@ -32,7 +32,10 @@ const ScheduleBoardIndex = () => {
   // console.log(imgRef.current);
   const [filter, setFilter] = useState(0);
   const [allTripReview, setAllTripReview] = useState([]);
+  const [popularTripReview, setPopularTripReview] = useState([]);
+  const [latestTripReview, setLatestTripReview] = useState([]);
   const [allCount, setAllCount] = useState(0);
+  const [isMore, setIsMore] = useState(true);
 
   // 인덱스
   const [popularPageNumber, setPopularPageNumber] = useState(1);
@@ -41,11 +44,16 @@ const ScheduleBoardIndex = () => {
     console.log("popularPageNumber", popularPageNumber);
   }, [popularPageNumber]);
   useEffect(() => {
-    console.log("popularPageNumber", popularPageNumber);
-  }, [popularPageNumber]);
+    console.log("latestPageNum", latestPageNum);
+  }, [latestPageNum]);
+
   useEffect(() => {
-    console.log("여행기 배열", allTripReview);
-  }, [allTripReview]);
+    console.log("추천순", popularTripReview);
+  }, [popularTripReview]);
+  useEffect(() => {
+    console.log("최신순", latestTripReview);
+  }, [latestTripReview]);
+
   /**
    * ## 모든 여행기 조회
    * #### type
@@ -67,11 +75,22 @@ const ScheduleBoardIndex = () => {
       );
       console.log(`여행기 모두 불러오기 ${orderType}`, res.data);
       const resultData = res.data;
-      setAllTripReview([...allTripReview, ...resultData.data]);
+      if (orderType === "popular") {
+        setPopularTripReview([...popularTripReview, ...resultData.data]);
+      }
+      if (orderType === "latest") {
+        setLatestTripReview([...latestTripReview, ...resultData.data]);
+      }
+
       if (resultData.code === "200 성공") {
         orderType === "popular"
           ? setPopularPageNumber(prev => prev + 1)
           : setLatestPageNum(prev => prev + 1);
+      }
+      if (resultData.data.length === 0) {
+        setIsMore(false);
+      } else {
+        setIsMore(true);
       }
     } catch (error) {
       console.log(`여행기 모두 불러오기 ${orderType}`, error);
@@ -91,9 +110,6 @@ const ScheduleBoardIndex = () => {
     getAllTripReview();
     getTripReviewCount();
   }, []);
-  useEffect(() => {
-    setAllTripReview([]); // 상태 초기화
-  }, [filter]); // filter가 변경될 때마다 실행
 
   return (
     <div>
@@ -122,10 +138,11 @@ const ScheduleBoardIndex = () => {
                 value={0}
                 className={`${filter === 0 ? "text-primary" : "text-slate-300"}`}
                 onClick={() => {
-                  setAllTripReview([]); // 배열 초기화를 먼저 수행
                   setFilter(0);
                   setLatestPageNum(1);
-                  getAllTripReview("popular");
+                  setPopularPageNumber(1);
+                  setAllTripReview([]); // 배열 초기화
+                  getAllTripReview("popular"); // 데이터 새로 로딩
                 }}
               >
                 • 추천순
@@ -137,10 +154,11 @@ const ScheduleBoardIndex = () => {
                 value={1}
                 className={`${filter === 1 ? "text-primary" : "text-slate-300"}`}
                 onClick={() => {
-                  setAllTripReview([]); // 배열 초기화를 먼저 수행
                   setFilter(1);
+                  setLatestPageNum(1);
                   setPopularPageNumber(1);
-                  getAllTripReview("latest");
+                  setAllTripReview([]); // 배열 초기화
+                  getAllTripReview("latest"); // 데이터 새로 로딩
                 }}
               >
                 • 최신순
@@ -151,8 +169,8 @@ const ScheduleBoardIndex = () => {
         </div>
         {/* 여행기 목록 */}
         <ul className="flex flex-col gap-[30px]">
-          {allTripReview ? (
-            allTripReview?.map((item, index) => {
+          {filter === 0 &&
+            popularTripReview.map((item, index) => {
               return (
                 <li
                   className="flex flex-col gap-[20px] px-[30px] py-[30px] rounded-3xl
@@ -223,82 +241,92 @@ const ScheduleBoardIndex = () => {
                   </div>
                 </li>
               );
-            })
-          ) : (
-            <li
-              className="flex flex-col gap-[20px] px-[30px] py-[30px] rounded-3xl
+            })}
+          {filter === 1 &&
+            latestTripReview.map((item, index) => {
+              return (
+                <li
+                  className="flex flex-col gap-[20px] px-[30px] py-[30px] rounded-3xl
                         shadow-[0_0_10px_0_rgba(0,0,0,0.1)] cursor-pointer"
-              onClick={() => navigateDetail(item)}
-            >
-              {/* info */}
-              <div className="flex justify-between items-center">
-                {/* 유저 */}
-                <div className="flex items-center gap-[10px]">
-                  {/* 프로필 */}
-                  <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                    <Skeleton.Avatar
-                      style={{ width: "50px", height: "50px" }}
-                    />
+                  key={index}
+                  onClick={() => navigateDetail(item)}
+                >
+                  {/* info */}
+                  <div className="flex justify-between items-center">
+                    {/* 유저 */}
+                    <div className="flex items-center gap-[10px]">
+                      {/* 프로필 */}
+                      <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-slate-100">
+                        <img
+                          src={`${ProfilePic}${item.userId}/${item.profilePic}`}
+                          alt="유저 프로필"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      {/* 닉네임 */}
+                      <p className="font-semibold text-[18px] text-slate-700">
+                        {item.name}
+                      </p>
+                    </div>
+                    {/* 조회수, 좋아요, 여행기 작성수 */}
+                    <ul className="flex gap-[10px] items-center">
+                      <li className="flex gap-[5px] items-center">
+                        <BiShow className="text-slate-300 text-[18px]" />
+                        <p className="text-slate-500 font-bold text-[14px]">
+                          {item.recentCount}
+                        </p>
+                      </li>
+                      <li className="flex gap-[5px] items-center">
+                        <GoThumbsup className="text-slate-300 text-[18px]" />
+                        <p className="text-slate-500 font-bold text-[14px]">
+                          {item.likeCount}
+                        </p>
+                      </li>
+                      <li className="flex gap-[5px] items-center">
+                        <IoReaderOutline className="text-slate-300 text-[18px]" />
+                        <p className="text-slate-500 font-bold text-[14px]">
+                          {item.scrapCount?.toLocaleString()}
+                        </p>
+                      </li>
+                    </ul>
                   </div>
-                  {/* 닉네임 */}
-                  <p className="font-semibold text-[18px] text-slate-700">
-                    닉네임
-                  </p>
-                </div>
-                {/* 조회수, 좋아요, 여행기 작성수 */}
-                <ul className="flex gap-[10px] items-center">
-                  <li className="flex gap-[5px] items-center">
-                    <BiShow className="text-slate-300 text-[18px]" />
-                    <p className="text-slate-500 font-bold text-[14px]">
-                      조회수
+                  {/* content */}
+                  <div className="flex flex-col gap-[20px]">
+                    {/* 이미지 */}
+                    <div className="w-full h-[322px] bg-slate-200 rounded-2xl overflow-hidden">
+                      <img
+                        src={
+                          item.tripReviewPics !== null
+                            ? `${TripReviewPic}${item.tripReviewId}/${item.tripReviewPics[0]}`
+                            : ``
+                        }
+                        alt="여행기 사진"
+                        className="w-full h-full object-cover"
+                        ref={imgRef}
+                      />
+                    </div>
+                    <h3 className="font-semibold text-[24px] text-slate-700">
+                      {item.title}
+                    </h3>
+                    <p className="text-[18px] text-slate-500 line-clamp-3">
+                      {item.content}
                     </p>
-                  </li>
-                  <li className="flex gap-[5px] items-center">
-                    <GoThumbsup className="text-slate-300 text-[18px]" />
-                    <p className="text-slate-500 font-bold text-[14px]">
-                      좋아요
-                    </p>
-                  </li>
-                  <li className="flex gap-[5px] items-center">
-                    <IoReaderOutline className="text-slate-300 text-[18px]" />
-                    <p className="text-slate-500 font-bold text-[14px]">
-                      작성수
-                    </p>
-                  </li>
-                </ul>
-              </div>
-              {/* content */}
-              <div className="flex flex-col gap-[20px]">
-                {/* 이미지 */}
-                <div className="w-full h-[322px] bg-slate-200 rounded-2xl">
-                  <img
-                    src=""
-                    alt="여행기 사진"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="font-semibold text-[24px] text-slate-700">
-                  제목
-                </h3>
-                <p className="text-[18px] text-slate-500 line-clamp-3">
-                  1일차- 제주, 2일차-서귀포' 함덕, 3일차-성산 기름값 4만원
-                  태우며 렌터카로 알차게 돌아다님. 참고로 2박 3일간 제주
-                  투어패스 48시간 끊었는데 강추!!2박 3일간 제주 투어패스 48시간
-                  끊었는데 강추!!2박 3일간 제주...
-                </p>
-              </div>
-            </li>
-          )}
+                  </div>
+                </li>
+              );
+            })}
         </ul>
         {/* 버튼 */}
         <div className="py-[20px]  flex justify-center items-center">
-          <Button
-            variant="outlined"
-            className="w-[100px] h-[40px] rounded-3xl"
-            onClick={() => getAllTripReview(filterArr[filter])}
-          >
-            더보기
-          </Button>
+          {isMore && (
+            <Button
+              variant="outlined"
+              className="w-[100px] h-[40px] rounded-3xl"
+              onClick={() => getAllTripReview(filterArr[filter])}
+            >
+              더보기
+            </Button>
+          )}
         </div>
       </div>
     </div>

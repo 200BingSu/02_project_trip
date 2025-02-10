@@ -3,7 +3,7 @@ import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import { RiCloseLargeFill } from "react-icons/ri";
 import { getCookie } from "../../utils/cookie";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 
 import { ProductPic } from "../../constants/pic";
@@ -19,6 +19,7 @@ const SearchNone = ({
   setSearchState,
 }) => {
   const accessToken = getCookie("accessToken");
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   // recoil
   const { userId } = useRecoilValue(userAtom);
   const [popularData, setPopularData] = useState([]);
@@ -137,7 +138,7 @@ const SearchNone = ({
   };
   useEffect(() => {
     getSearchBasicPopular();
-    if (accessToken) {
+    if (userInfo.accessToken) {
       getBasicList();
     }
   }, []);
@@ -170,7 +171,7 @@ const SearchNone = ({
         </ul>
       </div>
       {/* 최근 본 목록 */}
-      {accessToken ? (
+      {userInfo.accessToken ? (
         <div className="flex flex-col gap-[30px]">
           <div className="flex justify-between items-center">
             <h2 className="text-[24px] font-semibold text-slate-700">

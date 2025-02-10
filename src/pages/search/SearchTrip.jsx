@@ -8,7 +8,7 @@ import SearchList from "../../components/search/SearchList";
 import SearchNone from "../../components/search/SearchNone";
 import axios from "axios";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { Input, Rate } from "antd";
+import { Button, Input, Rate } from "antd";
 import { FiSearch } from "react-icons/fi";
 import SearchItems from "../../components/search/SearchItems";
 import { AiFillHeart, AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
@@ -46,14 +46,18 @@ const SearchTrip = () => {
     navigate(`/contents/index?strfId=${strfId}`);
   };
   // useState
-  const [lastIndex, setLastIndex] = useState(0);
-  const [searchData, setSearchData] = useState({});
+  const [basicLastIndex, setBasicLastIndex] = useState(0);
+  const [searchLastIndex, setSearchLastIndex] = useState(0);
+  const [wordLastIndex, setWordLastIndex] = useState(0);
+  const [searchData, setSearchData] = useState([]);
   const [searchState, setSearchState] = useState(false); // 검색 전, 후 구분
   const [inputValue, setInputValue] = useState(""); //검색 중 반영
+
   const [searchValue, setSearchValue] = useState(""); // 검색
   const [selectedCate, setSelectedCate] = useState(0);
   const [category, setCategory] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMore, setIsMore] = useState(true);
   // useEffect(() => {
   //   if (searchData && searchData.locationTitleList) {
   //     const locationTitleArr = searchData.locationTitleList;
@@ -71,20 +75,16 @@ const SearchTrip = () => {
 
   // 검색 결과 입력 전
   const getSearchBasic = async () => {
-    const sendData = {
-      trip_id: tripId,
-      last_index: lastIndex,
-    };
-    // console.log("검색 리퀘스트 데이터", sendData);
     try {
       const res = await jwtAxios.get(
-        `/api/search/strf-list-basic?trip_id=${tripId}&last_index=${lastIndex}`,
+        `/api/search/strf-list-basic?trip_id=${tripId}&last_index=${basicLastIndex}`,
       );
       const resultData = res.data;
       // console.log("결과-입력 전:", resultData);
-      setSearchData(resultData.data);
+      setSearchData([...searchData, ...resultData.data.list]);
       if (resultData) {
         setIsLoading(true);
+        setBasicLastIndex(prev => prev + 10);
       }
     } catch (error) {
       console.log("결과-입력 전:", error);
@@ -94,11 +94,15 @@ const SearchTrip = () => {
   const getSearchWord = async (cate = null) => {
     try {
       const res = await jwtAxios.get(
-        `/api/search/strf-list-word?trip_id=${tripId}&last_index=${lastIndex}&category=${category}&search_word=${searchValue}`,
+        `/api/search/strf-list-word?trip_id=${tripId}&last_index=${searchLastIndex}&category=${category}&search_word=${searchValue}`,
       );
       const resultData = res.data;
       // console.log("결과-입력 후:", resultData);
-      setSearchData(resultData.data);
+      setSearchData([...searchData, ...resultData.data.list]);
+      if (resultData) {
+        setIsLoading(true);
+        setSearchLastIndex(prev => prev + 10);
+      }
     } catch (error) {
       console.log("결과-입력 후:", error);
     }
@@ -108,8 +112,9 @@ const SearchTrip = () => {
     getSearchBasic();
   }, []);
   useEffect(() => {
-    getSearchWord();
-    setLastIndex(0);
+    if (category !== null) {
+      getSearchWord();
+    }
   }, [category]);
   //리스트 배열
   const listArr = searchData?.list;
@@ -174,12 +179,12 @@ const SearchTrip = () => {
 
           {/* 검색 결과 */}
           <ul className="px-[32px] py-[30px] flex flex-col gap-[30px]">
-            {listArr?.length > 0 ? (
-              listArr?.map((item, index) => {
+            {searchData?.length > 0 ? (
+              searchData?.map((item, index) => {
                 return (
                   <li
                     className="flex gap-[20px] items-center cursor-pointer"
-                    key={item.strfId}
+                    key={index}
                     onClick={() => {
                       navigateContent(item.strfId);
                     }}
@@ -244,13 +249,7 @@ const SearchTrip = () => {
             ) : (
               <li className="flex gap-[20px] items-center cursor-pointer">
                 {/* 썸네일 */}
-                <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px]">
-                  <img
-                    src="/images/logo_icon_4.png"
-                    alt="thumbnail"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px]"></div>
                 {/* 정보 */}
                 <div className="flex flex-col gap-[5px]">
                   {/* 제목, 지역 제휴 */}
@@ -295,6 +294,19 @@ const SearchTrip = () => {
       ) : (
         <Loading />
       )}
+
+      <Button
+        onClick={() => {
+          if (searchValue !== "") {
+            getSearchWord();
+          } else {
+            getSearchBasic();
+          }
+        }}
+        className="mb-[30px]"
+      >
+        더보기
+      </Button>
     </div>
   );
 };
