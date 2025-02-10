@@ -99,7 +99,6 @@ const ContentIndex = () => {
   };
   const location = useLocation();
   const locationState = location.state;
-  console.log("locationState", locationState);
   //useState
   const [contentData, setContentData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -92,7 +92,7 @@ const PostReview = () => {
     <div>
       <TitleHeader
         icon="back"
-        onClick={navigateBack}
+        onClick={navigateToContents}
         title={locationState?.strfTitle}
       />
       <div className="px-[32px] mt-[60px]">
