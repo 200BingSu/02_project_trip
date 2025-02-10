@@ -90,13 +90,11 @@ const UserWishList = () => {
                     <Rate
                       disabled
                       count={1}
-                      defaultValue={item.ratingIn}
+                      value={1}
                       className="text-primary"
                     />
                     <p className="text-[12px] text-slate-500">
-
                       {item.ratingAvg !== 0 ? item.ratingAvg : "0"}
-
                     </p>
                     <p className="text-[12px] text-slate-500">
                       ({item.ratingCnt.toLocaleString()})
