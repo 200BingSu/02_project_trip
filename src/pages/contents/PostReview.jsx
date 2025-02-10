@@ -13,6 +13,17 @@ import { AiOutlinePlus } from "react-icons/ai";
 
 const PostReview = () => {
   const accessToken = getCookie("accessToken");
+  // 에러 메세지
+  const [messageApi, contextHolder] = message.useMessage();
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "죄송합니다. 통신 에러로 인해 리뷰가 등록되지 않습니다.",
+      style: {
+        marginTop: "20vh",
+      },
+    });
+  };
   // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   useEffect(() => {
@@ -79,6 +90,12 @@ const PostReview = () => {
       console.log(response.data);
     } catch (error) {
       console.error(error);
+      if (error.response.status === 405) {
+        message.error("통신 에러로 인해 리뷰 작성에 실패했습니다.");
+      }
+      if (error.response.status === 500) {
+        message.error("통신 에러로 인해 리뷰 작성에 실패했습니다.");
+      }
     }
   };
 
