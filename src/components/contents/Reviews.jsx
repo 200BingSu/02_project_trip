@@ -43,7 +43,6 @@ const Reviews = () =>
         );
         console.log("리뷰 불러오기:", res.data);
         setReviewsData([...reviewsData, ...res.data]);
-        setReviewIndex(prev => prev + 10);
       } catch (error) {
         console.log("리뷰 불러오기:", error);
       }
@@ -51,7 +50,7 @@ const Reviews = () =>
 
     useEffect(() => {
       getReview();
-    }, []);
+    }, [reviewIndex]);
 
     return (
       <div>
@@ -143,7 +142,7 @@ const Reviews = () =>
           <button
             type="button"
             className="w-full py-[20px] rounded-lg border border-slate-300"
-            onClick={getReview}
+            onClick={() => setReviewIndex(prev => prev + 10)}
           >
             리뷰 더보기
           </button>
