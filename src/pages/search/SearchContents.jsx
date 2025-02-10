@@ -47,8 +47,8 @@ const SearchContents = () => {
     const sendData = { search_word: searchValue, last_index: 0 };
     console.log("검색:", sendData);
     try {
-      const res = await axios.post(
-        `/api/search/all?search_word=${searchValue}&last_index=1`,
+      const res = await jwtAxios.post(
+        `/api/search/all?search_word=${searchValue}`,
         { ...sendData },
         // {
         //   headers: {
