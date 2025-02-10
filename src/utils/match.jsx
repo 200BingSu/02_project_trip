@@ -3,7 +3,7 @@ import { BiNavigation, BiSolidBus, BiSolidTrain } from "react-icons/bi";
 import { BsQuestionLg } from "react-icons/bs";
 import { FaWalking } from "react-icons/fa";
 import { FaLocationDot, FaTrainSubway } from "react-icons/fa6";
-import { IoReaderOutline } from "react-icons/io5";
+import { IoAirplane, IoReaderOutline } from "react-icons/io5";
 import { MdOutlineAutoAwesomeMotion } from "react-icons/md";
 
 // day 색깔
@@ -61,7 +61,7 @@ export const matchPathTypeIcon = pathType => {
     case 20:
       return <BiSolidTrain />;
     case 13: //항공
-      return <FaWalking />;
+      return <IoAirplane />;
     default:
       return <BiNavigation />;
   }

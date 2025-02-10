@@ -50,7 +50,7 @@ const UserBooking = () => {
     >
       {isLoading ? (
         <>
-          <TitleHeader icon="back" title="여행" onClick={navigateBack} />
+          <TitleHeader icon="back" title="내 예약" onClick={navigateBack} />
           <div className="flex flex-col gap-[20px] px-[32px] w-full">
             {/* 카테고리 버튼 */}
             <ul className="flex gap-[10px] w-full">
@@ -75,18 +75,17 @@ const UserBooking = () => {
                 beforeList.length > 0 ? (
                   <div>
                     {beforeList.map((item, index) => {
-                      return <div key={index}></div>;
+                      return <Bookings key={index} />;
                     })}
                   </div>
                 ) : (
                   <>
-                    {/* <i className="text-slate-300 text-[100px]">
+                    <i className="text-slate-300 text-[100px]">
                       <LiaComment />
                     </i>
                     <p className="text-slate-400 text-[20px]">
                       예약 내역이 없습니다.
-                    </p> */}
-                    <Bookings />
+                    </p>
                   </>
                 )
               ) : null}
@@ -94,7 +93,7 @@ const UserBooking = () => {
                 afterList.length > 0 ? (
                   <div>
                     {afterList.map((item, index) => {
-                      return <div key={index}></div>;
+                      return <Bookings key={index} />;
                     })}
                   </div>
                 ) : (

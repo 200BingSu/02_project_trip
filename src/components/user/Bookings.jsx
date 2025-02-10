@@ -1,3 +1,4 @@
+import { Button } from "antd";
 import dayjs from "dayjs";
 import { memo } from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
@@ -64,44 +65,55 @@ const Bookings = ({ bookingStatus = 1 }) => {
       </div>
       {/* 숙소 이름 */}
       <div>
-        <h3>숙소 이름</h3>
+        <h3 className="text-[20px] font-bold text-slate-700">숙소 이름</h3>
       </div>
       {/* 내용 */}
-      <div>
+      <div className="flex gap-[20px]">
         {/* 예약 정보 */}
-        <div>
-          <div>
-            {/* 썸네일 */}
-            <div>
-              <img src="" alt="" />
-            </div>
-            {/* 정보 */}
-            <div>
-              {/* 날짜 */}
-              <div>
-                <p>체크인 날짜</p>
-                <p>~</p>
-                <p>체크아웃 날짜</p>
-              </div>
-              {/* 숙박일, 체크인 시간 */}
-              <div>
-                <p>숙박일</p>
-                <p>|</p>
-                <p>
-                  <span>체크인</span>
-                  <span>15:00</span>
-                  <span>체크아웃</span>
-                  <span>15:00</span>
-                </p>
-              </div>
-              {/* 금액 */}
-              <div>
-                <p>결제 금액</p>
-                <p>100,000원</p>
-              </div>
-            </div>
+
+        {/* 썸네일 */}
+        <div className="w-[85px] h-[85px] rounded-2xl overflow-hidden bg-slate-100">
+          <img src="" alt="" className="w-full h-full object-cover" />
+        </div>
+        {/* 정보 */}
+        <div className="flex flex-col gap-[10px]">
+          {/* 날짜 */}
+          <div className="flex items-center text-[16px] text-slate-700">
+            <p>체크인 날짜</p>
+            <p>~</p>
+            <p>체크아웃 날짜</p>
+          </div>
+          {/* 숙박일, 체크인 시간 */}
+          <div className="text-[14px] text-slate-500 flex items-center gap-[5px]">
+            <p>숙박일</p>
+            <p>|</p>
+            <p>
+              <span>체크인</span>
+              <span>15:00</span>
+              <span>체크아웃</span>
+              <span>15:00</span>
+            </p>
+            <p>|</p>
+            <p>
+              <span>체크아웃</span>
+              <span>15:00</span>
+            </p>
+          </div>
+          {/* 금액 */}
+          <div className="text-[14px] text-slate-500 flex items-center gap-[5px]">
+            <p>결제 금액: </p>
+            <p>{(100000).toLocaleString()}원</p>
           </div>
         </div>
+      </div>
+      {/* 버튼 */}
+      <div>
+        <Button
+          type="primary"
+          className="w-full h-[46px] rounded-lg text-[16px] font-bold"
+        >
+          예약 취소
+        </Button>
       </div>
     </div>
   );
