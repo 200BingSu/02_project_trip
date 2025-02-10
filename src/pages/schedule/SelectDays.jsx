@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ReactDatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
@@ -17,6 +17,7 @@ import { userAtom } from "../../atoms/userAtom";
 import { tripAtom } from "../../atoms/tripAtom";
 
 import { getCookie } from "../../utils/cookie";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 // 한글 로케일 등록
 registerLocale("ko", ko);
@@ -24,7 +25,6 @@ registerLocale("ko", ko);
 const SelectDays = () => {
   const accessToken = getCookie("accessToken");
   //recoil
-
 
   const [tripId, setTripId] = useRecoilState(tripAtom);
   useEffect(() => {
@@ -50,6 +50,9 @@ const SelectDays = () => {
   // useState
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  const datePickerRef = useRef(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   //여행 추가
   const postTrip = async () => {
@@ -117,6 +120,20 @@ const SelectDays = () => {
     // console.log("종료일", endDate);
   }, [endDate]);
 
+  const handlePrevMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentDate.getMonth() - 1);
+    setCurrentDate(newDate);
+    datePickerRef.current.setFocus();
+  };
+
+  const handleNextMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentDate.getMonth() + 1);
+    setCurrentDate(newDate);
+    datePickerRef.current.setFocus();
+  };
+
   return (
     <div>
       <TitleHeader icon="back" onClick={navigateBack} title="일정 선택" />
@@ -150,7 +167,24 @@ const SelectDays = () => {
         <div className="h-[10px] bg-slate-100"></div>
         {/* 달력 */}
         <div className="flex flex-col gap-[12px] px-[32px]">
+          <div className="flex justify-between">
+            <button
+              onClick={handlePrevMonth}
+              className="px-2 py-2 text-slate-600 text-[20px] rounded hover:bg-gray-100"
+            >
+              <IoIosArrowBack />
+            </button>
+
+            <button
+              onClick={handleNextMonth}
+              className="px-2 py-2 text-slate-600 text-[20px] rounded hover:bg-gray-100"
+            >
+              <IoIosArrowForward />
+            </button>
+          </div>
+
           <DatePicker
+            ref={datePickerRef}
             selected={startDate}
             selectsRange={true}
             onChange={onChange}
@@ -160,9 +194,10 @@ const SelectDays = () => {
             endDate={endDate}
             inline
             showDisabledMonthNavigation
-            monthsShown={2} // 한 번에 2개월 표시
+            monthsShown={2}
             locale="ko"
             form="external-form"
+            openToDate={currentDate}
             renderCustomHeader={({ monthDate }) => (
               <div>
                 <span className="react-datepicker__current-month">
@@ -183,7 +218,9 @@ const SelectDays = () => {
               onClick={resetDates}
             >
               <RiArrowGoBackFill className="text-[12px]" />
-              <span className="text-[16px] underline">초기화</span>
+              <span className="text-[16px] underline whitespace-nowrap">
+                초기화
+              </span>
             </button>
             <Button
               type="primary"

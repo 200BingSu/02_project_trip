@@ -1,5 +1,5 @@
-import { Form, Input } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Form, Input, Tooltip } from "antd";
+import { useEffect, useMemo, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -7,12 +7,15 @@ import { userAtom } from "../../atoms/userAtom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { LocationPic, ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
+import Footer from "../Footer";
 import axios from "axios";
+import jwtAxios from "../../apis/jwt";
+import { FaRegQuestionCircle } from "react-icons/fa";
 
 const categoryArr = ["다가오는 여행", "완료된 여행"];
 const UserTrips = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
-  const [useProfile, setUseProfile] = useState([]);
+  const [useProfile, setUseProfile] = useState({});
   const [tripListData, setTripListData] = useState({});
 
   const [form] = Form.useForm();
@@ -20,17 +23,15 @@ const UserTrips = () => {
   const [code, setCode] = useState("");
   const [category, setCategory] = useState(0);
   useEffect(() => {
-    console.log("tripListData", tripListData);
+    // console.log("tripListData", tripListData);
   }, [tripListData]);
 
   useEffect(() => {}, [category]);
-  // 미완료 여행 목록 불러오기
-
 
   // 여행 목록 불러오기
   const getTripList = async () => {
     try {
-      const res = await axios.get(`/api/trip-list`, {
+      const res = await jwtAxios.get(`/api/trip-list`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -57,15 +58,31 @@ const UserTrips = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log("구성원추가", res.data);
+      // console.log("구성원추가", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        getTripList();
+        navigate(`/schedule/index?tripId=${resultData.data}`);
+      }
     } catch (error) {
       console.log("구성원 추가", error);
     }
   };
-
+  // 유저 데이터 불러오기
+  const getUserInfo = async () => {
+    try {
+      const res = await jwtAxios.get(`/api/user/userInfo`);
+      // console.log(res.data);
+      const resultData = res.data;
+      setUseProfile(resultData.data);
+    } catch (error) {
+      console.log("유저 정보", error);
+    }
+  };
   useEffect(() => {
     if (userInfo.accessToken) {
       getTripList();
+      getUserInfo();
     }
   }, []);
   // useNavigate
@@ -78,36 +95,41 @@ const UserTrips = () => {
     navigate(`/schedule/index?tripId=${item.tripId}`);
   };
 
-
   useEffect(() => {
     // console.log("카테고리", category);
   }, [category]);
   // 미완료 여행 목록 불러오기
 
-  // console.log("✅  useProfile:", useProfile);
-  // console.log("tripListData", tripListData);
-
+  //antD 툴팁 설정
+  const [arrow, setArrow] = useState("Show");
+  const mergedArrow = useMemo(() => {
+    if (arrow === "Hide") {
+      return false;
+    }
+    if (arrow === "Show") {
+      return true;
+    }
+    return {
+      pointAtCenter: true,
+    };
+  }, [arrow]);
 
   return (
     <div className="flex flex-col gap-[30px]">
       <TitleHeader icon="back" title="여행" onClick={navigateBack} />
-      {/* 유저 정보 */}
-      <div className="mt-[90px] flex flex-col gap-[14px] items-center justify-center w-full">
-        {/* 프로필 이미지 */}
-        <div className="w-[120px] h-[120px] rounded-full overflow-hidden bg-slate-100">
-          <img
-            src={`${ProfilePic}${userInfo?.userId}/${useProfile?.profilePic}`}
-            alt="유저 이미지"
-            className="w-full h-full"
-          />
-        </div>
-        <p className="text-[30px] text-slate-700 font-bold">
-          {/* {useProfile?.name} */}
-        </p>
-      </div>
+
       {/* 여행코드 입력창 */}
       <div className="px-[32px] flex flex-col gap-[5px]">
-        <p className="text-slate-500 text-[18px] font-semibold">여행코드</p>
+        <div className="flex items-center gap-[5px]">
+          <p className="text-slate-500 text-[18px] font-semibold">여행코드</p>
+          <Button type="Outlined" className="group flex items-center focus:">
+            <FaRegQuestionCircle className="text-[18px] text-slate-300 group-hover:text-[#b8c8d1] transition-all duration-300" />
+            <p className="text-slate-300 w-0 group-hover:w-[350px] overflow-hidden transition-all duration-300">
+              생성된 일정에서 일정 코드를 받아 친구를 초대해보세요!
+            </p>
+          </Button>
+        </div>
+
         <Input
           placeholder="친구와 여행을 함께하기 위해 코드를 입력해주세요"
           className="px-[32px] py-[20px] h-[79px]"
@@ -156,10 +178,11 @@ const UserTrips = () => {
                   {/* 좌측 */}
                   <div className="flex items-center gap-[29px]">
                     {/* 이미지 */}
-                    <div className="w-[100px] h-[100px] bg-slate-100 rounded-full">
+                    <div className="w-[100px] h-[100px] bg-slate-100 rounded-full overflow-hidden">
                       <img
-                        src={`${LocationPic}/${item.locationPiclocationPic}`}
+                        src={`${LocationPic}${item.locationPic}`}
                         alt={item.title}
+                        className="w-full h-full"
                       />
                     </div>
                     {/* 정보 */}
@@ -219,6 +242,7 @@ const UserTrips = () => {
           </ul>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

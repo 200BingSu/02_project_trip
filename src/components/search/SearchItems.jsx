@@ -6,11 +6,12 @@ import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import { ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
-import { categoryKor } from "../../pages/contents/ContentIndex";
+import { categoryKor } from "../../utils/match";
 
 const SearchItems = forwardRef(
   (
     {
+      key,
       type,
       name,
       data,
@@ -18,36 +19,41 @@ const SearchItems = forwardRef(
       searchData,
       setSearchData,
       setSelectedCate,
+      category,
+      dataIndex,
+      setDataIndex,
     },
     ref,
   ) => {
-    console.log("현재 data로 들어오는 내용:", data);
+    // console.log("현재 data로 들어오는 내용:", data);
+
     // 쿠키
     const accessToken = getCookie("accessToken");
     //useNavigate
     const navigate = useNavigate();
     const handleClickList = item => {
-      console.log("클릭된 아이템", item);
-      navigate(`/contents/index?strfId=${item.strfId}`);
+      // console.log("클릭된 아이템", item);
+      navigate(`/contents/index?strfId=${item.strfId}`, {
+        state: { searchValue: searchValue },
+      });
     };
     // useState
-    const [dataIndex, setDataIndex] = useState(4);
+
+    const [showMore, setShowMore] = useState(true);
     useEffect(() => {
-      console.log(dataIndex);
+      // console.log(dataIndex);
     }, [dataIndex]);
 
     // 카테고리 별 더보기
     const getSearchListMore = async data => {
       try {
         const res = await axios.get(
-          `/api/search/category?last_index=${dataIndex}&category=${type}&search_word=${searchValue}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          },
+          `/api/search/category?last_index=${dataIndex}&category=${categoryKor(data)}&search_word=${searchValue}&order_type=ratingAvg`,
         );
         console.log("더보기 결과:", res.data);
+        if (res.data.data.length === 0) {
+          setShowMore(false);
+        }
         const resultData = res.data;
         setSearchData([...searchData, ...resultData.data]);
         setDataIndex(prev => prev + 10);
@@ -57,12 +63,12 @@ const SearchItems = forwardRef(
     };
     // 더보기 버튼 클릭
     const handleClickButton = () => {
-      console.log(type);
-      setSelectedCate(type);
+      console.log(type, category);
+      setSelectedCate(category);
       // if (type === "all") {
       //   moveTo();
       // }
-      // getSearchListMore();
+      getSearchListMore(type);
     };
 
     return (
@@ -94,7 +100,7 @@ const SearchItems = forwardRef(
                     {/* 제목, 지역 제휴 */}
                     <div className="flex gap-[5px] items-center ">
                       <h3 className="text-[20px] font-semibold text-slate-700">
-                        {item.title}
+                        {item.title || item.strfTitle}
                       </h3>
                       {/* <div className="h-[14px] px-[5px] py-[3px] bg-[#FDB4A1] bg-opacity-50 text-secondary3_3 text-[8px] font-semibold flex items-center justify-center line-height-[100%]">
                       지역 제휴
@@ -190,14 +196,17 @@ const SearchItems = forwardRef(
           )}
         </ul>
         {/* 더보기 */}
-        <button
-          type="button"
-          className="px-[20px] py-[10px] border border-slate-300 
+        {showMore && (
+          <button
+            type="button"
+            className="px-[20px] py-[10px] border border-slate-300 
+
         rounded-[24px] text-[16px] font-semibold text-slate-600"
-          onClick={handleClickButton}
-        >
-          {type} 검색결과 더보기
-        </button>
+            onClick={() => handleClickButton(type)}
+          >
+            {categoryKor(type)} 검색결과 더보기
+          </button>
+        )}
       </div>
     );
   },

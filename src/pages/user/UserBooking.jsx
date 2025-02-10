@@ -1,8 +1,17 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { useNavigate } from "react-router-dom";
+import jwtAxios from "../../apis/jwt";
+import { userAtom } from "../../atoms/userAtom";
+import Loading from "../../components/loading/Loading";
+import { useRecoilValue } from "recoil";
+import { LiaComment } from "react-icons/lia";
+import Footer from "../Footer";
+import Bookings from "../../components/user/Bookings";
 const categoryArr = ["예약 목록", "예약 완료 내역"];
 const UserBooking = () => {
+  //recoil
+  const { userId } = useRecoilValue(userAtom);
   // useNavigate
   const navigate = useNavigate();
   const navigateBack = () => {
@@ -10,107 +19,104 @@ const UserBooking = () => {
   };
   //useState
   const [category, setCategory] = useState(0);
-  const [bookingData, setBookingData] = useState({});
-  useEffect(() => {}, [category]);
-  return (
-    <div className="flex flex-col gap-[30px]">
-      <TitleHeader icon="back" title="여행" onClick={navigateBack} />
+  const [beforeList, setBeforeList] = useState([]);
+  const [afterList, setAfterList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-      {/* 여행 리스트 카테고리 */}
-      <div className="px-[32px]">
-        <ul className="flex items-center">
-          {categoryArr.map((item, index) => {
-            return (
-              <li
-                className={`cursor-pointer w-full flex justify-center items-center
-                            pt-[17px] pb-[16px]
-                            ${category === index ? `text-primary border-b-[2px] border-primary` : `text-slate-400 border-b border-slate-200`}`}
-                key={index}
-                onClick={() => {
-                  setCategory(index);
-                }}
-              >
-                {item}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      {/* 여행 목록 */}
-      <div className="px-[28px] mb-[40px]">
-        {/* 다가오는 여행 */}
-        {category === 0 && (
-          <ul className="flex flex-col gap-[40px]">
-            {tripListData.beforeTripList?.map((item, index) => {
-              return (
-                <li className="flex items-center justify-between" key={index}>
-                  {/* 좌측 */}
-                  <div className="flex items-center gap-[29px]">
-                    {/* 이미지 */}
-                    <div className="w-[100px] h-[100px] bg-slate-100 rounded-full">
-                      <img src="" alt="" />
-                    </div>
-                    {/* 정보 */}
-                    <div className="flex flex-col gap-[5px]">
-                      <h3 className="text-[24px] text-slate-700 font-semibold">
-                        {item.title}
-                      </h3>
-                      <p className="text-[18px] text-slate-500">
-                        <span>{item.startAt}</span>~<span>{item.endAt}</span>
-                      </p>
-                    </div>
-                  </div>
-                  {/* 우측 */}
-                  <button
-                    className="w-[36px] h-[36px] bg-slate-100 px-[10px] py-[10px] rounded-full"
-                    onClick={() => {
-                      navigateGoTrip(item);
-                    }}
+  // 예약 목록 불러오기
+  const getBookingList = useCallback(async () => {
+    try {
+      const res = await jwtAxios.get(`/api/booking?userId=${userId}`);
+      console.log("예약 목록", res.data);
+      const resultData = res.data;
+      setBeforeList(resultData.data.beforeList);
+      setAfterList(resultData.data.afterList);
+      if (res.data) {
+        setIsLoading(true);
+      }
+    } catch (error) {
+      console.log("예약 목록 불러오기 실패", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getBookingList();
+  }, []);
+
+  return (
+    <div
+      className="flex flex-col gap-[30px]
+                "
+    >
+      {isLoading ? (
+        <>
+          <TitleHeader icon="back" title="여행" onClick={navigateBack} />
+          <div className="flex flex-col gap-[20px] px-[32px] w-full">
+            {/* 카테고리 버튼 */}
+            <ul className="flex gap-[10px] w-full">
+              {categoryArr.map((item, index) => {
+                return (
+                  <li
+                    key={index}
+                    onClick={() => setCategory(index)}
+                    className={`w-full flex justify-center items-center 
+                  pt-[17px] pb-[16px]
+                  text-[16px] 
+                  ${index === category ? "border-b-[2px] border-primary text-primary" : "border-b-[1px] border-slate-200 text-slate-500"}`}
                   >
-                    <AiOutlinePlus className="text-slate-400" />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        {/* 완료된 여행 */}
-        {category === 1 && (
-          <ul className="flex flex-col gap-[40px]">
-            {tripListData.afterTripList?.map((item, index) => {
-              return (
-                <li className="flex items-center justify-between" key={index}>
-                  {/* 좌측 */}
-                  <div className="flex items-center gap-[29px]">
-                    {/* 이미지 */}
-                    <div className="w-[100px] h-[100px] bg-slate-100 rounded-full">
-                      <img src="" alt="" />
-                    </div>
-                    {/* 정보 */}
-                    <div className="flex flex-col gap-[5px]">
-                      <h3 className="text-[24px] text-slate-700 font-semibold">
-                        {item.title}
-                      </h3>
-                      <p className="text-[18px] text-slate-500">
-                        <span>{item.startAt}</span>~<span>{item.endAt}</span>
-                      </p>
-                    </div>
+                    {item}
+                  </li>
+                );
+              })}
+            </ul>
+            {/* 내용 */}
+            <div className="min-h-[500px] flex flex-col justify-center items-center">
+              {category === 0 ? (
+                beforeList.length > 0 ? (
+                  <div>
+                    {beforeList.map((item, index) => {
+                      return <div key={index}></div>;
+                    })}
                   </div>
-                  {/* 우측 */}
-                  <button
-                    className="w-[36px] h-[36px] bg-slate-100 px-[10px] py-[10px] rounded-full"
-                    onClick={() => {
-                      navigateGoTrip(item);
-                    }}
-                  >
-                    <AiOutlinePlus className="text-slate-400" />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
+                ) : (
+                  <>
+                    {/* <i className="text-slate-300 text-[100px]">
+                      <LiaComment />
+                    </i>
+                    <p className="text-slate-400 text-[20px]">
+                      예약 내역이 없습니다.
+                    </p> */}
+                    <Bookings />
+                  </>
+                )
+              ) : null}
+              {category === 1 ? (
+                afterList.length > 0 ? (
+                  <div>
+                    {afterList.map((item, index) => {
+                      return <div key={index}></div>;
+                    })}
+                  </div>
+                ) : (
+                  <div>
+                    <i className="text-slate-300 text-[100px]">
+                      <LiaComment />
+                    </i>
+                    <p className="text-slate-400 text-[20px]">
+                      예약 내역이 없습니다.
+                    </p>
+                  </div>
+                )
+              ) : null}
+            </div>
+
+            {/* 푸터 */}
+            <Footer />
+          </div>
+        </>
+      ) : (
+        <Loading />
+      )}
     </div>
   );
 };

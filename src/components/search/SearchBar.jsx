@@ -38,7 +38,7 @@ const SearchBar = React.memo(
           },
         });
         const resultData = res.data;
-        console.log(resultData);
+        // console.log(resultData);
         const filterArr = resultData.data.filter(item => {
           return item.txt !== "";
         });
@@ -66,8 +66,8 @@ const SearchBar = React.memo(
           },
         );
         const resultData = res.data;
-        console.log(resultData);
-        setSearchData("최근 검색어 클릭 결과", resultData.data);
+        console.log("최근 검색어 클릭 결과", resultData);
+        setSearchData(resultData.data);
       } catch (error) {
         console.log(error);
       }
@@ -98,12 +98,14 @@ const SearchBar = React.memo(
           onKeyDown={e => {
             if (e.code === "Enter") {
               setSearchValue(e.target.value);
+              setSearchBarFocus(false);
               setSearchState(true);
             }
           }}
           onFocus={() => {
             setSearchBarFocus(true);
           }}
+          onBlur={() => setTimeout(() => setSearchBarFocus(false), 200)}
           prefix={<FiSearch className="text-slate-400 text-2xl" />}
           className={`w-full h-[60px] px-[12px] ${inputValue ? "bg-white" : "bg-slate-100"}`}
         />

@@ -1,3 +1,4 @@
+import logo from "../../assets/logo_1.png";
 import { Button, Checkbox, Form, Input } from "antd";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -60,9 +61,12 @@ const SingInIndex = () => {
       >
         <div className="w-[330px] h-[50px] mb-[20px]">
           <img
-            src="/public/images/logo_1.png"
-            alt="로고 이미지"
-            className="w-full h-full"
+            src={logo}
+            alt="main_logo"
+            className="cursor-pointer"
+            onClick={() => {
+              navigate("/");
+            }}
           />
         </div>
       </div>
