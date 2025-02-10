@@ -89,7 +89,17 @@ const CompleteBooking = () => {
         </ul>
         {/* 버튼 */}
         <div>
-          <button type="button"></button>
+          <button
+            type="button"
+            className="px-[15px] py-[30px] rounded-lg border border-slate-300
+            text-[24px] font-semibold text-slate-700 w-full"
+            onClick={() => {
+              window.close();
+            }}
+          >
+            {" "}
+            결제 완료{" "}
+          </button>
         </div>
         {/* <div className="flex gap-[10px] w-full">
           <button

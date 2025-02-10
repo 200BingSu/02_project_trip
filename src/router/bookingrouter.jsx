@@ -7,6 +7,7 @@ const bookingRouter = () => {
   const LazyCompleteBooking = lazy(
     () => import("../pages/bookings/CompleteBooking"),
   );
+  const LazyWaiting = lazy(() => import("../pages/bookings/Waiting"));
   return [
     {
       path: "index",
@@ -21,6 +22,14 @@ const bookingRouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazyCompleteBooking />
+        </Suspense>
+      ),
+    },
+    {
+      path: "waiting",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyWaiting />
         </Suspense>
       ),
     },
