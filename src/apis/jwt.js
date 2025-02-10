@@ -5,7 +5,7 @@ const jwtAxios = axios.create();
 // 리퀘스트 이전
 // 인증 토큰이 존재하는지 확인, 요청 헤더에 추가
 const beforeReq = config => {
-  console.log("1. 요청 전에 먼저 전달", config);
+  // console.log("1. 요청 전에 먼저 전달", config);
   const accessToken = getCookie(`accessToken`);
   if (!accessToken) {
     return Promise.reject({
@@ -23,7 +23,7 @@ const failReq = err => {
 //리스폰스 이전
 // 새로운 accessToken 갱신
 const beforeRes = async res => {
-  console.log("2. 요청의 결과 전처리", res);
+  // console.log("2. 요청의 결과 전처리", res);
   const result = await axios.get(`/api/user/access-token`);
   setCookie(`accessToken`, result.data);
   return res;

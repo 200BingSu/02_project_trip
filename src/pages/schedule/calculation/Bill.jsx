@@ -3,7 +3,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { ProfilePic } from "../../../constants/pic";
-import "../../../styles/antd-css.css";
 
 const Bill = ({
   getCookie,
@@ -73,6 +72,7 @@ const Bill = ({
       open={isBillOpen}
       onOk={handleOk}
       onCancel={handleCancel}
+      className="custom-modal"
       footer={[
         <Button key="back" onClick={handleCancel}>
           취소

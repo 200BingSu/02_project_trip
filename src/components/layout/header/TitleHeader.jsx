@@ -34,39 +34,31 @@ export const RightContent = React.memo(
       <div>
         <ul className="flex gap-[30px] items-center">
           {icon1 ? (
-            <li
-              className="flex items-center text-[36px] text-slate-700"
-              onClick={icon1Click}
-            >
-              <button type="button">
+            <li className="flex items-center text-[36px] text-slate-700">
+              <button type="button" onClick={icon1Click}>
                 <BiSolidShareAlt />
               </button>
             </li>
           ) : null}
           {icon2 ? (
-            <li
-              className="flex items-center text-[36px] text-slate-700"
-              onClick={icon2Click}
-            >
+            <li className="flex items-center text-[36px] text-slate-700">
               <button type="button" onClick={icon2Click}>
                 <HiOutlineMap />
               </button>
             </li>
           ) : null}
           {icon3 ? (
-            <li
-              className="flex items-center text-[36px] text-slate-700"
-              onClick={icon3Click}
-            >
-              <IoReaderOutline />
+            <li className="flex items-center text-[36px] text-slate-700">
+              <button type="button" onClick={icon3Click}>
+                <IoReaderOutline />
+              </button>
             </li>
           ) : null}
           {icon4 ? (
-            <li
-              className="flex items-center text-[36px] text-slate-700"
-              onClick={icon4Click}
-            >
-              <CgMenuGridO />
+            <li className="flex items-center text-[36px] text-slate-700">
+              <button type="button" onClick={icon4Click}>
+                <CgMenuGridO />
+              </button>
             </li>
           ) : null}
         </ul>

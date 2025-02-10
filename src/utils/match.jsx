@@ -70,18 +70,25 @@ export const matchPathTypeIcon = pathType => {
 export const matchWeatherIcon = weather => {
   switch (weather) {
     case "sunny":
-      return <img src="/public/images/weathericon/sunny.svg" alt="sunny" />;
+      return <img src="/images/weathericon/sunny.svg" alt="sunny" />;
     case "cloudy":
-      return <img src="/public/images/weathericon/cloudy.svg" alt="cloudy" />;
+      return <img src="/images/weathericon/cloudy.svg" alt="cloudy" />;
     case "overcast":
-      return (
-        <img src="/public/images/weathericon/overcast.svg" alt="overcast" />
-      );
+      return <img src="/images/weathericon/overcast.svg" alt="overcast" />;
     case "rain":
-      return <img src="/public/images/weathericon/rain.svg" alt="rain" />;
+      return <img src="/images/weathericon/rain.svg" alt="rain" />;
     case "snow":
-      return <img src="/public/images/weathericon/snow.svg" alt="snow" />;
+      return <img src="/images/weathericon/snow.svg" alt="snow" />;
     default:
       return "";
   }
+};
+
+// 카테고리 한글 변환
+export const categoryKor = category => {
+  if (category === "STAY") return "숙소";
+  if (category === "RESTAUR") return "식당";
+  if (category === "TOUR") return "관광지";
+  if (category === "FEST") return "축제";
+  if (category === null) return "카테고리";
 };

@@ -12,6 +12,7 @@ import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import Bill from "./calculation/Bill";
+import "../../styles/antd-styles.css";
 
 const Calculation = () => {
   const [amount, setAmount] = useState({});

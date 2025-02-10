@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import SearchBar from "../../components/search/SearchBar";
 import SearchNone from "../../components/search/SearchNone";
@@ -12,6 +12,7 @@ import { SEARCH } from "../../constants/api";
 import axios from "axios";
 import jwtAxios from "../../apis/jwt";
 import { getCookie } from "../../utils/cookie";
+import DockBar from "../../components/layout/DockBar/DockBar";
 
 const SearchContents = () => {
   // 쿼리스트링
@@ -19,6 +20,9 @@ const SearchContents = () => {
   const accessToken = getCookie("accessToken");
   //useNavigate
   const navigate = useNavigate();
+  // useLocation
+  const location = useLocation();
+  const locationState = location.state;
   // useState
   const [searchState, setSearchState] = useState(false); // 검색 전, 후 구분
   const [searchValue, setSearchValue] = useState(""); // 검색어
@@ -56,7 +60,7 @@ const SearchContents = () => {
 
   // searchValue
   useEffect(() => {
-    // console.log("searchValue:", searchValue);
+    console.log("searchValue:", searchValue);
     postSearchAll();
   }, [searchValue]);
 
@@ -88,6 +92,7 @@ const SearchContents = () => {
           searchValue={searchValue}
         />
       )}
+      <DockBar />
     </div>
   );
 };

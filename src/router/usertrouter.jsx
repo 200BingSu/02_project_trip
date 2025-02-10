@@ -10,6 +10,8 @@ const usertrouter = () => {
 
   const LazyUserBooking = lazy(() => import("../pages/user/UserBooking"));
   const LazyUserWishList = lazy(() => import("../pages/user/UserWishList"));
+  const LazyUserrRview = lazy(() => import("../pages/user/UserrRview"));
+  const LazyUserCoupon = lazy(() => import("../pages/user/UserCoupon"));
 
   return [
     // {
@@ -37,16 +39,14 @@ const usertrouter = () => {
       ),
     },
     {
-
       path: "recentlist",
       element: (
         <Suspense fallback={<Loading />}>
           <LazyUserRecentList />
         </Suspense>
       ),
-},
-  {
-
+    },
+    {
       path: "userbooking",
       element: (
         <Suspense fallback={<Loading />}>
@@ -59,7 +59,22 @@ const usertrouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazyUserWishList />
-
+        </Suspense>
+      ),
+    },
+    {
+      path: "userreview",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyUserrRview />
+        </Suspense>
+      ),
+    },
+    {
+      path: "usercoupon",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyUserCoupon />
         </Suspense>
       ),
     },
