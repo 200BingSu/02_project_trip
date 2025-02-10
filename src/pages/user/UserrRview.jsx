@@ -1,4 +1,4 @@
-import { Rate } from "antd";
+import { Button, Rate } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { AiFillStar, AiOutlinePlus } from "react-icons/ai";
@@ -49,7 +49,7 @@ const DynamicGrid = ({ images }) => {
 
 const UserrRview = () => {
   const [reviewInfo, setReviewInfo] = useState([]);
-  const [lastIndex, setLastIndex] = useState(5); // lastIndex 상태 추가
+  const [lastIndex, setLastIndex] = useState(0); // lastIndex 상태 추가
   const accessToken = getCookie("accessToken");
 
   // 사용자 리뷰를 가져오가가
@@ -92,7 +92,7 @@ const UserrRview = () => {
                   navigate(`/contents/index?strfId=${item.strfId}`)
                 }
               >
-                상품 타이틀 출력구간
+                {item.strfTitle}
                 <IoIosArrowForward />
               </h1>
               <div className="flex items-center gap-3 mb-8">
@@ -114,10 +114,12 @@ const UserrRview = () => {
             </div>
           );
         })}
-        <button onClick={() => setLastIndex(prev => prev + 5)}>
-          <AiOutlinePlus />
-          더보기
-        </button>
+        <div className="flex justify-center mb-14">
+          <Button onClick={() => setLastIndex(prev => prev + 10)}>
+            <AiOutlinePlus />
+            더보기
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { ProfilePic } from "../../../constants/pic";
+import { useSearchParams } from "react-router-dom";
 
 const Bill = ({
   getCookie,
@@ -20,11 +21,13 @@ const Bill = ({
   setPaidUserList,
 }) => {
   const [checkedItems, setCheckedItems] = useState({});
+  const [searchParmas] = useSearchParams();
+  const tripId = searchParmas.get("tripId");
   const accessToken = getCookie("accessToken");
 
   const setCalculation = async () => {
     const sendData = {
-      trip_id: 1,
+      trip_id: tripId,
       total_price: isValue,
       paid_user_list: Object.keys(checkedItems)
         .filter(userId => checkedItems[userId])
@@ -50,6 +53,7 @@ const Bill = ({
 
   const handleChangeChecked = userId => {
     setCheckedItems(prev => ({ ...prev, [userId]: !prev[userId] }));
+    console.log(userId);
   };
 
   const handleOk = () => {
@@ -137,7 +141,7 @@ const Bill = ({
                 type="checkbox"
                 className="peer hidden"
                 checked={checkedItems[item.user_id] || false}
-                onChange={() => handleChangeChecked(user_id)}
+                onChange={() => handleChangeChecked(item.user_id)}
               />
               <div className="w-11 h-11 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center transition duration-300 peer-checked:bg-primary2 peer-checked:text-primary peer-checked:bg-opacity-50">
                 <FaCheck className="text-2xl duration-75" />

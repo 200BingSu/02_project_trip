@@ -30,9 +30,9 @@ const DockBar = React.memo(() => {
     });
   };
 
-  const showModal = () => setIsModalOpen(true);
-  const handleOk = () => setIsModalOpen(false);
-  const handleCancel = () => setIsModalOpen(false);
+  const showModal = () => {
+    message.error("현재 지원되는 서비스가 아닙니다.");
+  };
 
   return (
     <div>
@@ -49,6 +49,7 @@ const DockBar = React.memo(() => {
           onClick={() => {
             if (userId === 0) {
               info();
+              message.error("로그인 후 이용 가능한 서비스 입니다");
             } else {
               navigate("/search/location");
             }
@@ -72,7 +73,7 @@ const DockBar = React.memo(() => {
           여행기
         </Link>
         <Link
-          to=""
+          to="#"
           className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
           onClick={showModal}
         >
@@ -80,9 +81,6 @@ const DockBar = React.memo(() => {
           챗봇
         </Link>
       </div>
-      <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <p>현재 서비스가 지원되지 않습니다</p>
-      </Modal>
     </div>
   );
 });
