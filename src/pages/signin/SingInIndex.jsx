@@ -154,13 +154,13 @@ const SingInIndex = () => {
                           gap-[20px] 
                           text-slate-300"
           >
-            <button type="button" className="text-slate-500">
+            {/* <button type="button" className="text-slate-500">
               아이디 찾기
             </button>
             |
             <button type="button" className="text-slate-500">
               비밀번호 찾기
-            </button>
+            </button> */}
           </div>
           <Link to="/signup/index" className="text-slate-500 underline">
             회원가입

@@ -97,7 +97,7 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
   const [clickItem, setClickItem] = useState({});
   const [quantity, setQuantity] = useState(1);
   useEffect(() => {
-    console.log("clickItem", clickItem);
+    // console.log("clickItem", clickItem);
   }, [clickItem]);
   const handleDateChange = (values, formatString) => {
     console.log("선택된 날짜:", values); // dayjs 객체 배열

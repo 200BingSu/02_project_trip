@@ -87,7 +87,7 @@ const ContentIndex = () => {
   // console.log("토큰", accessToken);
   const [trip, setTrip] = useRecoilState(tripAtom);
   useEffect(() => {
-    console.log("trip", trip);
+    // console.log("trip", trip);
   }, [trip]);
   // useNavigate
   const navigate = useNavigate();
@@ -97,7 +97,9 @@ const ContentIndex = () => {
   const navigateTrip = () => {
     navigate(`/schedule/index?tripId=${trip.nowTripId}`);
   };
-
+  const location = useLocation();
+  const locationState = location.state;
+  console.log("locationState", locationState);
   //useState
   const [contentData, setContentData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -121,7 +123,9 @@ const ContentIndex = () => {
   //   console.log("reviewsData", reviewsData);
   // }, [reviewsData]);
   useEffect(() => {
-    getPathList();
+    if (trip.nowTripId !== 0) {
+      getPathList();
+    }
   }, [contentData]);
 
   // useRef
@@ -237,7 +241,7 @@ const ContentIndex = () => {
         `/api/transport/get?startLngSX=${trip.prevSchelng}&startLatSY=${trip.prevSchelat}&endLngEX=${contentData.longitude}&endLatEY=${contentData.latit}`,
       );
       const resultData = res.data;
-      console.log("길찾기 결과", resultData);
+      // console.log("길찾기 결과", resultData);
       setPathCode(resultData.code);
 
       setPathData(resultData.data);
