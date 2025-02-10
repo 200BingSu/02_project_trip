@@ -8,6 +8,8 @@ import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ReviewPic } from "../../constants/pic";
 import "../../styles/antd-styles.css";
 import { getCookie } from "../../utils/cookie";
+import { RiCloseLargeFill } from "react-icons/ri";
+import jwtAxios from "../../apis/jwt";
 
 // ✅ DynamicGrid 컴포넌트 추가
 const DynamicGrid = ({ images }) => {
@@ -53,7 +55,7 @@ const UserrRview = () => {
   const accessToken = getCookie("accessToken");
 
   // 사용자 리뷰를 가져오가가
-  const getUserReview = async () => {
+  const getUserReviewMore = async () => {
     try {
       const res = await axios.get(`/api/review/my?last_index=${lastIndex}`, {
         headers: {
@@ -67,7 +69,35 @@ const UserrRview = () => {
       console.log("✅  getUserReview  error:", error);
     }
   };
+  const getUserReview = async () => {
+    try {
+      const res = await axios.get(`/api/review/my?last_index=${lastIndex}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
+      setReviewInfo(res.data); // 기존 리뷰에 새 리뷰 추가
+      console.log("✅  getUserReview  res.data.data:", res.data);
+    } catch (error) {
+      console.log("✅  getUserReview  error:", error);
+    }
+  };
+  // 리뷰 삭제하기
+  const deleteReview = async item => {
+    console.log(item);
+    try {
+      const res = await jwtAxios.delete(
+        `/api/review/del?review_id=${item.reviewId}`,
+      );
+      console.log("리뷰 삭제:", res.data);
+      if (res.data) {
+        getUserReview();
+      }
+    } catch (error) {
+      console.log("리뷰 삭제:", error);
+    }
+  };
   useEffect(() => {
     getUserReview();
   }, [lastIndex]);
@@ -79,22 +109,34 @@ const UserrRview = () => {
     <div>
       <TitleHeader icon="back" title="리뷰" onClick={() => navigate(-1)} />
       <div className="px-8">
-        {reviewInfo.map(item => {
+        {reviewInfo.map((item, index) => {
           const imageUrls = item.myReviewPic.map(
             pic => `${ReviewPic}${item.reviewId}/${pic.pic}`,
           );
 
           return (
-            <div key={item.reviewId} className="py-8">
-              <h1
-                className="flex items-center gap-5 h text-3xl font-bold text-slate-700 mb-3 cursor-pointer"
-                onClick={() =>
-                  navigate(`/contents/index?strfId=${item.strfId}`)
-                }
-              >
-                {item.strfTitle}
-                <IoIosArrowForward />
-              </h1>
+            <div key={index} className="py-8">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h1
+                    className="flex items-center gap-5 h text-3xl font-bold text-slate-700 mb-3 cursor-pointer"
+                    onClick={() =>
+                      navigate(`/contents/index?strfId=${item.strfId}`)
+                    }
+                  >
+                    {item.strfTitle}
+                    <IoIosArrowForward />
+                  </h1>
+                </div>
+                <button
+                  type="button"
+                  className="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-[16px]"
+                  onClick={() => deleteReview(item)}
+                >
+                  삭제
+                </button>
+              </div>
+
               <div className="flex items-center gap-3 mb-8">
                 <Rate
                   className="custom-rate flex items-center gap-1"

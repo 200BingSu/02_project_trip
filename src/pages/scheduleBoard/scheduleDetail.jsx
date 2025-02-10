@@ -59,7 +59,9 @@ const ScheduleDetail = () => {
   // 여행 확인하기
   const getTrip = async () => {
     try {
-      const res = await jwtAxios.get(`/api/trip?trip_id=${tripId}`);
+      const res = await jwtAxios.get(
+        `/api/trip?trip_id=${tripId}&signed=false`,
+      );
       console.log("여행확인하기", res.data);
       const resultData = res.data.data;
       setTripData(resultData);
