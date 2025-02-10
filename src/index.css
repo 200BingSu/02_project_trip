@@ -19,6 +19,13 @@
   unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3,
     U+D7B0-D7FF, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E;
 }
+
+.pre {
+  font-family: "Pretendard" !important;
+}
+.work {
+  font-family: "Work Sans" !important;
+}
 html,
 body {
   -ms-overflow-style: none;
