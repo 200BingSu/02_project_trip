@@ -7,7 +7,7 @@ import DockBar from "../components/layout/DockBar/DockBar";
 const Footer = () => {
   return (
     <div>
-      <footer className="relative pt-10 pb-32  before:absolute before:top-0 before:w-full before:h-2.5 before:bg-slate-100 before:inline-block">
+      <footer className="relative pt-10 pb-32 bg-white before:absolute before:top-0 before:w-full before:h-2.5 before:bg-slate-100 before:inline-block">
         <div className="flex gap-4 text-xl font-bold text-slate-600 mb-5 px-8">
           <Link to="">이용약관</Link>
           <span className="text-slate-300 font-light">|</span>

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { LiaComment } from "react-icons/lia";
 import AfterCoupon from "../../components/coupon/AfterCoupon";
 import BeforeCoupon from "../../components/coupon/BeforeCoupon";
+import Footer from "../Footer";
 
 const categoryArr = ["사용 가능한 쿠폰", "사용 / 만료 된 쿠폰"];
 
@@ -14,7 +15,7 @@ const UserCoupon = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-slate-100">
+    <div className="h-full bg-slate-100">
       <TitleHeader icon="back" title="쿠폰함" onClick={() => navigate(-1)} />
       <div className="px-8">
         <Tabs
@@ -33,6 +34,7 @@ const UserCoupon = () => {
           ]}
         />
       </div>
+      <Footer />
     </div>
   );
 };

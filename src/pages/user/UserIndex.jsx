@@ -184,11 +184,11 @@ const UserIndex = ({ isOpen, onClose }) => {
                 리뷰
               </Link>
               <Link
-                to=""
+                to="/user/usertrip"
                 className="w-1/4 text-center text-lg text-slate-500 font-normal"
               >
                 <IoReaderOutline className="w-full text-4xl text-slate-700 mb-2" />
-                여행기
+                내 여행기
               </Link>
             </div>
           </div>
@@ -208,9 +208,11 @@ const UserIndex = ({ isOpen, onClose }) => {
           >
             <BiSolidCoupon className="text-4xl text-slate-400 mr-4" />
             쿠폰함
-            <span className="ml-auto w-9 h-6 rounded-2xl text-sm text-center leading-[1.45rem] text-primary3 bg-[#A5EEFE]/50">
-              {coupon.availableCouponCount}
-            </span>
+            {coupon.availableCouponCount > 0 && (
+              <span className="ml-auto w-9 h-6 rounded-2xl text-sm text-center leading-[1.45rem] text-primary3 bg-[#A5EEFE]/50">
+                {coupon.availableCouponCount}
+              </span>
+            )}
           </Link>
           <Link
             to=""

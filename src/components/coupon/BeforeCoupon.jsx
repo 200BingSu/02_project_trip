@@ -41,7 +41,7 @@ const BeforeCoupon = () => {
               {item.expiredAt.split("T")[0].replaceAll("-", ".")}
             </p>
           </div>
-          <div className="relative w-52 bg-primary border-l border-dashed border-slate-600 before:absolute before:w-10 before:h-10 before:bg-slate-100 before:rounded-full before:-top-4 before:-left-[22px] after:absolute after:w-10 after:h-10 after:bg-slate-100 after:rounded-full after:-bottom-4 after:-left-[22px]"></div>
+          <div className="relative w-52 bg-primary border-l-4 border-dashed border-slate-100 before:absolute before:w-10 before:h-10 before:bg-slate-100 before:rounded-full before:-top-4 before:-left-[22px]"></div>
         </div>
       ))}
     </div>
