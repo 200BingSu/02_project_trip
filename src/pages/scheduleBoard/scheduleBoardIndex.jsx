@@ -122,6 +122,7 @@ const ScheduleBoardIndex = () => {
                 value={0}
                 className={`${filter === 0 ? "text-primary" : "text-slate-300"}`}
                 onClick={() => {
+                  setAllTripReview([]); // 배열 초기화를 먼저 수행
                   setFilter(0);
                   setLatestPageNum(1);
                   getAllTripReview("popular");
@@ -136,6 +137,7 @@ const ScheduleBoardIndex = () => {
                 value={1}
                 className={`${filter === 1 ? "text-primary" : "text-slate-300"}`}
                 onClick={() => {
+                  setAllTripReview([]); // 배열 초기화를 먼저 수행
                   setFilter(1);
                   setPopularPageNumber(1);
                   getAllTripReview("latest");
@@ -279,7 +281,7 @@ const ScheduleBoardIndex = () => {
                   제목
                 </h3>
                 <p className="text-[18px] text-slate-500 line-clamp-3">
-                  1일차- 제주, 2일차-서귀포’ 함덕, 3일차-성산 기름값 4만원
+                  1일차- 제주, 2일차-서귀포' 함덕, 3일차-성산 기름값 4만원
                   태우며 렌터카로 알차게 돌아다님. 참고로 2박 3일간 제주
                   투어패스 48시간 끊었는데 강추!!2박 3일간 제주 투어패스 48시간
                   끊었는데 강추!!2박 3일간 제주...

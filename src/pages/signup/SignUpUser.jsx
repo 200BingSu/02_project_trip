@@ -295,7 +295,9 @@ const SignUpUser = () => {
             </Checkbox>
           </Checkbox.Group>
           {errorMessage ? (
-            <p className="text-secondary3 text-[14px] font-medium mb-[74px]">
+            <p
+              className={`${errorMessage ? "text-secondary3" : "text-white"} text-[14px] font-medium`}
+            >
               * 필수 약관을 모두 동의해야 제출 가능합니다.
             </p>
           ) : null}
