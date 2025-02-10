@@ -16,12 +16,15 @@ const PostReview = () => {
   // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   useEffect(() => {
-    console.log(userInfo);
+    // console.log(userInfo);
   }, [userInfo]);
   //useNavigate
   const navigate = useNavigate();
   const navigateBack = () => {
     navigate(-1);
+  };
+  const navigateToContents = () => {
+    navigate(`/contents/index?strfId=${strfId}`);
   };
   const location = useLocation();
   const locationState = location.state;
@@ -29,6 +32,7 @@ const PostReview = () => {
   //useState
   const [fileList, setFileList] = useState([]);
   const [iswriting, setIswriting] = useState(false);
+
   //쿼리스트링
   const [searchParmas] = useSearchParams();
   const strfId = searchParmas.get("strfId");
@@ -50,8 +54,8 @@ const PostReview = () => {
       "p",
       new Blob([JSON.stringify(pData)], { type: "application/json" }),
     );
-    console.log(values);
-    console.log(fileList);
+    // console.log(values);
+    // console.log(fileList);
     // const formData = new FormData();
     // formData.append("rating", values.rating);
     // formData.append("comment", values.comment);
@@ -68,14 +72,17 @@ const PostReview = () => {
     if (blob) {
       blob.text().then(text => console.log("p의 내용:", text));
     }
-    console.log("보낸 데이터", [...formData]);
+    // console.log("보낸 데이터", [...formData]);
     try {
       const response = await axios.post(`${REVIEW.postReview}`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
+      if (response.data) {
+        navigateToContents();
+      }
     } catch (error) {
       console.error(error);
     }

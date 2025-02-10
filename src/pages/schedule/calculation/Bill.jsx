@@ -92,10 +92,10 @@ const Bill = ({
         <input
           type="text"
           name="expenditurePice"
-          value={isValue}
+          value={Number(isValue).toLocaleString()}
           placeholder="0"
           onChange={e => setIsValue(e.target.value.replace(/\D/g, ""))}
-          className="w-11/12 !border-none !border-transparent outline-0 !shadow-none text-4xl font-bold text-slate-700 !text-right  "
+          className="w-11/12 !border-none !border-transparent outline-0 !shadow-none text-4xl font-bold text-slate-700 !text-right"
         />
         <span className="text-4xl font-bold text-slate-700">원</span>
       </label>
@@ -141,7 +141,9 @@ const Bill = ({
                 type="checkbox"
                 className="peer hidden"
                 checked={checkedItems[item.user_id] || false}
-                onChange={() => handleChangeChecked(item.user_id)}
+
+                onChange={() => handleChangeChecked(item?.user_id)}
+
               />
               <div className="w-11 h-11 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center transition duration-300 peer-checked:bg-primary2 peer-checked:text-primary peer-checked:bg-opacity-50">
                 <FaCheck className="text-2xl duration-75" />

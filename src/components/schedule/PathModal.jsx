@@ -71,7 +71,7 @@ const PathModal = ({
         },
       );
       const resultData = res.data;
-      console.log("길찾기 결과", resultData);
+      // console.log("길찾기 결과", resultData);
       setPathData(resultData.data);
     } catch (error) {
       console.log("길찾기 결과", error);
@@ -102,7 +102,7 @@ const PathModal = ({
           },
         },
       );
-      console.log("일정등록 결과", res.data);
+      // console.log("일정등록 결과", res.data);
       const resultData = res.data;
       if (resultData.code === "500 서버에러") {
         error();
