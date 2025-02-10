@@ -154,6 +154,7 @@ const PathModal = ({
         className="bg-white w-full 
                     rounded-t-2xl px-[60px] py-[55px]
                     flex flex-col gap-[20px]
+                    mb-[100px]
                     "
         onClick={handleModalClick}
       >

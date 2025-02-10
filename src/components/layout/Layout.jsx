@@ -9,7 +9,7 @@ const Layout = () => {
   return (
     <div className="max-w-3xl mx-auto  relative h-screen flex flex-col">
       {/* {path === "/" ? <MainHeader /> : <Header />} */}
-      <div className="flex-1">
+      <div className="flex-1 mb-[50px]">
         <Outlet />
       </div>
       <DockBar />

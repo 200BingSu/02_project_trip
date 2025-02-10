@@ -171,8 +171,9 @@ const ScheduleDetail = () => {
               className="flex gap-[10px] py-[10px] h-auto w-full"
               onClick={() => setOpenSelectTripModal(true)}
               classNames={`bg-slate-100`}
+              disabled
             >
-              <AiOutlineImport className="w-[30px] h-[30px] text-white" />
+              <AiOutlineImport className="w-[30px] h-[30px] text-slate-400" />
 
               <span className="font-semibold text-[24px] text-slate-400">
                 업데이트 예정인 메뉴입니다
