@@ -30,6 +30,24 @@ const UserTrip = () => {
     }
   };
 
+  const deleteTravelPost = item => {
+    console.log(item);
+    try {
+      const res = axios.delete(
+        `/api/trip-review?tripReviewId=${item.tripReviewId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log("✅  tripReviewId:", item.tripReviewId);
+      getTravelPost();
+    } catch (error) {
+      console.log("✅  error:", error);
+    }
+  };
+
   const navigateDetail = item => {
     navigate(
       `/scheduleboard/scheduleDetail?tripId=${item.tripId}&TripReviewId=${item.tripReviewId}`,
@@ -48,18 +66,25 @@ const UserTrip = () => {
           return (
             <li
               className="flex flex-col gap-[20px] px-[30px] py-[30px] rounded-3xl
-                        shadow-[0_0_10px_0_rgba(0,0,0,0.1)] cursor-pointer mb-8"
+                  shadow-[0_0_10px_0_rgba(0,0,0,0.1)] cursor-pointer mb-8"
               key={index}
               onClick={() => navigateDetail(item)}
             >
-              <h3 className="font-semibold text-[24px] text-slate-700">
-                {item.title}
-              </h3>
-              {/* info */}
-              <div className="flex justify-between items-center">
-                {/* 유저 */}
-                <div className="flex items-center gap-[10px]"></div>
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-[24px] text-slate-700">
+                  {item.title}
+                </h3>
+                <p
+                  className="text-slate-700 bg-slate-100 py-1 px-3 rounded-lg"
+                  onClick={e => {
+                    e.stopPropagation();
+                    deleteTravelPost(item);
+                  }}
+                >
+                  삭제
+                </p>
               </div>
+              {/* info */}
               {/* content */}
               <div className="flex flex-col gap-[20px]">
                 {/* 이미지 */}

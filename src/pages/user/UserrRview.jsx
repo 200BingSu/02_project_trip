@@ -77,6 +77,7 @@ const UserrRview = () => {
         },
       });
 
+
       setReviewInfo(res.data); // 기존 리뷰에 새 리뷰 추가
       console.log("✅  getUserReview  res.data.data:", res.data);
     } catch (error) {
@@ -98,6 +99,7 @@ const UserrRview = () => {
       console.log("리뷰 삭제:", error);
     }
   };
+
   useEffect(() => {
     getUserReview();
   }, [lastIndex]);
