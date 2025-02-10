@@ -12,15 +12,6 @@ import { TRIP } from "../../constants/api";
 import axios from "axios";
 import { LocationPic } from "../../constants/pic";
 
-// dummyLocationArr
-const dummyLocationArr = [
-  {
-    locationId: 1,
-    locationPic: "location.png",
-    title: "가평",
-  },
-];
-
 const SearchLocation = () => {
   //useNavigate
   const navigate = useNavigate();
@@ -43,6 +34,7 @@ const SearchLocation = () => {
   const [searchState, setSearchState] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     console.log(searchValue);
@@ -157,52 +149,7 @@ const SearchLocation = () => {
                 </li>
               );
             })
-          : dummyLocationArr.map((item, index) => {
-              return (
-                <li className="flex justify-between items-center" key={index}>
-                  {/* 우측*/}
-                  <div className="flex gap-[30px] items-center">
-                    {/* 썸네일 */}
-                    <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
-                      <Skeleton.Image
-                        active={false}
-                        style={{ width: "100px", height: "100px" }}
-                      />
-                    </div>
-                    {/* 텍스트 */}
-                    <div className="flex flex-col gap-[16px]">
-                      <p className="text-[24px] text-slate-700">{item.title}</p>
-                      <p className="text-[18px] text-slate-500">
-                        어디론가 떠나고 싶을 때
-                      </p>
-                    </div>
-                  </div>
-                  {/* 좌측 */}
-                  <div className="h-auto flex items-center justify-center ">
-                    {selectedLocationId.filter(
-                      selectedItem =>
-                        selectedItem.locationId === item.locationId,
-                    ).length > 0 ? (
-                      <button
-                        type="button"
-                        className="text-[16px] text-primary border border-primary3 rounded-2xl px-[15px] py-[5px]"
-                        onClick={() => handleClickCancel(item)}
-                      >
-                        취소
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className="text-[16px] text-slate-500 border border-slate-300 rounded-2xl px-[15px] py-[5px]"
-                        onClick={() => handleClickSelect(item)}
-                      >
-                        선택
-                      </button>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
+          : null}
       </ul>
       {/* 제출 버튼 */}
       <div className="w-full px-[32px] mb-[20px]">

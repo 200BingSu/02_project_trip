@@ -130,7 +130,7 @@ const PostBoard = () => {
                 beforeUpload={() => false} // 파일 자동 업로드 방지
                 fileList={fileList}
                 onChange={handleChange}
-                showUploadList={false}
+                // showUploadList={false}
                 multiple
               >
                 <div
@@ -198,6 +198,7 @@ const PostBoard = () => {
                 htmlType="submit"
                 className="w-full h-[80px] 
                     text-slate-50 text-[24px] font-semibold"
+                onClick={navigateToScheduleBoard}
               >
                 완료
               </Button>
