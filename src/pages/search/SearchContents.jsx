@@ -13,16 +13,22 @@ import axios from "axios";
 import jwtAxios from "../../apis/jwt";
 import { getCookie } from "../../utils/cookie";
 import DockBar from "../../components/layout/DockBar/DockBar";
+import { searchAtom } from "../../atoms/searchAtom";
+import { useRecoilState } from "recoil";
 
 const SearchContents = () => {
+  //recoil
+  const [search, setSearch] = useRecoilState(searchAtom);
   // 쿼리스트링
   const [searchParams] = useSearchParams();
   const accessToken = getCookie("accessToken");
   //useNavigate
   const navigate = useNavigate();
   // useLocation
+
   const location = useLocation();
   const locationState = location.state;
+
   // useState
   const [searchState, setSearchState] = useState(false); // 검색 전, 후 구분
   const [searchValue, setSearchValue] = useState(""); // 검색어
@@ -63,6 +69,11 @@ const SearchContents = () => {
     console.log("searchValue:", searchValue);
     postSearchAll();
   }, [searchValue]);
+
+  useEffect(() => {
+    console.log("searchValue:", search.searchWord);
+    postSearchAll();
+  }, [search]);
 
   return (
     <div className="w-full flex flex-col gap-[30px]">
