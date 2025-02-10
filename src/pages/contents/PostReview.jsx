@@ -13,17 +13,6 @@ import { AiOutlinePlus } from "react-icons/ai";
 
 const PostReview = () => {
   const accessToken = getCookie("accessToken");
-  // 에러 메세지
-  const [messageApi, contextHolder] = message.useMessage();
-  const error = () => {
-    messageApi.open({
-      type: "error",
-      content: "죄송합니다. 통신 에러로 인해 리뷰가 등록되지 않습니다.",
-      style: {
-        marginTop: "20vh",
-      },
-    });
-  };
   // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   useEffect(() => {
@@ -36,7 +25,6 @@ const PostReview = () => {
   };
   const location = useLocation();
   const locationState = location.state;
-  console.log(locationState);
   const [form] = Form.useForm();
   //useState
   const [fileList, setFileList] = useState([]);
@@ -57,7 +45,7 @@ const PostReview = () => {
       content: content,
     };
     const formData = new FormData();
-    setFileList(file?.fileList ? file.fileList : []);
+    setFileList(file.fileList);
     formData.append(
       "p",
       new Blob([JSON.stringify(pData)], { type: "application/json" }),
@@ -90,12 +78,6 @@ const PostReview = () => {
       console.log(response.data);
     } catch (error) {
       console.error(error);
-      if (error.response.status === 405) {
-        message.error("통신 에러로 인해 리뷰 작성에 실패했습니다.");
-      }
-      if (error.response.status === 500) {
-        message.error("통신 에러로 인해 리뷰 작성에 실패했습니다.");
-      }
     }
   };
 
@@ -123,13 +105,6 @@ const PostReview = () => {
           <Form.Item
             name="rating"
             className="flex flex-col justify-center items-center gap-[10px] text-slate-300"
-            rules={[
-              {
-                required: true,
-                message: "별점을 입력해주세요.",
-              },
-            ]}
-            validateStatus="error"
             help={
               <div className="text-center mt-[10px] text-slate-300">
                 별점을 입력해주세요.
@@ -138,19 +113,10 @@ const PostReview = () => {
           >
             <Rate style={{ fontSize: 54 }} />
           </Form.Item>
-
-          <Form.Item
-            name="content"
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "리뷰 내용은 필수 작성 항목입니다.",
-            //   },
-            // ]}
-          >
-            <h3 className="mb-[10px] text-slate-700 text-[24px] font-semibold">
-              리뷰를 남겨주세요.
-            </h3>
+          <h3 className="mb-[10px] text-slate-700 text-[24px] font-semibold">
+            리뷰를 남겨주세요.
+          </h3>
+          <Form.Item name="content">
             <Input.TextArea
               rows={4}
               placeholder="직접 경험한 솔직한 리뷰를 남겨주세요."
@@ -167,12 +133,12 @@ const PostReview = () => {
           </Form.Item>
 
           <Form.Item
+            name="file"
             label={
               <h3 className="mb-[10px] text-slate-700 text-[24px] font-semibold">
                 사진 첨부하기
               </h3>
             }
-            name="file"
           >
             <Upload
               id="file"

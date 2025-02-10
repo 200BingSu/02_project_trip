@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ProfilePic } from "../../constants/pic";
 import { BiSolidEditAlt } from "react-icons/bi";
 import ModifySalculation from "./ModifySalculation";
+import { useSearchParams } from "react-router-dom";
 
 const SettlementStatement = ({
   deId,
@@ -25,11 +26,12 @@ const SettlementStatement = ({
   const [isReceipt, setIsReceipt] = useState([]);
   const [isModifyOpen, setIsModifyOpen] = useState(false);
   const accessToken = getCookie("accessToken");
-
+  const [searchParmas] = useSearchParams();
+  const tripId = searchParmas.get("tripId");
   const getStatement = async () => {
     try {
       const res = await axios.get(
-        `/api/expense/select?de_id=${deId}&trip_id=1`,
+        `/api/expense/select?de_id=${deId}&trip_id=${tripId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
