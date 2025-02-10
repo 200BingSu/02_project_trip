@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
+import { useRecoilState } from "recoil";
+import { searchAtom } from "../../atoms/searchAtom";
 
 const SearchBar = React.memo(
   ({
@@ -17,12 +19,15 @@ const SearchBar = React.memo(
     setSearchData,
   }) => {
     const accessToken = getCookie("accessToken");
+    //recoil
+    const [search, setSearch] = useRecoilState(searchAtom);
     //useNavigate
     const navigate = useNavigate();
     // useState
     const [searchBarFocus, setSearchBarFocus] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const [recentText, setRecentText] = useState([]);
+
     useEffect(() => {
       // console.log("recentText", recentText);
     }, [recentText]);
@@ -51,8 +56,14 @@ const SearchBar = React.memo(
       if (accessToken) {
         getRecentText();
       }
+      if (search.searchWord !== "") {
+        setSearchValue(search.searchWord);
+        setInputValue(search.searchWord);
+        setSearchState(true);
+      }
     }, []);
     //검색어 클릭
+
     const postSearchAll = async () => {
       const sendData = { search_word: searchValue };
       try {
@@ -100,6 +111,7 @@ const SearchBar = React.memo(
               setSearchValue(e.target.value);
               setSearchBarFocus(false);
               setSearchState(true);
+              setSearch({ ...search, searchWord: e.target.value });
             }
           }}
           onFocus={() => {

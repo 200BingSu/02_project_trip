@@ -30,9 +30,9 @@ const Reviews = () =>
     useEffect(() => {
       console.log("리뷰 목록:", reviewsData);
     }, [reviewsData]);
-    // useEffect(() => {
-    //   console.log("reviewIndex:", reviewIndex);
-    // }, [reviewIndex]);
+    useEffect(() => {
+      console.log("reviewIndex:", reviewIndex);
+    }, [reviewIndex]);
 
     //getReviews
     const getReview = useCallback(async () => {
@@ -43,15 +43,14 @@ const Reviews = () =>
         );
         console.log("리뷰 불러오기:", res.data);
         setReviewsData([...reviewsData, ...res.data]);
-        setReviewIndex(prev => prev + 10);
       } catch (error) {
         console.log("리뷰 불러오기:", error);
       }
-    }, []);
+    }, [reviewIndex, reviewsData, strfId]);
 
     useEffect(() => {
       getReview();
-    }, []);
+    }, [reviewIndex]);
 
     return (
       <div>
@@ -143,7 +142,7 @@ const Reviews = () =>
           <button
             type="button"
             className="w-full py-[20px] rounded-lg border border-slate-300"
-            onClick={getReview}
+            onClick={() => setReviewIndex(prev => prev + 10)}
           >
             리뷰 더보기
           </button>
