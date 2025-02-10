@@ -67,7 +67,7 @@ const ModifySalculation = ({
       paid_user_list: sendDataUser, // 필터링된 유저 ID 배열
       de_id: deId,
       paid_for: storeName,
-      trip_id: 1,
+      trip_id: tripId,
     };
     try {
       const res = await axios.put(`/api/expense`, sendData, {

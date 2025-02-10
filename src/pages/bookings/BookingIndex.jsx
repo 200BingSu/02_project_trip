@@ -188,7 +188,7 @@ const BookingIndex = () => {
   return (
     <div>
       <TitleHeader icon="back" onClick={navigateBack} />
-      <div className="flex flex-col mt-[60px]">
+      <div className="flex flex-col">
         {/* 예약 정보 */}
         <div className="px-[32px] py-[30px] flex flex-col gap-[30px] border-b-[10px] border-slate-100">
           <h2 className="pb-[20px] text-[24px] text-slate-700 font-semibold">
