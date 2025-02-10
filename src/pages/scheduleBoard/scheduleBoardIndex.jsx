@@ -164,7 +164,8 @@ const ScheduleBoardIndex = () => {
                       <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-slate-100">
                         <img
                           src={`${ProfilePic}${item.userId}/${item.profilePic}`}
-                          alt=""
+                          alt="유저 프로필"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                       {/* 닉네임 */}
