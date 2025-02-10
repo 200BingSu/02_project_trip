@@ -61,7 +61,7 @@ const Timer = () => {
     setOpen(false);
   };
   return (
-    <div className="text-primary absolute right-[20px] top-[60px]">
+    <div className="text-primary absolute right-[30px] top-[60px]">
       {timeText}
     </div>
   );
