@@ -37,12 +37,12 @@ const ScheduleBoardIndex = () => {
   // 인덱스
   const [popularPageNumber, setPopularPageNumber] = useState(1);
   const [latestPageNum, setLatestPageNum] = useState(1);
-  // useEffect(() => {
-  //   console.log("popularPageNumber", popularPageNumber);
-  // }, [popularPageNumber]);
-  // useEffect(() => {
-  //   console.log("popularPageNumber", popularPageNumber);
-  // }, [popularPageNumber]);
+  useEffect(() => {
+    console.log("popularPageNumber", popularPageNumber);
+  }, [popularPageNumber]);
+  useEffect(() => {
+    console.log("popularPageNumber", popularPageNumber);
+  }, [popularPageNumber]);
   useEffect(() => {
     console.log("여행기 배열", allTripReview);
   }, [allTripReview]);
@@ -52,27 +52,29 @@ const ScheduleBoardIndex = () => {
    * - "latest": 최신순
    * - "popular": 추천순
    */
-  const getAllTripReview = async (filter = 0) => {
-    if (filterArr[filter] === "popular") {
-      console.log(`${filterArr[filter]} 부르는 페이지:`, popularPageNumber);
+  const getAllTripReview = async (orderType = "popular") => {
+    if (orderType === "popular") {
+      console.log(`${orderType} 부르는 페이지:`, popularPageNumber);
     }
-    if (filterArr[filter] === "latest") {
-      console.log(`${filterArr[filter]} 부르는 페이지:`, latestPageNum);
+
+    if (orderType === "latest") {
+      console.log(`${orderType} 부르는 페이지:`, latestPageNum);
     }
+
     try {
       const res = await axios.get(
-        `/api/trip-review/allTripReview?orderType=${filterArr[filter]}&pageNumber=${filterArr[filter] === "popular" ? popularPageNumber : latestPageNum}`,
+        `/api/trip-review/allTripReview?orderType=${orderType}&pageNumber=${orderType === "popular" ? popularPageNumber : latestPageNum}`,
       );
-      console.log(`여행기 모두 불러오기 ${filterArr[filter]}`, res.data);
+      console.log(`여행기 모두 불러오기 ${orderType}`, res.data);
       const resultData = res.data;
       setAllTripReview([...allTripReview, ...resultData.data]);
       if (resultData.code === "200 성공") {
-        filterArr[filter] === "popular"
+        orderType === "popular"
           ? setPopularPageNumber(prev => prev + 1)
           : setLatestPageNum(prev => prev + 1);
       }
     } catch (error) {
-      console.log(`여행기 모두 불러오기 ${filterArr[filter]}`, error);
+      console.log(`여행기 모두 불러오기 ${orderType}`, error);
     }
   };
   const getTripReviewCount = async () => {
@@ -91,8 +93,8 @@ const ScheduleBoardIndex = () => {
   }, []);
   useEffect(() => {
     setAllTripReview([]); // 상태 초기화
-    getAllTripReview(filterArr[filter]);
   }, [filter]); // filter가 변경될 때마다 실행
+
   return (
     <div>
       <TitleHeader onClick={navigateBack} title="여행기" icon="back" />
@@ -287,11 +289,11 @@ const ScheduleBoardIndex = () => {
           )}
         </ul>
         {/* 버튼 */}
-        <div className="py-[20px]">
+        <div className="py-[20px]  flex justify-center items-center">
           <Button
             variant="outlined"
-            className="w-full"
-            onClick={() => getAllTripReview(filter)}
+            className="w-[100px] h-[40px] rounded-3xl"
+            onClick={() => getAllTripReview(filterArr[filter])}
           >
             더보기
           </Button>

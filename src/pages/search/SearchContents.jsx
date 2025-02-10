@@ -18,7 +18,7 @@ import { useRecoilState } from "recoil";
 
 const SearchContents = () => {
   //recoil
-  const [search, setSearch] = useRecoilState(searchAtom);
+  // const [search, setSearch] = useRecoilState(searchAtom);
   // 쿼리스트링
   const [searchParams] = useSearchParams();
   const accessToken = getCookie("accessToken");
@@ -70,10 +70,10 @@ const SearchContents = () => {
     postSearchAll();
   }, [searchValue]);
 
-  useEffect(() => {
-    console.log("searchValue:", search.searchWord);
-    postSearchAll();
-  }, [search]);
+  // useEffect(() => {
+  //   console.log("searchValue:", search.searchWord);
+  //   postSearchAll();
+  // }, [search]);
 
   return (
     <div className="w-full flex flex-col gap-[30px]">
