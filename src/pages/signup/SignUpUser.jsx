@@ -126,7 +126,7 @@ const SignUpUser = () => {
   return (
     <>
       <TitleHeader icon={"back"} title={"회원가입"} onClick={navigateBack} />
-      <div className="w-full px-28 py-[50px] mt-[60px]">
+      <div className="w-full px-28 mt-[60px]">
         <Form
           {...formItemLayout}
           form={form}
@@ -167,6 +167,13 @@ const SignUpUser = () => {
             ]}
             hasFeedback
             validateStatus={validateStatus}
+            help={
+              validateStatus === "error"
+                ? "이미 사용 중인 이메일입니다."
+                : validateStatus === "success"
+                  ? "사용 가능한 이메일입니다."
+                  : null
+            }
           >
             <Input
               onBlur={e => {

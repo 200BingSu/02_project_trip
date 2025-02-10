@@ -87,9 +87,16 @@ const UserWishList = () => {
                   </div>
                   {/* 별점 */}
                   <div className="flex gap-[5px] items-center">
-                    <Rate disabled count={1} value={item.ratingIn ? 1 : 0} />
+                    <Rate
+                      disabled
+                      count={1}
+                      defaultValue={item.ratingIn}
+                      className="text-primary"
+                    />
                     <p className="text-[12px] text-slate-500">
-                      {item.averageRating ? item.averageRating : "0"}
+
+                      {item.ratingAvg !== 0 ? item.ratingAvg : "0"}
+
                     </p>
                     <p className="text-[12px] text-slate-500">
                       ({item.ratingCnt.toLocaleString()})
