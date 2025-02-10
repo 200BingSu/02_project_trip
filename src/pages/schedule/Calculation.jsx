@@ -132,9 +132,11 @@ const Calculation = () => {
                   setIsStatementOpen(true);
                 }}
               >
-                <p className="text-lg text-slate-500">{item.paidFor}</p>
+                <p className="text-lg text-slate-500">
+                  {item.paidFor || "항목 없음"}
+                </p>
                 <p className="mt-1 text-3xl text-slate-700 font-semibold">
-                  {item.totalPrice?.toLocaleString()}원
+                  {(item.totalPrice || 0).toLocaleString()}원
                 </p>
                 <div className="flex items-center gap-3 mt-5">
                   {item.paidUserList.slice(0, 3).map((member, index) => (
@@ -144,10 +146,7 @@ const Calculation = () => {
                       style={{ zIndex: 9 - index }} // zIndex 값 동적 적용
                     >
                       <img
-                        src={
-                          `${ProfilePic}${member?.user_id}/${member?.profile_pic}` ||
-                          `/images/user.png`
-                        }
+                        src={`${ProfilePic}${member?.user_id}/${member?.profile_pic}`}
                         alt={member.name}
                       />
                       {index !== item.paidUserList.length - 1 && ", "}
