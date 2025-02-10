@@ -116,11 +116,7 @@ const ScheduleIndex = () => {
   // 여행 확인하기
   const getTrip = async () => {
     try {
-      const res = await axios.get(`/api/trip?trip_id=${tripId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const res = await jwtAxios.get(`/api/trip?trip_id=${tripId}&signed=true`);
       console.log("여행확인하기", res.data);
       const resultData = res.data.data;
       setTripData(resultData);
