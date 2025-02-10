@@ -125,7 +125,11 @@ const SearchItems = forwardRef(
                     </div>
                     {/* 별점 */}
                     <div className="flex gap-[5px] items-center">
-                      <Rate disabled count={1} value={item.ratingIn ? 1 : 0} />
+                      <Rate
+                        disabled
+                        count={1}
+                        value={item.hasMyReview !== 0 ? 1 : 0}
+                      />
                       <p className="text-[12px] text-slate-500">
                         {item.averageRating ? item.averageRating : "0"}
                       </p>

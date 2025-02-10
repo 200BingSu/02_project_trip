@@ -88,7 +88,10 @@ const CompleteBooking = () => {
           </li>
         </ul>
         {/* 버튼 */}
-        <div className="flex gap-[10px] w-full">
+        <div>
+          <button type="button"></button>
+        </div>
+        {/* <div className="flex gap-[10px] w-full">
           <button
             type="button"
             className="px-[15px] py-[30px] rounded-lg border border-slate-300
@@ -107,7 +110,7 @@ const CompleteBooking = () => {
           >
             메인으로 가기
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

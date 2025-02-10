@@ -27,9 +27,9 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   const navigate = useNavigate();
   const navigateBack = () => {
     if (locationState) {
-      navigate(-1, { state: { ...locationState } });
+      navigate(`/`, { state: { ...locationState } });
     } else {
-      navigate(-1);
+      navigate(`/`);
     }
   };
 

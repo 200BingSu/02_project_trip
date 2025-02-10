@@ -19,8 +19,7 @@ const SearchBar = React.memo(
     setSearchData,
   }) => {
     const accessToken = getCookie("accessToken");
-    //recoil
-    const [search, setSearch] = useRecoilState(searchAtom);
+
     //useNavigate
     const navigate = useNavigate();
     // useState
@@ -55,11 +54,6 @@ const SearchBar = React.memo(
     useEffect(() => {
       if (accessToken) {
         getRecentText();
-      }
-      if (search.searchWord !== "") {
-        setSearchValue(search.searchWord);
-        setInputValue(search.searchWord);
-        setSearchState(true);
       }
     }, []);
     //검색어 클릭
@@ -111,7 +105,6 @@ const SearchBar = React.memo(
               setSearchValue(e.target.value);
               setSearchBarFocus(false);
               setSearchState(true);
-              setSearch({ ...search, searchWord: e.target.value });
             }
           }}
           onFocus={() => {
