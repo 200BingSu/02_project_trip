@@ -167,6 +167,13 @@ const SignUpUser = () => {
             ]}
             hasFeedback
             validateStatus={validateStatus}
+            help={
+              validateStatus === "error"
+                ? "이미 사용 중인 이메일입니다."
+                : validateStatus === "success"
+                  ? "사용 가능한 이메일입니다."
+                  : null
+            }
           >
             <Input
               onBlur={e => {
