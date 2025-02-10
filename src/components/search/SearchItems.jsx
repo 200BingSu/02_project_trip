@@ -7,6 +7,8 @@ import axios from "axios";
 import { ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import { categoryKor } from "../../utils/match";
+import { searchAtom } from "../../atoms/searchAtom";
+import { useRecoilState } from "recoil";
 
 const SearchItems = forwardRef(
   (
@@ -29,14 +31,19 @@ const SearchItems = forwardRef(
 
     // 쿠키
     const accessToken = getCookie("accessToken");
+    //recoil
+    const [search, setSearch] = useRecoilState(searchAtom);
     //useNavigate
     const navigate = useNavigate();
+
     const handleClickList = item => {
       // console.log("클릭된 아이템", item);
+      setSearch({ ...search, searchWord: searchValue });
       navigate(`/contents/index?strfId=${item.strfId}`, {
         state: { searchValue: searchValue },
       });
     };
+
     // useState
 
     const [showMore, setShowMore] = useState(true);

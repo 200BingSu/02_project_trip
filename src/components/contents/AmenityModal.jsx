@@ -4,14 +4,14 @@ const AmenityModal = ({ handleCancel, amenities }) => {
   return (
     <div
       className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white
-w-[768px] h-[506px]
+w-[768px] shadow-lg rounded-lg
 "
     >
       <div className="custom-modal-header flex gap-[40px] px-[32px] items-center mb-[20px]">
         <div className="custom-close-icon" onClick={handleCancel}>
           <IoIosClose className="text-[35px]" />
         </div>
-        <div className="custom-title font-bold text-[24px] text-slate-700">
+        <div className="custom-title font-bold text-[24px] text-slate-700 pt-[15px]">
           편의시설 및 서비스
         </div>
       </div>
@@ -21,8 +21,8 @@ w-[768px] h-[506px]
             key={item.key}
             className="flex flex-col gap-[10px] items-center justify-center w-[100px] h-[100px]"
           >
-            <div>{item.icon}</div>
-            <p>{item.key}</p>
+            <div className="text-slate-700">{item.icon}</div>
+            <p className="text-slate-700">{item.key}</p>
           </li>
         ))}
       </ul>

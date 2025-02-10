@@ -94,7 +94,9 @@ const UserWishList = () => {
                       className="text-primary"
                     />
                     <p className="text-[12px] text-slate-500">
-                      {item.averageRating}
+
+                      {item.ratingAvg !== 0 ? item.ratingAvg : "0"}
+
                     </p>
                     <p className="text-[12px] text-slate-500">
                       ({item.ratingCnt.toLocaleString()})
