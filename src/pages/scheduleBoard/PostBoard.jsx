@@ -19,12 +19,16 @@ const PostBoard = () => {
   const navigateBack = () => {
     navigate(-1);
   };
+  const navigateToScheduleBoard = () => {
+    navigate(`/scheduleboard/index`);
+  };
   // useState
   const [preview, setPreview] = useState("");
   const [title, setTitle] = useState("여행기 제목");
   const [text, setText] = useState("");
   const [tripData, setTripData] = useState({});
   const [fileList, setFileList] = useState([]);
+
   const [primary, setPrimary] = useState(false);
 
   // 여행 확인하기

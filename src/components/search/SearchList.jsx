@@ -29,7 +29,7 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
     setDataIndex(0);
   }, [selectedCate]);
   useEffect(() => {
-    console.log("searchData", searchData);
+    // console.log("searchData", searchData);
   }, [searchData]);
 
   // useRef
