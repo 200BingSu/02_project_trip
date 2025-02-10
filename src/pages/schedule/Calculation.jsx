@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { IoMdMore } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 import SettlementStatement from "../../components/calculation/SettlementStatement";
@@ -26,11 +26,13 @@ const Calculation = () => {
   const [paidUserList, setPaidUserList] = useState([]);
 
   const navigate = useNavigate();
-
+  // 쿼리스트링
+  const [searchParmas] = useSearchParams();
+  const tripId = searchParmas.get("tripId");
   const accessToken = getCookie("accessToken");
   const getExpenses = async () => {
     try {
-      const res = await axios.get("/api/expense?trip_id=1", {
+      const res = await axios.get(`/api/expense?trip_id=${tripId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -45,7 +47,7 @@ const Calculation = () => {
 
   const getBudgeting = async () => {
     try {
-      const res = await axios.get(`/api/expense/trip_user?trip_id=1`, {
+      const res = await axios.get(`/api/expense/trip_user?trip_id=${tripId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
