@@ -55,6 +55,7 @@ const SingInIndex = () => {
       className="w-full h-screen px-[122px] py-[225px] 
                     flex flex-col items-center justify-center"
     >
+      {/* 로고 */}
       <div
         className="w-full 
                     flex items-center justify-center"
@@ -70,6 +71,7 @@ const SingInIndex = () => {
           />
         </div>
       </div>
+      {/* 로그인 타입 */}
       <div
         className="w-full h-[30px] 
                     flex items-center justify-center 
@@ -131,8 +133,8 @@ const SingInIndex = () => {
             className="w-full mb-[40px] 
                           flex items-center justify-start"
           >
-            <Checkbox>로그인 유지</Checkbox>
-            <Checkbox>아이디 저장</Checkbox>
+            <Checkbox disabled>로그인 유지</Checkbox>
+            <Checkbox disabled>아이디 저장</Checkbox>
           </div>
           {/* 제출 버튼 */}
           <Form.Item>

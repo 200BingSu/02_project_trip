@@ -138,7 +138,7 @@ const SelectDays = () => {
     <div>
       <TitleHeader icon="back" onClick={navigateBack} title="일정 선택" />
       {/* 달력 */}
-      <div className="mt-[72px] flex flex-col gap-[12px]">
+      <div className="mt-[72px] flex flex-col gap-[12px] mt-[10px]">
         {/* 요일 */}
         <ul className="flex items-center justify-between px-[32px] py-[10px]">
           <li className="text-[12px] flex items-center justify-center w-[92px] h-[14px] text-secondary3">

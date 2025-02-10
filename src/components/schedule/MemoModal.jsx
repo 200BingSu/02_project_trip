@@ -26,7 +26,7 @@ const MemoModal = ({ setMemoModal, tripId, data, getTrip, setTripData }) => {
   //메모 추가하기
   const postMemo = async content => {
     const lastSeq =
-      data?.schedules.length > 0
+      data?.schedules?.length > 0
         ? data.schedules[data.schedules.length - 1].seq
         : 0;
     const sendData = {

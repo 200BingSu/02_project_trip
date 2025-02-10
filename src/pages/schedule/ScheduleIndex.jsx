@@ -43,6 +43,9 @@ const ScheduleIndex = () => {
   const navigateBack = () => {
     navigate(-1);
   };
+  const navigateCalculation = () => {
+    navigate(`/schedule/calculation?tripId=${tripId}`);
+  };
   const navigatePostBoard = () => {
     navigate(`/scheduleboard/schedulePost?tripId=${tripId}`);
   };
@@ -217,6 +220,7 @@ const ScheduleIndex = () => {
                 className="flex items-center gap-[10px] 
                 px-[15px] py-[10px] rounded-3xl
                 text-slate-500 bg-slate-100"
+                onClick={navigateCalculation}
               >
                 <AiOutlinePlus className="text-slate-300" />
                 가계부

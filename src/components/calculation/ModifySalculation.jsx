@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { ProfilePic } from "../../constants/pic";
+import { useSearchParams } from "react-router-dom";
 
 const ModifySalculation = ({
   getCookie,
@@ -22,6 +23,8 @@ const ModifySalculation = ({
   getExpenses,
 }) => {
   const accessToken = getCookie("accessToken");
+  const [searchParmas] = useSearchParams();
+  const tripId = searchParmas.get("tripId");
   const [checked, setChecked] = useState({});
   // 상품의 체크 리스트 처리
   const [checkList, setCheckList] = useState([]);
@@ -34,7 +37,7 @@ const ModifySalculation = ({
   const getbill = async () => {
     try {
       const res = await axios.get(
-        `/api/expense/trip_user?de_id=${deId}&trip_id=1`,
+        `/api/expense/trip_user?de_id=${deId}&trip_id=${tripId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
