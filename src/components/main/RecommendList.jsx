@@ -5,10 +5,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { ProductPic } from "../../constants/pic";
 
 const RecommendList = ({ recommend }) => {
+  const navigate = useNavigate();
   if (!recommend || recommend.length === 0) {
     return null;
   }
-  const navigate = useNavigate();
 
   return (
     <div>

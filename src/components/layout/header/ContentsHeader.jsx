@@ -21,7 +21,7 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const userId = userInfo.userId;
   useEffect(() => {
-    console.log("userInfo", userInfo);
+    // console.log("userInfo", userInfo);
   }, [userInfo]);
   //useNavigate
   const navigate = useNavigate();
