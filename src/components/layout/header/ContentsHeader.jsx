@@ -36,7 +36,7 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   //useLocation
   const location = useLocation();
   const locationState = location.state;
-  console.log("locationState", locationState);
+  // console.log("locationState", locationState);
   const nowUrl = location.search;
   // console.log("URL:", nowUrl);
   const localeIp = `${window.location.origin}/contents/index?${nowUrl}`;

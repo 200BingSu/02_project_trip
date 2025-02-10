@@ -60,6 +60,7 @@ import { ProductPic } from "../../constants/pic";
 import { GiPillow } from "react-icons/gi";
 import { categoryKor } from "../../utils/match";
 import Loading from "../../components/loading/Loading";
+import { moveTo } from "../../utils/moveTo";
 
 dayjs.extend(isBetween);
 const accessToken = getCookie("accessToken");
@@ -129,6 +130,7 @@ const ContentIndex = () => {
 
   // useRef
   const imgRef = useRef(null);
+  const reviewRef = useRef(null);
   // useEffect(() => {
   //   console.log(imgRef.current);
   // }, []);
@@ -206,7 +208,7 @@ const ContentIndex = () => {
         sendData,
       );
       const resultData = res.data.data;
-      // console.log("resultData", resultData);
+      console.log("resultData", resultData);
 
       setContentData(resultData);
       if (res.data.code === "200 성공") {
@@ -223,7 +225,7 @@ const ContentIndex = () => {
     try {
       const res = await jwtAxios.get(`/api/detail/member?&strf_id=${strfId}`);
       const resultData = res.data.data;
-      // console.log("상품조회-회원", resultData);
+      console.log("상품조회-회원", resultData);
       setContentData(resultData);
       if (res.data.code === "200 성공") {
         setIsLoading(true);
@@ -290,7 +292,13 @@ const ContentIndex = () => {
   const onChange = key => {
     console.log(key);
   };
-
+  // 리뷰로
+  const moveTo = ref => {
+    console.log(ref);
+    console.log(`${ref}로 이동`);
+    ref.current.scrollIntoView({ behavior: "smooth" });
+    setIsDetailOpen(false);
+  };
   return (
     <div className="relative pb-[70px]">
       {isLoading ? (
@@ -339,9 +347,14 @@ const ContentIndex = () => {
                 <div className="flex gap-[5px] items-center">
                   <Rate disabled count={1} value={1} />
                   <p className="text-[16px] text-slate-700 font-semibold">
-                    {contentData?.ratingAvg || "5.0"}
+                    {contentData?.ratingAvg}
                   </p>
-                  <p className="text-[16px] text-primary underline">
+                  <p
+                    className="text-[16px] text-primary underline"
+                    onClick={() => {
+                      moveTo(reviewRef);
+                    }}
+                  >
                     리뷰{" "}
                     {(contentData.reviewCnt
                       ? contentData.reviewCnt
@@ -453,7 +466,10 @@ const ContentIndex = () => {
             )}
 
             {/* 상세정보 및 리뷰 선택 */}
-            <div className="w-full flex items-center justify-center">
+            <div
+              className="w-full flex items-center justify-center"
+              ref={reviewRef}
+            >
               <button
                 type="button"
                 onClick={() => {

@@ -126,7 +126,7 @@ const SignUpUser = () => {
   return (
     <>
       <TitleHeader icon={"back"} title={"회원가입"} onClick={navigateBack} />
-      <div className="w-full px-28 py-[50px] mt-[60px]">
+      <div className="w-full px-28 mt-[60px]">
         <Form
           {...formItemLayout}
           form={form}

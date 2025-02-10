@@ -30,9 +30,9 @@ const Reviews = () =>
     useEffect(() => {
       console.log("리뷰 목록:", reviewsData);
     }, [reviewsData]);
-    // useEffect(() => {
-    //   console.log("reviewIndex:", reviewIndex);
-    // }, [reviewIndex]);
+    useEffect(() => {
+      console.log("reviewIndex:", reviewIndex);
+    }, [reviewIndex]);
 
     //getReviews
     const getReview = useCallback(async () => {
@@ -47,7 +47,7 @@ const Reviews = () =>
       } catch (error) {
         console.log("리뷰 불러오기:", error);
       }
-    }, []);
+    }, [reviewIndex, reviewsData, strfId]);
 
     useEffect(() => {
       getReview();

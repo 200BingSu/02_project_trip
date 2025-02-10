@@ -437,6 +437,10 @@ const BookingIndex = () => {
             onChange={onChange}
             className="flex flex-col gap-[8px]"
           />
+          <div className={`${checkAll ? `text-slate-500` : `text-secondary3`}`}>
+            * 필수 동의 항목들의 체크가 필요합니다.
+          </div>
+
           {/* 결제하기 */}
           <Button
             type="primary"
