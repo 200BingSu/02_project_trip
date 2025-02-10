@@ -214,13 +214,13 @@ const UserIndex = ({ isOpen, onClose }) => {
               </span>
             )}
           </Link>
-          <Link
+          {/* <Link
             to=""
             className="flex items-center py-5 text-2xl text-slate-700 font-normal"
           >
             <BsCashStack className="text-4xl text-slate-400 mr-4" />
             지역 상품권
-          </Link>
+          </Link> */}
           <Link
             to="/user/recentlist"
             className="flex items-center py-5 text-2xl text-slate-700 font-normal"
