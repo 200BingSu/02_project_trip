@@ -68,6 +68,24 @@ const UserrRview = () => {
     }
   };
 
+  const deleteTravelPost = item => {
+    console.log(item);
+    try {
+      const res = axios.delete(
+        `/api/trip-review?tripReviewId=${item.tripReviewId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log("✅  tripReviewId:", item.tripReviewId);
+      getTravelPost();
+    } catch (error) {
+      console.log("✅  error:", error);
+    }
+  };
+
   useEffect(() => {
     getUserReview();
   }, [lastIndex]);
