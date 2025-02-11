@@ -338,7 +338,7 @@ const BookingIndex = () => {
                       locationState?.item.menuPrice
                   ).toLocaleString()} */}
                   {(
-                    locationState?.item.menuPrice -
+                    locationState?.item.menuPrice * locationState?.quantity -
                     (discount / 100) * locationState?.item.menuPrice
                   ).toLocaleString()}
                 </span>
