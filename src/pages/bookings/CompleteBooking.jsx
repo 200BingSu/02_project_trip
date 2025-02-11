@@ -83,12 +83,12 @@ const CompleteBooking = () => {
             className="border border-slate-100 py-[30px]
                         flex flex-col gap-[10px] w-full items-center justify-center"
           >
-            <p className="text-[24px] text-slate-400 font-bold">체크인</p>
+            <p className="text-[24px] text-slate-400 font-bold">체크아웃</p>
             <p className="text-[24px] text-slate-700">{checkOut}</p>
           </li>
         </ul>
         {/* 버튼 */}
-        <div>
+        <div className="w-full">
           <button
             type="button"
             className="px-[15px] py-[30px] rounded-lg border border-slate-300
