@@ -40,11 +40,6 @@ const ScheduleDetail = () => {
     try {
       const res = await axios.get(
         `/api/trip-review/otherTripReview?tripReviewId=${TripReviewId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
       );
       // console.log("다른 사람 여행기 조회", res.data);
       const resultData = res.data;
@@ -59,9 +54,7 @@ const ScheduleDetail = () => {
   // 여행 확인하기
   const getTrip = async () => {
     try {
-      const res = await jwtAxios.get(
-        `/api/trip?trip_id=${tripId}&signed=false`,
-      );
+      const res = await axios.get(`/api/trip?trip_id=${tripId}&signed=false`);
       console.log("여행확인하기", res.data);
       const resultData = res.data.data;
       setTripData(resultData);

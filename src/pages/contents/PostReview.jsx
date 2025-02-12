@@ -123,7 +123,10 @@ const PostReview = () => {
           <h3 className="mb-[10px] text-slate-700 text-[24px] font-semibold">
             리뷰를 남겨주세요.
           </h3>
-          <Form.Item name="content">
+          <Form.Item
+            name="content"
+            rules={[{ required: true, message: "리뷰를 입력해주세요." }]}
+          >
             <Input.TextArea
               rows={4}
               placeholder="직접 경험한 솔직한 리뷰를 남겨주세요."

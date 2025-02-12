@@ -23,6 +23,7 @@ const UserIndex = ({ isOpen, onClose }) => {
   const [coupon, setCoupon] = useState("");
 
   const accessToken = getCookie("accessToken");
+  const userLogin = getCookie("user");
 
   const getUserInfo = async () => {
     try {
@@ -32,7 +33,7 @@ const UserIndex = ({ isOpen, onClose }) => {
         },
       });
 
-      console.log("✅  getUserInfo  res.data.data:", res.data.data);
+      // console.log("✅  getUserInfo  res.data.data:", res.data.data);
       setUseProfile(res.data.data);
     } catch (error) {
       console.log(error);
@@ -54,7 +55,7 @@ const UserIndex = ({ isOpen, onClose }) => {
   };
 
   useEffect(() => {
-    if (userInfo.accessToken) {
+    if (accessToken) {
       getUserInfo();
       getCoupon();
     }
@@ -68,6 +69,7 @@ const UserIndex = ({ isOpen, onClose }) => {
       accessToken: "",
     });
     removeCookie("accessToken");
+    // removeCookie("user");
     navigate("/signin");
   };
 
@@ -111,13 +113,13 @@ const UserIndex = ({ isOpen, onClose }) => {
             </h1>
           </div>
           <div>
-            {userInfo.accessToken ? (
+            {accessToken ? (
               <div className="">
                 <div className="mx-auto w-32 h-32 rounded-full overflow-hidden">
                   <img
                     src={
                       useProfile.profilePic
-                        ? `${ProfilePic}${userInfo?.userId}/${useProfile?.profilePic}`
+                        ? `${ProfilePic}${userLogin?.userId}/${userInfo?.profilePic}`
                         : `/images/user.png`
                     }
                     alt="User-Profile"
@@ -240,7 +242,7 @@ const UserIndex = ({ isOpen, onClose }) => {
           <Link to="" className="flex  text-lg text-slate-500 py-5">
             고객센터
           </Link>
-          {userInfo.accessToken && (
+          {accessToken && (
             <button
               onClick={() => handleLogout()}
               className="w-full h-[60px] rounded-lg border border-slate-300 text-2xl font-bold text-slate-500"

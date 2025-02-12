@@ -31,6 +31,7 @@ import {
   matchWeatherIcon,
 } from "../../utils/match";
 import { RiCloseLargeFill } from "react-icons/ri";
+import { CgMoreVerticalAlt } from "react-icons/cg";
 
 // defaultData(days[0])
 
@@ -83,6 +84,7 @@ const ScheduleDay = ({
   });
   const [dayData, setDayData] = useState();
   const [memoModal, setMemoModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     // console.log("메모 모달창", memoModal);
@@ -369,8 +371,8 @@ const ScheduleDay = ({
                         <p className="text-[14px]">{item.content}</p>
                       </div>
 
-                      <button type="button" onClick={() => deleteMemo(item)}>
-                        <RiCloseLargeFill className="text-slate-500" />
+                      <button type="button" onClick={() => setIsEditing(true)}>
+                        <CgMoreVerticalAlt className="text-slate-300 text-[30px]" />
                       </button>
                     </div>
                   </div>
