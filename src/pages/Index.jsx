@@ -74,7 +74,7 @@ const Index = () => {
   };
 
   useEffect(() => {
-    console.log("recoil", userInfo);
+    // console.log("recoil", userInfo);
   }, [userInfo]);
 
   const HandleSearchPage = () => {

@@ -14,7 +14,7 @@ const SingInIndex = () => {
   // recoil
   const [loginInfo, setLoginInfo] = useRecoilState(userAtom);
   useEffect(() => {
-    console.log("recoil", loginInfo);
+    // console.log("recoil", loginInfo);
   }, [loginInfo]);
 
   // useNavigate
@@ -28,9 +28,9 @@ const SingInIndex = () => {
   const postSignInUser = async data => {
     try {
       const res = await axios.post(`${USER.signInUser}`, data);
-      console.log("로그인 시도:", res.data);
+      // console.log("로그인 시도:", res.data);
       if (res.data.data === 200) {
-        console.log("현재 시각:", moment().format("H:mm:ss"));
+        // console.log("현재 시각:", moment().format("H:mm:ss"));
         setCookie(`accessToken`, res.data.accessToken);
         setLoginInfo({
           userId: res.data.userId,
@@ -46,7 +46,7 @@ const SingInIndex = () => {
 
   // 폼 제출 함수
   const onFinish = values => {
-    console.log("로그인 시도 데이터:", values);
+    // console.log("로그인 시도 데이터:", values);
     postSignInUser(values);
   };
 

@@ -362,7 +362,10 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
             {contentData ? (
               menuListArr.map((item, index) => {
                 return (
-                  <li className="flex py-[30px] border-b border-slate-200 items-center justify-between">
+                  <li
+                    key={index}
+                    className="flex py-[30px] border-b border-slate-200 items-center justify-between"
+                  >
                     <div className="flex flex-col gap-[10px]">
                       <div className="flex gap-[5px] items-center">
                         <p className="text-[24px] text-slate-700">

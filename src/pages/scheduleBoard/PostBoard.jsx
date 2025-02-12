@@ -126,7 +126,7 @@ const PostBoard = () => {
             <Form.Item name="file">
               <Upload
                 id="file"
-                listType="text"
+                listType="picture-card"
                 beforeUpload={() => false} // 파일 자동 업로드 방지
                 fileList={fileList}
                 onChange={handleChange}
