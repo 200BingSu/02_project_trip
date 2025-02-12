@@ -339,7 +339,8 @@ const BookingIndex = () => {
                   ).toLocaleString()} */}
                   {(
                     locationState?.item.menuPrice * locationState?.quantity -
-                    (discount / 100) * locationState?.item.menuPrice
+                    (discount / 100) *
+                      (locationState?.item.menuPrice * locationState?.quantity)
                   ).toLocaleString()}
                 </span>
                 원
