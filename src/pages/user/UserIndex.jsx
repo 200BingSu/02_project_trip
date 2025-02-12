@@ -23,6 +23,7 @@ const UserIndex = ({ isOpen, onClose }) => {
   const [coupon, setCoupon] = useState("");
 
   const accessToken = getCookie("accessToken");
+  const userLogin = getCookie("user");
 
   const getUserInfo = async () => {
     try {
@@ -68,6 +69,7 @@ const UserIndex = ({ isOpen, onClose }) => {
       accessToken: "",
     });
     removeCookie("accessToken");
+    // removeCookie("user");
     navigate("/signin");
   };
 
@@ -117,7 +119,7 @@ const UserIndex = ({ isOpen, onClose }) => {
                   <img
                     src={
                       useProfile.profilePic
-                        ? `${ProfilePic}${userInfo?.userId}/${userInfo?.profilePic}`
+                        ? `${ProfilePic}${userLogin?.userId}/${userInfo?.profilePic}`
                         : `/images/user.png`
                     }
                     alt="User-Profile"

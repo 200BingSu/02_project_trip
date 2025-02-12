@@ -17,7 +17,7 @@ const App = () => {
   const getUserInfo = async () => {
     try {
       const res = await jwtAxios.get("/api/user/userInfo");
-      console.log("app.jsx getUserInfo", res.data);
+      // console.log("app.jsx getUserInfo", res.data);
       const resultData = res.data;
       if (resultData) {
         setUserInfo({
