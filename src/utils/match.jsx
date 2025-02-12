@@ -48,19 +48,19 @@ export const dayLineColor = dayNum => {
 // pathType 아이콘
 export const matchPathTypeIcon = pathType => {
   switch (pathType) {
-    case 1: //지하철
+    case "지하철": //지하철
       return <FaTrainSubway />;
-    case 2: //버스
+    case "버스": //버스
       return <BiSolidBus />;
-    case 3: //버스+지하철
+    case "버스+지하철": //버스+지하철
       return <BiSolidBus />;
-    case 11: //열차
+    case "열차": //열차
       return <BiSolidTrain />;
-    case 12:
+    case "버스+열차": //버스+열차
       return <BiSolidBus />;
-    case 20:
+    case "지하철+열차": //지하철+열차
       return <BiSolidTrain />;
-    case 13: //항공
+    case "항공": //항공
       return <IoAirplane />;
     default:
       return <BiNavigation />;
