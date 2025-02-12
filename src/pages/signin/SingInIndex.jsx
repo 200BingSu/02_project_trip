@@ -3,13 +3,16 @@ import { Button, Checkbox, Form, Input } from "antd";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { removeCookie, setCookie } from "../../utils/cookie";
+import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
 import { userAtom } from "../../atoms/userAtom";
 import { USER } from "../../constants/api";
 import { useEffect, useState } from "react";
 import moment from "moment";
 
 const SingInIndex = () => {
+  //쿠키
+  const savedUserLogin = getCookie("user");
+  const nowEmail = savedUserLogin?.email;
   const [form] = Form.useForm();
   // recoil
   const [loginInfo, setLoginInfo] = useRecoilState(userAtom);
@@ -24,7 +27,15 @@ const SingInIndex = () => {
   };
   // useState
   const [loginType, setLoginType] = useState("personal");
+  const [isSaveLogin, setIsSaveLogin] = useState(
+    savedUserLogin ? savedUserLogin.isSaveLogin : false,
+  );
+  const [isSaveEmail, setIsSaveEmail] = useState(
+    savedUserLogin ? savedUserLogin.isSaveEmail : false,
+  );
+
   // 로그인 함수
+
   const postSignInUser = async data => {
     try {
       const res = await axios.post(`${USER.signInUser}`, data);
@@ -32,6 +43,12 @@ const SingInIndex = () => {
       if (res.data.data === 200) {
         // console.log("현재 시각:", moment().format("H:mm:ss"));
         setCookie(`accessToken`, res.data.accessToken);
+        setCookie("user", {
+          userId: res.data.userId,
+          email: data.email,
+          isSaveLogin: isSaveLogin,
+          isSaveEmail: isSaveEmail,
+        });
         setLoginInfo({
           userId: res.data.userId,
           accessToken: res.data.accessToken,
@@ -50,10 +67,15 @@ const SingInIndex = () => {
     postSignInUser(values);
   };
 
+  // 로그인 상태 저장
+  const handleSaveLogin = () => {};
+  // 아이디 저장
+  const handleSaveEmail = () => {};
+
   return (
     <div
       className="w-full h-screen px-[122px] py-[225px] 
-                    flex flex-col items-center justify-center"
+                    flex flex-col items-center justify-center gap-4"
     >
       {/* 로고 */}
       <div
@@ -109,7 +131,8 @@ const SingInIndex = () => {
           <Form.Item
             name="email"
             label="이메일"
-            labelCol={{ span: 24 }} // Label의 그리드 크기
+            labelCol={{ span: 24 }}
+            initialValue={nowEmail || ""}
             // rules={[{ required: true, message: "이메일을 입력해주세요." }]}
           >
             <Input
@@ -133,8 +156,18 @@ const SingInIndex = () => {
             className="w-full mb-[40px] 
                           flex items-center justify-start"
           >
-            <Checkbox disabled>로그인 유지</Checkbox>
-            <Checkbox disabled>아이디 저장</Checkbox>
+            <Checkbox
+              checked={isSaveLogin}
+              onChange={() => setIsSaveLogin(!isSaveLogin)}
+            >
+              로그인 유지
+            </Checkbox>
+            <Checkbox
+              checked={isSaveEmail}
+              onChange={() => setIsSaveEmail(!isSaveEmail)}
+            >
+              아이디 저장
+            </Checkbox>
           </div>
           {/* 제출 버튼 */}
           <Form.Item>
@@ -154,13 +187,13 @@ const SingInIndex = () => {
                           gap-[20px] 
                           text-slate-300"
           >
-            {/* <button type="button" className="text-slate-500">
+            <button type="button" className="text-slate-500">
               아이디 찾기
             </button>
             |
             <button type="button" className="text-slate-500">
               비밀번호 찾기
-            </button> */}
+            </button>
           </div>
           <Link to="/signup/index" className="text-slate-500 underline">
             회원가입
