@@ -108,9 +108,9 @@ const RecentList = ({
                 {content.locationName} · {categoryNameMap[activeTab]}
               </p>
 
-              <p>
+              <div>
                 <Rate disabled allowHalf defaultValue={content.averageRating} />
-              </p>
+              </div>
               <div className="flex text-slate-400 text-sm align-middle gap-1">
                 {content.wishIn ? (
                   <AiFillHeart className="text-secondary3 text-xl" />

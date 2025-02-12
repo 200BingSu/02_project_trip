@@ -151,6 +151,7 @@ const BookingIndex = () => {
       console.log("예약하기 결과", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공" && resultData.data) {
+        navigate("/booking/waiting");
         console.log("카카오페이먼트 도전");
         const paymentWindow = window.open(
           resultData.data,
@@ -337,8 +338,9 @@ const BookingIndex = () => {
                       locationState?.item.menuPrice
                   ).toLocaleString()} */}
                   {(
-                    locationState?.item.menuPrice -
-                    (discount / 100) * locationState?.item.menuPrice
+                    locationState?.item.menuPrice * locationState?.quantity -
+                    (discount / 100) *
+                      (locationState?.item.menuPrice * locationState?.quantity)
                   ).toLocaleString()}
                 </span>
                 원
