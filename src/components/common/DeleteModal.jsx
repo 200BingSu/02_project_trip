@@ -1,10 +1,20 @@
 import { Button } from "antd";
 import React, { memo } from "react";
 
+/**
+ * ## 삭제 모달
+ * ### handleClickCancle
+ * 취소 버튼 클릭 시 실행되는 함수
+ * ### handleClickSubmit
+ * 확인 버튼 클릭 시 실행되는 함수
+ * ### content
+ * 모달 내용
+ */
 const DeleteModal = ({
   handleClickCancle,
   handleClickSubmit,
   content = null,
+  showButton = true,
 }) => {
   //모달
   const handleBackgroundClick = () => {
@@ -39,6 +49,7 @@ const DeleteModal = ({
           <p className="text-slate-700">{content}</p>
         </div>
         {/* 버튼 목록 */}
+
         <div className="flex gap-[20px]">
           <Button
             color="default"
