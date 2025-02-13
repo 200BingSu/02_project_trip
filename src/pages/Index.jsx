@@ -12,11 +12,13 @@ import FestivalList from "../components/main/FestivalList";
 import LocationList from "../components/main/LocationList";
 import RecentList from "../components/main/RecentList";
 import RecommendList from "../components/main/RecommendList";
-import { removeCookie } from "../utils/cookie";
+import { getCookie, removeCookie } from "../utils/cookie";
 import Footer from "./Footer";
 import UserIndex from "./user/UserIndex";
 
 const Index = () => {
+  // 쿠키
+  const accessToken = getCookie("accessToken");
   const [festivities, setFestivities] = useState([]);
   const [locations, setLocations] = useState([]);
   const [recent, setRecent] = useState([]);
@@ -28,10 +30,10 @@ const Index = () => {
     try {
       const res = await axios.get(`/api/home`, {
         headers: {
-          Authorization: `Bearer ${userInfo.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log(res.data.data);
+      console.log("메인", res.data.data);
       const { festivalList, locationList, recentList, recommendList } =
         res.data.data;
 
