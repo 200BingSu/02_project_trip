@@ -1,5 +1,5 @@
 import { Button, Form, Input, Tooltip } from "antd";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -22,6 +22,7 @@ const UserTrips = () => {
   const accessToken = getCookie("accessToken");
   const [code, setCode] = useState("");
   const [category, setCategory] = useState(0);
+
   useEffect(() => {
     // console.log("tripListData", tripListData);
   }, [tripListData]);
@@ -80,7 +81,7 @@ const UserTrips = () => {
     }
   };
   useEffect(() => {
-    if (userInfo.accessToken) {
+    if (accessToken) {
       getTripList();
       getUserInfo();
     }
@@ -247,4 +248,4 @@ const UserTrips = () => {
   );
 };
 
-export default UserTrips;
+export default memo(UserTrips);

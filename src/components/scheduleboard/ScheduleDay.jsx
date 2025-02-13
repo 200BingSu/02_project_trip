@@ -85,6 +85,7 @@ const ScheduleDay = ({
   const [dayData, setDayData] = useState();
   const [memoModal, setMemoModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isModalOpen, SetIsModalOpen] = useState(false);
 
   useEffect(() => {
     // console.log("메모 모달창", memoModal);
