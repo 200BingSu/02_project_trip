@@ -14,7 +14,6 @@ const DeleteModal = ({
   handleClickCancle,
   handleClickSubmit,
   content = null,
-  showButton = true,
 }) => {
   //모달
   const handleBackgroundClick = () => {
