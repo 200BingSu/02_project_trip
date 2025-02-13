@@ -4,30 +4,18 @@ import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { ProfilePic } from "../../constants/pic";
 import { useSearchParams } from "react-router-dom";
+import { getCookie } from "../../utils/cookie";
 
-const ModifySalculation = ({
-  getCookie,
-  isModifyOpen,
-  setIsModifyOpen,
-  isReceipt,
-  setIsReceipt,
-  isValue,
-  setIsValue,
-  storeName,
-  setStoreName,
-  budgeting,
-  deId,
-  paidUserList,
-  getStatement,
-  getBudgeting,
-  getExpenses,
-}) => {
-  const accessToken = getCookie("accessToken");
+// 결제 수정하기 페이지
+const EditPayment = ({ isReceipt, editPaymentOpen, setEditPaymentOpen }) => {
+  const [isValue, setIsValue] = useState(0);
+  const [storeName, setStoreName] = useState("");
   const [searchParmas] = useSearchParams();
   const tripId = searchParmas.get("tripId");
   const [checked, setChecked] = useState({});
   // 상품의 체크 리스트 처리
   const [checkList, setCheckList] = useState([]);
+  const accessToken = getCookie("accessToken");
 
   useEffect(() => {
     setIsValue(isReceipt.totalPrice);
@@ -75,7 +63,7 @@ const ModifySalculation = ({
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      setIsModifyOpen(false);
+      setEditPaymentOpen(false);
       getExpenses();
       getBudgeting();
     } catch (error) {
@@ -84,10 +72,10 @@ const ModifySalculation = ({
   };
 
   useEffect(() => {
-    if (isModifyOpen) {
+    if (editPaymentOpen) {
       getbill();
     }
-  }, [isModifyOpen]);
+  }, [editPaymentOpen]);
 
   const handleChange = e => {
     let inputValue = e.target.value.replace(/\D/g, "");
@@ -97,7 +85,7 @@ const ModifySalculation = ({
   const handleCancel = () => {
     setIsValue(isReceipt.totalPrice); // 초기 금액으로 되돌림
     setStoreName(isReceipt.paidFor); // 초기 가게 이름으로 되돌림
-    setIsModifyOpen(false);
+    setEditPaymentOpen(false);
   };
 
   const handleOk = () => {
@@ -132,7 +120,7 @@ const ModifySalculation = ({
   return (
     <Modal
       title="결제 수정"
-      open={isModifyOpen}
+      open={editPaymentOpen}
       onCancel={handleCancel}
       onOk={handleOk}
       className="custom-modal"
@@ -203,4 +191,4 @@ const ModifySalculation = ({
   );
 };
 
-export default ModifySalculation;
+export default EditPayment;
