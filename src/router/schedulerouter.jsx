@@ -6,7 +6,9 @@ const scheduleRouter = () => {
     () => import("../pages/schedule/ScheduleIndex"),
   );
   const LazySelectDays = lazy(() => import("../pages/schedule/SelectDays"));
-  const LazyCalculation = lazy(() => import("../pages/schedule/Calculation"));
+  const LazyCalculation = lazy(
+    () => import("../pages/calculation/Calculation"),
+  );
   return [
     {
       path: "index",
