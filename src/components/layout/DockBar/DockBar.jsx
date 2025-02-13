@@ -8,13 +8,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
 import { LuMapPinned } from "react-icons/lu";
+import { getCookie } from "../../../utils/cookie";
 
 const DockBar = React.memo(() => {
   // 채팅 구현 안되서 띄우는 모달창
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  //쿠키
+  const accessToken = getCookie("accessToken");
   //recoil
-  const { userId, accessToken } = useRecoilValue(userAtom);
+  const { userId } = useRecoilValue(userAtom);
   //useNavigate
   const navigate = useNavigate();
   //antD
@@ -38,7 +40,7 @@ const DockBar = React.memo(() => {
     <div>
       <div className="flex max-w-3xl w-full h-[100px] fixed bottom-0 left-1/2 -translate-x-1/2 bg-white z-50 shadow-[0px_-4px_8px_0px_rgba(99,99,99,0.05)]">
         <Link
-          to="/search/contents"
+          to="/search/strf"
           className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
         >
           <FiSearch className="text-4xl" />
@@ -47,7 +49,7 @@ const DockBar = React.memo(() => {
         <button
           type="button"
           onClick={() => {
-            if (userId === 0) {
+            if (!accessToken) {
               info();
               message.error("로그인 후 이용 가능한 서비스 입니다");
             } else {
