@@ -9,13 +9,14 @@ import axios from "axios";
 import jwtAxios from "../../apis/jwt";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { userAtom } from "../../atoms/userAtom";
 import { getCookie } from "../../utils/cookie";
 import { Dropdown, Input } from "antd";
 import { MdContentCopy } from "react-icons/md";
 import dayjs from "dayjs";
 import Loading from "../../components/loading/Loading";
+import UserIndex from "../user/UserIndex";
 
 // const dummyDays = dummyData.days;
 const defaultData = {
@@ -55,6 +56,10 @@ const ScheduleIndex = () => {
   const [title, setTitle] = useState(tripData.title);
   const [addLink, setAddLink] = useState("");
   const [edit, setEdit] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [isModalOpen, SetIsModalOpen] = useState(false);
+
   useEffect(() => {
     console.log("여행 데이터", tripData);
   }, [tripData]);
@@ -72,11 +77,7 @@ const ScheduleIndex = () => {
   // URL
   const getAddLink = async () => {
     try {
-      const res = await axios.get(`/api/trip/add-link?trip_id=${tripId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const res = await jwtAxios.get(`/api/trip/add-link?trip_id=${tripId}`);
       console.log(res.data);
       setAddLink(res.data.data);
     } catch (error) {
@@ -140,6 +141,7 @@ const ScheduleIndex = () => {
     <div>
       {isLoading ? (
         <>
+          <UserIndex isOpen={isOpen} onClose={() => setIsOpen(false)} />
           <TitleHeader
             icon="back"
             onClick={navigateBack}
@@ -257,4 +259,4 @@ const ScheduleIndex = () => {
     </div>
   );
 };
-export default ScheduleIndex;
+export default memo(ScheduleIndex);
