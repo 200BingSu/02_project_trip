@@ -32,6 +32,8 @@ import {
 } from "../../utils/match";
 import { RiCloseLargeFill } from "react-icons/ri";
 import { CgMoreVerticalAlt } from "react-icons/cg";
+import DeleteModal from "../common/DeleteModal";
+import BottomModal from "../common/BottomModal";
 
 // defaultData(days[0])
 
@@ -58,7 +60,6 @@ const ScheduleDay = ({
   date,
   readOnly = false,
 }) => {
-  // console.log("data", data);
   //recoil
   const [trip, setTrip] = useRecoilState(tripAtom);
   const accessToken = getCookie("accessToken");
@@ -84,8 +85,10 @@ const ScheduleDay = ({
   });
   const [dayData, setDayData] = useState();
   const [memoModal, setMemoModal] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [selectedMemo, setSelectedMemo] = useState(null);
   const [isModalOpen, SetIsModalOpen] = useState(false);
+  const [isClickMemoMenu, setIsClickMemoMenu] = useState(false);
+  const [isEditingModal, setIsEditingModal] = useState(false);
 
   useEffect(() => {
     // console.log("메모 모달창", memoModal);
@@ -139,7 +142,7 @@ const ScheduleDay = ({
         validDistances.length
       : 0;
 
-  console.log("평균 거리:", averageDistance);
+  // console.log("평균 거리:", averageDistance);
   // 레벨 조절기
   const getKakaoMapLevel = averageDistance => {
     return averageDistance > 20000
@@ -166,9 +169,7 @@ const ScheduleDay = ({
       document.head.removeChild(kakaoMapScript);
     };
   }, []);
-  if (!isMapLoaded) {
-    return <div>지도를 불러오는 중입니다...</div>;
-  }
+
   //
 
   // console.log(scheduleArr[scheduleArr.length].seq);
@@ -190,7 +191,34 @@ const ScheduleDay = ({
     });
     navigateSearchContents();
   };
-
+  //메모 추가하기
+  const postMemo = async content => {
+    const lastSeq =
+      data?.schedules?.length > 0
+        ? data.schedules[data.schedules.length - 1].seq
+        : 0;
+    const sendData = {
+      trip_id: trip.nowTripId,
+      day: data.day,
+      seq: lastSeq + 1,
+      content: content,
+    };
+    console.log("메모 데이터", sendData);
+    try {
+      const res = await axios.post(`/api/memo/post`, sendData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      // console.log("메모 추가", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        getTrip();
+      }
+    } catch (error) {
+      console.log("메모 추가", error);
+    }
+  };
   // 메모 삭제
   const deleteMemo = async item => {
     console.log(item);
@@ -212,11 +240,67 @@ const ScheduleDay = ({
       console.log(error);
     }
   };
+  //메모 수정
+  const patchMemo = async content => {
+    const sendData = {
+      memo_id: selectedMemo.scheduleMemoId,
+      trip_id: trip.nowTripId,
+      content: content,
+    };
+    console.log("메모 수정 데이터", sendData);
+    try {
+      const res = await jwtAxios.patch(`/api/memo/upd`, sendData);
+      console.log("메모 수정", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        getTrip();
+      }
+    } catch (error) {
+      console.log("메모 수정", error);
+    }
+  };
   // 일정 클릭
   const handleClickList = item => {
     console.log(item);
     navigate(`/contents/index?strfId=${item.strfId}`);
   };
+  // 모달
+  const handleClickMemoMenu = item => {
+    setSelectedMemo(item);
+    setIsClickMemoMenu(true);
+  };
+  const handleCloseMemoModal = () => {
+    setMemoModal(false);
+    setIsClickMemoMenu(false);
+  };
+  const handleCloseEditingModal = () => {
+    setIsEditingModal(false);
+    setMemoModal(false);
+  };
+  const handleCloseModalMenu = () => {
+    setIsClickMemoMenu(false);
+  };
+  const handleClickCancle = () => {
+    setIsClickMemoMenu(false);
+  };
+  const handleClickDelete = () => {
+    deleteMemo(selectedMemo);
+    setIsClickMemoMenu(false);
+  };
+  const handleClickPostMemo = content => {
+    postMemo(content);
+    setMemoModal(false);
+  };
+  const handleClickPatchMemo = content => {
+    patchMemo(content);
+    setMemoModal(false);
+    setIsEditingModal(false);
+    setIsClickMemoMenu(false);
+  };
+
+  if (!isMapLoaded) {
+    return <div>지도를 불러오는 중입니다...</div>;
+  }
   return (
     <div className="flex flex-col gap-[30px]">
       {/* 라인 */}
@@ -372,7 +456,12 @@ const ScheduleDay = ({
                         <p className="text-[14px]">{item.content}</p>
                       </div>
 
-                      <button type="button" onClick={() => setIsEditing(true)}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleClickMemoMenu(item);
+                        }}
+                      >
                         <CgMoreVerticalAlt className="text-slate-300 text-[30px]" />
                       </button>
                     </div>
@@ -459,6 +548,51 @@ const ScheduleDay = ({
           data={data}
           getTrip={getTrip}
           setTripData={setTripData}
+          handleClickSubmit={handleClickPostMemo}
+          handleClickCancle={handleCloseMemoModal}
+        />
+      ) : null}
+      {isClickMemoMenu ? (
+        <BottomModal
+          showButton={false}
+          handleClickCancle={handleCloseModalMenu}
+          modalContent={
+            <div className="flex flex-col gap-[10px] w-full">
+              <h3 className="text-[20px] font-semibold">메모 편집</h3>
+              <ul className="flex flex-col gap-[10px] w-full">
+                <li className="w-full">
+                  <button
+                    type="button"
+                    className="text-[18px] text-slate-500"
+                    onClick={() => setIsEditingModal(true)}
+                  >
+                    수정하기
+                  </button>
+                </li>
+                <li className="w-full">
+                  <button
+                    type="button"
+                    className="text-[18px] text-slate-500"
+                    onClick={handleClickDelete}
+                  >
+                    삭제하기
+                  </button>
+                </li>
+              </ul>
+            </div>
+          }
+        />
+      ) : null}
+      {isEditingModal ? (
+        <MemoModal
+          selectedMemo={selectedMemo}
+          setMemoModal={setMemoModal}
+          tripId={tripId}
+          data={data}
+          getTrip={getTrip}
+          setTripData={setTripData}
+          handleClickCancle={handleCloseEditingModal}
+          handleClickSubmit={handleClickPatchMemo}
         />
       ) : null}
     </div>
