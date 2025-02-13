@@ -3,32 +3,19 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { ProfilePic } from "../../constants/pic";
 import { BiSolidEditAlt } from "react-icons/bi";
-import ModifySalculation from "./ModifySalculation";
+import EditPayment from "./EditPayment";
 import { useSearchParams } from "react-router-dom";
+import { getCookie } from "../../utils/cookie";
 
-const SettlementStatement = ({
-  deId,
-  getCookie,
-  isStatementOpen,
-  setIsStatementOpen,
-  isValue,
-  setIsValue,
-  storeName,
-  setStoreName,
-  budgeting,
-  setBudgeting,
-  paidUserList,
-  getExpenses,
-  setPaidUserList,
-  getBudgeting,
-}) => {
-  console.log("SettlementStatement : ", deId);
+// 계산서 / 정산서 페이지
+const Bill = ({ billOpen, setBillOpen, deId }) => {
+  console.log("Bill : ", deId);
   const [isReceipt, setIsReceipt] = useState([]);
-  const [isModifyOpen, setIsModifyOpen] = useState(false);
+  const [editPaymentOpen, setEditPaymentOpen] = useState(false);
   const accessToken = getCookie("accessToken");
   const [searchParmas] = useSearchParams();
   const tripId = searchParmas.get("tripId");
-  const getStatement = async () => {
+  const getBill = async () => {
     try {
       const res = await axios.get(
         `/api/expense/select?de_id=${deId}&trip_id=${tripId}`,
@@ -46,26 +33,26 @@ const SettlementStatement = ({
   };
 
   useEffect(() => {
-    if (isStatementOpen && deId && accessToken) {
-      console.log("🔵 SettlementStatement getStatement 실행 중...");
-      getStatement();
+    if (billOpen && deId && accessToken) {
+      console.log("🔵 Bill getBill 실행 중...");
+      getBill();
     }
-  }, [isStatementOpen]); // ✅ 모달이 열릴 때(getStatement 실행)
+  }, [billOpen]); // ✅ 모달이 열릴 때(getBill 실행)
 
   const handleOk = () => {
-    setIsStatementOpen(false);
-    setIsModifyOpen(true);
+    setBillOpen(false);
+    setEditPaymentOpen(true);
   };
 
   const handleCancel = () => {
-    setIsStatementOpen(false);
+    setBillOpen(false);
   };
 
   return (
     <div>
       <Modal
         title="계산서"
-        open={isStatementOpen}
+        open={billOpen}
         onOk={handleOk}
         onCancel={handleCancel}
         className="custom-modal"
@@ -123,26 +110,13 @@ const SettlementStatement = ({
           </div>
         </div>
       </Modal>
-      <ModifySalculation
-        getCookie={getCookie}
-        getExpenses={getExpenses}
-        isModifyOpen={isModifyOpen}
-        setIsModifyOpen={setIsModifyOpen}
+      <EditPayment
         isReceipt={isReceipt}
-        setIsReceipt={setIsReceipt}
-        isValue={isValue}
-        setIsValue={setIsValue}
-        storeName={storeName}
-        setStoreName={setStoreName}
-        budgeting={budgeting}
-        setBudgeting={setBudgeting}
-        deId={deId}
-        paidUserList={paidUserList}
-        setPaidUserList={setPaidUserList}
-        getBudgeting={getBudgeting}
+        editPaymentOpen={editPaymentOpen}
+        setEditPaymentOpen={setEditPaymentOpen}
       />
     </div>
   );
 };
 
-export default SettlementStatement;
+export default Bill;
