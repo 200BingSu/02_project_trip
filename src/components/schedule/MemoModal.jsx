@@ -1,12 +1,21 @@
 import { Button, Input } from "antd";
 import axios from "axios";
-import { useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { getCookie } from "../../utils/cookie";
 import { useRecoilState } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
 
-const MemoModal = ({ setMemoModal, tripId, data, getTrip, setTripData }) => {
-  // console.log("메모에서 읽는 data", data);
+const MemoModal = ({
+  setMemoModal,
+  tripId,
+  data,
+  getTrip,
+  setTripData,
+  selectedMemo = null,
+  handleClickCancle,
+  handleClickSubmit,
+}) => {
+  // console.log("메모에서 읽는 selectedMemo", selectedMemo);
   // recoil
   const [trip, setTrip] = useRecoilState(tripAtom);
   const accessToken = getCookie("accessToken");
@@ -23,34 +32,11 @@ const MemoModal = ({ setMemoModal, tripId, data, getTrip, setTripData }) => {
   const onChange = e => {
     setContent(e.target.value);
   };
-  //메모 추가하기
-  const postMemo = async content => {
-    const lastSeq =
-      data?.schedules?.length > 0
-        ? data.schedules[data.schedules.length - 1].seq
-        : 0;
-    const sendData = {
-      trip_id: trip.nowTripId,
-      day: data.day,
-      seq: lastSeq + 1,
-      content: content,
-    };
-    console.log("메모 데이터", sendData);
-    try {
-      const res = await axios.post(`/api/memo/post`, sendData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      // console.log("메모 추가", res.data);
-      const resultData = res.data;
-      if (resultData.code === "200 성공") {
-        getTrip();
-      }
-    } catch (error) {
-      console.log("메모 추가", error);
+  useEffect(() => {
+    if (selectedMemo) {
+      setContent(selectedMemo.content);
     }
-  };
+  }, [selectedMemo]);
   return (
     <div
       className="fixed top-0 left-[50%] translate-x-[-50%] z-10
@@ -65,29 +51,42 @@ const MemoModal = ({ setMemoModal, tripId, data, getTrip, setTripData }) => {
       <div
         className="bg-white w-[630px] 
                     rounded-2xl px-[60px] py-[55px]
-                    flex items-center justify-center"
+                    flex flex-col items-start justify-center gap-[20px]"
         onClick={handleModalClick}
       >
+        <h2 className="text-[24px] font-semibold px-2">메모</h2>
         <Input
           placeholder="메모를 입력해주세요."
           variant="borderless"
           allowClear
+          value={content}
           onChange={e => {
             onChange(e);
           }}
         />
-        <Button
-          type="Outline"
-          onClick={() => {
-            postMemo(content);
-            setMemoModal(false);
-          }}
-          className="text-slate-600"
-        >
-          확인
-        </Button>
+        <div className="flex gap-[20px] w-full">
+          <Button
+            color="default"
+            variant="filled"
+            onClick={() => {
+              handleClickCancle();
+            }}
+            className="w-full"
+          >
+            취소
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              handleClickSubmit(content);
+            }}
+            className="text-white w-full"
+          >
+            확인
+          </Button>
+        </div>
       </div>
     </div>
   );
 };
-export default MemoModal;
+export default memo(MemoModal);
