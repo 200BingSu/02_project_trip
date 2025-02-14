@@ -1,20 +1,19 @@
 import { Button, Modal } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { ProfilePic } from "../../constants/pic";
-import { BiSolidEditAlt } from "react-icons/bi";
-import EditPayment from "./EditPayment";
 import { useSearchParams } from "react-router-dom";
+import { ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
+import EditPayment from "./EditPayment";
 
 // 계산서 / 정산서 페이지
-const Bill = ({ billOpen, setBillOpen, deId }) => {
+const Bill = ({ isOpen, setIsOpen, deId, tripId }) => {
   console.log("Bill : ", deId);
   const [isReceipt, setIsReceipt] = useState([]);
   const [editPaymentOpen, setEditPaymentOpen] = useState(false);
+
   const accessToken = getCookie("accessToken");
-  const [searchParmas] = useSearchParams();
-  const tripId = searchParmas.get("tripId");
+
   const getBill = async () => {
     try {
       const res = await axios.get(
@@ -33,26 +32,23 @@ const Bill = ({ billOpen, setBillOpen, deId }) => {
   };
 
   useEffect(() => {
-    if (billOpen && deId && accessToken) {
-      console.log("🔵 Bill getBill 실행 중...");
-      getBill();
-    }
-  }, [billOpen]); // ✅ 모달이 열릴 때(getBill 실행)
+    getBill();
+  }, [isOpen]); // ✅ 모달이 열릴 때(getBill 실행)
 
   const handleOk = () => {
-    setBillOpen(false);
+    setIsOpen(false);
     setEditPaymentOpen(true);
   };
 
   const handleCancel = () => {
-    setBillOpen(false);
+    setIsOpen(false);
   };
 
   return (
     <div>
       <Modal
         title="계산서"
-        open={billOpen}
+        open={isOpen}
         onOk={handleOk}
         onCancel={handleCancel}
         className="custom-modal"
