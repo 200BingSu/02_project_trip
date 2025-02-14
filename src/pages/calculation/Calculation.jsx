@@ -1,41 +1,30 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { Button, message } from "antd";
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { IoMdMore } from "react-icons/io";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import { userAtom } from "../../atoms/userAtom";
+import { useSearchParams } from "react-router-dom";
+import Settlement from "../../components/calculation/Settlement";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
-import "../../styles/antd-styles.css";
-import Settlement from "../../components/calculation/Settlement";
+import { Button } from "antd";
 import Bill from "../../components/calculation/Bill";
 
 const Calculation = () => {
-  const [userInfo, setUserInfo] = useRecoilState(userAtom);
-
-  const [amount, setAmount] = useState({});
+  const [amount, setAmount] = useState([]);
   const [deId, setDeId] = useState(null); // ✅ 선택된 deId 상태 추가
-  const [isValue, setIsValue] = useState("");
-  const [storeName, setStoreName] = useState("");
-  const [budgeting, setBudgeting] = useState([]);
-  const [paidUserList, setPaidUserList] = useState([]);
-
-  const [settlementOpen, setSettlementOpen] = useState(false);
-  const [billOpen, setBillOpen] = useState(false);
-
-  const navigate = useNavigate();
+  const [settlementIsOpen, setSettlementIsOpen] = useState(false);
+  const [billIsOpen, setBillIsOpen] = useState(false);
 
   // 쿼리스트링
   const [searchParmas] = useSearchParams();
   const tripId = searchParmas.get("tripId");
   const accessToken = getCookie("accessToken");
 
-  //정산하기
-  const getExpenses = async () => {
+  // 가계부 보기
+  const getStatement = async () => {
     try {
       const res = await axios.get(`/api/expense?trip_id=${tripId}`, {
         headers: {
@@ -43,53 +32,13 @@ const Calculation = () => {
         },
       });
       setAmount(res.data.data);
-      console.log("✅  getExpenses:", res.data.data);
-    } catch (error) {
-      console.log("✅  getExpenses  error:", error);
-      setAmount(null); // 에러 발생 시 null로 초기화
-    }
-  };
-
-  // 가계부 조회
-  const getBudgeting = async () => {
-    try {
-      const res = await axios.get(`/api/expense/trip_user?trip_id=${tripId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      console.log("getBudgeting res", res);
-      setBudgeting(res.data.data);
-    } catch (error) {
-      console.log("✅  getBudgeting  error:", error);
-      setBudgeting([]);
-    }
-  };
-
-  // 가계부 삭제
-  const deleteExpenses = async deId => {
-    try {
-      const res = await axios.delete(`/api/expense`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        data: {
-          de_id: deId,
-          trip_id: tripId,
-        },
-      });
-      message.success("삭제되었습니다.");
-      getExpenses();
     } catch (error) {
       console.log("✅  error:", error);
-      message.error("삭제에 실패했습니다.");
     }
   };
 
   useEffect(() => {
-    getExpenses(); // 정산하기
-    getBudgeting(); // 가계부 조회
+    getStatement();
   }, []);
 
   return (
@@ -136,7 +85,7 @@ const Calculation = () => {
                 onClick={() => {
                   console.log("여기 클릭", item.deId);
                   setDeId(item.deId);
-                  setSettlementOpen(true);
+                  setBillIsOpen(true);
                 }}
               >
                 <p className="text-lg text-slate-500">
@@ -200,19 +149,24 @@ const Calculation = () => {
         <Button
           type="primary"
           className="sticky bottom-5 h-16 w-full rounded-2xl text-xl z-50 mt-5"
-          onClick={() => setSettlementOpen(true)}
+          onClick={() => setSettlementIsOpen(true)}
         >
           비용 추가
         </Button>
       </div>
-      <div>
-        <Settlement
-          settlementOpen={settlementOpen}
-          setSettlementOpen={setSettlementOpen}
-          budgeting={budgeting}
-        />
-        <Bill billOpen={billOpen} setBillOpen={setBillOpen} />
-      </div>
+
+      <Settlement
+        tripId={tripId}
+        deId={deId}
+        isOpen={settlementIsOpen}
+        setIsOpen={setSettlementIsOpen}
+      />
+      <Bill
+        isOpen={billIsOpen}
+        setIsOpen={setBillIsOpen}
+        deId={deId}
+        tripId={tripId}
+      />
     </div>
   );
 };
