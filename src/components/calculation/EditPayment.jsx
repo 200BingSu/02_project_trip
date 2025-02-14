@@ -40,6 +40,7 @@ const EditPayment = ({ isReceipt, editPaymentOpen, setEditPaymentOpen }) => {
     }
   };
 
+  // 가계부 수정
   const putBill = async () => {
     // const sendCheckTrue = checkList.filter(item => item.is_join === true);
     // // 아이디 모음
