@@ -133,12 +133,13 @@ const SelectDays = () => {
     setCurrentDate(newDate);
     datePickerRef.current.setFocus();
   };
-
+  // 날짜 계산
+  const duration = dayjs(endDate).diff(dayjs(startDate), "day");
   return (
     <div>
       <TitleHeader icon="back" onClick={navigateBack} title="일정 선택" />
       {/* 달력 */}
-      <div className="mt-[72px] flex flex-col gap-[12px] mt-[10px]">
+      <div className="mt-[72px] flex flex-col gap-[12px] mb-[50px]">
         {/* 요일 */}
         <ul className="flex items-center justify-between px-[32px] py-[10px]">
           <li className="text-[12px] flex items-center justify-center w-[92px] h-[14px] text-secondary3">
@@ -167,7 +168,7 @@ const SelectDays = () => {
         <div className="h-[10px] bg-slate-100"></div>
         {/* 달력 */}
         <div className="flex flex-col gap-[12px] px-[32px]">
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <button
               onClick={handlePrevMonth}
               className="px-2 py-2 text-slate-600 text-[20px] rounded hover:bg-gray-100"
@@ -222,6 +223,16 @@ const SelectDays = () => {
                 초기화
               </span>
             </button>
+            <div className="flex gap-[5px] justify-center items-center">
+              <p className="text-[16px] font-semibold text-slate-600">
+                {startDate && endDate
+                  ? `${dayjs(startDate).format("YYYY-MM-DD")} ~ ${dayjs(endDate).format("YYYY-MM-DD")}`
+                  : "날짜를 선택해주세요"}
+              </p>
+              <p className="text-[16px] text-slate-500">
+                {startDate && endDate && `(${duration}박 ${duration + 1}일)`}
+              </p>
+            </div>
             <Button
               type="primary"
               className="h-[54px] px-[20px] py-[15px] rounded-lg text-[20px] font-semibold"
