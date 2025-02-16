@@ -16,9 +16,12 @@ import { TripReviewPic } from "../../constants/pic";
 import jwtAxios from "../../apis/jwt";
 import SelectTrip from "../../components/scheduleboard/SelectTrip";
 import Loading from "../../components/loading/Loading";
+import { useRecoilValue } from "recoil";
 
 const ScheduleDetail = () => {
   const accessToken = getCookie("accessToken");
+  //recoil
+  const { userId } = useRecoilValue(userInfoState);
   // 쿼리스트링
   const [searchParams] = useSearchParams();
   const tripId = searchParams.get("tripId");
@@ -65,7 +68,42 @@ const ScheduleDetail = () => {
       console.log(error);
     }
   };
+  // api 여행기 추천
+  const postTripReviewLike = async () => {
+    const sendData = {
+      userId: userId,
+      tripReviewId: TripReviewId,
+    };
+    try {
+      const res = await jwtAxios.post(`/api/trip-review/like`, sendData);
+      console.log("여행기 추천", res.data);
+      const resultData = res.data;
+      if (resultData.status === 200) {
+        getOtherTripReview();
+      }
+    } catch (error) {
+      console.log("여행기 추천", error);
+    }
+  };
+  // api 여행기 추천 취소
+  const deleteTripReviewLike = async () => {
+    const sendData = {
+      userId: userId,
+      tripReviewId: TripReviewId,
+    };
+    try {
+      const res = await jwtAxios.delete(`/api/trip-review/like`, sendData);
+      console.log("여행기 추천 취소", res.data);
+      const resultData = res.data;
+      if (resultData.status === 200) {
+        getOtherTripReview();
+      }
+    } catch (error) {
+      console.log("여행기 추천 취소", error);
+    }
+  };
 
+  // useEffect
   useEffect(() => {
     getOtherTripReview();
     getTrip();
@@ -124,10 +162,15 @@ const ScheduleDetail = () => {
                     </p>
                   </li>
                   <li className="flex gap-[5px] items-center">
-                    <GoThumbsup className="text-slate-300 text-[18px]" />
-                    <p className="text-slate-500 font-bold text-[14px]">
+                    <GoThumbsup
+                      className={`text-slate-300 text-[18px] focus:text-secondary3 transition-all duration-300`}
+                    />
+                    <button
+                      type="button"
+                      className="text-slate-500 font-bold text-[14px]"
+                    >
                       {tripReviewData[0]?.likeCount}
-                    </p>
+                    </button>
                   </li>
                   <li className="flex gap-[5px] items-center">
                     <IoReaderOutline className="text-slate-300 text-[18px]" />
@@ -166,12 +209,11 @@ const ScheduleDetail = () => {
               className="flex gap-[10px] py-[10px] h-auto w-full"
               onClick={() => setOpenSelectTripModal(true)}
               classNames={`bg-slate-100`}
-              disabled
             >
-              <AiOutlineImport className="w-[30px] h-[30px] text-slate-400" />
+              <AiOutlineImport className="w-[30px] h-[30px] text-white" />
 
-              <span className="font-semibold text-[24px] text-slate-400">
-                업데이트 예정인 메뉴입니다
+              <span className="font-semibold text-[24px] text-white">
+                내 여행에 담기
               </span>
             </Button>
           </div>

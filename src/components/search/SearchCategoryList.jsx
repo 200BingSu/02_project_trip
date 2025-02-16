@@ -4,12 +4,13 @@ import { ProductPic } from "../../constants/pic";
 import { Rate } from "antd";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { moveTo } from "../../utils/moveTo";
 
 const SearchCategoryList = ({
-  showMore = true,
-  handleClickMore,
   title,
   categoryData,
+  searchValue,
+  buttonClick,
 }) => {
   //navigate
   const navigate = useNavigate();
@@ -103,7 +104,7 @@ const SearchCategoryList = ({
           className="px-[20px] py-[10px] border border-slate-300 
 
         rounded-[24px] text-[16px] font-semibold text-slate-600"
-          onClick={handleClickMore}
+          onClick={buttonClick}
         >
           {title} 검색결과 더보기
         </button>

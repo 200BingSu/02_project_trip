@@ -5,6 +5,7 @@ import { FaWalking } from "react-icons/fa";
 import { FaLocationDot, FaTrainSubway } from "react-icons/fa6";
 import { IoAirplane, IoReaderOutline } from "react-icons/io5";
 import { MdOutlineAutoAwesomeMotion } from "react-icons/md";
+import { amenities } from "../constants/dataArr";
 
 // day 색깔
 export const dayTextColor = dayNum => {
@@ -91,4 +92,10 @@ export const categoryKor = category => {
   if (category === "TOUR") return "관광지";
   if (category === "FEST") return "축제";
   if (category === null) return "카테고리";
+};
+
+// 편의시설 아이콘 매칭
+export const matchAmenitiesIcon = amenityNum => {
+  const amenity = amenities.find(item => item.amenity_id === amenityNum);
+  return amenity.icon;
 };

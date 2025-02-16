@@ -2,7 +2,7 @@ import { Button } from "antd";
 import React, { memo } from "react";
 
 /**
- * ## 삭제 모달
+ * ## 중앙 모달
  * ### handleClickCancle
  * 취소 버튼 클릭 시 실행되는 함수
  * ### handleClickSubmit
@@ -10,7 +10,7 @@ import React, { memo } from "react";
  * ### content
  * 모달 내용
  */
-const DeleteModal = ({
+const CenterModal = ({
   handleClickCancle,
   handleClickSubmit,
   content = null,
@@ -75,4 +75,4 @@ const DeleteModal = ({
   );
 };
 
-export default memo(DeleteModal);
+export default memo(CenterModal);
