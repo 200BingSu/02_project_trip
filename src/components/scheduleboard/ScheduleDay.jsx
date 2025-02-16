@@ -32,7 +32,7 @@ import {
 } from "../../utils/match";
 import { RiCloseLargeFill } from "react-icons/ri";
 import { CgMoreVerticalAlt } from "react-icons/cg";
-import DeleteModal from "../common/DeleteModal";
+import CenterModal from "../common/CenterModal";
 import BottomModal from "../common/BottomModal";
 
 // defaultData(days[0])

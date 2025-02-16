@@ -55,8 +55,8 @@ const ScheduleIndex = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState(tripData.title);
   const [addLink, setAddLink] = useState("");
-  const [edit, setEdit] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  // const [isOpen, setIsOpen] = useState(false);
 
   const [isModalOpen, SetIsModalOpen] = useState(false);
 
@@ -75,7 +75,7 @@ const ScheduleIndex = () => {
   };
 
   // URL
-  const getAddLink = async () => {
+  const getAddLink = useCallback(async () => {
     try {
       const res = await jwtAxios.get(`/api/trip/add-link?trip_id=${tripId}`);
       console.log(res.data);
@@ -83,15 +83,16 @@ const ScheduleIndex = () => {
     } catch (error) {
       console.log("초대코드", error);
     }
-  };
-  const handleCopy = async () => {
+  }, []);
+  const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(addLink);
       console.log("복사 성공");
     } catch (err) {
       console.error("복사 실패:", err);
     }
-  };
+  }, []);
+  // 드롭다운 메뉴
   const items = [
     {
       label: (
@@ -114,8 +115,8 @@ const ScheduleIndex = () => {
     },
   ];
 
-  // 여행 확인하기
-  const getTrip = async () => {
+  // api 여행 확인하기
+  const getTrip = useCallback(async () => {
     try {
       const res = await jwtAxios.get(`/api/trip?trip_id=${tripId}&signed=true`);
       console.log("여행확인하기", res.data);
@@ -127,7 +128,15 @@ const ScheduleIndex = () => {
     } catch (error) {
       console.log(error);
     }
+  }, []);
+  // 여행 수정 함수
+  const handleClickCancle = () => {
+    setIsEdit(false);
   };
+  const handleClickEdit = () => {
+    getTrip();
+  };
+  // useEffect
   useEffect(() => {
     getTrip();
     if (tripData) {
@@ -141,7 +150,7 @@ const ScheduleIndex = () => {
     <div>
       {isLoading ? (
         <>
-          <UserIndex isOpen={isOpen} onClose={() => setIsOpen(false)} />
+          {/* <UserIndex isOpen={isOpen} onClose={() => setIsOpen(false)} /> */}
           <TitleHeader
             icon="back"
             onClick={navigateBack}
@@ -163,24 +172,34 @@ const ScheduleIndex = () => {
                 <p className="text-[18px] text-slate-700 ">
                   <span>{tripData.startAt}</span>-<span>{tripData.endAt}</span>
                 </p>
-                <button type="button">
+                <button type="button" onClick={() => setIsEdit(true)}>
                   <IoSettingsOutline className="text-[24px] text-slate-300 bg-white" />
                 </button>
               </div>
-              {edit ? (
-                <Input
-                  placeholder="메모를 입력해주세요."
-                  variant="borderless"
-                  allowClear
-                  onChange={e => {
-                    onChange(e);
-                  }}
-                />
-              ) : (
-                <h2 className="text-[36px] text-slate-700 font-bold">
-                  {tripData.title}
-                </h2>
-              )}
+              <h2 className="text-[36px] text-slate-700 font-bold">
+                {tripData.title}
+              </h2>
+              {/* 임시 위치, 참여 인원 정보 */}
+              <div className="flex items-center gap-3 mt-5">
+                {/* {item.paidUserList.slice(0, 3).map((member, index) => (
+                    <span
+                      key={member.user_id}
+                      className="inline-block w-14 h-14 !border-4 border-white rounded-full overflow-hidden -ml-9 first:ml-0 "
+                      style={{ zIndex: 9 - index }} // zIndex 값 동적 적용
+                    >
+                      <img
+                        src={`${ProfilePic}${member?.user_id}/${member?.profile_pic}`}
+                        alt={member.name}
+                      />
+                      {index !== item.paidUserList.length - 1 && ", "}
+                    </span>
+                  ))}
+                  <span className="text-lg text-slate-500 font-semibold">
+                    {item.paidUserList.length === 1
+                      ? `${item.paidUserList[0]?.name}`
+                      : `${item.paidUserList[0]?.name} 외 ${item.paidUserList.length - 1}명`}
+                  </span> */}
+              </div>
             </div>
             {/* 버튼 */}
             <div className="flex items-center gap-[10px] px-[32px]">
@@ -191,18 +210,16 @@ const ScheduleIndex = () => {
                 trigger={["click"]}
                 overlayStyle={{ marginTop: "10px" }}
               >
-                <a onClick={e => e.preventDefault()}>
-                  <button
-                    type="button"
-                    className="flex items-center gap-[10px] 
-                px-[15px] py-[10px] rounded-3xl
-                text-white bg-primary"
-                    onClick={() => getAddLink()}
-                  >
-                    <AiOutlinePlus />
-                    초대 코드
-                  </button>
-                </a>
+                <button
+                  type="button"
+                  className="flex items-center gap-[10px] 
+                  px-[15px] py-[10px] rounded-3xl
+                  text-white bg-primary"
+                  onClick={getAddLink}
+                >
+                  <AiOutlinePlus />
+                  초대 코드
+                </button>
               </Dropdown>
               {/* <button
                 type="button"
@@ -255,6 +272,14 @@ const ScheduleIndex = () => {
         </>
       ) : (
         <Loading />
+      )}
+      {/* 여행 수정 모달 */}
+      {isEdit && (
+        <EditTripModal
+          tripData={tripData}
+          handleClickCancle={handleClickCancle}
+          getTrip={getTrip}
+        />
       )}
     </div>
   );

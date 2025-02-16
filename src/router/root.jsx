@@ -15,6 +15,7 @@ import { useRecoilValue } from "recoil";
 import contentsRouter from "./contentsrouter";
 import usertrouter from "./usertrouter";
 import bookingRouter from "./bookingrouter";
+import Test from "../pages/Test";
 
 // lazys
 
@@ -169,6 +170,7 @@ const router = createBrowserRouter([
         ),
         children: usertrouter(),
       },
+      { path: "/test", element: <Test /> },
       { path: "*", element: <NotFound /> },
     ],
   },

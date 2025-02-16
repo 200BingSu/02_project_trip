@@ -191,7 +191,11 @@ const SingInIndex = () => {
               아이디 찾기
             </button>
             |
-            <button type="button" className="text-slate-500">
+            <button
+              type="button"
+              className="text-slate-500"
+              onClick={() => navigate(`/user/findpw`)}
+            >
               비밀번호 찾기
             </button>
           </div>
