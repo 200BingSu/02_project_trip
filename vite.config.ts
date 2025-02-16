@@ -4,6 +4,9 @@ import tailwindcss from "tailwindcss";
 
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    global: "window",
+  }, // stompjs 사용시 필요
   plugins: [react()],
   css: {
     postcss: {
