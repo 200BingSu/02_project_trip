@@ -7,22 +7,22 @@ import { useSearchParams } from "react-router-dom";
 import { getCookie } from "../../utils/cookie";
 
 // 결제 수정하기 페이지
-const EditPayment = ({ isReceipt, editPaymentOpen, setEditPaymentOpen }) => {
+const EditPayment = ({
+  deId,
+  isReceipt,
+  editPaymentOpen,
+  setEditPaymentOpen,
+  getStatement,
+}) => {
   const [isValue, setIsValue] = useState(0);
   const [storeName, setStoreName] = useState("");
   const [searchParmas] = useSearchParams();
-  const tripId = searchParmas.get("tripId");
-  const [checked, setChecked] = useState({});
-  // 상품의 체크 리스트 처리
   const [checkList, setCheckList] = useState([]);
+  const tripId = searchParmas.get("tripId");
   const accessToken = getCookie("accessToken");
 
-  useEffect(() => {
-    setIsValue(isReceipt.totalPrice);
-    setStoreName(isReceipt.paidFor);
-  }, [isReceipt]);
-
-  const getbill = async () => {
+  // 결제할 인원 가져오기
+  const getAttendee = async () => {
     try {
       const res = await axios.get(
         `/api/expense/trip_user?de_id=${deId}&trip_id=${tripId}`,
@@ -32,32 +32,33 @@ const EditPayment = ({ isReceipt, editPaymentOpen, setEditPaymentOpen }) => {
           },
         },
       );
-      console.log("========== getbill : ", res.data.data);
-      const data = res.data.data;
-      setCheckList(data);
+
+      console.log("Received data:", res.data.data);
+      setCheckList(res.data.data);
     } catch (error) {
-      console.log("✅ getbill error:", error);
+      console.log("✅  error:", error);
     }
   };
 
+  useEffect(() => {
+    setIsValue(isReceipt.totalPrice);
+    setStoreName(isReceipt.paidFor);
+  }, [isReceipt]);
+
   // 가계부 수정
   const putBill = async () => {
-    // const sendCheckTrue = checkList.filter(item => item.is_join === true);
-    // // 아이디 모음
-    // const sendDataUser = sendCheckTrue.map(item => item.user_id);
-    // console.log(sendDataUser);
-
     const sendDataUser = checkList
-      .filter(({ is_join }) => is_join) // is_join이 true인 항목 필터링
-      .map(({ user_id }) => user_id); // user_id만 추출
+      .filter(({ is_join }) => is_join)
+      .map(({ user_id }) => user_id);
+
     const sendData = {
       total_price: isValue,
-      // paid_user_list: paidUserList,
-      paid_user_list: sendDataUser, // 필터링된 유저 ID 배열
+      paid_user_list: sendDataUser,
       de_id: deId,
       paid_for: storeName,
       trip_id: tripId,
     };
+
     try {
       const res = await axios.put(`/api/expense`, sendData, {
         headers: {
@@ -65,8 +66,7 @@ const EditPayment = ({ isReceipt, editPaymentOpen, setEditPaymentOpen }) => {
         },
       });
       setEditPaymentOpen(false);
-      getExpenses();
-      getBudgeting();
+      getStatement();
     } catch (error) {
       console.log("✅  error:", error, sendData);
     }
@@ -74,7 +74,7 @@ const EditPayment = ({ isReceipt, editPaymentOpen, setEditPaymentOpen }) => {
 
   useEffect(() => {
     if (editPaymentOpen) {
-      getbill();
+      getAttendee();
     }
   }, [editPaymentOpen]);
 
@@ -93,7 +93,7 @@ const EditPayment = ({ isReceipt, editPaymentOpen, setEditPaymentOpen }) => {
     // isValue가 없거나 0 이하일 경우 실행 중지
     if (!isValue || isValue <= 0) {
       message.error("지출 금액은 0보다 커야 합니다.");
-      setIsValue(isReceipt.totalPrice); // 기존 값으로 복원
+      setIsValue(isReceipt.totalPrice);
       return;
     }
 
@@ -102,20 +102,21 @@ const EditPayment = ({ isReceipt, editPaymentOpen, setEditPaymentOpen }) => {
       setStoreName(isReceipt.paidFor);
     }
 
-    putBill(); // ✅ 정산하기 버튼 클릭 시 실행
+    putBill();
   };
 
   const handleChangeChecked = selectItem => {
-    // console.log(selectItem);
-    const tempArr = checkList.map(item => {
-      if (item.user_id === selectItem.user_id) {
-        item.is_join = !item.is_join;
-      }
-      return item;
-    });
-
-    console.log(tempArr);
-    setCheckList(tempArr);
+    setCheckList(prev =>
+      prev.map(item => {
+        if (item.user_id === selectItem.user_id) {
+          return {
+            ...item,
+            is_join: !item.is_join, // 현재 상태를 반전
+          };
+        }
+        return item;
+      }),
+    );
   };
 
   return (
@@ -177,9 +178,7 @@ const EditPayment = ({ isReceipt, editPaymentOpen, setEditPaymentOpen }) => {
                 type="checkbox"
                 className="peer hidden"
                 checked={item.is_join}
-                onClick={() => {
-                  handleChangeChecked(item);
-                }}
+                onChange={() => handleChangeChecked(item)}
               />
               <div className="w-11 h-11 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center transition duration-300 peer-checked:bg-primary2 peer-checked:text-primary peer-checked:bg-opacity-50">
                 <FaCheck className="text-2xl duration-75" />
