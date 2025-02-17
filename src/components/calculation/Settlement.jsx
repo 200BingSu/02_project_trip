@@ -6,12 +6,13 @@ import { ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import Bill from "./Bill";
 
-const Settlement = ({ tripId, deId, isOpen, setIsOpen }) => {
+const Settlement = ({ tripId, deId, isOpen, setIsOpen, getStatement }) => {
   const [isValue, setIsValue] = useState(0);
   const [storeName, setStoreName] = useState("");
   const [checkedItems, setCheckedItems] = useState({});
   const [attendee, setAttendee] = useState([]);
   const [billIsOpen, setBillIsOpen] = useState(false);
+  const [newDeId, setNewDeId] = useState(null);
 
   const accessToken = getCookie("accessToken");
 
@@ -48,9 +49,16 @@ const Settlement = ({ tripId, deId, isOpen, setIsOpen }) => {
         },
       });
 
+      // 성공 시 반환된 ID를 저장
+      setNewDeId(res.data.data);
+      setBillIsOpen(true);
+      setIsOpen(false);
       message.success("추가 되었습니다");
+
+      // Bill 컴포넌트에 새로운 deId 전달
+      return res.data.data; // ID를 반환
     } catch (error) {
-      console.log("✅  error:", error.response?.data, sendData); // 서버에서 반환된 에러 메시지
+      console.log("✅  error:", error.response?.data, sendData);
     }
   };
 
@@ -63,12 +71,21 @@ const Settlement = ({ tripId, deId, isOpen, setIsOpen }) => {
     console.log(userId);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     if (!storeName.trim()) return message.error("내용을 입력해 주세요");
     if (Number(isValue) < 1000)
       return message.error("가격은 1000원 이상이어야 합니다");
-    setCalculation();
-    setBillIsOpen(true);
+
+    // setCalculation의 반환값(newDeId)을 받아서 Bill 컴포넌트에 전달
+    const newDeId = await setCalculation();
+    if (newDeId) {
+      setBillIsOpen(true);
+      setIsOpen(false);
+    }
+    getStatement();
+    setIsValue("0");
+    setStoreName("");
+    setCheckedItems({});
   };
 
   const handleCancel = () => {
@@ -166,8 +183,9 @@ const Settlement = ({ tripId, deId, isOpen, setIsOpen }) => {
       <Bill
         isOpen={billIsOpen}
         setIsOpen={setBillIsOpen}
-        deId={deId}
+        deId={newDeId}
         tripId={tripId}
+        getStatement={getStatement}
       />
     </div>
   );

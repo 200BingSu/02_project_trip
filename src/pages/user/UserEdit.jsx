@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { BiSolidCamera } from "react-icons/bi";
 import { Button, Input, message, Typography } from "antd";
 import { IoCloseCircleSharp } from "react-icons/io5";
+import { getCookie } from "../../utils/cookie";
 
 const UserEdit = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
@@ -23,13 +24,15 @@ const UserEdit = () => {
   const [file, setFile] = useState(null);
   const [newName, setNewName] = useState("");
 
+  const accessToken = getCookie("accessToken");
+  const userLogin = getCookie("user");
   const navigate = useNavigate();
 
   const getUserInfo = async () => {
     try {
       const res = await axios.get(`/api/user/userInfo`, {
         headers: {
-          Authorization: `Bearer ${userInfo.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       setUseProfile(res.data.data);
@@ -38,7 +41,7 @@ const UserEdit = () => {
       setPreview(res.data.data.profilePic);
       // 처음에 화면에 보일때 API 호출 후 최초 오리지널 이미지를 경로로 담는다.
       setOriginImg(
-        `${ProfilePic}${userInfo.userId}/${res.data.data.profilePic}`,
+        `${ProfilePic}${userLogin.userId}/${res.data.data.profilePic}`,
       );
       console.log("res.data", res.data.data.profilePic);
       // console.log("setPreview", setPreview);
@@ -75,7 +78,7 @@ const UserEdit = () => {
     try {
       const res = await axios.patch(`/api/user`, formData, {
         headers: {
-          Authorization: `Bearer ${userInfo.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
         },
       });
