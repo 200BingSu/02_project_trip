@@ -68,7 +68,7 @@ const accessToken = getCookie("accessToken");
 const ContentIndex = () => {
   // antD
   const [messageApi, contextHolder] = message.useMessage();
-  const success = () => {
+  const success = useCallback(() => {
     messageApi.open({
       type: "success",
       content: "일정 추가가 완료되었습니다",
@@ -76,7 +76,7 @@ const ContentIndex = () => {
         marginTop: "20vh",
       },
     });
-  };
+  }, [messageApi]);
   // 쿼리 스트링 조회
   const [searchParams] = useSearchParams();
 

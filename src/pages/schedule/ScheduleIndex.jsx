@@ -17,6 +17,19 @@ import { MdContentCopy } from "react-icons/md";
 import dayjs from "dayjs";
 import Loading from "../../components/loading/Loading";
 import UserIndex from "../user/UserIndex";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import EditTripModal from "../../components/schedule/EditTripModal";
 
 // const dummyDays = dummyData.days;
 const defaultData = {
@@ -59,6 +72,14 @@ const ScheduleIndex = () => {
   // const [isOpen, setIsOpen] = useState(false);
 
   const [isModalOpen, SetIsModalOpen] = useState(false);
+  const [dragInfo, setDragInfo] = useState({
+    tripId: null,
+    scheduleId: null,
+    originDay: null,
+    destDay: null,
+    originSeq: null,
+    destSeq: null,
+  });
 
   useEffect(() => {
     console.log("여행 데이터", tripData);
@@ -129,6 +150,17 @@ const ScheduleIndex = () => {
       console.log(error);
     }
   }, []);
+  // api 일정 순서 변경
+  const patchScheduleOrder = useCallback(async dragInfo => {
+    try {
+      const res = await jwtAxios.patch("/api/schedule", dragInfo);
+      console.log("일정 순서 변경 성공:", res.data);
+      // 성공 시 일정 새로고침
+      getTrip();
+    } catch (error) {
+      console.log("일정 순서 변경 실패:", error);
+    }
+  }, []);
   // 여행 수정 함수
   const handleClickCancle = () => {
     setIsEdit(false);
@@ -145,6 +177,89 @@ const ScheduleIndex = () => {
   }, []);
 
   const tripDaysArr = tripData.days;
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor),
+  );
+
+  const handleDragEnd = event => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    // 드래그된 아이템의 day와 index 추출
+    const [sourceDay, sourceIndex] = active.id.split("-").map(Number);
+    const [targetDay, targetIndex] = over.id.split("-").map(Number);
+
+    // 같은 위치면 아무 것도 하지 않음
+    if (sourceDay === targetDay && sourceIndex === targetIndex) return;
+
+    // 출발지와 도착지의 일정 찾기
+    const sourceDayData = tripData.days.find(day => day.day === sourceDay);
+    const targetDayData = tripData.days.find(day => day.day === targetDay);
+
+    const sourceSchedule = sourceDayData.schedules[sourceIndex];
+    const targetSchedule = targetDayData.schedules[targetIndex];
+
+    // dragInfo 상태 업데이트
+    const newDragInfo = {
+      tripId: tripId,
+      scheduleId: sourceSchedule.scheduleMemoId,
+      originDay: sourceDay,
+      destDay: targetDay,
+      originSeq: sourceIndex + 1, // API가 1-based index를 사용한다고 가정
+      destSeq: targetIndex + 1,
+    };
+
+    setDragInfo(newDragInfo);
+
+    console.log("드래그 앤 드롭 상세 정보:", {
+      출발: {
+        일차: sourceDay,
+        순서: sourceIndex,
+        일정: {
+          id: sourceSchedule.scheduleMemoId,
+          제목: sourceSchedule.strfTitle || sourceSchedule.title,
+          타입: sourceSchedule.scheOrMemo,
+        },
+      },
+      도착: {
+        일차: targetDay,
+        순서: targetIndex,
+        일정: targetSchedule
+          ? {
+              id: targetSchedule.scheduleMemoId,
+              제목: targetSchedule.strfTitle || targetSchedule.title,
+              타입: targetSchedule.scheOrMemo,
+            }
+          : "마지막 위치",
+      },
+    });
+
+    // UI 업데이트
+    const newTripData = { ...tripData };
+    const [movedSchedule] = newTripData.days[sourceDay - 1].schedules.splice(
+      sourceIndex,
+      1,
+    );
+    newTripData.days[targetDay - 1].schedules.splice(
+      targetIndex,
+      0,
+      movedSchedule,
+    );
+    setTripData(newTripData);
+
+    // API 호출
+    patchScheduleOrder(newDragInfo);
+  };
+
+  // dragInfo 상태가 변경될 때마다 로그 출력
+  useEffect(() => {
+    if (dragInfo.tripId) {
+      console.log("드래그 정보 상태 업데이트:", dragInfo);
+    }
+  }, [dragInfo]);
 
   return (
     <div>
@@ -215,7 +330,10 @@ const ScheduleIndex = () => {
                   className="flex items-center gap-[10px] 
                   px-[15px] py-[10px] rounded-3xl
                   text-white bg-primary"
-                  onClick={getAddLink}
+                  onClick={async () => {
+                    await getAddLink();
+                    handleCopy();
+                  }}
                 >
                   <AiOutlinePlus />
                   초대 코드
@@ -243,30 +361,46 @@ const ScheduleIndex = () => {
             </div>
             {/* 맵, 일정 */}
             <div className="flex flex-col gap-[50px]">
-              {tripDaysArr === null ? (
-                <ScheduleDay
-                  newTrip={true}
-                  data={defaultData}
-                  startAt={tripData?.startAt}
-                  tripId={tripId}
-                  getTrip={getTrip}
-                  setTripData={setTripData}
-                />
-              ) : (
-                tripDaysArr?.map((item, index) => {
-                  return (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                {tripDaysArr === null ? (
+                  <SortableContext
+                    items={[{ id: "1-0" }]}
+                    strategy={verticalListSortingStrategy}
+                  >
                     <ScheduleDay
                       newTrip={true}
-                      data={item}
-                      key={index}
+                      data={defaultData}
                       startAt={tripData?.startAt}
                       tripId={tripId}
                       getTrip={getTrip}
                       setTripData={setTripData}
                     />
-                  );
-                })
-              )}
+                  </SortableContext>
+                ) : (
+                  tripDaysArr?.map((item, dayIndex) => (
+                    <SortableContext
+                      key={item.day}
+                      items={item.schedules.map(
+                        (_, index) => `${item.day}-${index}`,
+                      )}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <ScheduleDay
+                        newTrip={true}
+                        data={item}
+                        startAt={tripData?.startAt}
+                        tripId={tripId}
+                        getTrip={getTrip}
+                        setTripData={setTripData}
+                      />
+                    </SortableContext>
+                  ))
+                )}
+              </DndContext>
             </div>
           </div>
         </>
