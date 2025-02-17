@@ -14,20 +14,23 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getCookie } from "../../../utils/cookie";
 import { Dropdown } from "antd";
 import { MdContentCopy } from "react-icons/md";
+import { searchAtom } from "../../../atoms/searchAtom";
 
 const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   const accessToken = getCookie("accessToken");
   //recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
   const userId = userInfo.userId;
   useEffect(() => {
-    // console.log("userInfo", userInfo);
-  }, [userInfo]);
+    console.log("searchRecoil", searchRecoil);
+  }, [searchRecoil]);
+
   //useNavigate
   const navigate = useNavigate();
   const navigateBack = () => {
-    if (locationState) {
-      navigate(`/`, { state: { ...locationState } });
+    if (searchRecoil.searchWord !== "") {
+      navigate(`/search/strf`);
     } else {
       navigate(`/`);
     }

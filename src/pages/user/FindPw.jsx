@@ -23,7 +23,7 @@ const FindPw = () => {
       const resultData = res.data;
       if (resultData) {
         setOpenEmailLoading(false);
-        navigate("/user/signin");
+        navigate("/signin");
       }
     } catch (error) {
       console.log("임시 비번 이메일", error);
@@ -48,40 +48,52 @@ const FindPw = () => {
         icon="back"
       />
       <div
-        className="mt-[100px] flex flex-col justify-center items-center w-full
-      px-8"
+        className="mt-[100px] flex flex-col justify-center items-start w-full
+      px-8 gap-[20px]"
       >
         {/* 타이틀 */}
         <h2 className="text-[30px] text-slate-700 font-bold">
           이메일 인증 확인
         </h2>
-        <Spin spinning={openEmailLoading} tip="이메일을 발송중입니다.">
-          <Form
-            form={form}
-            onFinish={onFinish}
-            requiredMark={false}
-            className="flex flex-col items-center justify-center"
-          >
-            <Form.Item
-              name="email"
-              label="이메일"
-              rules={[
-                {
-                  type: "email",
-                  message: "이메일 형식을 입력해주세요.",
-                },
-                { required: true, message: "이메일을 입력해주세요." },
-              ]}
+        <div className="w-full">
+          <Spin spinning={openEmailLoading} tip="이메일을 발송중입니다.">
+            <Form
+              form={form}
+              onFinish={onFinish}
+              requiredMark={false}
+              className="w-full"
+              style={{ position: "relative" }}
             >
-              <Input placeholder="이메일을 입력해주세요." />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                임시 비밀번호 발송
-              </Button>
-            </Form.Item>
-          </Form>
-        </Spin>
+              <Form.Item
+                name="email"
+                label="이메일"
+                labelCol={{ span: 24 }}
+                rules={[
+                  {
+                    type: "email",
+                    message: "이메일 형식을 입력해주세요.",
+                  },
+                  { required: true, message: "이메일을 입력해주세요." },
+                ]}
+                className="w-full"
+              >
+                <Input
+                  placeholder="이메일을 입력해주세요."
+                  style={{ height: "60px", width: "100%" }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="h-[60px] w-full text-[20px] font-semibold"
+                >
+                  임시 비밀번호 발송
+                </Button>
+              </Form.Item>
+            </Form>
+          </Spin>
+        </div>
       </div>
     </div>
   );

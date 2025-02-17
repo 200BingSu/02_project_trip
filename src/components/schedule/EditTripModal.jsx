@@ -31,7 +31,7 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
   const handleDateChange = (values, formatString) => {
     console.log("선택된 날짜:", values); // dayjs 객체 배열
     console.log("포맷된 날짜:", formatString); // 'YYYY-MM-DD' 형식의 문자열 배열
-    const makeSecondFormatDates = formatString.map(item => item + ":00");
+    const makeSecondFormatDates = formatString?.map(item => item + ":00");
     setDates(makeSecondFormatDates);
   };
   const disabledDate = current => {
@@ -70,7 +70,7 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
   // api 여행 수정
   const patchTrip = async sendData => {
     try {
-      const res = await jwtAxios.patch(`api/trip?trip_id=${tripId}`, sendData);
+      const res = await jwtAxios.patch(`/api/trip`, sendData);
       console.log("여행 수정", res.data);
       const resultData = res.data;
       if (resultData) {
@@ -85,19 +85,28 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
   const handleFinish = values => {
     console.log(values);
     const { title, rangePicker, nowUser } = values;
-    const notUser = tripData.nowUser
-      .map(item => item.userId)
-      .filter(userId => !values.nowUser.includes(userId));
-    const joinUser = values.nowUser.filter(userId => !notUser.includes(userId));
+
+    // nowUser가 있는지 확인하고 map 함수 실행
+    const notUser = tripData?.nowUser
+      ? tripData.nowUser
+          .map(item => item.userId)
+          .filter(userId => !values.nowUser?.includes(userId))
+      : [];
+
+    const joinUser =
+      values.nowUser?.filter(userId => !notUser.includes(userId)) || [];
+
     const dateArr = rangePicker.map(item => item.format("YYYY-MM-DD"));
     console.log(dateArr);
     const sendData = {
       title: title,
-      startAt: dateArr[0],
-      endAt: dateArr[1],
-      nowUser: joinUser,
-      notUser: notUser,
-      tripId: tripId,
+      trip_id: tripId,
+      start_at: dateArr[0],
+      end_at: dateArr[1],
+      ins_user_list: joinUser,
+      del_user_list: notUser,
+      ins_location_list: [...tripData?.tripLocationList],
+      del_location_list: [],
     };
     patchTrip(sendData);
   };
@@ -149,13 +158,17 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
               separator={"~"}
             />
           </Form.Item>
-          <Form.Item name="nowUser" label="참여자">
+          <Form.Item
+            name="nowUser"
+            label="참여자"
+            initialValue={tripData?.tripUserIdList || []}
+          >
             <Checkbox.Group>
-              {tripData.nowUser.map(item => (
-                <Checkbox key={item.userId} value={item.userId}>
-                  {item.name}
+              {tripData?.tripUserIdList?.map((item, index) => (
+                <Checkbox key={index} value={item}>
+                  {item}
                 </Checkbox>
-              ))}
+              )) || null}
             </Checkbox.Group>
           </Form.Item>
           <Form.Item>

@@ -34,6 +34,19 @@ import { RiCloseLargeFill } from "react-icons/ri";
 import { CgMoreVerticalAlt } from "react-icons/cg";
 import CenterModal from "../common/CenterModal";
 import BottomModal from "../common/BottomModal";
+import {
+  DndContext,
+  closestCenter,
+  useSensor,
+  useSensors,
+  PointerSensor,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 // defaultData(days[0])
 
@@ -356,157 +369,27 @@ const ScheduleDay = ({
         </div>
         {/* 일정 목록 */}
         <ul className="relative flex flex-col gap-[30px]">
-          {scheduleArr?.map((item, index) => {
-            const scheIndex = scheArr.findIndex(
-              scheItem => scheItem.scheduleMemoId === item.scheduleMemoId,
-            );
-            return (
-              <li
-                key={index}
-                className="flex flex-col gap-[30px] justify-center "
-              >
-                {/* 일정 또는 메모 */}
-                {item.scheOrMemo === "SCHE" ? (
-                  // 일정
-                  <div
-                    className="flex gap-[30px] items-center cursor-pointer"
-                    onClick={() => {
-                      handleClickList(item);
-                    }}
-                  >
-                    <div
-                      className={`w-[30px] h-[30px]
-                                  flex items-center justify-center  
-                                  rounded-full
-                                  text-[16px] text-white font-medium
-                                  ${dayBgColor(data?.day)}`}
-                    >
-                      {scheIndex !== -1 ? scheIndex + 1 : "없음"}
-                    </div>
-                    {/* 일정 정보 */}
-                    <div className="flex gap-[20px] items-center">
-                      {/* 이미지 */}
-                      <div className="w-[60px] h-[60px] bg-slate-200 rounded-lg overflow-hidden">
-                        <img
-                          src={`${ProductPic}${item.strfId}/${item.picName}`}
-                          alt="thum"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      {/* 정보 */}
-                      <div>
-                        <h4 className="font-semibold text-[20px] text-slate-700">
-                          {item.strfTitle}
-                        </h4>
-                        <div className="flex gap-[10px] items-center">
-                          <p className="text-[14px] text-slate-500">
-                            {categoryKor(item.category)}
-                          </p>
-                          <div className="flex gap-[10px] items-center">
-                            <div className="flex gap-[5px] items-center">
-                              <Rate
-                                disabled
-                                count={1}
-                                value={item.reviewed ? 1 : 0}
-                                style={{
-                                  width: "16px",
-                                  height: "16px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                }}
-                              />
-                              {/* <p className="text-[12px] text-slate-500">평점</p>
-                              <p className="text-[12px] text-slate-500">
-                                ({(1000).toLocaleString()})
-                              </p> */}
-                            </div>
-                            {/* <p className="flex gap-[5px] items-center">
-                              <AiTwotoneHeart className="text-[16px]" />
-                              <span className="text-[12px] text-slate-500">
-                                찜하기 수
-                              </span>
-                            </p> */}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : readOnly ? null : (
-                  // 메모
+          {scheduleArr?.map((item, itemIndex) => (
+            <SortableScheduleItem
+              key={item.scheduleMemoId}
+              id={`${data.day}-${itemIndex}`}
+              item={item}
+              index={itemIndex}
+              data={data}
+              handleClickList={handleClickList}
+              dayBgColor={dayBgColor}
+              scheArr={scheArr}
+              readOnly={readOnly}
+              handleClickMemoMenu={handleClickMemoMenu}
+              categoryKor={categoryKor}
+              ProductPic={ProductPic}
+              dayTextColor={dayTextColor}
+              matchWeatherIcon={matchWeatherIcon}
+            />
+          ))}
 
-                  <div className="flex gap-[30px] items-center">
-                    {/* 점 */}
-                    <div className="w-[30px] h-[30px] flex items-center justify-center">
-                      <div
-                        className={`w-[10px] h-[10px] flex items-center justify-center rounded-full  text-[16px] text-white font-medium ${dayBgColor(data?.day)}`}
-                      ></div>
-                    </div>
-                    {/* 내용 */}
-                    <div
-                      className="flex  gap-[10px] justify-between
-                  px-[40px] py-[20px] w-full rounded-2xl
-                  bg-slate-50 "
-                    >
-                      <div className="flex flex-col gap-[10px]">
-                        <p className="flex gap-[5px] text-slate-700">
-                          <IoReaderOutline className="text-slate-300 text-[18px]" />
-                          {item.title}
-                        </p>
-                        <p className="text-[14px]">{item.content}</p>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          handleClickMemoMenu(item);
-                        }}
-                      >
-                        <CgMoreVerticalAlt className="text-slate-300 text-[30px]" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* path_type */}
-                {item.scheOrMemo === "SCHE" ? (
-                  <div className="flex items-center">
-                    {/* 점 */}
-                    <div className="w-[30px] h-[30px] flex items-center justify-center">
-                      <div
-                        className={`w-[10px] h-[10px] flex items-center justify-center rounded-full  text-[16px] text-white font-medium ${dayBgColor(data?.day)}`}
-                      ></div>
-                    </div>
-                    {/* type */}
-                    <div
-                      className={`${item.pathType === null ? "h-[38px] flex gap-[10px] items-center px-[10px] bg-slate-50 rounded-2xl cursor-pointer" : "h-[38px] flex gap-[10px] items-center px-[10px] bg-white rounded-2xl"}`}
-                      onClick={() => {
-                        console.log(item);
-                      }}
-                    >
-                      <div
-                        className={`${item.pathType === null ? "text-slate-600 h-[18px]" : "text-slate-400 h-[18px]"}`}
-                      >
-                        {matchPathTypeIcon(item.pathType)}
-                      </div>
-                      <div
-                        className={`${item.pathType === null ? "text-[14px] text-slate-600 h-[18px]" : "text-[14px] text-slate-400 h-[18px]"}`}
-                      >
-                        {item.duration}
-                        {item.pathType > 0 ? "분" : ""}
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-              </li>
-            );
-          })}
           {/* 연결 라인 */}
-          <div
-            className="border-l border-slate-200
-                                absolute left-[14px] top-1/2 -translate-y-1/2
-                                h-[90%] -z-10"
-          ></div>
+          <div className="border-l border-slate-200 absolute left-[14px] top-1/2 -translate-y-1/2 h-[90%] -z-10"></div>
         </ul>
         {/* 추가 버튼 */}
         {newTrip ? (
@@ -596,6 +479,185 @@ const ScheduleDay = ({
         />
       ) : null}
     </div>
+  );
+};
+
+// 새로운 SortableScheduleItem 컴포넌트 추가
+const SortableScheduleItem = ({
+  id,
+  item,
+  index,
+  data,
+  handleClickList,
+  dayBgColor,
+  scheArr,
+  readOnly,
+  handleClickMemoMenu,
+  categoryKor,
+  ProductPic,
+  dayTextColor,
+  matchWeatherIcon,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 1 : 0,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const scheIndex = scheArr.findIndex(
+    scheItem => scheItem.scheduleMemoId === item.scheduleMemoId,
+  );
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+    >
+      <div className="flex flex-col gap-[30px] justify-center">
+        {item.scheOrMemo === "SCHE" ? (
+          // 기존 일정 표시 부분
+          <div
+            className="flex gap-[30px] items-center cursor-pointer"
+            onClick={() => handleClickList(item)}
+          >
+            <div
+              className={`w-[30px] h-[30px]
+                          flex items-center justify-center  
+                          rounded-full
+                          text-[16px] text-white font-medium
+                          ${dayBgColor(data?.day)}`}
+            >
+              {scheIndex !== -1 ? scheIndex + 1 : "없음"}
+            </div>
+            {/* 일정 정보 */}
+            <div className="flex gap-[20px] items-center">
+              {/* 이미지 */}
+              <div className="w-[60px] h-[60px] bg-slate-200 rounded-lg overflow-hidden">
+                <img
+                  src={`${ProductPic}${item.strfId}/${item.picName}`}
+                  alt="thum"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* 정보 */}
+              <div>
+                <h4 className="font-semibold text-[20px] text-slate-700">
+                  {item.strfTitle}
+                </h4>
+                <div className="flex gap-[10px] items-center">
+                  <p className="text-[14px] text-slate-500">
+                    {categoryKor(item.category)}
+                  </p>
+                  <div className="flex gap-[10px] items-center">
+                    <div className="flex gap-[5px] items-center">
+                      <Rate
+                        disabled
+                        count={1}
+                        value={item.reviewed ? 1 : 0}
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      />
+                      {/* <p className="text-[12px] text-slate-500">평점</p>
+                      <p className="text-[12px] text-slate-500">
+                        ({(1000).toLocaleString()})
+                      </p> */}
+                    </div>
+                    {/* <p className="flex gap-[5px] items-center">
+                      <AiTwotoneHeart className="text-[16px]" />
+                      <span className="text-[12px] text-slate-500">
+                        찜하기 수
+                      </span>
+                    </p> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : readOnly ? null : (
+          // 기존 메모 표시 부분
+          <div className="flex gap-[30px] items-center">
+            {/* 점 */}
+            <div className="w-[30px] h-[30px] flex items-center justify-center">
+              <div
+                className={`w-[10px] h-[10px] flex items-center justify-center rounded-full  text-[16px] text-white font-medium ${dayBgColor(data?.day)}`}
+              ></div>
+            </div>
+            {/* 내용 */}
+            <div
+              className="flex  gap-[10px] justify-between
+                    px-[40px] py-[20px] w-full rounded-2xl
+                    bg-slate-50 "
+            >
+              <div className="flex flex-col gap-[10px]">
+                <p className="flex gap-[5px] text-slate-700">
+                  <IoReaderOutline className="text-slate-300 text-[18px]" />
+                  {item.title}
+                </p>
+                <p className="text-[14px]">{item.content}</p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  handleClickMemoMenu(item);
+                }}
+              >
+                <CgMoreVerticalAlt className="text-slate-300 text-[30px]" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 기존 path_type 표시 부분 */}
+        {item.scheOrMemo === "SCHE" && (
+          <div className="flex items-center">
+            {/* 점 */}
+            <div className="w-[30px] h-[30px] flex items-center justify-center">
+              <div
+                className={`w-[10px] h-[10px] flex items-center justify-center rounded-full  text-[16px] text-white font-medium ${dayBgColor(data?.day)}`}
+              ></div>
+            </div>
+            {/* type */}
+            <div
+              className={`${item.pathType === null ? "h-[38px] flex gap-[10px] items-center px-[10px] bg-slate-50 rounded-2xl cursor-pointer" : "h-[38px] flex gap-[10px] items-center px-[10px] bg-white rounded-2xl"}`}
+              onClick={() => {
+                console.log(item);
+              }}
+            >
+              <div
+                className={`${item.pathType === null ? "text-slate-600 h-[18px]" : "text-slate-400 h-[18px]"}`}
+              >
+                {matchPathTypeIcon(item.pathType)}
+              </div>
+              <div
+                className={`${item.pathType === null ? "text-[14px] text-slate-600 h-[18px]" : "text-[14px] text-slate-400 h-[18px]"}`}
+              >
+                {item.duration}
+                {item.pathType > 0 ? "분" : ""}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </li>
   );
 };
 

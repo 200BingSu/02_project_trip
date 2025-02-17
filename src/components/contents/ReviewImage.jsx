@@ -213,15 +213,15 @@ const ReviewImage = ({ imgArr, reviewId }) => {
       {/* 클릭 시 확대 */}
       {showSwiper && (
         <div
-          className="fixed inset-0 flex flex-col px-[32px] py-[30px] gap-[30px] bg-black bg-opacity-50 z-30"
+          className="fixed max-w-3xl w-full mx-auto h-screen h-screen top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col px-[32px] py-[30px] gap-[30px] bg-black bg-opacity-50 z-50"
           onClick={handleCloseSwiper}
         >
-          <div className="w-full h-screen absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="max-w-3xl h-screen absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center px-[32px]">
             <Swiper
               slidesPerView={1}
               spaceBetween={0}
               loop={true}
-              className="mySwiper w-full h-[406px] px-[32px] overflow-hidden"
+              className="mySwiper w-full h-[406px] rounded-2xl overflow-hidden"
               onClick={e => e.stopPropagation()}
             >
               {imgArr.map((item, index) => {
@@ -230,6 +230,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
                     <img
                       src={`${ReviewPic}${reviewId}/${item.pic}`}
                       alt={`${item.reviewId}`}
+                      className="w-full h-full object-contain"
                     />
                   </SwiperSlide>
                 );
