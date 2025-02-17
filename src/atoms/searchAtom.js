@@ -6,5 +6,6 @@ export const searchAtom = atom({
     searchWord: "",
     searchData: [],
     lastIndex: 0,
+    category: 0,
   },
 });

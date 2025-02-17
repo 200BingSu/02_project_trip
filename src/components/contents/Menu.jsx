@@ -256,7 +256,10 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
             {contentData ? (
               menuListArr.map((item, index) => {
                 return (
-                  <li className="min-w-[342px] w-full flex flex-col flex-1 gap-[10px]">
+                  <li
+                    className="min-w-[342px] w-full flex flex-col flex-1 gap-[10px]"
+                    key={index}
+                  >
                     {/* 이미지 */}
                     <div className="w-full h-[300px] bg-slate-200 rounded-[16px] overflow-hidden">
                       <img
