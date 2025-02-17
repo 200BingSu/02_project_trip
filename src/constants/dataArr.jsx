@@ -1,3 +1,28 @@
+import { AiOutlineSafety } from "react-icons/ai";
+import { BiBlanket, BiWifi } from "react-icons/bi";
+import { BsThermometerHalf } from "react-icons/bs";
+import {
+  FaBath,
+  FaBed,
+  FaFireExtinguisher,
+  FaSwimmingPool,
+} from "react-icons/fa";
+import {
+  FaComputer,
+  FaHotTubPerson,
+  FaHouseFloodWater,
+  FaTrainSubway,
+} from "react-icons/fa6";
+import { GiPillow } from "react-icons/gi";
+import { IoIosBed } from "react-icons/io";
+import {
+  PiCookingPot,
+  PiForkKnifeBold,
+  PiHandSoapBold,
+  PiMonitorBold,
+  PiWashingMachineBold,
+} from "react-icons/pi";
+
 export const strfArr = ["STAY", "TOUR", "RESTAUR", "FEST"];
 export const pathType = ["모두", "지하철", "버스", "버스+지하철"];
 

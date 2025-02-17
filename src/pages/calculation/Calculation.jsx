@@ -9,8 +9,9 @@ import Settlement from "../../components/calculation/Settlement";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import Bill from "../../components/calculation/Bill";
+import "../../styles/antd-styles.css";
 
 const Calculation = () => {
   const [amount, setAmount] = useState([]);
@@ -37,12 +38,32 @@ const Calculation = () => {
     }
   };
 
+  const deleteExpenses = async deId => {
+    try {
+      const res = await axios.delete(`/api/expense`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        data: {
+          de_id: deId,
+          trip_id: 1,
+        },
+      });
+      message.success("삭제되었습니다.");
+      getStatement();
+    } catch (error) {
+      console.log("✅  error:", error);
+      message.error("삭제에 실패했습니다.");
+    }
+  };
+
   useEffect(() => {
     getStatement();
   }, []);
 
   return (
-    <div className="bg-slate-100 pb-4">
+    <div className="bg-slate-100 pb-4 h-screen">
       <TitleHeader
         icon={"back"}
         title={"가계부"}
@@ -78,10 +99,10 @@ const Calculation = () => {
           {amount?.expensedList?.map(item => (
             <div
               key={item.deId}
-              className="flex justify-between cursor-pointer bg-white px-8 py-5 rounded-3xl mt-5"
+              className="flex justify-between bg-white px-8 py-5 rounded-3xl mt-5"
             >
               <div
-                className="w-full"
+                className="w-full cursor-pointer"
                 onClick={() => {
                   console.log("여기 클릭", item.deId);
                   setDeId(item.deId);
@@ -127,9 +148,9 @@ const Calculation = () => {
 
                 <MenuItems
                   transition
-                  className="absolute right-0 z-10  py-2 px-5 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                  className="absolute right-0 z-10 py-2 px-5 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 cursor-pointer transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                   onClick={e => {
-                    e.stopPropagation(); // 부모 요소의 onClick 이벤트가 실행되지 않도록 함
+                    e.stopPropagation();
                     deleteExpenses(item.deId);
                   }}
                 >
@@ -160,12 +181,14 @@ const Calculation = () => {
         deId={deId}
         isOpen={settlementIsOpen}
         setIsOpen={setSettlementIsOpen}
+        getStatement={getStatement}
       />
       <Bill
         isOpen={billIsOpen}
         setIsOpen={setBillIsOpen}
         deId={deId}
         tripId={tripId}
+        getStatement={getStatement}
       />
     </div>
   );

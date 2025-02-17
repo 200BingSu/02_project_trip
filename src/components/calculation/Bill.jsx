@@ -7,7 +7,7 @@ import { getCookie } from "../../utils/cookie";
 import EditPayment from "./EditPayment";
 
 // 계산서 / 정산서 페이지
-const Bill = ({ isOpen, setIsOpen, deId, tripId }) => {
+const Bill = ({ isOpen, setIsOpen, deId, tripId, getStatement }) => {
   console.log("Bill : ", deId);
   const [isReceipt, setIsReceipt] = useState([]);
   const [editPaymentOpen, setEditPaymentOpen] = useState(false);
@@ -53,11 +53,11 @@ const Bill = ({ isOpen, setIsOpen, deId, tripId }) => {
         onCancel={handleCancel}
         className="custom-modal"
         footer={[
-          <Button key="back" onClick={handleCancel}>
-            확인
-          </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
             수정
+          </Button>,
+          <Button key="back" onClick={handleCancel}>
+            확인
           </Button>,
         ]}
       >
@@ -110,6 +110,8 @@ const Bill = ({ isOpen, setIsOpen, deId, tripId }) => {
         isReceipt={isReceipt}
         editPaymentOpen={editPaymentOpen}
         setEditPaymentOpen={setEditPaymentOpen}
+        deId={deId}
+        getStatement={getStatement}
       />
     </div>
   );

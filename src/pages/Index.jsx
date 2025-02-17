@@ -51,7 +51,7 @@ const Index = () => {
   }, []);
 
   const handleScroll = () => {
-    if (window.scrollY > 140) {
+    if (window.scrollY > 0) {
       setScrollY(true); // 스크롤이 60 이상이면 고정
     } else {
       setScrollY(false); // 스크롤이 60이면 고정 해제
@@ -87,7 +87,7 @@ const Index = () => {
     <div>
       <UserIndex isOpen={isOpen} onClose={() => setIsOpen(false)} />
       <header
-        className={`flex h-[60px] items-center px-[32px] max-w-3xl w-full duration-300 ${scrollY ? "fixed top-0 " : "relative"} z-50 bg-white `}
+        className={`flex h-[60px] items-center px-[32px] max-w-3xl w-full sticky top-0 left-0 z-10 duration-300 ${scrollY ? "shadow-md" : "shadow-none"} z-50 bg-white `}
       >
         <h1 className="w-[160px] mr-auto">
           <img
