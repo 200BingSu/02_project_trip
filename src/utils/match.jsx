@@ -95,7 +95,7 @@ export const categoryKor = category => {
 };
 
 // 편의시설 아이콘 매칭
-export const matchAmenitiesIcon = amenityNum => {
-  const amenity = amenities.find(item => item.amenity_id === amenityNum);
+export const matchAmenitiesIcon = amenityId => {
+  const amenity = amenities.find(item => item.amenity_id === amenityId);
   return amenity.icon;
 };

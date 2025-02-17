@@ -8,7 +8,7 @@ export const categoryArr = [
 ];
 // 정렬 배열
 export const orderTypeArr = [
-  { type: "ratingAvg", name: "평점순" },
-  { type: "reviewCount", name: "리뷰순" },
-  { type: "likeCount", name: "좋아요순" },
+  { type: "ratingAvg", name: "• 평점순" },
+  { type: "reviewCount", name: "• 리뷰순" },
+  { type: "likeCount", name: "• 좋아요순" },
 ];

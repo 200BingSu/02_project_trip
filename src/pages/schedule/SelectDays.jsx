@@ -18,6 +18,7 @@ import { tripAtom } from "../../atoms/tripAtom";
 
 import { getCookie } from "../../utils/cookie";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import jwtAxios from "../../apis/jwt";
 
 // 한글 로케일 등록
 registerLocale("ko", ko);
@@ -34,12 +35,12 @@ const SelectDays = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const locationData = location.state;
-  // console.log("locationData", locationData);
-  const locationIdArr = locationData?.map((item, index) => {
+  console.log("locationData", locationData);
+  const locationIdArr = locationData.selectedLocationId?.map((item, index) => {
     return item.locationId;
   });
   // console.log(locationIdArr);
-  const tripTitle = locationData[0].title;
+  const tripTitle = locationData?.title;
   // console.log(tripTitle);
   const navigateBack = () => {
     navigate(-1);
@@ -54,7 +55,7 @@ const SelectDays = () => {
   const datePickerRef = useRef(null);
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  //여행 추가
+  //api 여행 추가
   const postTrip = async () => {
     const startAt = dayjs(startDate).format("YYYY-MM-DD");
     const endAt = dayjs(endDate).format("YYYY-MM-DD");
@@ -82,6 +83,31 @@ const SelectDays = () => {
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+  // api 여행 스크랩
+  const postTripScrap = async () => {
+    const startAt = dayjs(startDate).format("YYYY-MM-DD");
+    const endAt = dayjs(endDate).format("YYYY-MM-DD");
+    const sendData = {
+      tripReviewId: locationData.tripReviewId,
+      // copyTripId: locationData.selectedLocationId,
+      copyTripId: locationData.tripId,
+      newStartAt: startAt,
+      newEndAt: endAt,
+    };
+    try {
+      const res = await jwtAxios.post(`/api/trip-review/scrap`, sendData);
+    } catch (error) {
+      console.log("여행 스크랩", error);
+    }
+  };
+  //일정 생성 버튼
+  const hanldeClickPostTrip = () => {
+    if (locationData.from === "/scheduleboard/scheduleDetail") {
+      postTripScrap();
+    } else {
+      postTrip();
     }
   };
   // 달력
@@ -236,7 +262,7 @@ const SelectDays = () => {
             <Button
               type="primary"
               className="h-[54px] px-[20px] py-[15px] rounded-lg text-[20px] font-semibold"
-              onClick={postTrip}
+              onClick={hanldeClickPostTrip}
             >
               일정 등록
             </Button>
