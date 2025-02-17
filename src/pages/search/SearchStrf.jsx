@@ -1,4 +1,4 @@
-import { Input } from "antd";
+import { Button, Checkbox, Form, Input } from "antd";
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
@@ -16,11 +16,12 @@ import { categoryKor } from "../../utils/match";
 import SearchCategoryList from "../../components/search/SearchCategoryList";
 import { LiaComment } from "react-icons/lia";
 import PulseLoader from "react-spinners/PulseLoader";
-import { strfArr } from "../../constants/dataArr";
+import { amenities, strfArr } from "../../constants/dataArr";
 import { moveTo } from "../../utils/moveTo";
 import { categoryArr, orderTypeArr } from "../../constants/search";
 
 const SearchStrf = () => {
+  const [form] = Form.useForm();
   //recoil
   const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
   const { userId } = useRecoilValue(userAtom);
@@ -30,10 +31,13 @@ const SearchStrf = () => {
   const topRef = useRef(null);
   //useNavigate
   const navigate = useNavigate();
-
+  const navigateToBack = () => {
+    navigate(-1);
+    setSearchValue("");
+  };
   //useState
   const [searchState, setSearchState] = useState(
-    searchRecoil.searchWord ? true : false,
+    searchRecoil.searchWord !== "" ? true : false,
   ); // 검색 상태
   const [searchValue, setSearchValue] = useState(searchRecoil.searchWord || ""); // 검색어
   const [searchData, setSearchData] = useState(searchRecoil.searchData || []); // 검색 결과
@@ -46,6 +50,9 @@ const SearchStrf = () => {
   const [orderType, setOrderType] = useState(0); // 정렬 타입
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [isSearchLoading, setIsSearchLoading] = useState(false); // 검색 로딩
+
+  // Form 초기값 상태 수정
+  const [amenityValues, setAmenityValues] = useState([]);
 
   // api 인기 검색어
   const getPopularWord = useCallback(async () => {
@@ -181,6 +188,9 @@ const SearchStrf = () => {
     // setSearchValue(word.strfName);
     navigate(`/contents/index?strfId=${word.strfId}`);
   }, []);
+  const handleClickClear = useCallback(() => {
+    setSearchValue("");
+  }, []);
   //모달 취소
   const handleClickCancle = () => {
     setIsModalOpen(false);
@@ -195,6 +205,11 @@ const SearchStrf = () => {
   const handleClickMore = () => {
     getCategorySearch();
   };
+  // 편의시설 필터 적용 함수 수정
+  const handleFinish = values => {
+    console.log("values", values.amenities);
+    setAmenityValues(values.amenities);
+  };
   //useEffect
   useEffect(() => {
     getPopularWord();
@@ -205,13 +220,16 @@ const SearchStrf = () => {
   }, []);
   useEffect(() => {
     console.log("searchValue", searchValue);
+    setSearchRecoil({ ...searchRecoil, searchWord: searchValue });
   }, [searchValue]);
   useEffect(() => {
     setSearchRecoil({ ...searchRecoil, lastIndex: lastIndex });
   }, [lastIndex]);
   useEffect(() => {
     setLastIndex(0);
-    getCategorySearch();
+    if (selectedCategory !== 0) {
+      getCategorySearch();
+    }
   }, [orderType, selectedCategory]);
   useEffect(() => {
     if (searchData.length > 0) {
@@ -227,7 +245,7 @@ const SearchStrf = () => {
         <div
           className="text-[36px] cursor-pointer"
           onClick={() => {
-            navigate(-1);
+            navigateToBack();
           }}
         >
           <IoIosArrowRoundBack />
@@ -239,10 +257,12 @@ const SearchStrf = () => {
             className="h-[60px] text-lg rounded-lg gap-[5px]"
             placeholder="관광지, 장소, 숙소,맛집을 검색해 보세요"
             allowClear
+            onClear={handleClickClear}
             prefix={<FiSearch className="text-slate-400 text-2xl" />}
             onChange={e => onChange(e)}
             onPressEnter={() => handleClickEnter()}
             variant="filled"
+            value={searchValue}
           />
         </label>
       </div>
@@ -276,7 +296,7 @@ const SearchStrf = () => {
               return (
                 <li
                   key={index}
-                  className={`cursor-pointer font-semibold text-[13px] w-full flex justify-center items-center px-[10px] py-[5px] gap-[10px] ${
+                  className={`cursor-pointer font-semibold text-[13px] flex items-center px-3 py-1  ${
                     index === orderType ? "text-primary" : "text-slate-500"
                   }`}
                   onClick={() => setOrderType(index)}
@@ -288,11 +308,34 @@ const SearchStrf = () => {
           </ul>
           {/* 편의시설 필터 */}
           {selectedCategory === 2 && (
-            <ul className="flex flex-wrap gap-[10px]">
-              {amenities.map((item, index) => {
-                return <li key={index}>{item.name}</li>;
-              })}
-            </ul>
+            <Form form={form} onFinish={handleFinish}>
+              <Form.Item
+                name="amenities"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 cursor-pointer"
+              >
+                <Checkbox.Group className="flex flex-wrap gap-2">
+                  {amenities.map((item, index) => {
+                    return (
+                      <Checkbox value={item.amenity_id} key={index}>
+                        <div className="flex justify-center items-center gap-2">
+                          <span className="text-[16px] text-slate-500">
+                            {item.icon}
+                          </span>
+                          <span className="text-[14px] text-slate-700">
+                            {item.key}
+                          </span>
+                        </div>
+                      </Checkbox>
+                    );
+                  })}
+                </Checkbox.Group>
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  적용
+                </Button>
+              </Form.Item>
+            </Form>
           )}
           {/* 검색 결과 */}
           {isSearchLoading ? (
@@ -315,7 +358,7 @@ const SearchStrf = () => {
                         title={item.name}
                         categoryData={item.data}
                         searchValue={searchValue}
-                        buttonClick={moveTo(topRef)}
+                        // buttonClick={moveTo(topRef)}
                       />
                     );
                   })}
@@ -323,7 +366,6 @@ const SearchStrf = () => {
               ),
               selectedCategory === 1 && (
                 <SearchCategoryList
-                  key={index}
                   title={categoryArr[1].name}
                   categoryData={searchData}
                   searchValue={searchValue}
@@ -332,7 +374,6 @@ const SearchStrf = () => {
               ),
               selectedCategory === 2 && (
                 <SearchCategoryList
-                  key={index}
                   title={categoryArr[2].name}
                   categoryData={searchData}
                   searchValue={searchValue}
@@ -341,7 +382,6 @@ const SearchStrf = () => {
               ),
               selectedCategory === 3 && (
                 <SearchCategoryList
-                  key={index}
                   title={categoryArr[3].name}
                   categoryData={searchData}
                   searchValue={searchValue}
@@ -350,7 +390,6 @@ const SearchStrf = () => {
               ),
               selectedCategory === 4 && (
                 <SearchCategoryList
-                  key={index}
                   title={categoryArr[4].name}
                   categoryData={searchData}
                   searchValue={searchValue}

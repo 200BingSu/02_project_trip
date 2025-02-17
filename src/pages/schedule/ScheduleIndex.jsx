@@ -9,7 +9,7 @@ import axios from "axios";
 import jwtAxios from "../../apis/jwt";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { userAtom } from "../../atoms/userAtom";
 import { getCookie } from "../../utils/cookie";
 import { Dropdown, Input } from "antd";

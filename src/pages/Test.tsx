@@ -1,7 +1,7 @@
-(window as any).global = window;
-
-import JwtChat from "../components/chat/jwtchat";
+import JwtChat from "../components/chat/Jwtchat";
 import StompChat from "../components/chat/StompChat";
+
+(window as any).global = window;
 
 const Test = () => {
   return (
