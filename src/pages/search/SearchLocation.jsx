@@ -24,7 +24,12 @@ const SearchLocation = () => {
     if (fromPage) {
       navigate(fromPage, { state: selectedLocationId });
     } else {
-      navigate(`/schedule/days`, { state: selectedLocationId });
+      navigate(`/schedule/days`, {
+        state: {
+          selectedLocationId: selectedLocationId,
+          title: selectedLocationId[0].title,
+        },
+      });
     }
   };
 

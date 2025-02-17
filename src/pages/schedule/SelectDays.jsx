@@ -39,7 +39,7 @@ const SelectDays = () => {
   const locationIdArr = locationData.selectedLocationId?.map((item, index) => {
     return item.locationId;
   });
-  // console.log(locationIdArr);
+  console.log(locationIdArr);
   const tripTitle = locationData?.title;
   // console.log(tripTitle);
   const navigateBack = () => {

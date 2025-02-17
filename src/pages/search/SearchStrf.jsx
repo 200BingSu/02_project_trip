@@ -24,7 +24,9 @@ const SearchStrf = () => {
   const [form] = Form.useForm();
   //recoil
   const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
-
+  useEffect(() => {
+    console.log("searchRecoil", searchRecoil);
+  }, [searchRecoil]);
   //쿠키
   const accessToken = getCookie("accessToken");
   const userId = getCookie("user").userId;
@@ -52,7 +54,9 @@ const SearchStrf = () => {
   const [popularWordList, setPopularWordList] = useState([]); // 인기 검색어
   const [recentContents, setRecentContents] = useState([]); // 최근 본 목록
   const [recentText, setRecentText] = useState([]); // 최근 검색어
-  const [selectedCategory, setSelectedCategory] = useState(0); // 선택된 카테고리
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchRecoil.category || 0,
+  ); // 선택된 카테고리
   const [orderType, setOrderType] = useState(0); // 정렬 타입
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [isSearchLoading, setIsSearchLoading] = useState(false); // 검색 로딩
@@ -148,7 +152,7 @@ const SearchStrf = () => {
         `/api/search/all?search_word=${word}`,
         sendData,
       );
-      console.log(res.data);
+      // console.log(res.data);
       const resultData = res.data;
       if (resultData) {
         setIsSearchLoading(true);
@@ -161,10 +165,10 @@ const SearchStrf = () => {
   }, []);
   // api 카테고리 검색
   const getCategorySearch = useCallback(async () => {
-    console.log(
-      `selectedCategory: ${selectedCategory}`,
-      categoryArr[selectedCategory].name,
-    );
+    // console.log(
+    //   `selectedCategory: ${selectedCategory}`,
+    //   categoryArr[selectedCategory].name,
+    // );
     try {
       // lastIndex를 직접 참조하는 대신 함수 파라미터로 받도록 수정
       const currentIndex = lastIndex;
@@ -173,9 +177,11 @@ const SearchStrf = () => {
           categoryArr[selectedCategory].name
         }&search_word=${searchValue}&order_type=${orderTypeArr[orderType].type}`,
       );
-      console.log("카테고리 검색", res.data);
+      // console.log("카테고리 검색", res.data);
       const resultData = res.data;
-
+      if (resultData) {
+        setIsSearchLoading(true);
+      }
       // 데이터가 있을 때만 lastIndex 증가
       if (resultData.data && resultData.data.length > 0) {
         setSearchData(prev =>
@@ -229,7 +235,9 @@ const SearchStrf = () => {
   const handleClickAllMore = cateNum => {
     moveTo(topRef);
     setSelectedCategory(cateNum);
+    setSearchRecoil({ ...searchRecoil, category: cateNum });
   };
+
   // 카테고리 검색 내 더보기
   const handleClickMore = () => {
     getCategorySearch();
@@ -248,7 +256,7 @@ const SearchStrf = () => {
     }
   }, []);
   useEffect(() => {
-    console.log("searchValue", searchValue);
+    // console.log("searchValue", searchValue);
     setSearchRecoil({ ...searchRecoil, searchWord: searchValue });
   }, [searchValue]);
   useEffect(() => {
@@ -270,7 +278,7 @@ const SearchStrf = () => {
     return () => clearTimeout(timer);
   }, [selectedCategory, orderType]);
   useEffect(() => {
-    console.log("searchData", searchData);
+    // console.log("searchData", searchData);
     if (searchData.length > 0) {
       setSearchRecoil({ ...searchRecoil, searchData: searchData });
     }
@@ -326,6 +334,7 @@ const SearchStrf = () => {
                   onClick={() => {
                     setLastIndex(0);
                     setSelectedCategory(index);
+                    setSearchRecoil({ ...searchRecoil, category: index });
                   }}
                 >
                   {item.name}
