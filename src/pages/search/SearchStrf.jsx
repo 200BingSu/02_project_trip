@@ -1,8 +1,8 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, FloatButton, Form, Input } from "antd";
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { IoIosArrowRoundBack } from "react-icons/io";
+import { IoIosArrowRoundBack, IoIosArrowUp } from "react-icons/io";
 import { RiCloseLargeFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -24,16 +24,22 @@ const SearchStrf = () => {
   const [form] = Form.useForm();
   //recoil
   const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
-  const { userId } = useRecoilValue(userAtom);
+
   //쿠키
   const accessToken = getCookie("accessToken");
+  const userId = getCookie("user").userId;
   //useRef
   const topRef = useRef(null);
   //useNavigate
   const navigate = useNavigate();
   const navigateToBack = () => {
     navigate(-1);
-    setSearchValue("");
+    setSearchRecoil({
+      ...searchRecoil,
+      searchWord: "",
+      searchData: [],
+      lastIndex: 0,
+    });
   };
   //useState
   const [searchState, setSearchState] = useState(
@@ -50,6 +56,7 @@ const SearchStrf = () => {
   const [orderType, setOrderType] = useState(0); // 정렬 타입
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [isSearchLoading, setIsSearchLoading] = useState(false); // 검색 로딩
+  const [isShowMore, setIsShowMore] = useState(true); // 더보기 상태
 
   // Form 초기값 상태 수정
   const [amenityValues, setAmenityValues] = useState([]);
@@ -65,10 +72,10 @@ const SearchStrf = () => {
       console.log("인기 검색어", error);
     }
   }, []);
-  // api 최근 검색 목록
+  // api 최근 본 목록
   const getBasicList = useCallback(async () => {
     try {
-      const res = await jwtAxios.get(`/api/search/basic?user_id=${userId}`);
+      const res = await jwtAxios.get(`/api/search/basic`);
       const resultData = res.data;
       // console.log("최근 본 검색 결과", resultData);
       setRecentContents(resultData.data);
@@ -133,18 +140,19 @@ const SearchStrf = () => {
     }
   }, []);
   // api 전체 검색
-  const postSearchAll = useCallback(async () => {
-    const sendData = { search_word: searchValue };
-    console.log("sendData", sendData);
+  const postSearchAll = useCallback(async word => {
+    const sendData = { search_word: word };
+    console.log("전체 검색", sendData);
     try {
       const res = await axios.post(
-        `/api/search/all?search_word=${searchValue}`,
+        `/api/search/all?search_word=${word}`,
         sendData,
       );
       console.log(res.data);
       const resultData = res.data;
       if (resultData) {
         setIsSearchLoading(true);
+        setSearchState(true);
       }
       setSearchData(resultData.data);
     } catch (error) {
@@ -153,22 +161,34 @@ const SearchStrf = () => {
   }, []);
   // api 카테고리 검색
   const getCategorySearch = useCallback(async () => {
+    console.log(
+      `selectedCategory: ${selectedCategory}`,
+      categoryArr[selectedCategory].name,
+    );
     try {
+      // lastIndex를 직접 참조하는 대신 함수 파라미터로 받도록 수정
+      const currentIndex = lastIndex;
       const res = await axios.get(
-        `/api/search/category?
-    last_index=${lastIndex}&
-    category=${categoryArr[selectedCategory].type}&
-    search_word=${searchValue}&
-    order_type=${orderTypeArr[orderType].type}`,
+        `/api/search/category?last_index=${currentIndex}&category=${
+          categoryArr[selectedCategory].name
+        }&search_word=${searchValue}&order_type=${orderTypeArr[orderType].type}`,
       );
       console.log("카테고리 검색", res.data);
       const resultData = res.data;
-      setSearchData([...searchData, ...resultData.data]);
-      setLastIndex(prev => prev + 10);
+
+      // 데이터가 있을 때만 lastIndex 증가
+      if (resultData.data && resultData.data.length > 0) {
+        setSearchData(prev =>
+          currentIndex === 0 ? resultData.data : [...prev, ...resultData.data],
+        );
+        setLastIndex(currentIndex + 10);
+      } else {
+        setIsShowMore(false);
+      }
     } catch (error) {
       console.log("카테고리 검색", error);
     }
-  }, []);
+  }, [selectedCategory, lastIndex, searchValue, orderType]);
   // 카테고리 별 데이터
   const tourData = searchData.filter(item => item.category === "TOUR");
   const stayData = searchData.filter(item => item.category === "STAY");
@@ -181,6 +201,8 @@ const SearchStrf = () => {
   // 최근 검색어 클릭
   const handleClickRecentText = useCallback(word => {
     console.log("클릭한 최근 검색어:", word);
+    setSearchValue(word.txt);
+    postSearchAll(word.txt);
   }, []);
   // 인기 검색어 클릭
   const handleClickPopularWord = useCallback(word => {
@@ -196,10 +218,17 @@ const SearchStrf = () => {
     setIsModalOpen(false);
   };
   // 검색 엔터
-  const handleClickEnter = () => {
-    postSearchAll(searchValue);
+  const handleClickEnter = e => {
+    if (!searchValue.trim()) return; // 빈 검색어 체크
+    setIsSearchLoading(false); // 로딩 상태 초기화
+    postSearchAll(e.target.value);
     setSearchRecoil({ ...searchRecoil, searchWord: searchValue });
     setSearchState(true);
+  };
+  // 전체보기에서 더보기 클릭
+  const handleClickAllMore = cateNum => {
+    moveTo(topRef);
+    setSelectedCategory(cateNum);
   };
   // 카테고리 검색 내 더보기
   const handleClickMore = () => {
@@ -223,15 +252,25 @@ const SearchStrf = () => {
     setSearchRecoil({ ...searchRecoil, searchWord: searchValue });
   }, [searchValue]);
   useEffect(() => {
-    setSearchRecoil({ ...searchRecoil, lastIndex: lastIndex });
-  }, [lastIndex]);
-  useEffect(() => {
+    // 카테고리 변경 시 상태 초기화를 즉시 실행
     setLastIndex(0);
-    if (selectedCategory !== 0) {
-      getCategorySearch();
-    }
-  }, [orderType, selectedCategory]);
+    setSearchData([]);
+    setIsShowMore(true);
+    setSearchRecoil(prev => ({ ...prev, lastIndex: 0, searchData: [] }));
+
+    // 약간의 지연 후 검색 실행
+    const timer = setTimeout(() => {
+      if (selectedCategory !== 0) {
+        getCategorySearch();
+      } else {
+        postSearchAll(searchValue);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [selectedCategory, orderType]);
   useEffect(() => {
+    console.log("searchData", searchData);
     if (searchData.length > 0) {
       setSearchRecoil({ ...searchRecoil, searchData: searchData });
     }
@@ -240,7 +279,10 @@ const SearchStrf = () => {
   return (
     <div className="w-full flex flex-col gap-[30px] mb-[100px]">
       {/* 상단 */}
-      <div className="w-full px-[32px] py-[30px] flex items-center gap-[40px] relative">
+      <div
+        className="w-full px-[32px] py-[30px] flex items-center gap-[40px] relative"
+        ref={topRef}
+      >
         {/* 뒤로가기 */}
         <div
           className="text-[36px] cursor-pointer"
@@ -259,8 +301,8 @@ const SearchStrf = () => {
             allowClear
             onClear={handleClickClear}
             prefix={<FiSearch className="text-slate-400 text-2xl" />}
-            onChange={e => onChange(e)}
-            onPressEnter={() => handleClickEnter()}
+            onChange={onChange}
+            onPressEnter={e => handleClickEnter(e)}
             variant="filled"
             value={searchValue}
           />
@@ -271,7 +313,7 @@ const SearchStrf = () => {
       {searchState ? (
         <div className="px-[32px] py-[30px] flex flex-col gap-[30px] min-h-screen">
           {/* 카테고리 */}
-          <ul className="flex justify-between items-center" ref={topRef}>
+          <ul className="flex justify-between items-center">
             {categoryArr.map((item, index) => {
               return (
                 <li
@@ -282,6 +324,7 @@ const SearchStrf = () => {
                       : "bg-white text-slate-500"
                   }`}
                   onClick={() => {
+                    setLastIndex(0);
                     setSelectedCategory(index);
                   }}
                 >
@@ -291,21 +334,27 @@ const SearchStrf = () => {
             })}
           </ul>
           {/* 정렬 방식 */}
-          <ul className="flex items-center">
-            {orderTypeArr.map((item, index) => {
-              return (
-                <li
-                  key={index}
-                  className={`cursor-pointer font-semibold text-[13px] flex items-center px-3 py-1  ${
-                    index === orderType ? "text-primary" : "text-slate-500"
-                  }`}
-                  onClick={() => setOrderType(index)}
-                >
-                  {item.name}
-                </li>
-              );
-            })}
-          </ul>
+          {selectedCategory !== 0 && (
+            <ul className="flex items-center">
+              {orderTypeArr.map((item, index) => {
+                return (
+                  <li
+                    key={index}
+                    className={`cursor-pointer font-semibold text-[13px] flex items-center px-3 py-1  ${
+                      index === orderType ? "text-primary" : "text-slate-500"
+                    }`}
+                    onClick={() => {
+                      setOrderType(index);
+                      setLastIndex(0);
+                    }}
+                  >
+                    {item.name}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+
           {/* 편의시설 필터 */}
           {selectedCategory === 2 && (
             <Form form={form} onFinish={handleFinish}>
@@ -349,53 +398,80 @@ const SearchStrf = () => {
                 </p>
               </div>
             ) : (
-              (selectedCategory === 0 && (
-                <div className="flex flex-col gap-[30px]">
-                  {categoryArr.slice(1).map((item, index) => {
-                    return (
-                      <SearchCategoryList
-                        key={index}
-                        title={item.name}
-                        categoryData={item.data}
-                        searchValue={searchValue}
-                        // buttonClick={moveTo(topRef)}
-                      />
-                    );
-                  })}
-                </div>
-              ),
-              selectedCategory === 1 && (
-                <SearchCategoryList
-                  title={categoryArr[1].name}
-                  categoryData={searchData}
-                  searchValue={searchValue}
-                  buttonClick={handleClickMore}
-                />
-              ),
-              selectedCategory === 2 && (
-                <SearchCategoryList
-                  title={categoryArr[2].name}
-                  categoryData={searchData}
-                  searchValue={searchValue}
-                  buttonClick={handleClickMore}
-                />
-              ),
-              selectedCategory === 3 && (
-                <SearchCategoryList
-                  title={categoryArr[3].name}
-                  categoryData={searchData}
-                  searchValue={searchValue}
-                  buttonClick={handleClickMore}
-                />
-              ),
-              selectedCategory === 4 && (
-                <SearchCategoryList
-                  title={categoryArr[4].name}
-                  categoryData={searchData}
-                  searchValue={searchValue}
-                  buttonClick={handleClickMore}
-                />
-              ))
+              <>
+                {selectedCategory === 0 && (
+                  <div className="flex flex-col gap-[30px]">
+                    <SearchCategoryList
+                      title={categoryArr[1].name}
+                      categoryData={tourData}
+                      searchValue={searchValue}
+                      buttonClick={() => {
+                        handleClickAllMore(1);
+                      }}
+                    />
+                    <SearchCategoryList
+                      title={categoryArr[2].name}
+                      categoryData={stayData}
+                      searchValue={searchValue}
+                      buttonClick={() => {
+                        handleClickAllMore(2);
+                      }}
+                    />
+                    <SearchCategoryList
+                      title={categoryArr[3].name}
+                      categoryData={restaurData}
+                      searchValue={searchValue}
+                      buttonClick={() => {
+                        handleClickAllMore(3);
+                      }}
+                    />
+                    <SearchCategoryList
+                      title={categoryArr[4].name}
+                      categoryData={festData}
+                      searchValue={searchValue}
+                      buttonClick={() => {
+                        handleClickAllMore(4);
+                      }}
+                    />
+                  </div>
+                )}
+                {selectedCategory === 1 && (
+                  <SearchCategoryList
+                    title={categoryArr[1].name}
+                    categoryData={searchData}
+                    searchValue={searchValue}
+                    buttonClick={handleClickMore}
+                    showMore={isShowMore}
+                  />
+                )}
+                {selectedCategory === 2 && (
+                  <SearchCategoryList
+                    title={categoryArr[2].name}
+                    categoryData={searchData}
+                    searchValue={searchValue}
+                    buttonClick={handleClickMore}
+                    showMore={isShowMore}
+                  />
+                )}
+                {selectedCategory === 3 && (
+                  <SearchCategoryList
+                    title={categoryArr[3].name}
+                    categoryData={searchData}
+                    searchValue={searchValue}
+                    buttonClick={handleClickMore}
+                    showMore={isShowMore}
+                  />
+                )}
+                {selectedCategory === 4 && (
+                  <SearchCategoryList
+                    title={categoryArr[4].name}
+                    categoryData={searchData}
+                    searchValue={searchValue}
+                    buttonClick={handleClickMore}
+                    showMore={isShowMore}
+                  />
+                )}
+              </>
             )
           ) : (
             <div className="flex justify-center items-center h-[50vh]">
