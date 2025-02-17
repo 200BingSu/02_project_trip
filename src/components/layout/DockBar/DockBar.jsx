@@ -5,10 +5,11 @@ import { FiSearch } from "react-icons/fi";
 import { IoLogoWechat, IoReaderOutline } from "react-icons/io5";
 import { RiMapPinUserFill } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
 import { LuMapPinned } from "react-icons/lu";
 import { getCookie } from "../../../utils/cookie";
+import { searchAtom } from "../../../atoms/searchAtom";
 
 const DockBar = React.memo(() => {
   // 채팅 구현 안되서 띄우는 모달창
@@ -17,6 +18,7 @@ const DockBar = React.memo(() => {
   const accessToken = getCookie("accessToken");
   //recoil
   const { userId } = useRecoilValue(userAtom);
+  const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
   //useNavigate
   const navigate = useNavigate();
   //antD
@@ -64,6 +66,9 @@ const DockBar = React.memo(() => {
         <Link
           to="/"
           className="bg-primary text-white w-[102px] h-[102px] rounded-full flex flex-col justify-center items-center gap-1.5 relative bottom-5"
+          onClick={() => {
+            setSearchRecoil({ ...searchRecoil, searchWord: "" });
+          }}
         >
           <BsFillPatchPlusFill className="text-4xl" />홈
         </Link>

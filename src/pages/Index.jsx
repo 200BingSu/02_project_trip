@@ -15,6 +15,7 @@ import RecommendList from "../components/main/RecommendList";
 import { getCookie, removeCookie } from "../utils/cookie";
 import Footer from "./Footer";
 import UserIndex from "./user/UserIndex";
+import jwtAxios from "../apis/jwt";
 
 const Index = () => {
   // 쿠키
@@ -28,11 +29,12 @@ const Index = () => {
 
   const getMainList = async () => {
     try {
-      const res = await axios.get(`/api/home`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      let res;
+      if (accessToken) {
+        res = await jwtAxios.get(`/api/home`);
+      } else {
+        res = await axios.get(`/api/home`);
+      }
       console.log("메인", res.data.data);
       const { festivalList, locationList, recentList, recommendList } =
         res.data.data;

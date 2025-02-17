@@ -14,6 +14,7 @@ const usertrouter = () => {
   const LazyUserCoupon = lazy(() => import("../pages/user/UserCoupon"));
   const LazyUserTrip = lazy(() => import("../pages/user/UserTrip"));
   const LazyFindPw = lazy(() => import("../pages/user/FindPw"));
+  const LazyChangePw = lazy(() => import("../pages/user/ChangePw"));
 
   return [
     // {
@@ -93,6 +94,14 @@ const usertrouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazyFindPw />
+        </Suspense>
+      ),
+    },
+    {
+      path: "changepw",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyChangePw />
         </Suspense>
       ),
     },

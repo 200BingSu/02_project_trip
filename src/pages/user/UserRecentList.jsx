@@ -5,13 +5,13 @@ import { IoCloseSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
-import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import { Button, Modal, Rate } from "antd";
 import { LiaComment } from "react-icons/lia";
 import Footer from "../Footer";
 import "../../styles/antd-styles.css";
+import TitleHeader from "../../components/layout/header/TitleHeader";
 
 const UserRecentList = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);

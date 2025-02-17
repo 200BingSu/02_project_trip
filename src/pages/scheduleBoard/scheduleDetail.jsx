@@ -17,15 +17,16 @@ import jwtAxios from "../../apis/jwt";
 import SelectTrip from "../../components/scheduleboard/SelectTrip";
 import Loading from "../../components/loading/Loading";
 import { useRecoilValue } from "recoil";
+import { userAtom } from "../../atoms/userAtom";
 
 const ScheduleDetail = () => {
   const accessToken = getCookie("accessToken");
   //recoil
-  const { userId } = useRecoilValue(userInfoState);
+  const { userId } = useRecoilValue(userAtom);
   // 쿼리스트링
   const [searchParams] = useSearchParams();
-  const tripId = searchParams.get("tripId");
-  const TripReviewId = searchParams.get("TripReviewId");
+  const tripId = parseInt(searchParams.get("tripId"));
+  const tripReviewId = parseInt(searchParams.get("TripReviewId"));
   //useNavigate
   const navigate = useNavigate();
   const handleNavigateBack = () => {
@@ -42,9 +43,9 @@ const ScheduleDetail = () => {
   const getOtherTripReview = async () => {
     try {
       const res = await axios.get(
-        `/api/trip-review/otherTripReview?tripReviewId=${TripReviewId}`,
+        `/api/trip-review/otherTripReview?tripReviewId=${tripReviewId}`,
       );
-      // console.log("다른 사람 여행기 조회", res.data);
+      console.log("다른 사람 여행기 조회", res.data);
       const resultData = res.data;
       setTripReviewData(resultData.data);
       if (resultData) {
@@ -72,13 +73,13 @@ const ScheduleDetail = () => {
   const postTripReviewLike = async () => {
     const sendData = {
       userId: userId,
-      tripReviewId: TripReviewId,
+      tripReviewId: tripReviewId,
     };
     try {
       const res = await jwtAxios.post(`/api/trip-review/like`, sendData);
       console.log("여행기 추천", res.data);
       const resultData = res.data;
-      if (resultData.status === 200) {
+      if (resultData.code === "200 성공") {
         getOtherTripReview();
       }
     } catch (error) {
@@ -89,7 +90,7 @@ const ScheduleDetail = () => {
   const deleteTripReviewLike = async () => {
     const sendData = {
       userId: userId,
-      tripReviewId: TripReviewId,
+      tripReviewId: tripReviewId,
     };
     try {
       const res = await jwtAxios.delete(`/api/trip-review/like`, sendData);
@@ -127,7 +128,7 @@ const ScheduleDetail = () => {
               slidesPerView={1}
               spaceBetween={0}
               loop={true}
-              className="mySwiper w-full h-[406px] px-[32px] overflow-hidden"
+              className="mySwiper w-full h-[406px] overflow-hidden"
             >
               {tripReviewData.length > 0
                 ? tripReviewData[0]?.tripReviewPics?.map((item, index) => {
@@ -161,7 +162,7 @@ const ScheduleDetail = () => {
                       {tripReviewData[0]?.recentCount}
                     </p>
                   </li>
-                  <li className="flex gap-[5px] items-center">
+                  <li className="flex gap-[5px] items-center cursor-pointer">
                     <GoThumbsup
                       className={`text-slate-300 text-[18px] focus:text-secondary3 transition-all duration-300`}
                     />
@@ -186,6 +187,21 @@ const ScheduleDetail = () => {
             <div>
               <p>{tripReviewData[0]?.content}</p>
             </div>
+            {/* 좋아요 버튼 */}
+            <div className="flex justify-center">
+              <button
+                type="button"
+                className={`w-[50px] h-[50px] flex items-center justify-center
+                   bg-slate-100 rounded-full 
+                   text-slate-300 text-[20px] hover:text-secondary3
+                   transition-all duration-300`}
+                onClick={() => {
+                  postTripReviewLike();
+                }}
+              >
+                <GoThumbsup />
+              </button>
+            </div>
           </div>
           {/* 일정 */}
           <div>
@@ -205,6 +221,7 @@ const ScheduleDetail = () => {
           {/* 버튼 */}
           <div className="px-[32px] mb-[30px]">
             <Button
+              type="primary"
               variant="filled"
               className="flex gap-[10px] py-[10px] h-auto w-full"
               onClick={() => setOpenSelectTripModal(true)}
@@ -222,6 +239,7 @@ const ScheduleDetail = () => {
               openSelectTripModal={openSelectTripModal}
               setOpenSelectTripModal={setOpenSelectTripModal}
               tripLocationList={tripData?.tripLocationList}
+              tripReviewId={tripReviewId}
             />
           )}
         </>
