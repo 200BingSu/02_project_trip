@@ -1,5 +1,5 @@
 import { message, Modal } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BsFillPatchPlusFill } from "react-icons/bs";
 import { FiSearch } from "react-icons/fi";
 import { IoLogoWechat, IoReaderOutline } from "react-icons/io5";
@@ -10,6 +10,7 @@ import { userAtom } from "../../../atoms/userAtom";
 import { LuMapPinned } from "react-icons/lu";
 import { getCookie } from "../../../utils/cookie";
 import { searchAtom } from "../../../atoms/searchAtom";
+import { IoIosArrowUp } from "react-icons/io";
 
 const DockBar = React.memo(() => {
   // 채팅 구현 안되서 띄우는 모달창
@@ -23,6 +24,17 @@ const DockBar = React.memo(() => {
   const navigate = useNavigate();
   //antD
   const [messageApi, contextHolder] = message.useMessage();
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollButton(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const info = () => {
     console.log("info 작동");
     messageApi.open({
@@ -38,6 +50,12 @@ const DockBar = React.memo(() => {
     message.error("현재 지원되는 서비스가 아닙니다.");
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
   return (
     <div>
       <div className="flex max-w-3xl w-full h-[100px] fixed bottom-0 left-1/2 -translate-x-1/2 bg-white z-50 shadow-[0px_-4px_8px_0px_rgba(99,99,99,0.05)]">
@@ -67,7 +85,11 @@ const DockBar = React.memo(() => {
           to="/"
           className="bg-primary text-white w-[102px] h-[102px] rounded-full flex flex-col justify-center items-center gap-1.5 relative bottom-5"
           onClick={() => {
-            setSearchRecoil({ ...searchRecoil, searchWord: "" });
+            setSearchRecoil({
+              ...searchRecoil,
+              searchWord: "",
+              searchData: [],
+            });
           }}
         >
           <BsFillPatchPlusFill className="text-4xl" />홈
@@ -87,6 +109,19 @@ const DockBar = React.memo(() => {
           <IoLogoWechat className="text-4xl" />
           챗봇
         </Link>
+        <div
+          className={`absolute bottom-[120px] right-0 -translate-x-1/2 transition-all duration-300 ${
+            showScrollButton ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
+        >
+          <button
+            type="button"
+            className="bg-primary text-white rounded-full p-[10px] text-[24px] shadow-lg hover:bg-primary/90 transition-colors"
+            onClick={scrollToTop}
+          >
+            <IoIosArrowUp />
+          </button>
+        </div>
       </div>
     </div>
   );
