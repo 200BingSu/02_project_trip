@@ -2,11 +2,12 @@ import { Button } from "antd";
 import React, { useEffect, useState } from "react";
 import jwtAxios from "../../apis/jwt";
 import { LocationPic } from "../../constants/pic";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 const SelectTrip = ({
   openSelectTripModal,
   setOpenSelectTripModal,
   tripLocationList,
+  tripReviewId,
 }) => {
   //useNavigate
   const navigate = useNavigate();
@@ -14,10 +15,14 @@ const SelectTrip = ({
     navigate(`/schedule/days`, {
       state: {
         selectedLocationId: tripLocationList,
+        tripReviewId: tripReviewId,
         tripId: selectedTripData.tripId,
+        title: selectedTripData.title,
+        from: "/scheduleboard/scheduleDetail",
       },
     });
   };
+
   //useState
   const [tripListData, setTripListData] = useState([]);
   const [selectedTrip, setSelectedTrip] = useState(null);
@@ -26,6 +31,9 @@ const SelectTrip = ({
   useEffect(() => {
     console.log("tripListData", tripListData);
   }, [tripListData]);
+  useEffect(() => {
+    console.log("selectedTripData", selectedTripData);
+  }, [selectedTripData]);
 
   // 여행 목록 불러오기
   const getTripList = async () => {
@@ -63,6 +71,7 @@ const SelectTrip = ({
             max-w-3xl w-full mx-auto h-screen
             flex items-end justify-center
             bg-[rgba(0,0,0,0.5)]
+            pb-[70px]
             "
       onClick={() => {
         handleBackgroundClick();

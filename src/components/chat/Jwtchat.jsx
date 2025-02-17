@@ -1,9 +1,9 @@
 import { Input } from "antd";
 import React, { useEffect, useState } from "react";
 
-const JwtChat: React.FC = () => {
-  const [ws, setWs] = useState<WebSocket | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
+const JwtChat = () => {
+  const [ws, setWs] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const userId = "user123"; // 로그인된 사용자 ID (실제 환경에서는 인증 시스템에서 가져옴)
   const recipientId = "user456"; // 메시지를 받을 대상

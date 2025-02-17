@@ -237,10 +237,19 @@ const UserIndex = ({ isOpen, onClose }) => {
             공지사항
           </Link>
           <Link to="" className="flex text-lg text-slate-500 py-5">
-            자주 묻는 질문
+            FAQ
           </Link>
           <Link to="" className="flex  text-lg text-slate-500 py-5">
             고객센터
+          </Link>
+          <Link to="" className="flex  text-lg text-slate-500 py-5">
+            1:1 문의하기
+          </Link>
+          <Link
+            to="/user/changepw"
+            className="flex  text-lg text-slate-500 py-5"
+          >
+            비밀번호 변경
           </Link>
           {accessToken && (
             <button

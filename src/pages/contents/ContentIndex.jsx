@@ -58,7 +58,7 @@ import PathModal from "../../components/schedule/PathModal";
 
 import { ProductPic } from "../../constants/pic";
 import { GiPillow } from "react-icons/gi";
-import { categoryKor } from "../../utils/match";
+import { categoryKor, matchAmenitiesIcon } from "../../utils/match";
 import Loading from "../../components/loading/Loading";
 import { moveTo } from "../../utils/moveTo";
 
@@ -92,6 +92,9 @@ const ContentIndex = () => {
   }, [trip]);
   // useNavigate
   const navigate = useNavigate();
+  const navigateToBack = () => {
+    navigate(-1);
+  };
   const navigatePostReview = () => {
     navigate(`/contents/postreview?strfId=${strfId}`, { state: contentData });
   };
@@ -199,16 +202,10 @@ const ContentIndex = () => {
 
   // 상품 조회(비회원)
   const getDetailGuest = async () => {
-    const sendData = {
-      strf_id: strfId,
-    };
     try {
-      const res = await axios.get(
-        `/api/detail/member/non?strf_id=${strfId}`,
-        sendData,
-      );
+      const res = await axios.get(`/api/detail/member/non?strf_id=${strfId}`);
       const resultData = res.data.data;
-      console.log("resultData", resultData);
+      console.log("상품조회-비회원", resultData);
 
       setContentData(resultData);
       if (res.data.code === "200 성공") {
@@ -216,7 +213,7 @@ const ContentIndex = () => {
         getPathList();
       }
     } catch (error) {
-      console.log("상품조회", error);
+      console.log("상품조회-비회원", error);
     }
   };
   // 상품조회(회원)
@@ -252,12 +249,13 @@ const ContentIndex = () => {
   };
 
   useEffect(() => {
-    if (accessToken) {
+    // accessToken 상태를 콘솔에 출력하여 디버깅
+    // console.log("accessToken status:", !!accessToken);
+
+    if (accessToken && accessToken !== "undefined") {
       getDetailMember();
-      // getReview();
     } else {
       getDetailGuest();
-      // getReview();
     }
   }, []);
 
@@ -392,7 +390,7 @@ const ContentIndex = () => {
             />
             {/* 편의 시설 및 서비스 */}
             {contentData?.category === "STAY" && (
-              <div className="flex flex-col gap-[30px]">
+              <div className="flex flex-col">
                 <div className="flex flex-col gap-[20px]">
                   <div className="flex gap-[5px] items-center justify-between">
                     <h2 className="text-[28px] font-semibold">
@@ -407,18 +405,20 @@ const ContentIndex = () => {
                     </button>
                   </div>
                   {/* 편의시설 리스트 */}
-                  <ul className="flex flex-wrap gap-auto vertical-gap-[20px]">
+                  <ul className="flex flex-wrap w-full">
                     {contentData ? (
                       contentData.amenities.map((item, index) => {
                         return (
                           <li
-                            className="flex flex-col gap-[10px] items-center"
+                            className="flex flex-col gap-[10px] items-center w-[117px] min-w-[117px] h-[102px]"
                             key={index}
                           >
-                            <div className="text-[24px] w-[24px] h-[24px]">
-                              {matchAmenitiesIcon(item)}
+                            <div className="text-[24px] text-slate-700">
+                              {matchAmenitiesIcon(item.amenityId)}
                             </div>
-                            <p className="text-slate-700">{item}</p>
+                            <p className="text-slate-700">
+                              {item.amenityTitle}
+                            </p>
                           </li>
                         );
                       })
