@@ -24,10 +24,40 @@ const ChangePw = () => {
     <div>
       <h1>비밀번호 변경</h1>
       <Form form={form} requiredMark={false} onFinish={onFinish}>
-        <Form.Item name="pw" label="비밀번호">
+        <Form.Item
+          name="pw"
+          label="비밀번호"
+          rules={[
+            {
+              required: true,
+              message: "비밀번호는 필수 입력 항목입니다.",
+            },
+            {
+              pattern:
+                /^(?=.*[A-Za-z])(?=.*[\d~!@#$%^&*()_+=])[A-Za-z\d~!@#$%^&*()_+=]{8,20}$/,
+              message:
+                "비밀번호는 반드시 8-20자 이내 숫자, 특수문자(), 영문자 중 2가지 이상을 조합하셔야 합니다",
+            },
+          ]}
+        >
           <Input.Password />
         </Form.Item>
-        <Form.Item name="newPw" label="새 비밀번호">
+        <Form.Item
+          name="newPw"
+          label="새 비밀번호"
+          rules={[
+            {
+              required: true,
+              message: "새로운 비밀번호를 입력해주세요.",
+            },
+            {
+              pattern:
+                /^(?=.*[A-Za-z])(?=.*[\d~!@#$%^&*()_+=])[A-Za-z\d~!@#$%^&*()_+=]{8,20}$/,
+              message:
+                "비밀번호는 반드시 8-20자 이내 숫자, 특수문자(), 영문자 중 2가지 이상을 조합하셔야 합니다",
+            },
+          ]}
+        >
           <Input.Password />
         </Form.Item>
         <Form.Item>

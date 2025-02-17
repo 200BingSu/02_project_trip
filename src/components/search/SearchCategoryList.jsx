@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { moveTo } from "../../utils/moveTo";
 
 const SearchCategoryList = ({
+  showMore = true,
   title,
   categoryData,
   searchValue,
