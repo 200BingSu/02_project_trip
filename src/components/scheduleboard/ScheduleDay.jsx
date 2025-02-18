@@ -216,14 +216,11 @@ const ScheduleDay = ({
       seq: lastSeq + 1,
       content: content,
     };
+    console.log("accessToken", accessToken ? true : false);
     console.log("메모 데이터", sendData);
     try {
-      const res = await axios.post(`/api/memo/post`, sendData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      // console.log("메모 추가", res.data);
+      const res = await jwtAxios.post(`/api/memo/post`, sendData);
+      console.log("메모 추가", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
         getTrip();
