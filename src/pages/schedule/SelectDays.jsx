@@ -67,12 +67,8 @@ const SelectDays = () => {
     };
     console.log("sendData", sendData);
     try {
-      const res = await axios.post(`${TRIP.postTrip}`, sendData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      console.log("일정 등록", res.data);
+      const res = await jwtAxios.post(`${TRIP.postTrip}`, sendData);
+      console.log("여행 생성", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
         const newTripId = resultData.data.trip_id;
@@ -82,7 +78,7 @@ const SelectDays = () => {
         navigateScheduleIndex(newTripId);
       }
     } catch (error) {
-      console.log(error);
+      console.log("여행 생성 실패", error);
     }
   };
   // api 여행 스크랩

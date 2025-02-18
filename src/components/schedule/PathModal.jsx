@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { matchPathTypeIcon } from "../../utils/match";
 
 const PathModal = ({
+  pathCode,
   pathData,
   setPathData,
   contentData,
@@ -175,48 +176,61 @@ const PathModal = ({
           </li>
         </ul>
         {/* 교통 수단 */}
-        <ul
-          className="flex flex-col px-[10px] py-[20px] gap-[30px]
+        {pathCode === "400 거리가 너무 가깝거나 잘못된 값입니다." && (
+          <div
+            className={`flex gap-[20px] items-center 
+                          px-[20px] py-[10px]
+                          text-slate-700
+                            rounded-lg`}
+          >
+            {pathCode}
+          </div>
+        )}
+        {pathCode === "200 성공" && (
+          <ul
+            className="flex flex-col px-[10px] py-[20px] gap-[30px]
               max-h-[30vh] overflow-y-auto"
-        >
-          {pathData?.map((item, index) => {
-            return (
-              <li
-                className={`flex gap-[20px] items-center 
+          >
+            {pathData?.map((item, index) => {
+              return (
+                <li
+                  className={`flex gap-[20px] items-center 
                           px-[20px] py-[10px]
                           hover:bg-slate-50 cursor-pointer
                             rounded-lg
                             ${index === nowSelected ? "bg-slate-100" : "bg-white"}`}
-                onClick={() => {
-                  handleClickList(item);
-                  setNowSelected(index);
-                }}
-                key={index}
-              >
-                {/* 좌 */}
-                <div className="text-[30px] text-slate-400">
-                  {matchPathTypeIcon(item.pathType)}
-                </div>
-                {/* 우 */}
-                <ul className="flex gap-[10px] items-center">
-                  <li className="text-slate-700 text-[24px] font-semibold">
-                    {item.totalTime > 60
-                      ? formatMinutes(item.totalTime)
-                      : `${item.totalTime}분`}
-                  </li>
-                  <li className="text-slate-700 text-[16px] font-semibold">
-                    {item.payment.toLocaleString()}원
-                  </li>
-                  <li className="font-medium text-[14px] text-slate-400">
-                    {item.totalDistance > 1000
-                      ? `${(item.totalDistance / 1000).toFixed(2)}km`
-                      : `${item.totalDistance}m`}
-                  </li>
-                </ul>
-              </li>
-            );
-          })}
-        </ul>
+                  onClick={() => {
+                    handleClickList(item);
+                    setNowSelected(index);
+                  }}
+                  key={index}
+                >
+                  {/* 좌 */}
+                  <div className="text-[30px] text-slate-400">
+                    {matchPathTypeIcon(item.pathType)}
+                  </div>
+                  {/* 우 */}
+                  <ul className="flex gap-[10px] items-center">
+                    <li className="text-slate-700 text-[24px] font-semibold">
+                      {item.totalTime > 60
+                        ? formatMinutes(item.totalTime)
+                        : `${item.totalTime}분`}
+                    </li>
+                    <li className="text-slate-700 text-[16px] font-semibold">
+                      {item.payment.toLocaleString()}원
+                    </li>
+                    <li className="font-medium text-[14px] text-slate-400">
+                      {item.totalDistance > 1000
+                        ? `${(item.totalDistance / 1000).toFixed(2)}km`
+                        : `${item.totalDistance}m`}
+                    </li>
+                  </ul>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
         {/* 완료 */}
         <Button
           type="primary"

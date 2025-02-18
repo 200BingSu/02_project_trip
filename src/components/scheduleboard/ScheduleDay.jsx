@@ -1,5 +1,5 @@
 import { Rate } from "antd";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { AiTwotoneHeart } from "react-icons/ai";
 import { BiNavigation, BiSolidBus, BiSolidTrain } from "react-icons/bi";
 import { BsQuestionLg } from "react-icons/bs";
@@ -72,6 +72,8 @@ const ScheduleDay = ({
   index,
   date,
   readOnly = false,
+  isDragging,
+  setIsDragging,
 }) => {
   //recoil
   const [trip, setTrip] = useRecoilState(tripAtom);
@@ -353,16 +355,39 @@ const ScheduleDay = ({
 
       <div className="flex flex-col gap-[20px] px-[32px]">
         {/* Day, 날짜, 날씨 */}
-        <div className="flex gap-[10px] items-center">
-          <h3
-            className={`font-work-sans text-[24px] font-bold ${dayTextColor(data.day || index + 1)} `}
-          >
-            Day {data.day || index + 1}
-          </h3>
-          <span className="text-[18px] text-slate-700">{date}</span>
-          <div className="w-[30px] h-[30px] flex items-center justify-center text-[30px]">
-            {matchWeatherIcon(data?.weather)}
+        <div className="flex items-center justify-between">
+          <div className="flex gap-[10px] items-center">
+            <h3
+              className={`font-work-sans text-[24px] font-bold ${dayTextColor(data.day || index + 1)} `}
+            >
+              Day {data.day || index + 1}
+            </h3>
+            <span className="text-[18px] text-slate-700">{date}</span>
+            <div className="w-[30px] h-[30px] flex items-center justify-center text-[30px]">
+              {matchWeatherIcon(data?.weather)}
+            </div>
           </div>
+          {data.day === 1 && (
+            <div>
+              {isDragging ? (
+                <button
+                  type="button"
+                  className={`text-[18px] leading-none border-b text-primary border-primary`}
+                  onClick={() => setIsDragging(false)}
+                >
+                  완료
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className={`text-[18px] leading-none border-b text-slate-700 border-slate-700`}
+                  onClick={() => setIsDragging(true)}
+                >
+                  편집
+                </button>
+              )}
+            </div>
+          )}
         </div>
         {/* 일정 목록 */}
         <ul className="relative flex flex-col gap-[30px]">
@@ -515,13 +540,18 @@ const SortableScheduleItem = ({
     scheItem => scheItem.scheduleMemoId === item.scheduleMemoId,
   );
 
+  // 메모 메뉴 버튼 클릭 핸들러
+  const handleMemoMenuClick = (e, item) => {
+    e.stopPropagation(); // 이벤트 전파 중단
+    handleClickMemoMenu(item);
+  };
+
   return (
     <li
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+      {...(item.scheOrMemo === "SCHE" ? { ...attributes, ...listeners } : {})}
+      className={`${item.scheOrMemo === "SCHE" && isDragging ? "cursor-grabbing" : item.scheOrMemo === "SCHE" ? "cursor-grab" : ""}`}
     >
       <div className="flex flex-col gap-[30px] justify-center">
         {item.scheOrMemo === "SCHE" ? (
@@ -613,9 +643,8 @@ const SortableScheduleItem = ({
 
               <button
                 type="button"
-                onClick={() => {
-                  handleClickMemoMenu(item);
-                }}
+                onClick={e => handleMemoMenuClick(e, item)}
+                className="z-10" // 높은 z-index 추가
               >
                 <CgMoreVerticalAlt className="text-slate-300 text-[30px]" />
               </button>
@@ -658,4 +687,4 @@ const SortableScheduleItem = ({
   );
 };
 
-export default ScheduleDay;
+export default memo(ScheduleDay);
