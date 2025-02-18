@@ -15,7 +15,7 @@ const SearchCategoryList = ({
 }) => {
   //navigate
   const navigate = useNavigate();
-
+//
   // 목록 클릭
   const handleClickList = item => {
     // setSearch({ ...search, searchWord: searchValue });
