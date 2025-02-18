@@ -8,6 +8,8 @@ import { ProductPic } from "../../constants/pic";
 
 import { AiFillHeart, AiTwotoneHeart } from "react-icons/ai";
 import { categoryKor } from "../../utils/match";
+import { categoryArr, orderTypeArr } from "../../constants/search";
+import jwtAxios from "../../apis/jwt";
 
 const UserWishList = () => {
   const accessToken = getCookie("accessToken");
@@ -20,34 +22,87 @@ const UserWishList = () => {
     navigate(`/contents/index?strfId=${item.strfId}`);
   };
   //useState
-  const [lastIndex, setLastIndex] = useState(1);
+  const [startIndex, setStartIndex] = useState(0);
   const [wishListData, setWishListData] = useState([]);
+  const [category, setCategory] = useState(0);
+  const [orderType, setOrderType] = useState(0);
   useEffect(() => {
     console.log("wishListData", wishListData);
   }, [wishListData]);
   // 찜 목록
   const getWishList = async () => {
     try {
-      const res = await axios.get(`/api/wish-list?start_idx=${lastIndex}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      //   console.log(res.data);
+      const res = await jwtAxios.get(
+        `/api/wish-list?start_idx=${startIndex}&orderType=${orderTypeArr[orderType].type}&category=${categoryArr[category].name}`,
+      );
+      console.log(res.data);
       const resultData = res.data;
       setWishListData([...wishListData, ...resultData.data]);
-      setLastIndex(prev => prev + 10);
+      setStartIndex(prev => prev + 10);
     } catch (error) {
       console.log("찜목록 불러오기", error);
     }
   };
+  // 카테고리 변경
+  const handleCategoryChange = index => {
+    setCategory(index);
+    setStartIndex(0);
+    setWishListData([]);
+  };
+  // 정렬 변경
+  const handleOrderTypeChange = index => {
+    setOrderType(index);
+    setStartIndex(0);
+    setWishListData([]);
+  };
   useEffect(() => {
     getWishList();
   }, []);
+  useEffect(() => {
+    getWishList();
+  }, [category, orderType]);
   return (
     <div>
       <TitleHeader icon="back" onClick={navigateBack} title="찜 목록" />
-      <div className="px-[32px] flex flex-col gap-[50px] mt-[60px] ">
+      <div className="px-[32px] flex flex-col gap-[50px] mt-[30px] ">
+        {/* 카테고리, 필터 */}
+        <div className="flex flex-col gap-[20px]">
+          <ul className="flex justify-between items-center">
+            {categoryArr.map((item, index) => {
+              return (
+                <li
+                  key={index}
+                  onClick={() => {
+                    handleCategoryChange(index);
+                  }}
+                  className={`cursor-pointer font-semibold text-[16px] w-full flex justify-center items-center px-[15px] py-[10px] gap-[10px] rounded-[8px] ${
+                    index === category
+                      ? "bg-primary text-white"
+                      : "bg-white text-slate-500"
+                  }`}
+                >
+                  {item.name}
+                </li>
+              );
+            })}
+          </ul>
+          <ul className="flex items-center">
+            {orderTypeArr.map((item, index) => {
+              return (
+                <li
+                  key={index}
+                  className={`cursor-pointer font-semibold text-[13px] flex items-center px-3 py-1  ${
+                    index === orderType ? "text-primary" : "text-slate-500"
+                  }`}
+                  onClick={() => handleOrderTypeChange(index)}
+                >
+                  {item.name}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        {/* 검색 목록 */}
         <ul className="w-full flex flex-col gap-[20px] mb-[30px]">
           {wishListData.map((item, index) => {
             return (

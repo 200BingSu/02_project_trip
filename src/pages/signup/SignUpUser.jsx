@@ -69,7 +69,7 @@ const SignUpUser = () => {
     setIsAllChecked(checked);
   }, []);
 
-  //checkDuplicatedEmail
+  // api 이메일 중복확인
   const getIdCheck = useCallback(async e => {
     console.log("아이디 중복 체크 시도");
     setValidateStatus("validating");
@@ -185,6 +185,27 @@ const SignUpUser = () => {
               style={{ height: "60px" }}
             />
           </Form.Item>
+          {/* 휴대폰 번호 */}
+          {/* <Form.Item
+            name="phone"
+            label="휴대폰 번호"
+            rules={[
+              {
+                required: true,
+                message: "휴대폰 번호는 필수 입력 항목입니다.",
+              },
+              {
+                pattern: /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
+                message:
+                  "올바른 휴대폰 번호 형식이 아닙니다. (예: 010-1234-5678)",
+              },
+            ]}
+          >
+            <Input
+              placeholder="휴대폰 번호를 입력하세요"
+              style={{ height: "60px" }}
+            />
+          </Form.Item> */}
           {/* 비밀번호 */}
           <Form.Item
             name="pw"

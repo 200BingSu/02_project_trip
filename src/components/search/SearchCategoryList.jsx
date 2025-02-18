@@ -74,10 +74,14 @@ const SearchCategoryList = ({
                     value={item.hasMyReview !== 0 ? 1 : 0}
                   />
                   <p className="text-[12px] text-slate-500">
-                    {item.averageRating ? item.averageRating : "0"}
+                    {item.averageRating
+                      ? item.averageRating
+                      : item.ratingAvg
+                        ? item.ratingAvg
+                        : "0"}
                   </p>
                   <p className="text-[12px] text-slate-500">
-                    ({item.reviewCount.toLocaleString()})
+                    ({item.reviewCount?.toLocaleString()})
                   </p>
                 </div>
                 {/* 찜하기 */}
@@ -90,7 +94,7 @@ const SearchCategoryList = ({
                     )}
                   </div>
                   <p className="text-[12px] text-slate-500">
-                    {item.wishlistCount.toLocaleString()}
+                    {item.wishlistCount?.toLocaleString()}
                   </p>
                 </div>
               </div>

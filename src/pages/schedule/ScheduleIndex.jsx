@@ -69,7 +69,11 @@ const ScheduleIndex = () => {
   const [title, setTitle] = useState(tripData.title);
   const [addLink, setAddLink] = useState("");
   const [isEdit, setIsEdit] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   // const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    getTrip();
+  }, []);
 
   const [isModalOpen, SetIsModalOpen] = useState(false);
   const [dragInfo, setDragInfo] = useState({
@@ -156,7 +160,6 @@ const ScheduleIndex = () => {
       const res = await jwtAxios.patch("/api/schedule", dragInfo);
       console.log("일정 순서 변경 성공:", res.data);
       // 성공 시 일정 새로고침
-      getTrip();
     } catch (error) {
       console.log("일정 순서 변경 실패:", error);
     }
@@ -167,6 +170,10 @@ const ScheduleIndex = () => {
   };
   const handleClickEdit = () => {
     getTrip();
+  };
+  // 드래그 onoff 함수
+  const handleClickTripEditBtn = () => {
+    setIsDragging(!isDragging);
   };
   // useEffect
   useEffect(() => {
@@ -183,7 +190,12 @@ const ScheduleIndex = () => {
     useSensor(KeyboardSensor),
   );
 
+  const handleDragStart = () => {
+    setIsDragging(true);
+  };
+
   const handleDragEnd = event => {
+    setIsDragging(false);
     const { active, over } = event;
 
     if (!over) return;
@@ -317,29 +329,30 @@ const ScheduleIndex = () => {
               </div>
             </div>
             {/* 버튼 */}
-            <div className="flex items-center gap-[10px] px-[32px]">
-              <Dropdown
-                menu={{
-                  items,
-                }}
-                trigger={["click"]}
-                overlayStyle={{ marginTop: "10px" }}
-              >
-                <button
-                  type="button"
-                  className="flex items-center gap-[10px] 
+            <div className="flex items-center justify-between gap-[10px] px-[32px]">
+              <div className="flex items-center gap-[10px]">
+                <Dropdown
+                  menu={{
+                    items,
+                  }}
+                  trigger={["click"]}
+                  overlayStyle={{ marginTop: "10px" }}
+                >
+                  <button
+                    type="button"
+                    className="flex items-center gap-[10px] 
                   px-[15px] py-[10px] rounded-3xl
                   text-white bg-primary"
-                  onClick={async () => {
-                    await getAddLink();
-                    handleCopy();
-                  }}
-                >
-                  <AiOutlinePlus />
-                  초대 코드
-                </button>
-              </Dropdown>
-              {/* <button
+                    onClick={async () => {
+                      await getAddLink();
+                      handleCopy();
+                    }}
+                  >
+                    <AiOutlinePlus />
+                    초대 코드
+                  </button>
+                </Dropdown>
+                {/* <button
                 type="button"
                 className="flex items-center gap-[10px] 
                 px-[15px] py-[10px] rounded-3xl
@@ -348,29 +361,80 @@ const ScheduleIndex = () => {
                 <AiOutlinePlus className="text-slate-300" />
                 숙소
               </button> */}
-              <button
-                type="button"
-                className="flex items-center gap-[10px] 
+                <button
+                  type="button"
+                  className="flex items-center gap-[10px] 
                 px-[15px] py-[10px] rounded-3xl
                 text-slate-500 bg-slate-100"
-                onClick={navigateCalculation}
-              >
-                <AiOutlinePlus className="text-slate-300" />
-                가계부
-              </button>
+                  onClick={navigateCalculation}
+                >
+                  <AiOutlinePlus className="text-slate-300" />
+                  가계부
+                </button>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  className="flex items-center gap-[10px] 
+                px-[15px] py-[10px] rounded-3xl
+                text-slate-500 bg-slate-100"
+                >
+                  참여 인원
+                </button>
+              </div>
             </div>
             {/* 맵, 일정 */}
             <div className="flex flex-col gap-[50px]">
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                {tripDaysArr === null ? (
-                  <SortableContext
-                    items={[{ id: "1-0" }]}
-                    strategy={verticalListSortingStrategy}
-                  >
+              {isDragging ? (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                  onDragStart={handleDragStart}
+                >
+                  {tripDaysArr === null ? (
+                    <SortableContext
+                      items={[{ id: "1-0" }]}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <ScheduleDay
+                        newTrip={true}
+                        data={defaultData}
+                        startAt={tripData?.startAt}
+                        tripId={tripId}
+                        getTrip={getTrip}
+                        setTripData={setTripData}
+                        isDragging={isDragging}
+                        setIsDragging={setIsDragging}
+                      />
+                    </SortableContext>
+                  ) : (
+                    tripDaysArr?.map((item, dayIndex) => (
+                      <SortableContext
+                        key={item.day}
+                        items={item.schedules.map(
+                          (_, index) => `${item.day}-${index}`,
+                        )}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <ScheduleDay
+                          newTrip={true}
+                          data={item}
+                          startAt={tripData?.startAt}
+                          tripId={tripId}
+                          getTrip={getTrip}
+                          setTripData={setTripData}
+                          isDragging={isDragging}
+                          setIsDragging={setIsDragging}
+                        />
+                      </SortableContext>
+                    ))
+                  )}
+                </DndContext>
+              ) : (
+                // When not dragging, render without DndContext
+                <>
+                  {tripDaysArr === null ? (
                     <ScheduleDay
                       newTrip={true}
                       data={defaultData}
@@ -378,29 +442,26 @@ const ScheduleIndex = () => {
                       tripId={tripId}
                       getTrip={getTrip}
                       setTripData={setTripData}
+                      isDragging={isDragging}
+                      setIsDragging={setIsDragging}
                     />
-                  </SortableContext>
-                ) : (
-                  tripDaysArr?.map((item, dayIndex) => (
-                    <SortableContext
-                      key={item.day}
-                      items={item.schedules.map(
-                        (_, index) => `${item.day}-${index}`,
-                      )}
-                      strategy={verticalListSortingStrategy}
-                    >
+                  ) : (
+                    tripDaysArr?.map((item, dayIndex) => (
                       <ScheduleDay
+                        key={item.day}
                         newTrip={true}
                         data={item}
                         startAt={tripData?.startAt}
                         tripId={tripId}
                         getTrip={getTrip}
                         setTripData={setTripData}
+                        isDragging={isDragging}
+                        setIsDragging={setIsDragging}
                       />
-                    </SortableContext>
-                  ))
-                )}
-              </DndContext>
+                    ))
+                  )}
+                </>
+              )}
             </div>
           </div>
         </>

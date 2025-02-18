@@ -5,7 +5,7 @@ import { FiSearch } from "react-icons/fi";
 import { IoIosArrowRoundBack, IoIosArrowUp } from "react-icons/io";
 import { RiCloseLargeFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import jwtAxios from "../../apis/jwt";
 import { searchAtom } from "../../atoms/searchAtom";
 import { userAtom } from "../../atoms/userAtom";
@@ -19,11 +19,13 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { amenities, strfArr } from "../../constants/dataArr";
 import { moveTo } from "../../utils/moveTo";
 import { categoryArr, orderTypeArr } from "../../constants/search";
+import { resetSearchData } from "../../selector/searchSelector";
 
 const SearchStrf = () => {
   const [form] = Form.useForm();
   //recoil
   const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
+  const resetSearch = useResetRecoilState(resetSearchData);
   useEffect(() => {
     console.log("searchRecoil", searchRecoil);
   }, [searchRecoil]);
@@ -36,12 +38,7 @@ const SearchStrf = () => {
   const navigate = useNavigate();
   const navigateToBack = () => {
     navigate(-1);
-    setSearchRecoil({
-      ...searchRecoil,
-      searchWord: "",
-      searchData: [],
-      lastIndex: 0,
-    });
+    resetSearchData();
   };
   //useState
   const [searchState, setSearchState] = useState(
@@ -145,13 +142,8 @@ const SearchStrf = () => {
   }, []);
   // api 전체 검색
   const postSearchAll = useCallback(async word => {
-    const sendData = { search_word: word };
-    console.log("전체 검색", sendData);
     try {
-      const res = await axios.post(
-        `/api/search/all?search_word=${word}`,
-        sendData,
-      );
+      const res = await axios.get(`/api/search/all?search_word=${word}`);
       // console.log(res.data);
       const resultData = res.data;
       if (resultData) {
@@ -173,7 +165,7 @@ const SearchStrf = () => {
       // lastIndex를 직접 참조하는 대신 함수 파라미터로 받도록 수정
       const currentIndex = lastIndex;
       const res = await axios.get(
-        `/api/search/category?last_index=${currentIndex}&category=${
+        `/api/search/category?start_idx=${currentIndex}&category=${
           categoryArr[selectedCategory].name
         }&search_word=${searchValue}&order_type=${orderTypeArr[orderType].type}`,
       );
@@ -188,18 +180,36 @@ const SearchStrf = () => {
           currentIndex === 0 ? resultData.data : [...prev, ...resultData.data],
         );
         setLastIndex(currentIndex + 10);
-      } else {
+      }
+      if (resultData.data[0]?.more === false) {
         setIsShowMore(false);
       }
     } catch (error) {
       console.log("카테고리 검색", error);
     }
   }, [selectedCategory, lastIndex, searchValue, orderType]);
+  // api 편의시설 검색
+  const getAmenitySearch = useCallback(async amenityIds => {
+    try {
+      const res = await axios.get(
+        `/api/search/filter?start_idx=0&category="숙소"&search_word=${searchValue}&${amenityIds}`,
+      );
+      console.log("편의시설", res.data);
+      const resultData = res.data;
+      if (resultData.data.more === false) {
+        setIsShowMore(false);
+      }
+      setSearchData(resultData.data.stays);
+    } catch (error) {
+      console.log("편의시설", error);
+    }
+  }, []);
+
   // 카테고리 별 데이터
-  const tourData = searchData.filter(item => item.category === "TOUR");
-  const stayData = searchData.filter(item => item.category === "STAY");
-  const restaurData = searchData.filter(item => item.category === "RESTAUR");
-  const festData = searchData.filter(item => item.category === "FEST");
+  const tourData = searchData?.filter(item => item.category === "TOUR");
+  const stayData = searchData?.filter(item => item.category === "STAY");
+  const restaurData = searchData?.filter(item => item.category === "RESTAUR");
+  const festData = searchData?.filter(item => item.category === "FEST");
   // 검색창 비우기
   const onChange = e => {
     setSearchValue(e.target.value);
@@ -252,6 +262,11 @@ const SearchStrf = () => {
   const handleFinish = values => {
     console.log("values", values.amenities);
     setAmenityValues(values.amenities);
+    const amenityIds = values.amenities
+      ?.map(id => `amenity_id=${id}`)
+      .join("&");
+    console.log("amenityIds", amenityIds);
+    getAmenitySearch(amenityIds);
   };
   //useEffect
   useEffect(() => {
@@ -270,6 +285,7 @@ const SearchStrf = () => {
   useEffect(() => {
     // 카테고리 변경 시 상태 초기화를 즉시 실행
     setLastIndex(0);
+    setIsSearchLoading(false);
     setSearchData([]);
     setIsShowMore(true);
     setSearchRecoil(prev => ({ ...prev, lastIndex: 0, searchData: [] }));
@@ -288,7 +304,7 @@ const SearchStrf = () => {
   }, [selectedCategory, orderType]);
   useEffect(() => {
     // console.log("searchData", searchData);
-    if (searchData.length > 0) {
+    if (searchData?.length > 0) {
       setSearchRecoil({ ...searchRecoil, searchData: searchData });
     }
   }, [searchData]);
@@ -406,7 +422,7 @@ const SearchStrf = () => {
           )}
           {/* 검색 결과 */}
           {isSearchLoading ? (
-            searchData.length === 0 ? (
+            searchData?.length === 0 ? (
               <div className="flex flex-col gap-[20px] items-center py-[100px]">
                 <i className="text-slate-300 text-[100px]">
                   <LiaComment />
