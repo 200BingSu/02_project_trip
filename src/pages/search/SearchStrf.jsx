@@ -29,7 +29,7 @@ const SearchStrf = () => {
   }, [searchRecoil]);
   //쿠키
   const accessToken = getCookie("accessToken");
-  const userId = getCookie("user").userId;
+  const userId = getCookie("user")?.userId;
   //useRef
   const topRef = useRef(null);
   //useNavigate
@@ -216,6 +216,12 @@ const SearchStrf = () => {
     // setSearchValue(word.strfName);
     navigate(`/contents/index?strfId=${word.strfId}`);
   }, []);
+  // 최근 본 목록 클릭
+  const handleClickList = useCallback(item => {
+    console.log("클릭한 최근 본 목록:", item);
+    navigate(`/contents/index?strfId=${item.strfId}`);
+  }, []);
+  // 검색창 비우기
   const handleClickClear = useCallback(() => {
     setSearchValue("");
   }, []);
@@ -257,7 +263,9 @@ const SearchStrf = () => {
   }, []);
   useEffect(() => {
     // console.log("searchValue", searchValue);
-    setSearchRecoil({ ...searchRecoil, searchWord: searchValue });
+    if (searchValue !== "") {
+      setSearchRecoil({ ...searchRecoil, searchWord: searchValue });
+    }
   }, [searchValue]);
   useEffect(() => {
     // 카테고리 변경 시 상태 초기화를 즉시 실행
@@ -266,16 +274,17 @@ const SearchStrf = () => {
     setIsShowMore(true);
     setSearchRecoil(prev => ({ ...prev, lastIndex: 0, searchData: [] }));
 
-    // 약간의 지연 후 검색 실행
-    const timer = setTimeout(() => {
-      if (selectedCategory !== 0) {
-        getCategorySearch();
-      } else {
-        postSearchAll(searchValue);
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
+    // searchValue가 비어있지 않을 때만 검색 실행
+    if (searchValue.trim()) {
+      const timer = setTimeout(() => {
+        if (selectedCategory !== 0) {
+          getCategorySearch();
+        } else {
+          postSearchAll(searchValue);
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
   }, [selectedCategory, orderType]);
   useEffect(() => {
     // console.log("searchData", searchData);
@@ -569,11 +578,9 @@ const SearchStrf = () => {
                         <li
                           key={index}
                           className="flex cursor-pointer items-center justify-between"
+                          onClick={() => handleClickList(item)}
                         >
-                          <div
-                            className="flex gap-[15px]"
-                            onClick={() => handleClickList(item)}
-                          >
+                          <div className="flex gap-[15px]">
                             <div className="w-[80px] h-[80px] rounded-2xl overflow-hidden">
                               <img
                                 className="w-full h-full object-cover"

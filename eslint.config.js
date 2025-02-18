@@ -30,6 +30,7 @@ export default tseslint.config(
       ],
       "prettier/prettier": "warn", // Prettier 규칙 (포매팅 오류를 에러로 표시)
       "react/react-in-jsx-scope": "off", // React import 생략 가능
+      "@typescript-eslint/no-explicit-any": "warn",
     },
     settings: {
       react: {
