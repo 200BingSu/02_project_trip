@@ -49,20 +49,19 @@ const PostReview = () => {
       content: content,
     };
     const formData = new FormData();
-    setFileList(file.fileList);
+
+    // file이 있을 때만 fileList 설정
+    if (file?.fileList) {
+      setFileList(file.fileList);
+    }
+
     formData.append(
       "p",
       new Blob([JSON.stringify(pData)], { type: "application/json" }),
     );
-    // console.log(values);
-    // console.log(fileList);
-    // const formData = new FormData();
-    // formData.append("rating", values.rating);
-    // formData.append("comment", values.comment);
 
-    // // 파일이 있으면 폼 데이터에 추가
-    if (file && file.fileList && file.fileList.length > 0) {
-      // file.fileList 배열을 순회하며 각 파일을 formData에 append
+    // 파일이 있을 때만 처리
+    if (file?.fileList?.length > 0) {
       file.fileList.forEach(fileItem => {
         formData.append("pics", fileItem.originFileObj);
       });

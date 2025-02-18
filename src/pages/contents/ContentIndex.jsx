@@ -83,9 +83,7 @@ const ContentIndex = () => {
   const strfId = parseInt(searchParams.get("strfId"));
   // recoil
   const { userId } = useRecoilValue(userAtom);
-  // console.log("userId", userId);
 
-  // console.log("토큰", accessToken);
   const [trip, setTrip] = useRecoilState(tripAtom);
   useEffect(() => {
     // console.log("trip", trip);
@@ -118,13 +116,7 @@ const ContentIndex = () => {
   const [pathData, setPathData] = useState();
 
   const [openPathModal, setOpenPathModal] = useState(false);
-  useEffect(() => {
-    // console.log("로딩", isLoading);
-  }, [isLoading]);
 
-  // useEffect(() => {
-  //   console.log("reviewsData", reviewsData);
-  // }, [reviewsData]);
   useEffect(() => {
     if (trip.nowTripId !== 0) {
       getPathList();
@@ -134,9 +126,7 @@ const ContentIndex = () => {
   // useRef
   const imgRef = useRef(null);
   const reviewRef = useRef(null);
-  // useEffect(() => {
-  //   console.log(imgRef.current);
-  // }, []);
+
   // 편의 시설 모달
   const showModal = () => {
     setIsModalOpen(true);
@@ -175,7 +165,10 @@ const ContentIndex = () => {
   const showRegistModal = () => {
     if (trip.nowTripId === 0) {
       setIsRegistModalOpen(true);
-    } else if (trip.lastSeq > 0 && pathCode === "200 성공") {
+    } else if (
+      trip.lastSeq > 0
+      //  && pathCode === "200 성공"
+    ) {
       setOpenPathModal(true);
     } else {
       postSchedule();
@@ -247,20 +240,6 @@ const ContentIndex = () => {
       console.log("길찾기 결과", error);
     }
   };
-
-  useEffect(() => {
-    // accessToken 상태를 콘솔에 출력하여 디버깅
-    // console.log("accessToken status:", !!accessToken);
-
-    if (accessToken && accessToken !== "undefined") {
-      getDetailMember();
-    } else {
-      getDetailGuest();
-    }
-  }, []);
-
-  //
-
   // 검색 지우기
   const onChange = key => {
     console.log(key);
@@ -272,6 +251,15 @@ const ContentIndex = () => {
     ref.current.scrollIntoView({ behavior: "smooth" });
     setIsDetailOpen(false);
   };
+  //useEffect
+  useEffect(() => {
+    if (accessToken && accessToken !== "undefined") {
+      getDetailMember();
+    } else {
+      getDetailGuest();
+    }
+  }, []);
+
   return (
     <div className="relative pb-[70px]">
       {isLoading ? (
@@ -519,6 +507,7 @@ const ContentIndex = () => {
 
           {openPathModal ? (
             <PathModal
+              pathCode={pathCode}
               pathData={pathData}
               setPathData={setPathData}
               setOpenPathModal={setOpenPathModal}

@@ -4,15 +4,19 @@ import { BsFillPatchPlusFill } from "react-icons/bs";
 import { FiSearch } from "react-icons/fi";
 import { IoLogoWechat, IoReaderOutline } from "react-icons/io5";
 import { RiMapPinUserFill } from "react-icons/ri";
-import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
 import { LuMapPinned } from "react-icons/lu";
 import { getCookie } from "../../../utils/cookie";
 import { searchAtom } from "../../../atoms/searchAtom";
 import { IoIosArrowUp } from "react-icons/io";
+import { resetSearchData } from "../../../selector/searchSelector";
 
 const DockBar = React.memo(() => {
+  //useLocation
+  const location = useLocation();
+  const nowLocation = location.pathname;
   // 채팅 구현 안되서 띄우는 모달창
   const [isModalOpen, setIsModalOpen] = useState(false);
   //쿠키
@@ -20,6 +24,7 @@ const DockBar = React.memo(() => {
   //recoil
   const { userId } = useRecoilValue(userAtom);
   const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
+  const resetSearch = useResetRecoilState(resetSearchData);
   //useNavigate
   const navigate = useNavigate();
   //antD
@@ -85,11 +90,7 @@ const DockBar = React.memo(() => {
           to="/"
           className="bg-primary text-white w-[102px] h-[102px] rounded-full flex flex-col justify-center items-center gap-1.5 relative bottom-5"
           onClick={() => {
-            setSearchRecoil({
-              ...searchRecoil,
-              searchWord: "",
-              searchData: [],
-            });
+            resetSearch();
           }}
         >
           <BsFillPatchPlusFill className="text-4xl" />홈
@@ -109,19 +110,21 @@ const DockBar = React.memo(() => {
           <IoLogoWechat className="text-4xl" />
           챗봇
         </Link>
-        <div
-          className={`absolute bottom-[120px] right-0 -translate-x-1/2 transition-all duration-300 ${
-            showScrollButton ? "opacity-100 visible" : "opacity-0 invisible"
-          }`}
-        >
-          <button
-            type="button"
-            className="bg-primary text-white rounded-full p-[10px] text-[24px] shadow-lg hover:bg-primary/90 transition-colors"
-            onClick={scrollToTop}
+        {nowLocation === "/search/strf" && (
+          <div
+            className={`absolute bottom-[120px] right-0 -translate-x-1/2 transition-all duration-300 ${
+              showScrollButton ? "opacity-100 visible" : "opacity-0 invisible"
+            }`}
           >
-            <IoIosArrowUp />
-          </button>
-        </div>
+            <button
+              type="button"
+              className="bg-primary text-white rounded-full p-[10px] text-[24px] shadow-lg hover:bg-primary/90 transition-colors"
+              onClick={scrollToTop}
+            >
+              <IoIosArrowUp />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
