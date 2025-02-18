@@ -46,8 +46,8 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   //복사하기
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(addLink);
-      console.log("복사 성공");
+      await navigator.clipboard.writeText(localeIp);
+      // console.log("복사 성공");
     } catch (err) {
       console.error("복사 실패:", err);
     }

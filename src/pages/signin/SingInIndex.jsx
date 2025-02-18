@@ -171,7 +171,12 @@ const SingInIndex = () => {
           </div>
           {/* 제출 버튼 */}
           <Form.Item>
-            <Button type="primary" htmlType="submit" block className="h-[60px]">
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              className="h-[60px] font-semibold text-[16px]"
+            >
               다음
             </Button>
           </Form.Item>
@@ -203,6 +208,15 @@ const SingInIndex = () => {
             회원가입
           </Link>
         </div>
+      </div>
+      {/* 카카오 로그인 */}
+      <div>
+        <Button
+          type="default"
+          className="h-[60px] font-semibold text-[16px] bg-[#FEE500] hover:bg-[#FEE500]/80 w-full"
+        >
+          카카오 로그인
+        </Button>
       </div>
     </div>
   );
