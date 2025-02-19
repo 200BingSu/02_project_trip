@@ -21,6 +21,7 @@
     "@headlessui/react": "^2.2.0",
     "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^3.10.0",
+    "@stomp/stompjs": "^7.0.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/axios": "^0.9.36",
     "antd": "^5.23.1",

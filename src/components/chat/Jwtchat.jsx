@@ -9,7 +9,8 @@ const JwtChat = () => {
   const recipientId = "user456"; // 메시지를 받을 대상
 
   useEffect(() => {
-    const socket = new WebSocket(`ws://localhost:8080/chat?userId=${userId}`);
+    // const socket = new WebSocket(`ws://localhost:8080/chat?userId=${userId}`);
+    const socket = new WebSocket("ws://localhost:8080/spring-boot-tutorial");
 
     socket.onopen = () => console.log("WebSocket Connected");
     socket.onmessage = event => setMessages(prev => [...prev, event.data]);
