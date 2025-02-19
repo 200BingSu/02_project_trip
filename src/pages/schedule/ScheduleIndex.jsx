@@ -159,9 +159,9 @@ const ScheduleIndex = () => {
     try {
       const res = await jwtAxios.patch("/api/schedule", dragInfo);
       console.log("일정 순서 변경 성공:", res.data);
-      // 성공 시 일정 새로고침
     } catch (error) {
       console.log("일정 순서 변경 실패:", error);
+      getTrip();
     }
   }, []);
   // 여행 수정 함수
@@ -190,80 +190,44 @@ const ScheduleIndex = () => {
     useSensor(KeyboardSensor),
   );
 
-  const handleDragStart = () => {
-    setIsDragging(true);
-  };
-
-  const handleDragEnd = event => {
-    setIsDragging(false);
+  const handleDragEnd = async event => {
     const { active, over } = event;
 
     if (!over) return;
 
-    // 드래그된 아이템의 day와 index 추출
     const [sourceDay, sourceIndex] = active.id.split("-").map(Number);
     const [targetDay, targetIndex] = over.id.split("-").map(Number);
 
-    // 같은 위치면 아무 것도 하지 않음
     if (sourceDay === targetDay && sourceIndex === targetIndex) return;
 
-    // 출발지와 도착지의 일정 찾기
-    const sourceDayData = tripData.days.find(day => day.day === sourceDay);
-    const targetDayData = tripData.days.find(day => day.day === targetDay);
+    // 현재 UI의 데이터 업데이트
+    const newTripData = structuredClone(tripData); // Deep copy to avoid mutation
+    const sourceDayData = newTripData.days.find(day => day.day === sourceDay);
+    const targetDayData = newTripData.days.find(day => day.day === targetDay);
 
-    const sourceSchedule = sourceDayData.schedules[sourceIndex];
-    const targetSchedule = targetDayData.schedules[targetIndex];
+    if (!sourceDayData || !targetDayData) return;
 
-    // dragInfo 상태 업데이트
-    const newDragInfo = {
-      tripId: tripId,
-      scheduleId: sourceSchedule.scheduleMemoId,
-      originDay: sourceDay,
-      destDay: targetDay,
-      originSeq: sourceIndex + 1, // API가 1-based index를 사용한다고 가정
-      destSeq: targetIndex + 1,
-    };
+    const [movedSchedule] = sourceDayData.schedules.splice(sourceIndex, 1);
+    targetDayData.schedules.splice(targetIndex, 0, movedSchedule);
 
-    setDragInfo(newDragInfo);
-
-    console.log("드래그 앤 드롭 상세 정보:", {
-      출발: {
-        일차: sourceDay,
-        순서: sourceIndex,
-        일정: {
-          id: sourceSchedule.scheduleMemoId,
-          제목: sourceSchedule.strfTitle || sourceSchedule.title,
-          타입: sourceSchedule.scheOrMemo,
-        },
-      },
-      도착: {
-        일차: targetDay,
-        순서: targetIndex,
-        일정: targetSchedule
-          ? {
-              id: targetSchedule.scheduleMemoId,
-              제목: targetSchedule.strfTitle || targetSchedule.title,
-              타입: targetSchedule.scheOrMemo,
-            }
-          : "마지막 위치",
-      },
-    });
-
-    // UI 업데이트
-    const newTripData = { ...tripData };
-    const [movedSchedule] = newTripData.days[sourceDay - 1].schedules.splice(
-      sourceIndex,
-      1,
-    );
-    newTripData.days[targetDay - 1].schedules.splice(
-      targetIndex,
-      0,
-      movedSchedule,
-    );
+    // Update UI immediately
     setTripData(newTripData);
 
     // API 호출
-    patchScheduleOrder(newDragInfo);
+    try {
+      await patchScheduleOrder({
+        tripId,
+        scheduleId: movedSchedule.scheduleMemoId,
+        originDay: sourceDay,
+        destDay: targetDay,
+        originSeq: sourceIndex + 1,
+        destSeq: targetIndex + 1,
+      });
+    } catch (error) {
+      console.error("Failed to update schedule order:", error);
+      // Optionally revert UI on error
+      getTrip();
+    }
   };
 
   // dragInfo 상태가 변경될 때마다 로그 출력
@@ -342,7 +306,8 @@ const ScheduleIndex = () => {
                     type="button"
                     className="flex items-center gap-[10px] 
                   px-[15px] py-[10px] rounded-3xl
-                  text-white bg-primary"
+                  text-white bg-primary
+                  hover:bg-primary/80 transition-all duration-300"
                     onClick={async () => {
                       await getAddLink();
                       handleCopy();
@@ -365,21 +330,43 @@ const ScheduleIndex = () => {
                   type="button"
                   className="flex items-center gap-[10px] 
                 px-[15px] py-[10px] rounded-3xl
-                text-slate-500 bg-slate-100"
+                text-slate-500 bg-slate-100
+                hover:bg-slate-200/80 transition-all duration-300"
                   onClick={navigateCalculation}
                 >
                   <AiOutlinePlus className="text-slate-300" />
                   가계부
                 </button>
               </div>
-              <div>
+              <div className="flex items-center gap-[10px]">
                 <button
                   type="button"
                   className="flex items-center gap-[10px] 
-                px-[15px] py-[10px] rounded-3xl
-                text-slate-500 bg-slate-100"
+                  px-[15px] py-[10px] rounded-3xl
+                  text-slate-500 bg-slate-100
+                  hover:bg-slate-200/80 transition-all duration-300"
                 >
                   참여 인원
+                </button>
+                <button
+                  type="button"
+                  className={`flex items-center gap-[10px] 
+                    px-[15px] py-[10px] rounded-3xl transition-all duration-300
+                    ${
+                      isDragging
+                        ? "text-white bg-primary hover:bg-primary/80"
+                        : "text-slate-500 bg-slate-100 hover:bg-slate-200/80"
+                    }`}
+                  onClick={() => {
+                    if (isDragging) {
+                      setIsDragging(false);
+                      getTrip();
+                    } else {
+                      setIsDragging(true);
+                    }
+                  }}
+                >
+                  {isDragging ? "완료" : "일정 편집"}
                 </button>
               </div>
             </div>
@@ -390,16 +377,18 @@ const ScheduleIndex = () => {
                   sensors={sensors}
                   collisionDetection={closestCenter}
                   onDragEnd={handleDragEnd}
-                  onDragStart={handleDragStart}
                 >
-                  {tripDaysArr === null ? (
+                  {tripData.days?.map((item, dayIndex) => (
                     <SortableContext
-                      items={[{ id: "1-0" }]}
+                      key={item.day}
+                      items={item.schedules.map(
+                        (_, index) => `${item.day}-${index}`,
+                      )}
                       strategy={verticalListSortingStrategy}
                     >
                       <ScheduleDay
                         newTrip={true}
-                        data={defaultData}
+                        data={item}
                         startAt={tripData?.startAt}
                         tripId={tripId}
                         getTrip={getTrip}
@@ -408,28 +397,7 @@ const ScheduleIndex = () => {
                         setIsDragging={setIsDragging}
                       />
                     </SortableContext>
-                  ) : (
-                    tripDaysArr?.map((item, dayIndex) => (
-                      <SortableContext
-                        key={item.day}
-                        items={item.schedules.map(
-                          (_, index) => `${item.day}-${index}`,
-                        )}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        <ScheduleDay
-                          newTrip={true}
-                          data={item}
-                          startAt={tripData?.startAt}
-                          tripId={tripId}
-                          getTrip={getTrip}
-                          setTripData={setTripData}
-                          isDragging={isDragging}
-                          setIsDragging={setIsDragging}
-                        />
-                      </SortableContext>
-                    ))
-                  )}
+                  ))}
                 </DndContext>
               ) : (
                 // When not dragging, render without DndContext

@@ -103,7 +103,7 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
       trip_id: tripId,
       start_at: dateArr[0],
       end_at: dateArr[1],
-      ins_user_list: joinUser,
+      // ins_user_list: joinUser,
       del_user_list: notUser,
       ins_location_list: [...tripData?.tripLocationList],
       del_location_list: [],

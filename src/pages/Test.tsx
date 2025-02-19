@@ -2,6 +2,7 @@ import { Button, message, Steps, theme } from "antd";
 import JwtChat from "../components/chat/Jwtchat";
 import StompChat from "../components/chat/StompChat";
 import { useState } from "react";
+import Chat from "../components/chat/Chat";
 
 (window as any).global = window;
 
@@ -47,7 +48,8 @@ const Test = () => {
     <div>
       {/* <JwtChat />
       <StompChat /> */}
-      <>
+      <Chat />
+      {/* <>
         <Steps
           current={current}
           items={items}
@@ -79,7 +81,7 @@ const Test = () => {
             </Button>
           )}
         </div>
-      </>
+      </> */}
     </div>
   );
 };
