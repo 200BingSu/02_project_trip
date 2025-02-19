@@ -36,10 +36,10 @@ const Reviews = () =>
 
     //getReviews
     const getReview = useCallback(async () => {
-      console.log("지금 보내는 lastIndex", reviewIndex);
+      console.log("지금 보내는 start_idx", reviewIndex);
       try {
         const res = await axios.get(
-          `/api/review?strf_id=${strfId}&last_index=${reviewIndex}`,
+          `/api/review?strf_id=${strfId}&start_idx=${reviewIndex}`,
         );
         console.log("리뷰 불러오기:", res.data);
         setReviewsData([...reviewsData, ...res.data]);

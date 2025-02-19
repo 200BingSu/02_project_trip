@@ -46,7 +46,7 @@ const SearchStrf = () => {
   ); // 검색 상태
   const [searchValue, setSearchValue] = useState(searchRecoil.searchWord || ""); // 검색어
   const [searchData, setSearchData] = useState(searchRecoil.searchData || []); // 검색 결과
-  const [lastIndex, setLastIndex] = useState(searchRecoil.lastIndex || 0); // 마지막 인덱스
+  const [startIndex, setStartIndex] = useState(searchRecoil.startIndex || 0); // 마지막 인덱스
 
   const [popularWordList, setPopularWordList] = useState([]); // 인기 검색어
   const [recentContents, setRecentContents] = useState([]); // 최근 본 목록
@@ -162,8 +162,8 @@ const SearchStrf = () => {
     //   categoryArr[selectedCategory].name,
     // );
     try {
-      // lastIndex를 직접 참조하는 대신 함수 파라미터로 받도록 수정
-      const currentIndex = lastIndex;
+      // startIndex를 직접 참조하는 대신 함수 파라미터로 받도록 수정
+      const currentIndex = startIndex;
       const res = await axios.get(
         `/api/search/category?start_idx=${currentIndex}&category=${
           categoryArr[selectedCategory].name
@@ -174,12 +174,12 @@ const SearchStrf = () => {
       if (resultData) {
         setIsSearchLoading(true);
       }
-      // 데이터가 있을 때만 lastIndex 증가
+      // 데이터가 있을 때만 startIndex 증가
       if (resultData.data && resultData.data.length > 0) {
         setSearchData(prev =>
           currentIndex === 0 ? resultData.data : [...prev, ...resultData.data],
         );
-        setLastIndex(currentIndex + 10);
+        setStartIndex(currentIndex + 10);
       }
       if (resultData.data[0]?.more === false) {
         setIsShowMore(false);
@@ -187,19 +187,19 @@ const SearchStrf = () => {
     } catch (error) {
       console.log("카테고리 검색", error);
     }
-  }, [selectedCategory, lastIndex, searchValue, orderType]);
+  }, [selectedCategory, startIndex, searchValue, orderType]);
   // api 편의시설 검색
   const getAmenitySearch = useCallback(async amenityIds => {
     try {
       const res = await axios.get(
-        `/api/search/filter?start_idx=0&category="숙소"&search_word=${searchValue}&${amenityIds}`,
+        `/api/search/filter?start_idx=0&category=숙소&search_word=${searchRecoil.searchWord}&${amenityIds}`,
       );
       console.log("편의시설", res.data);
       const resultData = res.data;
       if (resultData.data.more === false) {
         setIsShowMore(false);
       }
-      setSearchData(resultData.data.stays);
+      setSearchData(resultData.data);
     } catch (error) {
       console.log("편의시설", error);
     }
@@ -284,11 +284,11 @@ const SearchStrf = () => {
   }, [searchValue]);
   useEffect(() => {
     // 카테고리 변경 시 상태 초기화를 즉시 실행
-    setLastIndex(0);
+    setStartIndex(0);
     setIsSearchLoading(false);
     setSearchData([]);
     setIsShowMore(true);
-    setSearchRecoil(prev => ({ ...prev, lastIndex: 0, searchData: [] }));
+    setSearchRecoil(prev => ({ ...prev, startIndex: 0, searchData: [] }));
 
     // searchValue가 비어있지 않을 때만 검색 실행
     if (searchValue.trim()) {
@@ -357,7 +357,7 @@ const SearchStrf = () => {
                       : "bg-white text-slate-500"
                   }`}
                   onClick={() => {
-                    setLastIndex(0);
+                    setStartIndex(0);
                     setSelectedCategory(index);
                     setSearchRecoil({ ...searchRecoil, category: index });
                   }}
@@ -379,7 +379,7 @@ const SearchStrf = () => {
                     }`}
                     onClick={() => {
                       setOrderType(index);
-                      setLastIndex(0);
+                      setStartIndex(0);
                     }}
                   >
                     {item.name}

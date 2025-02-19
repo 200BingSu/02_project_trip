@@ -55,7 +55,7 @@ const SearchItems = forwardRef(
     const getSearchListMore = async data => {
       try {
         const res = await axios.get(
-          `/api/search/category?last_index=${dataIndex}&category=${categoryKor(data)}&search_word=${searchValue}&order_type=ratingAvg`,
+          `/api/search/category?start_idx=${dataIndex}&category=${categoryKor(data)}&search_word=${searchValue}&order_type=ratingAvg`,
         );
         console.log("더보기 결과:", res.data);
         if (res.data.data.length === 0) {

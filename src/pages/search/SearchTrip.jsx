@@ -46,9 +46,9 @@ const SearchTrip = () => {
     navigate(`/contents/index?strfId=${strfId}`);
   };
   // useState
-  const [basicLastIndex, setBasicLastIndex] = useState(0);
-  const [searchLastIndex, setSearchLastIndex] = useState(0);
-  const [wordLastIndex, setWordLastIndex] = useState(0);
+  const [basicstartIndex, setBasicstartIndex] = useState(0);
+  const [searchstartIndex, setSearchstartIndex] = useState(0);
+  const [wordstartIndex, setWordstartIndex] = useState(0);
   const [searchData, setSearchData] = useState([]);
   const [searchState, setSearchState] = useState(false); // 검색 전, 후 구분
   const [inputValue, setInputValue] = useState(""); //검색 중 반영
@@ -77,14 +77,17 @@ const SearchTrip = () => {
   const getSearchBasic = async () => {
     try {
       const res = await jwtAxios.get(
-        `/api/search/strf-list-basic?trip_id=${tripId}&last_index=${basicLastIndex}`,
+        `/api/search/strf-list-basic?trip_id=${tripId}&start_idx=${basicstartIndex}`,
       );
       const resultData = res.data;
       // console.log("결과-입력 전:", resultData);
       setSearchData([...searchData, ...resultData.data.list]);
       if (resultData) {
         setIsLoading(true);
-        setBasicLastIndex(prev => prev + 10);
+        setBasicstartIndex(prev => prev + 10);
+      }
+      if (resultData.data.more === false) {
+        setIsMore(false);
       }
     } catch (error) {
       console.log("결과-입력 전:", error);
@@ -94,14 +97,17 @@ const SearchTrip = () => {
   const getSearchWord = async (cate = null) => {
     try {
       const res = await jwtAxios.get(
-        `/api/search/strf-list-word?trip_id=${tripId}&last_index=${searchLastIndex}&category=${category}&search_word=${searchValue}`,
+        `/api/search/strf-list-word?trip_id=${tripId}&start_idx=${searchstartIndex}&category=${category}&search_word=${searchValue}`,
       );
       const resultData = res.data;
       // console.log("결과-입력 후:", resultData);
       setSearchData([...searchData, ...resultData.data.list]);
       if (resultData) {
         setIsLoading(true);
-        setSearchLastIndex(prev => prev + 10);
+        setSearchstartIndex(prev => prev + 10);
+      }
+      if (resultData.data.more === false) {
+        setIsMore(false);
       }
     } catch (error) {
       console.log("결과-입력 후:", error);
@@ -146,12 +152,13 @@ const SearchTrip = () => {
                 onChange();
                 setInputValue(e.target.value);
               }}
-              onKeyDown={e => {
-                if (e.code === "Enter") {
-                  setSearchValue(e.target.value);
-                  setSearchState(true);
-                  getSearchWord();
-                }
+              onPressEnter={e => {
+                setSearchValue(inputValue);
+                setSearchData([]);
+                setBasicstartIndex(0);
+                setSearchstartIndex(0);
+                setSearchState(true);
+                getSearchWord();
               }}
               value={inputValue}
               className={`w-full h-[60px] px-[12px] ${inputValue ? "bg-white" : "bg-slate-100"}`}
@@ -290,23 +297,24 @@ const SearchTrip = () => {
               </li>
             )}
           </ul>
+          <div className="flex justify-center">
+            <Button
+              onClick={() => {
+                if (searchValue !== "") {
+                  getSearchWord();
+                } else {
+                  getSearchBasic();
+                }
+              }}
+              className="mb-[30px] w-28 rounded-2xl"
+            >
+              더보기
+            </Button>
+          </div>
         </>
       ) : (
         <Loading />
       )}
-
-      <Button
-        onClick={() => {
-          if (searchValue !== "") {
-            getSearchWord();
-          } else {
-            getSearchBasic();
-          }
-        }}
-        className="mb-[30px]"
-      >
-        더보기
-      </Button>
     </div>
   );
 };

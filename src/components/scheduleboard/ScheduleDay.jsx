@@ -22,7 +22,7 @@ import MemoModal from "../schedule/MemoModal";
 import { getCookie } from "../../utils/cookie";
 import axios from "axios";
 import { ProductPic } from "../../constants/pic";
-import { categoryKor } from "../../utils/match";
+import { categoryKor, matchPathTypeNumIcon } from "../../utils/match";
 import {
   dayBgColor,
   dayLineColor,
@@ -47,9 +47,10 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import dayjs, { Dayjs } from "dayjs";
 
 // defaultData(days[0])
-
+const today = dayjs().format("YYYY-MM-DD");
 /**
  * ### 인수
  * #### data
@@ -367,27 +368,6 @@ const ScheduleDay = ({
               {matchWeatherIcon(data?.weather)}
             </div>
           </div>
-          {data.day === 1 && (
-            <div>
-              {isDragging ? (
-                <button
-                  type="button"
-                  className={`text-[18px] leading-none border-b text-primary border-primary`}
-                  onClick={() => setIsDragging(false)}
-                >
-                  완료
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className={`text-[18px] leading-none border-b text-slate-700 border-slate-700`}
-                  onClick={() => setIsDragging(true)}
-                >
-                  편집
-                </button>
-              )}
-            </div>
-          )}
         </div>
         {/* 일정 목록 */}
         <ul className="relative flex flex-col gap-[30px]">
@@ -671,7 +651,7 @@ const SortableScheduleItem = ({
               <div
                 className={`${item.pathType === null ? "text-slate-600 h-[18px]" : "text-slate-400 h-[18px]"}`}
               >
-                {matchPathTypeIcon(item.pathType)}
+                {matchPathTypeNumIcon(item.pathType)}
               </div>
               <div
                 className={`${item.pathType === null ? "text-[14px] text-slate-600 h-[18px]" : "text-[14px] text-slate-400 h-[18px]"}`}

@@ -44,7 +44,7 @@ const SearchList = ({ searchValue, searchData, setSearchData }) => {
   const initRequestData = {
     category: null,
     search_word: searchValue,
-    last_index: null,
+    start_idx: null,
   };
 
   const tourData = Array.isArray(searchData)
