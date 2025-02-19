@@ -210,13 +210,13 @@ const SingInIndex = () => {
         </div>
       </div>
       {/* 카카오 로그인 */}
-      <div>
-        <Button
-          type="default"
-          className="h-[60px] font-semibold text-[16px] bg-[#FEE500] hover:bg-[#FEE500]/80 w-full"
+      <div className="w-full">
+        <button
+          type="button"
+          className="w-full h-[60px] font-semibold text-[16px] bg-[#FEE500] hover:bg-[#FEE500]/80 rounded-md"
         >
           카카오 로그인
-        </Button>
+        </button>
       </div>
     </div>
   );

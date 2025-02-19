@@ -10,6 +10,7 @@ import { AiFillHeart, AiTwotoneHeart } from "react-icons/ai";
 import { categoryKor } from "../../utils/match";
 import { categoryArr, orderTypeArr } from "../../constants/search";
 import jwtAxios from "../../apis/jwt";
+import dayjs from "dayjs";
 
 const UserWishList = () => {
   const accessToken = getCookie("accessToken");
@@ -26,6 +27,7 @@ const UserWishList = () => {
   const [wishListData, setWishListData] = useState([]);
   const [category, setCategory] = useState(0);
   const [orderType, setOrderType] = useState(0);
+  const [isMore, setIsMore] = useState(true);
   useEffect(() => {
     console.log("wishListData", wishListData);
   }, [wishListData]);
@@ -39,6 +41,23 @@ const UserWishList = () => {
       const resultData = res.data;
       setWishListData([...wishListData, ...resultData.data]);
       setStartIndex(prev => prev + 10);
+    } catch (error) {
+      console.log("찜목록 불러오기", error);
+    }
+  };
+  const getWishListFest = async () => {
+    const today = dayjs().format("YYYY-MM-DD");
+    try {
+      const res = await jwtAxios.get(
+        `/api/wish-list/fest?start_idx=${startIndex}&orderType=${orderTypeArr[orderType].type}&category=${categoryArr[category].name}&start_at=${today}`,
+      );
+      console.log(res.data);
+      const resultData = res.data;
+      setWishListData([...wishListData, ...resultData.data]);
+      setStartIndex(prev => prev + 10);
+      if (resultData.data[0].more === false) {
+        setIsMore(false);
+      }
     } catch (error) {
       console.log("찜목록 불러오기", error);
     }
@@ -59,14 +78,19 @@ const UserWishList = () => {
     getWishList();
   }, []);
   useEffect(() => {
-    getWishList();
+    if (category !== 4) {
+      getWishList();
+    } else {
+      getWishListFest();
+    }
   }, [category, orderType]);
   return (
     <div>
       <TitleHeader icon="back" onClick={navigateBack} title="찜 목록" />
       <div className="px-[32px] flex flex-col gap-[50px] mt-[30px] ">
-        {/* 카테고리, 필터 */}
+        {/* 필터 */}
         <div className="flex flex-col gap-[20px]">
+          {/* 카테고리 */}
           <ul className="flex justify-between items-center">
             {categoryArr.map((item, index) => {
               return (
@@ -86,6 +110,8 @@ const UserWishList = () => {
               );
             })}
           </ul>
+
+          {/* 정렬 */}
           <ul className="flex items-center">
             {orderTypeArr.map((item, index) => {
               return (
@@ -145,7 +171,7 @@ const UserWishList = () => {
                     <Rate
                       disabled
                       count={1}
-                      value={1}
+                      value={item.reviewed ? 1 : 0}
                       className="text-primary"
                     />
                     <p className="text-[12px] text-slate-500">
@@ -170,17 +196,19 @@ const UserWishList = () => {
           })}
         </ul>
       </div>
-      <div className="px-[32px] pb-[40px] flex items-center justify-center">
-        <Button
-          variant="outlined"
-          onClick={() => {
-            getWishList();
-          }}
-          className="h-[46px] px-[20px] py-[10px] rounded-3xl text-slate-600 text-[16px] font-semibold"
-        >
-          더보기
-        </Button>
-      </div>
+      {isMore && (
+        <div className="px-[32px] pb-[40px] flex items-center justify-center">
+          <Button
+            variant="outlined"
+            onClick={() => {
+              getWishList();
+            }}
+            className="h-[46px] px-[20px] py-[10px] rounded-3xl text-slate-600 text-[16px] font-semibold"
+          >
+            더보기
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { Button, Divider, Form, Input } from "antd";
+import { Button, DatePicker, Divider, Form, Input } from "antd";
 import Checkbox from "antd/es/checkbox/Checkbox";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
@@ -186,7 +186,7 @@ const SignUpUser = () => {
             />
           </Form.Item>
           {/* 휴대폰 번호 */}
-          {/* <Form.Item
+          <Form.Item
             name="phone"
             label="휴대폰 번호"
             rules={[
@@ -205,7 +205,19 @@ const SignUpUser = () => {
               placeholder="휴대폰 번호를 입력하세요"
               style={{ height: "60px" }}
             />
-          </Form.Item> */}
+          </Form.Item>
+          {/* 생일 */}
+          <Form.Item
+            name="birthday"
+            label="생일"
+            help="* 쿠폰 발급과 같은 서비스를 위한 항목입니다."
+            style={{ paddingBottom: "20px" }}
+          >
+            <DatePicker
+              placeholder="생일을 입력하세요"
+              style={{ height: "60px", width: "100%" }}
+            />
+          </Form.Item>
           {/* 비밀번호 */}
           <Form.Item
             name="pw"

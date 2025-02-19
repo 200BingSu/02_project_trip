@@ -11,7 +11,7 @@ export const resetSearchData = selector({
     set(searchAtom, {
       searchWord: "",
       searchData: [],
-      lastIndex: 0,
+      startIndex: 0,
       category: 0,
     });
   },

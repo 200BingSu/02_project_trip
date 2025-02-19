@@ -51,35 +51,42 @@ const DynamicGrid = ({ images }) => {
 
 const UserrRview = () => {
   const [reviewInfo, setReviewInfo] = useState([]);
-  const [lastIndex, setLastIndex] = useState(0); // lastIndex 상태 추가
+  const [startIndex, setStartIndex] = useState(0); // startIndex 상태 추가
+  const [isShowMore, setIsShowMore] = useState(true);
   const accessToken = getCookie("accessToken");
 
-  // 사용자 리뷰를 가져오가가
+  // 사용자 리뷰를 더 가져오기
   const getUserReviewMore = async () => {
     try {
-      const res = await axios.get(`/api/review/my?last_index=${lastIndex}`, {
+      const res = await axios.get(`/api/review/my?start_idx=${startIndex}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
       setReviewInfo(prev => [...prev, ...res.data]); // 기존 리뷰에 새 리뷰 추가
+      if (res.data.more === false) {
+        setIsShowMore(false);
+      }
       console.log("✅  getUserReview  res.data.data:", res.data);
     } catch (error) {
       console.log("✅  getUserReview  error:", error);
     }
   };
+  // 사용자 리뷰를 가져오기
   const getUserReview = async () => {
     try {
-      const res = await axios.get(`/api/review/my?last_index=${lastIndex}`, {
+      const res = await axios.get(`/api/review/my?start_idx=${startIndex}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-
       setReviewInfo(res.data); // 기존 리뷰에 새 리뷰 추가
       console.log("✅  getUserReview  res.data.data:", res.data);
+      if (res.data.more === false) {
+        setIsShowMore(false);
+      }
     } catch (error) {
       console.log("✅  getUserReview  error:", error);
     }
@@ -102,8 +109,8 @@ const UserrRview = () => {
 
   useEffect(() => {
     getUserReview();
-  }, [lastIndex]);
-  // lastIndex가 변경될 때마다 getUserReview 호출
+  }, [startIndex]);
+  // startIndex가 변경될 때마다 getUserReview 호출
 
   const navigate = useNavigate();
 
@@ -158,12 +165,14 @@ const UserrRview = () => {
             </div>
           );
         })}
-        <div className="flex justify-center mb-14">
-          <Button onClick={() => setLastIndex(prev => prev + 10)}>
-            <AiOutlinePlus />
-            더보기
-          </Button>
-        </div>
+        {isShowMore && (
+          <div className="flex justify-center mb-14">
+            <Button onClick={() => setStartIndex(prev => prev + 10)}>
+              <AiOutlinePlus />
+              더보기
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

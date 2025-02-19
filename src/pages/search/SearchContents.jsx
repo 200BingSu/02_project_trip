@@ -44,7 +44,7 @@ const SearchContents = () => {
   };
   //입력 후 데이터 호출
   const postSearchAll = async () => {
-    const sendData = { search_word: searchValue, last_index: 0 };
+    const sendData = { search_word: searchValue, start_idx: 0 };
     console.log("검색:", sendData);
     try {
       const res = await jwtAxios.post(
