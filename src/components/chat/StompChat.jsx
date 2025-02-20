@@ -14,7 +14,7 @@ const StompChat = () => {
   useEffect(() => {
     // 웹 소켓 연결 설정은 한번만 실행되도록
     if (!stompClient) {
-      const socket = new SockJS("http://localhost:8080/spring-boot-tutorial");
+      const socket = new SockJS("ws://112.222.157.157:5231/chat-join");
 
       const client = Stomp.over(socket);
 
