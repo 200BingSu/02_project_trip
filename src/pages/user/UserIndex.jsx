@@ -17,7 +17,7 @@ import UserTrips from "./UserTrips";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
-const UserIndex = ({ isOpen, onClose }) => {
+const UserIndex = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [useProfile, setUseProfile] = useState([]);
   const [coupon, setCoupon] = useState("");
@@ -74,34 +74,20 @@ const UserIndex = ({ isOpen, onClose }) => {
   };
 
   const handleUserEdit = () => {
-    navigate("user/useredit", { state: useProfile });
+    navigate("useredit", { state: useProfile });
   };
 
   return (
-    <div
-      className={`overflow-hidden max-w-3xl w-full fixed left-1/2 -translate-x-1/2 inset-0 z-[99] flex justify-end transition-opacity duration-300 ${
-        isOpen
-          ? "opacity-100 pointer-events-auto"
-          : "opacity-0 pointer-events-none"
-      }`}
-      onClick={() => onClose()}
-    >
-      {/* 배경 오버레이 */}
-      <div
-        className="absolute inset-0 bg-black opacity-50 "
-        onClick={() => onClose()}
-      ></div>
+    <div className={` w-full flex justify-end`}>
       {/* 모바일 메뉴 컨테이너 */}
       <div
-        className={`z-[999] absolute top-0 right-0 w-[70%]  h-screen bg-white overflow-y-auto shadow-xl transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : " translate-x-full"
-        }`}
+        className={`w-full  h-screen bg-white `}
         onClick={e => e.stopPropagation()}
       >
         <div className="px-8 py-8">
           <div className="flex justify-between">
             <IoCloseSharp
-              onClick={() => onClose()}
+              onClick={() => navigate(-1)}
               className="text-3xl cursor-pointer text-slate-700"
             />
             <h1 className="flex gap-5">
@@ -113,55 +99,45 @@ const UserIndex = ({ isOpen, onClose }) => {
             </h1>
           </div>
           <div>
-            {accessToken ? (
-              <div className="">
-                <div className="mx-auto w-32 h-32 rounded-full overflow-hidden">
-                  <img
-                    src={
-                      useProfile.profilePic
-                        ? `${ProfilePic}${userLogin?.userId}/${userInfo?.profilePic}`
-                        : `/images/user.png`
-                    }
-                    alt="User-Profile"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+            <div className="">
+              <div className="mx-auto w-32 h-32 rounded-full overflow-hidden">
+                <img
+                  src={
+                    useProfile.profilePic
+                      ? `${ProfilePic}${userLogin?.userId}/${userInfo?.profilePic}`
+                      : `/images/user.png`
+                  }
+                  alt="User-Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-                <h1 className="text-3xl font-bold text-slate-700 mt-4 text-center">
-                  {useProfile.name}
-                </h1>
-                <Swiper slidesPerView={1} className="mySwiper">
-                  {useProfile.tripList?.map(content => (
-                    <SwiperSlide key={content.tripId}>
-                      <span className="absolute top-0 left-1/2 -translate-x-1/2 block w-0 h-0 border-transparent border-solid border-l-[12px] border-r-[12px] border-b-[20px] border-b-slate-100 z-[1]" />
-                      <div className="flex items-center justify-between bg-slate-100 mt-5 px-5 h-20 rounded-[36px] relative">
-                        <div className="flex items-center">
-                          <img
-                            src={`${LocationPic}${content.locationPic}`}
-                            alt=""
-                            className="w-8 h-8 rounded-full mr-3"
-                          />
-                          <span className="text-xl text-slate-700 font-normal">
-                            {content.title}
-                          </span>
-                        </div>
-                        <span className="text-xl text-primary font-medium">
-                          {content.dday > 0 ? `D-${content.dday}` : "여행중"}
+              <h1 className="text-3xl font-bold text-slate-700 mt-4 text-center">
+                {useProfile.name}
+              </h1>
+              <Swiper slidesPerView={1} className="mySwiper">
+                {useProfile.tripList?.map(content => (
+                  <SwiperSlide key={content.tripId}>
+                    <span className="absolute top-0 left-1/2 -translate-x-1/2 block w-0 h-0 border-transparent border-solid border-l-[12px] border-r-[12px] border-b-[20px] border-b-slate-100 z-[1]" />
+                    <div className="flex items-center justify-between bg-slate-100 mt-5 px-5 h-20 rounded-[36px] relative">
+                      <div className="flex items-center">
+                        <img
+                          src={`${LocationPic}${content.locationPic}`}
+                          alt=""
+                          className="w-8 h-8 rounded-full mr-3"
+                        />
+                        <span className="text-xl text-slate-700 font-normal">
+                          {content.title}
                         </span>
                       </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </div>
-            ) : (
-              <Link
-                to="/signin"
-                className="text-2xl font-bold text-slate-700 flex items-center justify-between py-5"
-              >
-                <span>로그인 해주세요</span>
-                <IoIosArrowRoundForward className="text-3xl" />
-              </Link>
-            )}
+                      <span className="text-xl text-primary font-medium">
+                        {content.dday > 0 ? `D-${content.dday}` : "여행중"}
+                      </span>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
 
             <div className="flex mt-10">
               <Link
