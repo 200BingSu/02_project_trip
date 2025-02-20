@@ -211,12 +211,12 @@ const SingInIndex = () => {
       </div>
       {/* 카카오 로그인 */}
       <div className="w-full">
-        <button
-          type="button"
+        <Link
+          to="http://localhost:8080/oauth2/authorization"
           className="w-full h-[60px] font-semibold text-[16px] bg-[#FEE500] hover:bg-[#FEE500]/80 rounded-md"
         >
           카카오 로그인
-        </button>
+        </Link>
       </div>
     </div>
   );

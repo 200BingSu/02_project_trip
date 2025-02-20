@@ -10,7 +10,7 @@ const JwtChat = () => {
 
   useEffect(() => {
     // const socket = new WebSocket(`ws://localhost:8080/chat?userId=${userId}`);
-    const socket = new WebSocket("ws://localhost:8080/spring-boot-tutorial");
+    const socket = new WebSocket("ws://112.222.157.157:5231/chat-join");
 
     socket.onopen = () => console.log("WebSocket Connected");
     socket.onmessage = event => setMessages(prev => [...prev, event.data]);

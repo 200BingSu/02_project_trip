@@ -62,7 +62,6 @@ const UserTrips = () => {
       // console.log("구성원추가", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
-        getTripList();
         navigate(`/schedule/index?tripId=${resultData.data}`);
       }
     } catch (error) {
