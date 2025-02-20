@@ -43,7 +43,7 @@ const ChangePw = () => {
             form={form}
             requiredMark={false}
             onFinish={onFinish}
-            className="w-full"
+            className="w-full flex flex-col gap-[20px]"
           >
             <Form.Item
               name="pw"
@@ -61,6 +61,7 @@ const ChangePw = () => {
                     "비밀번호는 반드시 8-20자 이내 숫자, 특수문자(), 영문자 중 2가지 이상을 조합하셔야 합니다",
                 },
               ]}
+              help="비밀번호는 반드시 8-20자 이내 숫자, 특수문자(), 영문자 중 2가지 이상을 조합하셔야 합니다"
             >
               <Input.Password
                 placeholder="현재 비밀번호를 입력해주세요."
@@ -83,6 +84,7 @@ const ChangePw = () => {
                     "비밀번호는 반드시 8-20자 이내 숫자, 특수문자(), 영문자 중 2가지 이상을 조합하셔야 합니다",
                 },
               ]}
+              help="비밀번호는 반드시 8-20자 이내 숫자, 특수문자(), 영문자 중 2가지 이상을 조합하셔야 합니다"
             >
               <Input.Password
                 placeholder="새로운 비밀번호를 입력해주세요."

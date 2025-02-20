@@ -1,4 +1,4 @@
-import { Button, DatePicker, Divider, Form, Input } from "antd";
+import { Button, DatePicker, Divider, Form, Input, Select, Space } from "antd";
 import Checkbox from "antd/es/checkbox/Checkbox";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { USER } from "../../constants/api";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import Policy from "../../components/signup/Policy";
+import dayjs from "dayjs";
 
 const formItemLayout = {
   labelCol: {
@@ -106,15 +107,19 @@ const SignUpUser = () => {
     );
     const { confirm, ...filterData } = values;
     const email = values.email;
-    setFormData(filterData);
-    //console.log("보내지는 데이터:", postData);
-    if (requiredArr.length === 4 && validateStatus === "success") {
-      console.log("이메일 링크 요청", { email: email });
-      postEmail({ email: email });
-      handleClickNavigate(filterData);
-    } else {
-      setErrorMessage(true);
-    }
+    const birthobj = values.birthday;
+    const birthString = `${birthobj.year}-${birthobj.month > 9 ? birthobj.month : `0${birthobj.month}`}-${birthobj.day > 9 ? birthobj.day : `0${birthobj.day}`}`;
+    const sendData = { ...filterData, birthday: birthString };
+    console.log("폼 제출 데이터:", sendData);
+    setFormData(sendData);
+
+    // if (requiredArr.length === 4 && validateStatus === "success") {
+    //   console.log("이메일 링크 요청", { email: email });
+    //   postEmail({ email: email });
+    //   handleClickNavigate(filterData);
+    // } else {
+    //   setErrorMessage(true);
+    // }
   };
 
   // 약관 보기
@@ -122,6 +127,33 @@ const SignUpUser = () => {
     setPolicyType(e.target.value);
     setShowPolicy(true);
   }, []);
+
+  // 년/월/일 선택을 위한 options 생성
+  const yearOptions = Array.from({ length: 100 }, (_, i) => ({
+    value: new Date().getFullYear() - i,
+    label: `${new Date().getFullYear() - i}년`,
+  }));
+
+  const monthOptions = Array.from({ length: 12 }, (_, i) => ({
+    value: i + 1,
+    label: `${i + 1}월`,
+  }));
+
+  const dayOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i + 1,
+    label: `${i + 1}일`,
+  }));
+
+  // Form의 초기값 설정
+  useEffect(() => {
+    form.setFieldsValue({
+      birthday: {
+        year: 1999,
+        month: 1,
+        day: 1,
+      },
+    });
+  }, [form]);
 
   return (
     <>
@@ -185,39 +217,7 @@ const SignUpUser = () => {
               style={{ height: "60px" }}
             />
           </Form.Item>
-          {/* 휴대폰 번호 */}
-          <Form.Item
-            name="phone"
-            label="휴대폰 번호"
-            rules={[
-              {
-                required: true,
-                message: "휴대폰 번호는 필수 입력 항목입니다.",
-              },
-              {
-                pattern: /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
-                message:
-                  "올바른 휴대폰 번호 형식이 아닙니다. (예: 010-1234-5678)",
-              },
-            ]}
-          >
-            <Input
-              placeholder="휴대폰 번호를 입력하세요"
-              style={{ height: "60px" }}
-            />
-          </Form.Item>
-          {/* 생일 */}
-          <Form.Item
-            name="birthday"
-            label="생일"
-            help="* 쿠폰 발급과 같은 서비스를 위한 항목입니다."
-            style={{ paddingBottom: "20px" }}
-          >
-            <DatePicker
-              placeholder="생일을 입력하세요"
-              style={{ height: "60px", width: "100%" }}
-            />
-          </Form.Item>
+
           {/* 비밀번호 */}
           <Form.Item
             name="pw"
@@ -269,7 +269,56 @@ const SignUpUser = () => {
               style={{ height: "60px" }}
             />
           </Form.Item>
-          {/* 약관 동의 */}
+          {/* 휴대폰 번호 */}
+          <Form.Item
+            name="phone"
+            label="휴대폰 번호"
+            rules={[
+              {
+                pattern: /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
+                message:
+                  "올바른 휴대폰 번호 형식이 아닙니다. (예: 010-1234-5678)",
+              },
+            ]}
+            help="* 휴대폰 번호는 광고 또는 서비스 이용을 위한 항목입니다."
+          >
+            <Input
+              placeholder="휴대폰 번호를 입력하세요"
+              style={{ height: "60px" }}
+            />
+          </Form.Item>
+          {/* 생일 */}
+          <Form.Item
+            name="birthday"
+            label="생일"
+            help="* 쿠폰 발급과 같은 서비스를 위한 항목입니다."
+            style={{ paddingBottom: "20px" }}
+          >
+            <Space.Compact block>
+              <Form.Item name={["birthday", "year"]} noStyle>
+                <Select
+                  placeholder="년도"
+                  style={{ width: "33%", height: "40px" }}
+                  options={yearOptions}
+                />
+              </Form.Item>
+              <Form.Item name={["birthday", "month"]} noStyle>
+                <Select
+                  placeholder="월"
+                  style={{ width: "33%", height: "40px" }}
+                  options={monthOptions}
+                />
+              </Form.Item>
+              <Form.Item name={["birthday", "day"]} noStyle>
+                <Select
+                  placeholder="일"
+                  style={{ width: "34%", height: "40px" }}
+                  options={dayOptions}
+                />
+              </Form.Item>
+            </Space.Compact>
+          </Form.Item>
+
           {/* 약관 동의 */}
           <Checkbox
             onChange={onCheckAllChange}

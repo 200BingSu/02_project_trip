@@ -11,18 +11,34 @@ import SearchList from "../../components/search/SearchList";
 import { TRIP } from "../../constants/api";
 import axios from "axios";
 import { LocationPic } from "../../constants/pic";
+import { useRecoilState } from "recoil";
+import { editTripAtom } from "../../atoms/EditTripAtom";
 
 const SearchLocation = () => {
+  //recoil
+  const [editData, setEditData] = useRecoilState(editTripAtom);
+  useEffect(() => {
+    console.log("편집 데이터", editData);
+  }, [editData]);
   //useNavigate
   const navigate = useNavigate();
   const location = useLocation();
   const locationState = location.state;
   const fromPage = locationState?.from;
-
+  // useLocation
+  const tripLocationList = locationState?.tripLocationList;
   // 일정 관리 안 넣었음
-  const hadleClickSubmitButton = () => {
+  const handleClickSubmitButton = () => {
     if (fromPage) {
-      navigate(fromPage, { state: selectedLocationId });
+      if (fromPage === "/schedule/index") {
+        navigate(fromPage);
+        setEditData({
+          ...editData,
+          tripLocationList: selectedLocationId,
+        });
+      } else {
+        navigate(fromPage, { state: selectedLocationId });
+      }
     } else {
       navigate(`/schedule/days`, {
         state: {
@@ -42,8 +58,8 @@ const SearchLocation = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log(searchValue);
-  }, [searchValue]);
+    console.log("selectedLocationId", selectedLocationId);
+  }, [selectedLocationId]);
   //useRef
   const imgRef = useRef(null);
   useEffect(() => {
@@ -65,12 +81,24 @@ const SearchLocation = () => {
     getLocationList();
   }, []);
 
+  useEffect(() => {
+    if (locationData && editData?.tripLocationList) {
+      const matchedLocations = locationData.data.locationList.filter(location =>
+        editData.tripLocationList.includes(location.locationId),
+      );
+      setSelectedLocationId(matchedLocations);
+    }
+  }, [locationData, editData?.tripLocationList]);
+
   const locationArr = locationData?.data.locationList;
   const sortArr = locationArr?.filter(item => item.title.includes(searchValue));
 
   // 지역 선택
   const handleClickSelect = item => {
-    setSelectedLocationId([...selectedLocationId, item]);
+    // 중복 선택 방지를 위한 체크 추가
+    if (!selectedLocationId.some(loc => loc.locationId === item.locationId)) {
+      setSelectedLocationId([...selectedLocationId, item]);
+    }
   };
   const handleClickCancel = item => {
     setSelectedLocationId(
@@ -162,7 +190,7 @@ const SearchLocation = () => {
           <button
             type="button"
             className="w-full px-[20px] py-[15px] text-[20px] font-bold text-white bg-primary rounded-lg"
-            onClick={hadleClickSubmitButton}
+            onClick={handleClickSubmitButton}
           >
             {selectedLocationId.length === 1
               ? `${selectedLocationId[0]?.title} 선택 완료`
