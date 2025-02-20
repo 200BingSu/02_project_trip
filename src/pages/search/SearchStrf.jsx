@@ -19,7 +19,7 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { amenities, strfArr } from "../../constants/dataArr";
 import { moveTo } from "../../utils/moveTo";
 import { categoryArr, orderTypeArr } from "../../constants/search";
-import { resetSearchData } from "../../selector/searchSelector";
+import { resetSearchData } from "../../selectors/searchSelector";
 
 const SearchStrf = () => {
   const [form] = Form.useForm();
