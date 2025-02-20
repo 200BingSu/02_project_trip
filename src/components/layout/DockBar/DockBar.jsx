@@ -11,7 +11,7 @@ import { LuMapPinned } from "react-icons/lu";
 import { getCookie } from "../../../utils/cookie";
 import { searchAtom } from "../../../atoms/searchAtom";
 import { IoIosArrowUp } from "react-icons/io";
-import { resetSearchData } from "../../../selector/searchSelector";
+import { resetSearchData } from "../../../selectors/searchSelector";
 
 const DockBar = React.memo(() => {
   //useLocation

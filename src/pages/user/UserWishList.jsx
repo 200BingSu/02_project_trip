@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import TitleHeader from "../../components/layout/header/TitleHeader";
-import { Button, Rate } from "antd";
+import { Button, DatePicker, Form, Rate } from "antd";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getCookie } from "../../utils/cookie";
@@ -12,7 +12,10 @@ import { categoryArr, orderTypeArr } from "../../constants/search";
 import jwtAxios from "../../apis/jwt";
 import dayjs from "dayjs";
 
+const today = dayjs().format("YYYY-MM-DD");
+
 const UserWishList = () => {
+  const [form] = Form.useForm();
   const accessToken = getCookie("accessToken");
   //useNavigate
   const navigate = useNavigate();
@@ -28,6 +31,7 @@ const UserWishList = () => {
   const [category, setCategory] = useState(0);
   const [orderType, setOrderType] = useState(0);
   const [isMore, setIsMore] = useState(true);
+  const [startDate, setStartDate] = useState(today);
   useEffect(() => {
     console.log("wishListData", wishListData);
   }, [wishListData]);
@@ -45,17 +49,17 @@ const UserWishList = () => {
       console.log("찜목록 불러오기", error);
     }
   };
+  // 축제 찜목록
   const getWishListFest = async () => {
-    const today = dayjs().format("YYYY-MM-DD");
     try {
       const res = await jwtAxios.get(
-        `/api/wish-list/fest?start_idx=${startIndex}&orderType=${orderTypeArr[orderType].type}&category=${categoryArr[category].name}&start_at=${today}`,
+        `/api/wish-list/fest?start_idx=${startIndex}&orderType=${orderTypeArr[orderType].type}&category=${categoryArr[category].name}&start_at=${startDate}`,
       );
-      console.log(res.data);
+      console.log("축제 찜목록", res.data);
       const resultData = res.data;
       setWishListData([...wishListData, ...resultData.data]);
       setStartIndex(prev => prev + 10);
-      if (resultData.data[0].more === false) {
+      if (resultData.data[0]?.more === false || resultData.data.length === 0) {
         setIsMore(false);
       }
     } catch (error) {
@@ -74,6 +78,16 @@ const UserWishList = () => {
     setStartIndex(0);
     setWishListData([]);
   };
+  // 날짜 변경
+  const handleStartDateChange = async date => {
+    setStartIndex(0);
+    setWishListData([]);
+    const dateString = date.format("YYYY-MM-DD");
+    setStartDate(dateString);
+
+    // 상태 업데이트가 반영될 수 있도록 useEffect를 활용
+  };
+  // useEffect
   useEffect(() => {
     getWishList();
   }, []);
@@ -84,6 +98,11 @@ const UserWishList = () => {
       getWishListFest();
     }
   }, [category, orderType]);
+  useEffect(() => {
+    if (startDate && category === 4) {
+      getWishListFest();
+    }
+  }, [startDate]);
   return (
     <div>
       <TitleHeader icon="back" onClick={navigateBack} title="찜 목록" />
@@ -110,23 +129,29 @@ const UserWishList = () => {
               );
             })}
           </ul>
-
-          {/* 정렬 */}
-          <ul className="flex items-center">
-            {orderTypeArr.map((item, index) => {
-              return (
-                <li
-                  key={index}
-                  className={`cursor-pointer font-semibold text-[13px] flex items-center px-3 py-1  ${
-                    index === orderType ? "text-primary" : "text-slate-500"
-                  }`}
-                  onClick={() => handleOrderTypeChange(index)}
-                >
-                  {item.name}
-                </li>
-              );
-            })}
-          </ul>
+          <div className="flex items-center gap-5">
+            {/* 정렬 */}
+            <ul className="flex items-center gap-5">
+              {orderTypeArr.map((item, index) => {
+                return (
+                  <li
+                    key={index}
+                    className={`cursor-pointer font-semibold text-[13px] flex items-center py-1  ${
+                      index === orderType ? "text-primary" : "text-slate-500"
+                    }`}
+                    onClick={() => handleOrderTypeChange(index)}
+                  >
+                    {item.name}
+                  </li>
+                );
+              })}
+            </ul>
+            {category === 4 && (
+              <div>
+                <DatePicker onChange={handleStartDateChange} />
+              </div>
+            )}
+          </div>
         </div>
         {/* 검색 목록 */}
         <ul className="w-full flex flex-col gap-[20px] mb-[30px]">
