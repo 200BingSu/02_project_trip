@@ -87,7 +87,6 @@ const Index = () => {
 
   return (
     <div>
-      <UserIndex isOpen={isOpen} onClose={() => setIsOpen(false)} />
       <header
         className={`flex h-[60px] items-center px-[32px] max-w-3xl w-full sticky top-0 left-0 z-10 duration-300 ${scrollY ? "shadow-md" : "shadow-none"} z-50 bg-white `}
       >
@@ -105,7 +104,13 @@ const Index = () => {
           <BiBell className="text-3xl text-slate-400 cursor-pointer" />
           <CgMenuGridO
             className="text-3xl text-slate-400 cursor-pointer"
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              if (accessToken) {
+                navigate("/user");
+              } else {
+                navigate("/signin");
+              }
+            }}
           />
         </nav>
       </header>
