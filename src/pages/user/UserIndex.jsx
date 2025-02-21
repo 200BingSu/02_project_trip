@@ -8,7 +8,7 @@ import { HiOutlineMap } from "react-icons/hi2";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { IoCloseSharp, IoReaderOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 import { LocationPic, ProfilePic } from "../../constants/pic";
 import { getCookie, removeCookie } from "../../utils/cookie";
@@ -18,7 +18,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
 const UserIndex = () => {
+  // recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const resetUserData = useResetRecoilState(userAtom);
   const [useProfile, setUseProfile] = useState([]);
   const [coupon, setCoupon] = useState("");
 
@@ -64,10 +66,7 @@ const UserIndex = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    setUserInfo({
-      userId: 0,
-      accessToken: "",
-    });
+    resetUserData();
     removeCookie("accessToken");
     // removeCookie("user");
     navigate("/signin");
