@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
 
 const Chat = () => {
-  const url = "ws://112.222.157.157:5231/chat-join";
+  const url = "ws://localhost:8080/chat-join";
   const topic = "/topic/greetings";
   const app = "/app/hello";
 
