@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 import Loading from "../components/loading/Loading";
 
 const usertrouter = () => {
-  // const LazyUserIndex = lazy(() => import("../pages/user/UserIndex"));
+  const LazyUserIndex = lazy(() => import("../pages/user/UserIndex"));
   const LazyUserEdit = lazy(() => import("../pages/user/UserEdit"));
   const LazyUserTrips = lazy(() => import("../pages/user/UserTrips"));
 
@@ -17,14 +17,14 @@ const usertrouter = () => {
   const LazyChangePw = lazy(() => import("../pages/user/ChangePw"));
 
   return [
-    // {
-    //   path: "mypage",
-    //   element: (
-    //     <Suspense fallback={<Loading />}>
-    //       <LazyUserIndex />
-    //     </Suspense>
-    //   ),
-    // },
+    {
+      path: "index",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyUserIndex />
+        </Suspense>
+      ),
+    },
     {
       path: "useredit",
       element: (
