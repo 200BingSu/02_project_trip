@@ -14,7 +14,7 @@ const StompChat = () => {
   useEffect(() => {
     // 웹 소켓 연결 설정은 한번만 실행되도록
     if (!stompClient) {
-      const socket = new SockJS("ws://112.222.157.157:5231/chat-join");
+      const socket = new SockJS(`http://localhost:8080/chat`);
 
       const client = Stomp.over(socket);
 
@@ -23,9 +23,9 @@ const StompChat = () => {
         setStompClient(client);
 
         // 구독할 채팅방의 roomId 설정
-        const roomId = "teest"; // 원하는 채팅방 ID로 설정. 임의로 정한 ID
+        const roomId = "test"; // 원하는 채팅방 ID로 설정. 임의로 정한 ID
 
-        client.subscribe(`/sub/Chat/room/${roomId}`, message => {
+        client.subscribe(`/sub/chat/${roomId}`, message => {
           const newMessage = JSON.parse(message.body);
           setMessages(prevMessages => [...prevMessages, newMessage]);
           console.log(newMessage);
@@ -55,13 +55,13 @@ const StompChat = () => {
   const sendMessage = () => {
     // 메시지를 서버로 보내는 함수
     if (stompClient) {
-      const roomId = "teest"; // 원하는 채팅방 ID로 설정
+      const roomId = "test"; // 원하는 채팅방 ID로 설정
       const message = {
-        type: "TALK", // 메시지 타입
-        roomId,
+        // type: "TALK", // 메시지 타입
+        roomId: roomId,
         sender: sender, // sender로 사용자의 이름
         message: messageInput,
-        time: new Date(), // 시간 설정
+        // time: new Date(), // 시간 설정
       };
       stompClient.send(`/pub/Chat/message`, {}, JSON.stringify(message));
       setMessageInput("");

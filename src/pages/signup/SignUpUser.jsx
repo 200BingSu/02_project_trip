@@ -270,7 +270,7 @@ const SignUpUser = () => {
             />
           </Form.Item>
           {/* 휴대폰 번호 */}
-          <Form.Item
+          {/* <Form.Item
             name="phone"
             label="휴대폰 번호"
             rules={[
@@ -286,7 +286,7 @@ const SignUpUser = () => {
               placeholder="휴대폰 번호를 입력하세요"
               style={{ height: "60px" }}
             />
-          </Form.Item>
+          </Form.Item> */}
           {/* 생일 */}
           <Form.Item
             name="birthday"
@@ -298,21 +298,21 @@ const SignUpUser = () => {
               <Form.Item name={["birthday", "year"]} noStyle>
                 <Select
                   placeholder="년도"
-                  style={{ width: "33%", height: "40px" }}
+                  style={{ width: "33%", height: "60px" }}
                   options={yearOptions}
                 />
               </Form.Item>
               <Form.Item name={["birthday", "month"]} noStyle>
                 <Select
                   placeholder="월"
-                  style={{ width: "33%", height: "40px" }}
+                  style={{ width: "33%", height: "60px" }}
                   options={monthOptions}
                 />
               </Form.Item>
               <Form.Item name={["birthday", "day"]} noStyle>
                 <Select
                   placeholder="일"
-                  style={{ width: "34%", height: "40px" }}
+                  style={{ width: "34%", height: "60px" }}
                   options={dayOptions}
                 />
               </Form.Item>
