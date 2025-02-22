@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
 
 const Chat = () => {
-  const url = "ws://112.222.157.157:5231/chat-join";
+  const url = `ws://localhost:8080/chat`;
   const topic = "/topic/greetings";
   const app = "/app/hello";
 
@@ -55,18 +55,20 @@ const Chat = () => {
   };
 
   const sendMessage = () => {
-    if (client && name.trim() && connected) {
+    if (client && messages.trim() && connected) {
       try {
-        console.log("Sending message:", name);
+        console.log("Sending message:", messages);
         client.publish({
           destination: app,
-          body: JSON.stringify({ name }),
+          body: JSON.stringify({ messages }),
         });
       } catch (error) {
         console.error("Error sending message:", error);
       }
     } else {
-      console.log("Cannot send message: Client not connected or name is empty");
+      console.log(
+        "Cannot send message: Client not connected or messages is empty",
+      );
     }
   };
   return (
