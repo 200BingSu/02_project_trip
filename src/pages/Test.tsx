@@ -1,4 +1,4 @@
-import Chat from "../components/chat/Chat";
+import StompChat from "../components/chat/StompChat";
 
 (window as any).global = window;
 
@@ -6,8 +6,8 @@ const Test = () => {
   return (
     <div>
       {/* <JwtChat /> */}
-      {/* <StompChat /> */}
-      <Chat />
+      <StompChat />
+      {/* <Chat /> */}
       {/* <>
         <Steps
           current={current}
