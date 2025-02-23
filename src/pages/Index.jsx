@@ -106,7 +106,7 @@ const Index = () => {
             className="text-3xl text-slate-400 cursor-pointer"
             onClick={() => {
               if (accessToken) {
-                navigate("/user");
+                navigate("/user/index");
               } else {
                 navigate("/signin");
               }
