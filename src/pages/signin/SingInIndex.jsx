@@ -11,6 +11,9 @@ import moment from "moment";
 
 //카카오 로그인 url
 const snsUrl = "http://localhost:8080/oauth2/authorization";
+const handleKakaoLogin = () => {
+  window.location.href = `${snsUrl}`;
+};
 const SingInIndex = () => {
   //쿠키
   const savedUserLogin = getCookie("user");
@@ -215,9 +218,7 @@ const SingInIndex = () => {
       <div className="w-full">
         <button
           type="button"
-          onClick={() => {
-            window.location.href = `${snsUrl}`;
-          }}
+          onClick={handleKakaoLogin}
           className="w-full h-[60px] font-semibold text-[16px] bg-[#FEE500] hover:bg-[#FEE500]/80 rounded-md"
         >
           카카오 로그인
