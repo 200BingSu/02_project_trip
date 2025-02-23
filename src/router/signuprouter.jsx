@@ -7,7 +7,6 @@ const signUpRouter = () => {
   const LazySignUpBusiness = lazy(
     () => import("../pages/signup/SignUpBusiness"),
   );
-
   const LazyConfirmEmail = lazy(() => import("../pages/signup/ConfirmEmail"));
   const LazyConfirmBusinessNum = lazy(
     () => import("../pages/signup/ConfirmBusinessNum"),
@@ -15,6 +14,8 @@ const signUpRouter = () => {
   const LazyCompleteSignUp = lazy(
     () => import("../pages/signup/CompleteSingUP"),
   );
+  const LazyKakaoSingup = lazy(() => import("../pages/signup/Kakao"));
+
   return [
     {
       path: "index",
