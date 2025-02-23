@@ -550,51 +550,60 @@ const SortableScheduleItem = ({
               {scheIndex !== -1 ? scheIndex + 1 : "없음"}
             </div>
             {/* 일정 정보 */}
-            <div className="flex gap-[20px] items-center">
-              {/* 이미지 */}
-              <div className="w-[60px] h-[60px] bg-slate-200 rounded-lg overflow-hidden">
-                <img
-                  src={`${ProductPic}${item.strfId}/${item.picName}`}
-                  alt="thum"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {/* 정보 */}
-              <div>
-                <h4 className="font-semibold text-[20px] text-slate-700">
-                  {item.strfTitle}
-                </h4>
-                <div className="flex gap-[10px] items-center">
-                  <p className="text-[14px] text-slate-500">
-                    {categoryKor(item.category)}
-                  </p>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex gap-[20px] items-center">
+                {/* 이미지 */}
+                <div className="w-[60px] h-[60px] bg-slate-200 rounded-lg overflow-hidden">
+                  <img
+                    src={`${ProductPic}${item.strfId}/${item.picName}`}
+                    alt="thum"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* 정보 */}
+                <div>
+                  <h4 className="font-semibold text-[20px] text-slate-700">
+                    {item.strfTitle}
+                  </h4>
                   <div className="flex gap-[10px] items-center">
-                    <div className="flex gap-[5px] items-center">
-                      <Rate
-                        disabled
-                        count={1}
-                        value={item.reviewed ? 1 : 0}
-                        style={{
-                          width: "16px",
-                          height: "16px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      />
-                      {/* <p className="text-[12px] text-slate-500">평점</p>
+                    <p className="text-[14px] text-slate-500">
+                      {categoryKor(item.category)}
+                    </p>
+                    <div className="flex gap-[10px] items-center">
+                      <div className="flex gap-[5px] items-center">
+                        <Rate
+                          disabled
+                          count={1}
+                          value={item.reviewed ? 1 : 0}
+                          style={{
+                            width: "16px",
+                            height: "16px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        />
+                        {/* <p className="text-[12px] text-slate-500">평점</p>
                       <p className="text-[12px] text-slate-500">
                         ({(1000).toLocaleString()})
                       </p> */}
-                    </div>
-                    {/* <p className="flex gap-[5px] items-center">
+                      </div>
+                      {/* <p className="flex gap-[5px] items-center">
                       <AiTwotoneHeart className="text-[16px]" />
                       <span className="text-[12px] text-slate-500">
                         찜하기 수
                       </span>
                     </p> */}
+                    </div>
                   </div>
                 </div>
+              </div>
+              <div>
+                {isDragging ? (
+                  <button type="button" className="text-[18px] text-slate-300">
+                    이동
+                  </button>
+                ) : null}
               </div>
             </div>
           </div>

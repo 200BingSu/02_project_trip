@@ -208,7 +208,7 @@ const UserIndex = () => {
           </Link>
         </div>
         <p className="w-full h-[10px] bg-slate-100"></p>
-        <div className="px-8 pb-8">
+        <div className="px-8 pb-[130px]">
           <Link to="" className="flex py-5 text-lg text-slate-500">
             공지사항
           </Link>
