@@ -193,10 +193,16 @@ const ScheduleDetail = () => {
                 type="button"
                 className={`w-[50px] h-[50px] flex items-center justify-center
                    bg-slate-100 rounded-full 
-                   text-slate-300 text-[20px] hover:text-secondary3
-                   transition-all duration-300`}
+                   text-slate-300 text-[20px]
+                   transition-all duration-300
+                   hover:bg-slate-200
+                   ${tripReviewData.likeUser === 0 ? "text-secondary3" : "text-slate-500"}`}
                 onClick={() => {
-                  postTripReviewLike();
+                  if (tripReviewData.likeUser === 0) {
+                    postTripReviewLike();
+                  } else {
+                    deleteTripReviewLike();
+                  }
                 }}
               >
                 <GoThumbsup />
