@@ -1,4 +1,12 @@
-import { Button, Checkbox, FloatButton, Form, Input } from "antd";
+import {
+  Button,
+  Checkbox,
+  FloatButton,
+  Form,
+  Input,
+  Modal,
+  Select,
+} from "antd";
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
@@ -20,6 +28,7 @@ import { amenities, strfArr } from "../../constants/dataArr";
 import { moveTo } from "../../utils/moveTo";
 import { categoryArr, orderTypeArr } from "../../constants/search";
 import { resetSearchData } from "../../selectors/searchSelector";
+import AmenityFilter from "../../components/search/AmenityFilter";
 
 const SearchStrf = () => {
   const [form] = Form.useForm();
@@ -58,6 +67,7 @@ const SearchStrf = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [isSearchLoading, setIsSearchLoading] = useState(false); // 검색 로딩
   const [isShowMore, setIsShowMore] = useState(true); // 더보기 상태
+  const [isAmenityOpen, setIsAmenityOpen] = useState(false); // 편의시설 열림 상태
 
   // Form 초기값 상태 수정
   const [amenityValues, setAmenityValues] = useState([]);
@@ -204,7 +214,6 @@ const SearchStrf = () => {
       console.log("편의시설", error);
     }
   }, []);
-
   // 카테고리 별 데이터
   const tourData = searchData?.filter(item => item.category === "TOUR");
   const stayData = searchData?.filter(item => item.category === "STAY");
@@ -258,15 +267,12 @@ const SearchStrf = () => {
   const handleClickMore = () => {
     getCategorySearch();
   };
-  // 편의시설 필터 적용 함수 수정
-  const handleFinish = values => {
-    console.log("values", values.amenities);
-    setAmenityValues(values.amenities);
-    const amenityIds = values.amenities
-      ?.map(id => `amenity_id=${id}`)
-      .join("&");
-    console.log("amenityIds", amenityIds);
-    getAmenitySearch(amenityIds);
+  // 편의시설 필터 모달
+  const showAmenityFilter = () => {
+    setIsAmenityOpen(true);
+  };
+  const handleClickAmenityFilter = () => {
+    setIsAmenityOpen(false);
   };
   //useEffect
   useEffect(() => {
@@ -368,58 +374,29 @@ const SearchStrf = () => {
             })}
           </ul>
           {/* 정렬 방식 */}
-          {selectedCategory !== 0 && (
-            <ul className="flex items-center">
-              {orderTypeArr.map((item, index) => {
-                return (
-                  <li
-                    key={index}
-                    className={`cursor-pointer font-semibold text-[13px] flex items-center px-3 py-1  ${
-                      index === orderType ? "text-primary" : "text-slate-500"
-                    }`}
-                    onClick={() => {
-                      setOrderType(index);
-                      setStartIndex(0);
-                    }}
-                  >
-                    {item.name}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+          <div className="flex items-center gap-3">
+            {selectedCategory !== 0 && (
+              <Select
+                value={orderType}
+                onChange={value => {
+                  setOrderType(value);
+                  setStartIndex(0);
+                }}
+                options={orderTypeArr.map((item, index) => ({
+                  value: index,
+                  label: item.name,
+                }))}
+                className="w-[120px]"
+                size="middle"
+              />
+            )}
+            <div>
+              {selectedCategory === 2 && (
+                <Button onClick={showAmenityFilter}>편의시설 필터</Button>
+              )}
+            </div>
+          </div>
 
-          {/* 편의시설 필터 */}
-          {selectedCategory === 2 && (
-            <Form form={form} onFinish={handleFinish}>
-              <Form.Item
-                name="amenities"
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 cursor-pointer"
-              >
-                <Checkbox.Group className="flex flex-wrap gap-2">
-                  {amenities.map((item, index) => {
-                    return (
-                      <Checkbox value={item.amenity_id} key={index}>
-                        <div className="flex justify-center items-center gap-2">
-                          <span className="text-[16px] text-slate-500">
-                            {item.icon}
-                          </span>
-                          <span className="text-[14px] text-slate-700">
-                            {item.key}
-                          </span>
-                        </div>
-                      </Checkbox>
-                    );
-                  })}
-                </Checkbox.Group>
-              </Form.Item>
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  적용
-                </Button>
-              </Form.Item>
-            </Form>
-          )}
           {/* 검색 결과 */}
           {isSearchLoading ? (
             searchData?.length === 0 ? (
@@ -653,6 +630,17 @@ const SearchStrf = () => {
           handleClickCancle={handleClickCancle}
           handleClickSubmit={patchRecentListAll}
           content="최근 본 목록을 모두 삭제하시겠습니까?"
+        />
+      )}
+      {isAmenityOpen && (
+        <AmenityFilter
+          searchData={searchData}
+          setSearchData={setSearchData}
+          amenityValues={amenityValues}
+          setAmenityValues={setAmenityValues}
+          handleClickCancle={handleClickAmenityFilter}
+          getAmenitySearch={getAmenitySearch}
+          content="편의시설 필터"
         />
       )}
     </div>
