@@ -5,9 +5,7 @@ const usertrouter = () => {
   const LazyUserIndex = lazy(() => import("../pages/user/UserIndex"));
   const LazyUserEdit = lazy(() => import("../pages/user/UserEdit"));
   const LazyUserTrips = lazy(() => import("../pages/user/UserTrips"));
-
   const LazyUserRecentList = lazy(() => import("../pages/user/UserRecentList"));
-
   const LazyUserBooking = lazy(() => import("../pages/user/UserBooking"));
   const LazyUserWishList = lazy(() => import("../pages/user/UserWishList"));
   const LazyUserrRview = lazy(() => import("../pages/user/UserrRview"));
