@@ -49,26 +49,32 @@ const Chat = (): JSX.Element => {
   useEffect(() => {
     const stompClient = new Client({
       brokerURL: url,
-      // connectHeaders: {
-      //   Authorization: `Bearer ${accessToken}`,
-      // },
+      connectHeaders: {
+        Authorization: `Bearer ${accessToken}`,
+      },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       onConnect: async frame => {
         console.log("Connected: ", frame);
-        stompClient.subscribe(topic, message => {
-          console.log("받은 메세지:", message);
-          try {
-            const receivedMessage = JSON.parse(message.body);
-            console.log("파싱된 메세지:", receivedMessage);
-            setMessages(prev => [...prev, receivedMessage.content]);
-          } catch (error) {
-            // JSON이 아닌 일반 텍스트 메시지 처리
-            console.log("일반 텍스트 메시지:", message.body);
-            setMessages(prev => [...prev, message.body]);
-          }
-        });
+        stompClient.subscribe(
+          topic,
+          message => {
+            console.log("받은 메세지:", message);
+            try {
+              const receivedMessage = JSON.parse(message.body);
+              console.log("파싱된 메세지:", receivedMessage);
+              setMessages(prev => [...prev, receivedMessage.content]);
+            } catch (error) {
+              // JSON이 아닌 일반 텍스트 메시지 처리
+              console.log("일반 텍스트 메시지:", message.body);
+              setMessages(prev => [...prev, message.body]);
+            }
+          },
+          {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        );
         setConnected(true);
         // stompClient를 직접 사용
         try {
@@ -78,6 +84,9 @@ const Chat = (): JSX.Element => {
               roomId: roomId,
               sender: name,
             }),
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           });
           console.log("채팅방 입장 성공");
         } catch (error) {
@@ -167,6 +176,9 @@ const Chat = (): JSX.Element => {
             sender: name,
             message: inputMessage,
           }),
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
         // 메시지를 즉시 화면에 표시
         // setMessages(prev => [
