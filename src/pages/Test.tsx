@@ -5,8 +5,6 @@ import Chat from "../components/chat/Chat";
 const Test = () => {
   return (
     <div>
-      {/* <JwtChat /> */}
-      {/* <StompChat /> */}
       <Chat />
       {/* <>
         <Steps

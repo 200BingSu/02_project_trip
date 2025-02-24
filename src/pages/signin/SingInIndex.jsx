@@ -80,7 +80,10 @@ const SingInIndex = () => {
   return (
     <div
       className="w-full h-screen px-[122px] py-[225px] 
-                    flex flex-col items-center justify-center gap-4"
+                    flex flex-col items-center justify-center gap-4
+                     xs:px-[16px] xs:py-[134px]
+                     xxs:px-[16px] xxs:py-[134px]
+                    "
     >
       {/* 로고 */}
       <div
@@ -219,9 +222,14 @@ const SingInIndex = () => {
         <button
           type="button"
           onClick={handleKakaoLogin}
-          className="w-full h-[60px] font-semibold text-[16px] bg-[#FEE500] hover:bg-[#FEE500]/80 rounded-md"
+          className="w-full h-[60px]  bg-[#FEE500] hover:bg-[#FEE500]/80 rounded-md
+         
+          flex items-center justify-center gap-[10px]"
         >
-          카카오 로그인
+          <img src="/images/kakaoIcon.svg" alt="kakao" />
+          <p className="w-[265px] text-center  font-semibold text-[14px] text-[#191600] ">
+            카카오 로그인
+          </p>
         </button>
       </div>
     </div>
