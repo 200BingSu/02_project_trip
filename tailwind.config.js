@@ -10,7 +10,7 @@ export default {
     extend: {
       screens: {
         xxs: "320px",
-        xs: "480px",
+        xs: "375px",
       },
       colors: {
         primary: "#0DD1FD",
