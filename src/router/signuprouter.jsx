@@ -65,6 +65,14 @@ const signUpRouter = () => {
         </Suspense>
       ),
     },
+    {
+      path: "kakao",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyCompleteSignUp />
+        </Suspense>
+      ),
+    },
   ];
 };
 export default signUpRouter;

@@ -1,25 +1,46 @@
 import { Client } from "@stomp/stompjs";
 import { Button, Input } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { userAtom } from "../../atoms/userAtom";
 import { useRecoilValue } from "recoil";
+import { getCookie } from "../../utils/cookie";
+
+interface IMessage {
+  message: string;
+  sender: number;
+  roomId: number;
+}
 
 const Chat = (): JSX.Element => {
+  // 쿠키
+  const accessToken = getCookie("accessToken");
   // useState
   const [client, setClient] = useState<Client | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
-  const [name, setName] = useState<number>(0);
-  const [messages, setMessages] = useState<string[]>([]);
-  const [roomId, setRoomId] = useState<string>("");
+  const [name, setName] = useState<number>(1);
+  const [messages, setMessages] = useState<(IMessage | string)[]>([]);
+  const [roomId, setRoomId] = useState<number>(1);
   const [inputMessage, setInputMessage] = useState<string>("");
+  const connectionRef = useRef<boolean>(false);
+  useEffect(() => {
+    console.log("connectionRef", connectionRef.current);
+  }, [connectionRef]);
+  useEffect(() => {
+    console.log("messages", messages);
+  }, [messages]);
 
   //recoil
   const { userId } = useRecoilValue(userAtom);
+  //임시
   useEffect(() => {
-    setName(userId);
+    if (userId !== 0) {
+      setName(userId);
+    }
+    setRoomId(1);
   }, []);
   // 커넥션
-  const url = `ws://localhost:8080/chat`;
+  // const url = `ws://localhost:8080/chat`;
+  const url = `ws://112.222.157.157:5231/chat`;
   // 구독 경로
   const topic = `/sub/chat/${roomId}`;
 
@@ -28,25 +49,59 @@ const Chat = (): JSX.Element => {
   useEffect(() => {
     const stompClient = new Client({
       brokerURL: url,
-      // 자동 재연결 설정 추가
-      reconnectDelay: 5000, // 5초 후 재연결 시도
+      connectHeaders: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
-      onConnect: frame => {
+      onConnect: async frame => {
         console.log("Connected: ", frame);
-        stompClient.subscribe(topic, message => {
-          console.log("Received message:", message);
-          setMessages(prev => [...prev, JSON.parse(message.body).content]);
-        });
+        stompClient.subscribe(
+          topic,
+          message => {
+            console.log("받은 메세지:", message);
+            try {
+              const receivedMessage = JSON.parse(message.body);
+              console.log("파싱된 메세지:", receivedMessage);
+              setMessages(prev => [...prev, receivedMessage.content]);
+            } catch (error) {
+              // JSON이 아닌 일반 텍스트 메시지 처리
+              console.log("일반 텍스트 메시지:", message.body);
+              setMessages(prev => [...prev, message.body]);
+            }
+          },
+          {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        );
         setConnected(true);
+        // stompClient를 직접 사용
+        try {
+          await stompClient.publish({
+            destination: "/pub/chat.join",
+            body: JSON.stringify({
+              roomId: roomId,
+              sender: name,
+            }),
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          console.log("채팅방 입장 성공");
+        } catch (error) {
+          console.error("Error joining room:", error);
+        }
       },
       onDisconnect: () => {
         console.log("Disconnected");
+        connectionRef.current = false;
         setConnected(false);
         setMessages(prev => [...prev, "연결이 끊어졌습니다."]);
       },
       onWebSocketError: error => {
         console.error("WebSocket error: ", error);
+        connectionRef.current = false;
         setConnected(false);
         setMessages(prev => [
           ...prev,
@@ -55,6 +110,7 @@ const Chat = (): JSX.Element => {
       },
       onStompError: frame => {
         console.error("STOMP error: ", frame.headers["message"], frame.body);
+        connectionRef.current = false;
         setConnected(false);
         setMessages(prev => [...prev, "STOMP 오류가 발생했습니다."]);
       },
@@ -62,8 +118,8 @@ const Chat = (): JSX.Element => {
     setClient(stompClient);
 
     return () => {
-      if (stompClient) {
-        stompClient.deactivate();
+      if (stompClient && stompClient.connected) {
+        stompClient.unsubscribe(topic);
       }
     };
   }, []);
@@ -72,29 +128,34 @@ const Chat = (): JSX.Element => {
     if (client) {
       client.activate();
     }
+    connectionRef.current = true;
   };
   // 클라이언트 연결 종료
   const disconnect = (): void => {
-    if (client) {
-      client.deactivate();
+    if (client && client.connected) {
+      // 클라이언트가 존재하고 연결된 상태인지 확인
+      console.log("연결 해제");
+      client.unsubscribe(topic);
       setConnected(false);
       setMessages([]);
     }
+    connectionRef.current = false;
   };
-
+  // 채팅방 생성
+  // 채팅 내역 불러오기
   // 채팅방 입장 함수(현재 과거 채팅 조회 없음)
-  const joinRoom = (): void => {
-    // 클라이언트가 연결되어 있고, 이름이 입력되어 있는지 확인
+  const joinRoom = async (): Promise<void> => {
+    console.log(client, name, connected);
     if (client && name && connected) {
       try {
-        // /pub/chat.join 경로로 입장 메시지 발행
         client.publish({
           destination: "/pub/chat.join",
           body: JSON.stringify({
-            roomId: roomId, // 채팅방 ID
-            sender: name, // 입장하는 유저 이름
+            roomId: roomId,
+            sender: name,
           }),
         });
+        console.log("채팅방 입장 성공");
       } catch (error) {
         console.error("Error joining room:", error);
       }
@@ -115,7 +176,15 @@ const Chat = (): JSX.Element => {
             sender: name,
             message: inputMessage,
           }),
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
+        // 메시지를 즉시 화면에 표시
+        // setMessages(prev => [
+        //   ...prev,
+        //   { message: inputMessage, sender: name, roomId: roomId },
+        // ]);
         setInputMessage("");
       } catch (error) {
         console.error("Error sending message:", error);
@@ -130,7 +199,7 @@ const Chat = (): JSX.Element => {
       <h2>WebSocket STOMP Client</h2>
       {/* 연결/연결해제 버튼 */}
       <div className="flex gap-5">
-        {connected ? (
+        {connectionRef.current ? (
           <Button
             onClick={disconnect}
             disabled={!connected}
@@ -150,20 +219,21 @@ const Chat = (): JSX.Element => {
       </div>
 
       {/* 채팅 인터페이스 (연결된 경우에만 표시) */}
-      <div style={{ display: connected ? "block" : "none" }}>
-        {/* 사용자 이름 입력 필드: 이후 recoil로 입력 처리하기 */}
-        <div>
-          <label>이름</label>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(Number(e.target.value))}
-            placeholder="이름 입력"
-          />
-        </div>
-        {/* 채팅방 입장 버튼 */}
-        <button onClick={joinRoom}>채팅방 입장</button>
-
+      <div
+        style={{ display: connected ? "block" : "none" }}
+        className="flex flex-col gap-5"
+      >
+        <ul className="bg-gray-100 h-96 overflow-y-auto">
+          {messages.map((item: IMessage | string, index) => {
+            return (
+              <li key={index}>
+                {typeof item === "string"
+                  ? item
+                  : `${item.sender}: ${item.message}`}
+              </li>
+            );
+          })}
+        </ul>
         {/* 메시지 입력 필드 추가 */}
         <Input
           type="text"
@@ -176,17 +246,7 @@ const Chat = (): JSX.Element => {
             }
           }}
         />
-        <button onClick={sendMessage}>Send</button>
-
-        <table>
-          <tbody>
-            {messages.map((msg, index) => (
-              <tr key={index}>
-                <td>{msg}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Button onClick={sendMessage}>전송</Button>
       </div>
     </div>
   );

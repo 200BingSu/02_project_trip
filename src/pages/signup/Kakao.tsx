@@ -11,15 +11,16 @@ const Kakao = (): JSX.Element => {
   const userProfileImage = searchParams.get("userProfileImage");
 
   //useState
-  const [kakaoLogin, setKakaoLogin] = useState<boolean>(false);
+  const [kakaoLogin] = useState<boolean>(false);
   // 카카오 로그인 정보 받은 뒤 회원가입 api
   return (
     <div>
-      <Spin
-        spinning={kakaoLogin}
-        tip="카카오 로그인 진행 중..."
-        size="large"
-      ></Spin>
+      <Spin spinning={kakaoLogin} tip="카카오 로그인 진행 중..." size="large">
+        {accessToken}
+        {userName}
+        {userEmail}
+        {userProfileImage}
+      </Spin>
     </div>
   );
 };

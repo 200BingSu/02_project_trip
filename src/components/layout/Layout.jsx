@@ -7,7 +7,7 @@ import DockBar from "./DockBar/DockBar";
 const Layout = () => {
   const path = window.location.pathname;
   return (
-    <div className="max-w-3xl mx-auto  relative h-screen flex flex-col">
+    <div className="max-w-3xl mx-auto relative h-screen flex flex-col">
       {/* {path === "/" ? <MainHeader /> : <Header />} */}
       <div className="flex-1 pb-[100px]">
         <Outlet />
