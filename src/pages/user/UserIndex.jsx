@@ -74,7 +74,7 @@ const UserIndex = () => {
   };
 
   const handleUserEdit = () => {
-    navigate("useredit", { state: useProfile });
+    navigate("/user/useredit", { state: useProfile });
   };
 
   return (
