@@ -16,6 +16,7 @@ const Kakao = (): JSX.Element => {
   return (
     <div>
       <Spin spinning={kakaoLogin} tip="카카오 로그인 진행 중..." size="large">
+        <h1>카카오 로그인 준비 중(도흠쌤 버전 아님)</h1>
         {accessToken}
         {userName}
         {userEmail}
