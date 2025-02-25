@@ -316,15 +316,15 @@ const SearchStrf = () => {
   }, [searchData]);
 
   return (
-    <div className="w-full flex flex-col gap-[30px] mb-[100px]">
+    <div className="w-full flex flex-col  mb-[100px]">
       {/* 상단 */}
       <div
-        className="w-full px-[32px] py-[30px] flex items-center gap-[40px] relative"
+        className="w-full px-4 py-6 flex items-center gap-3 relative"
         ref={topRef}
       >
         {/* 뒤로가기 */}
         <div
-          className="text-[36px] cursor-pointer"
+          className="text-3xl cursor-pointer"
           onClick={() => {
             navigateToBack();
           }}
@@ -492,15 +492,15 @@ const SearchStrf = () => {
         </div>
       ) : (
         /* 검색 전 화면 */
-        <div className="px-[32px] flex flex-col gap-[50px]">
+        <div className="flex flex-col gap-3 px-4">
           {/* 최근 검색어 */}
           {accessToken && (
-            <div className="flex flex-col gap-[30px]">
-              <h2 className="text-[24px] font-semibold text-slate-700">
+            <div className="flex flex-col">
+              <h2 className="text-lg font-semibold text-slate-700">
                 최근 검색어
               </h2>
               {/* 최근 검색어 목록 */}
-              <ul className="flex gap-[20px] flex-wrap">
+              <ul className="flex gap-3 flex-wrap">
                 {recentText ? (
                   recentText?.map((item, index) => {
                     return (
@@ -524,7 +524,7 @@ const SearchStrf = () => {
 
           {/* 인기 검색어 */}
           <div className="flex flex-col gap-[30px]">
-            <h2 className="text-[24px] font-semibold text-slate-700">
+            <h2 className="text-lg  font-semibold text-slate-700">
               인기 검색어
             </h2>
             {/* 인기 검색어 목록 */}
@@ -552,7 +552,7 @@ const SearchStrf = () => {
           {accessToken && (
             <div className="flex flex-col gap-[30px]">
               <div className="flex justify-between items-center">
-                <h2 className="text-[24px] font-semibold text-slate-700">
+                <h2 className="text-lg  font-semibold text-slate-700">
                   최근 본 목록
                 </h2>
                 <button

@@ -20,6 +20,40 @@
     U+D7B0-D7FF, U+0020-002F, U+003A-0040, U+005B-0060, U+007B-007E;
 }
 
+@layer base {
+  html {
+    font-size: 16px; /* 기본적으로 1rem = 10px */
+  }
+
+  @media (min-width: 320px) {
+    /* xs */
+    html {
+      font-size: 16px; /* xs: 1rem = 12px */
+    }
+  }
+
+  @media (min-width: 384px) {
+    /* sm */
+    html {
+      font-size: 16px; /* sm: 1rem = 14px */
+    }
+  }
+
+  @media (min-width: 576px) {
+    /* md */
+    html {
+      font-size: 20px; /* md: 1rem = 16px */
+    }
+  }
+
+  @media (min-width: 768px) {
+    /* lg */
+    html {
+      font-size: 24px; /* lg: 1rem = 18px */
+    }
+  }
+}
+
 .pre {
   font-family: "Pretendard" !important;
 }
