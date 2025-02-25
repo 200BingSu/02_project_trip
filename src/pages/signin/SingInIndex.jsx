@@ -78,19 +78,13 @@ const SingInIndex = () => {
   const handleSaveEmail = () => {};
 
   return (
-    <div
-      className="w-full h-screen px-[122px] py-[225px] 
-                    flex flex-col items-center justify-center gap-4
-                     xs:px-[16px] xs:py-[134px]
-                     xxs:px-[16px] xxs:py-[134px]
-                    "
-    >
+    <div className="w-full h-screen flex flex-col items-center justify-center gap-4">
       {/* 로고 */}
       <div
         className="w-full 
                     flex items-center justify-center"
       >
-        <div className="w-[330px] h-[50px] mb-[20px]">
+        <div className="w-[44.2vw] h-auto">
           <img
             src={logo}
             alt="main_logo"
@@ -109,7 +103,7 @@ const SingInIndex = () => {
       >
         <button
           type="button"
-          className={`text-2xl h-[60px] pt-[17px] pb-[16px]
+          className={`text-base h-[60px] pt-[17px] pb-[16px]
                      ${loginType === "personal" ? "text-primary" : "text-slate-400"}
                      ${loginType === "personal" ? "border-b-[2px] border-primary" : "border-b-1 border-slate-200"}`}
           onClick={() => setLoginType("personal")}
@@ -118,7 +112,7 @@ const SingInIndex = () => {
         </button>
         <button
           type="button"
-          className={`text-2xl h-[60px] pt-[17px] pb-[16px]
+          className={`text-base h-[60px] pt-[17px] pb-[16px]
                      ${loginType === "business" ? "text-primary" : "text-slate-400"}
                      ${loginType === "business" ? "border-b-[2px] border-primary" : "border-b-1 border-slate-200"}`}
           onClick={() => setLoginType("business")}
