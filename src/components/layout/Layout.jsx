@@ -7,9 +7,9 @@ import DockBar from "./DockBar/DockBar";
 const Layout = () => {
   const path = window.location.pathname;
   return (
-    <div className="max-w-3xl mx-auto relative h-screen flex flex-col">
+    <div className="w-full max-w-3xl min-w-xs mx-auto relative h-screen xxs:text-[10px] xs:text-[12px] sm:text-[14px] md:text-[16px] xxs:bg-slate-500 xs:bg-slate-400 sm:bg-slate-300 md:bg-slate-200">
       {/* {path === "/" ? <MainHeader /> : <Header />} */}
-      <div className="flex-1 pb-[100px]">
+      <div className="">
         <Outlet />
       </div>
       <DockBar />
