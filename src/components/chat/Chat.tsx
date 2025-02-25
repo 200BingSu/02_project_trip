@@ -1,14 +1,12 @@
 import { Client } from "@stomp/stompjs";
 import { Button, Input } from "antd";
-import { useEffect, useState, useRef } from "react";
-import { userAtom } from "../../atoms/userAtom";
-import { useRecoilValue } from "recoil";
+import { useEffect, useRef, useState } from "react";
 import { getCookie } from "../../utils/cookie";
 
 interface IMessage {
   message: string;
   sender: number;
-  roomId: number;
+  roomId?: number;
 }
 
 const Chat = (): JSX.Element => {
@@ -29,8 +27,9 @@ const Chat = (): JSX.Element => {
     console.log("messages", messages);
   }, [messages]);
 
-  //recoil
-  const { userId } = useRecoilValue(userAtom);
+  //쿠키
+  const userInfo = getCookie("user");
+  const userId = userInfo?.userId;
   //임시
   useEffect(() => {
     if (userId !== 0) {
@@ -64,7 +63,7 @@ const Chat = (): JSX.Element => {
             try {
               const receivedMessage = JSON.parse(message.body);
               console.log("파싱된 메세지:", receivedMessage);
-              setMessages(prev => [...prev, receivedMessage.content]);
+              setMessages(prev => [...prev, receivedMessage]);
             } catch (error) {
               // JSON이 아닌 일반 텍스트 메시지 처리
               console.log("일반 텍스트 메시지:", message.body);
@@ -82,7 +81,7 @@ const Chat = (): JSX.Element => {
             destination: "/pub/chat.join",
             body: JSON.stringify({
               roomId: roomId,
-              sender: name,
+              sender: userId,
             }),
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -138,31 +137,31 @@ const Chat = (): JSX.Element => {
       client.unsubscribe(topic);
       setConnected(false);
       setMessages([]);
+      connectionRef.current = false;
     }
-    connectionRef.current = false;
   };
   // 채팅방 생성
   // 채팅 내역 불러오기
   // 채팅방 입장 함수(현재 과거 채팅 조회 없음)
-  const joinRoom = async (): Promise<void> => {
-    console.log(client, name, connected);
-    if (client && name && connected) {
-      try {
-        client.publish({
-          destination: "/pub/chat.join",
-          body: JSON.stringify({
-            roomId: roomId,
-            sender: name,
-          }),
-        });
-        console.log("채팅방 입장 성공");
-      } catch (error) {
-        console.error("Error joining room:", error);
-      }
-    } else {
-      console.log("참여 불가: 커넥트 끊김 또는 이름 입력 없음");
-    }
-  };
+  // const joinRoom = async (): Promise<void> => {
+  //   console.log(client, name, connected);
+  //   if (client && name && connected) {
+  //     try {
+  //       client.publish({
+  //         destination: "/pub/chat.join",
+  //         body: JSON.stringify({
+  //           roomId: roomId,
+  //           sender: name,
+  //         }),
+  //       });
+  //       console.log("채팅방 입장 성공");
+  //     } catch (error) {
+  //       console.error("Error joining room:", error);
+  //     }
+  //   } else {
+  //     console.log("참여 불가: 커넥트 끊김 또는 이름 입력 없음");
+  //   }
+  // };
 
   // 채팅 메시지 전송 함수
   const sendMessage = (): void => {
@@ -229,24 +228,26 @@ const Chat = (): JSX.Element => {
               <li key={index}>
                 {typeof item === "string"
                   ? item
-                  : `${item.sender}: ${item.message}`}
+                  : `user${item?.sender}: ${item?.message}`}
               </li>
             );
           })}
         </ul>
         {/* 메시지 입력 필드 추가 */}
-        <Input
-          type="text"
-          value={inputMessage}
-          onChange={e => setInputMessage(e.target.value)}
-          placeholder="메세지 입력"
-          onPressEnter={e => {
-            if (e.key === "Enter") {
-              sendMessage();
-            }
-          }}
-        />
-        <Button onClick={sendMessage}>전송</Button>
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            value={inputMessage}
+            onChange={e => setInputMessage(e.target.value)}
+            placeholder="메세지 입력"
+            onPressEnter={e => {
+              if (e.key === "Enter") {
+                sendMessage();
+              }
+            }}
+          />
+          <Button onClick={sendMessage}>전송</Button>
+        </div>
       </div>
     </div>
   );

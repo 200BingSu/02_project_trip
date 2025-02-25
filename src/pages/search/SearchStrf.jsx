@@ -27,8 +27,9 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { amenities, strfArr } from "../../constants/dataArr";
 import { moveTo } from "../../utils/moveTo";
 import { categoryArr, orderTypeArr } from "../../constants/search";
-import { resetSearchData } from "../../selectors/searchSelector";
+
 import AmenityFilter from "../../components/search/AmenityFilter";
+import { resetSearchData } from "../../selectors/searchSelector";
 
 const SearchStrf = () => {
   const [form] = Form.useForm();
@@ -47,7 +48,7 @@ const SearchStrf = () => {
   const navigate = useNavigate();
   const navigateToBack = () => {
     navigate(-1);
-    resetSearchData();
+    resetSearch();
   };
   //useState
   const [searchState, setSearchState] = useState(
@@ -152,17 +153,32 @@ const SearchStrf = () => {
   }, []);
   // api 전체 검색
   const postSearchAll = useCallback(async word => {
-    try {
-      const res = await axios.get(`/api/search/all?search_word=${word}`);
-      // console.log(res.data);
-      const resultData = res.data;
-      if (resultData) {
-        setIsSearchLoading(true);
-        setSearchState(true);
+    if (accessToken) {
+      try {
+        const res = await jwtAxios.get(`/api/search/all?search_word=${word}`);
+        // console.log(res.data);
+        const resultData = res.data;
+        if (resultData) {
+          setIsSearchLoading(true);
+          setSearchState(true);
+        }
+        setSearchData(resultData.data);
+      } catch (error) {
+        console.log("전체 검색", error);
       }
-      setSearchData(resultData.data);
-    } catch (error) {
-      console.log("전체 검색", error);
+    } else {
+      try {
+        const res = await axios.get(`/api/search/all?search_word=${word}`);
+        // console.log(res.data);
+        const resultData = res.data;
+        if (resultData) {
+          setIsSearchLoading(true);
+          setSearchState(true);
+        }
+        setSearchData(resultData.data);
+      } catch (error) {
+        console.log("전체 검색", error);
+      }
     }
   }, []);
   // api 카테고리 검색
@@ -341,7 +357,11 @@ const SearchStrf = () => {
             onClear={handleClickClear}
             prefix={<FiSearch className="text-slate-400 text-2xl" />}
             onChange={onChange}
-            onPressEnter={e => handleClickEnter(e)}
+            onPressEnter={e => {
+              if (e.target.value.trim()) {
+                handleClickEnter(e);
+              }
+            }}
             variant="filled"
             value={searchValue}
           />
