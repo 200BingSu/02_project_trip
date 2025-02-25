@@ -56,15 +56,15 @@ const RecentList = ({
   }
   return (
     <div>
-      <h1 className="text-3xl font-bold">최근 본 목록</h1>
+      <h1 className="text-2xl font-bold text-slate-700">최근 본 목록</h1>
       <div>
         {recent.map(item => (
           <button
             key={item.category}
             onClick={() => setActiveTab(item.category)}
-            className={`px-5 py-2 border cursor-pointer mr-2.5 my-8 rounded-2xl ${
+            className={`px-4 py-1.5 my-5 border cursor-pointer text-base mr-3 rounded-2xl ${
               activeTab === item.category
-                ? "bg-primary text-white"
+                ? "bg-primary text-white border-none"
                 : "bg-white text-slate-500 border-1 border-slate-300"
             }`}
           >
@@ -77,12 +77,12 @@ const RecentList = ({
         {activeTabData?.recent.slice(0, 6).map(content => (
           <div
             key={content.strfId}
-            className="w-[50%] flex items-center gap-5 mb-5 cursor-pointer"
+            className="w-full flex items-center gap-5 mb-5 cursor-pointer"
             onClick={() => {
               navigate(`/contents/index?strfId=${content.strfId}`);
             }}
           >
-            <div className="w-[164px] h-[164px] rounded-[16px] relative overflow-hidden flex-1">
+            <div className="w-[34.6vw] aspect-square rounded-[16px] relative overflow-hidden flex-1">
               <img
                 src={`${ProductPic}${content.strfId}/${content.strfPic}`}
                 alt={content.strfTitle}
@@ -100,22 +100,27 @@ const RecentList = ({
               </i>
             </div>
 
-            <div className="flex-1 pr-4">
-              <h3 className="text-lg font-bold text-slate-700 break-keep">
+            <div className="flex-1 pr-3">
+              <h3 className="text-lg font-semibold text-slate-700 break-keep">
                 {content.strfTitle}
               </h3>
-              <p className="font-medium text-base text-slate-400">
+              <p className="font-light text-sm text-slate-400">
                 {content.locationName} · {categoryNameMap[activeTab]}
               </p>
 
               <div>
-                <Rate disabled allowHalf defaultValue={content.averageRating} />
+                <Rate
+                  disabled
+                  allowHalf
+                  defaultValue={content.averageRating}
+                  className="custom-star"
+                />
               </div>
-              <div className="flex text-slate-400 text-sm align-middle gap-1">
+              <div className="flex text-slate-400 text-sm items-center gap-1">
                 {content.wishIn ? (
-                  <AiFillHeart className="text-secondary3 text-xl" />
+                  <AiFillHeart className="text-secondary3 text-lg" />
                 ) : (
-                  <AiOutlineHeart className="text-slate-400 text-xl" />
+                  <AiOutlineHeart className="text-slate-400 text-lg" />
                 )}
                 {content.wishCnt}
               </div>

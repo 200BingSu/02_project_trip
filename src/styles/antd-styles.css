@@ -40,3 +40,22 @@
   width: 100% !important;
   left: 0;
 }
+
+.custom-input-item {
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.custom-input-item label {
+  font-size: 0.75rem !important;
+  height: auto !important;
+  margin-bottom: 4px !important;
+  margin-left: 3px !important;
+}
+
+.custom-star .ant-rate-star {
+  font-size: 16px;
+}
+.custom-star .ant-rate-star:not(:last-child) {
+  margin-right: 4px;
+}

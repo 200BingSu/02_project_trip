@@ -1,18 +1,15 @@
 import { Outlet } from "react-router-dom";
-import Header from "./header/Header";
-import MainHeader from "./header/MainHeader";
-import Footer from "./footer/Footer";
-import DockBar from "./DockBar/DockBar";
 
 const Layout = () => {
   const path = window.location.pathname;
   return (
-    <div className="w-full max-w-3xl min-w-xs mx-auto relative h-screen xxs:text-[10px] xs:text-[12px] sm:text-[14px] md:text-[16px] ">
+
+    <div className="max-w-[768px] min-w-xs mx-auto relative h-screen ">
+
       {/* {path === "/" ? <MainHeader /> : <Header />} */}
-      <div className="">
+      <div>
         <Outlet />
       </div>
-      <DockBar />
     </div>
   );
 };
