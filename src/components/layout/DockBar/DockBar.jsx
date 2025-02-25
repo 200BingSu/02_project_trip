@@ -63,12 +63,12 @@ const DockBar = React.memo(() => {
   };
   return (
     <div>
-      <div className="flex max-w-3xl w-full h-[100px] fixed bottom-0 left-1/2 -translate-x-1/2 bg-white z-50 shadow-[0px_-4px_8px_0px_rgba(99,99,99,0.05)]">
+      <div className="flex max-w-[768px] w-full h-auto fixed bottom-0 left-1/2 -translate-x-1/2 bg-white z-50 shadow-[0px_-4px_8px_0px_rgba(99,99,99,0.05)]">
         <Link
           to="/search/strf"
           className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
         >
-          <FiSearch className="text-4xl" />
+          <FiSearch className="text-2xl" />
           검색
         </Link>
         <button
@@ -81,33 +81,33 @@ const DockBar = React.memo(() => {
               navigate("/search/location");
             }
           }}
-          className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
+          className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5 text-sm"
         >
-          <LuMapPinned className="text-4xl" />
+          <LuMapPinned className="text-2xl" />
           일정
         </button>
         <Link
           to="/"
-          className="bg-primary text-white w-[102px] h-[102px] rounded-full flex flex-col justify-center items-center gap-1.5 relative bottom-5"
+          className="bg-primary text-white w-20 h-20 rounded-full flex flex-col justify-center items-center gap-1.5 relative bottom-5 text-sm"
           onClick={() => {
             resetSearch();
           }}
         >
-          <BsFillPatchPlusFill className="text-4xl" />홈
+          <BsFillPatchPlusFill className="text-2xl" />홈
         </Link>
         <Link
           to="/scheduleboard/index"
-          className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
+          className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5 text-sm"
         >
-          <IoReaderOutline className="text-4xl" />
+          <IoReaderOutline className="text-2xl" />
           여행기
         </Link>
         <Link
           to="#"
-          className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
+          className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5 text-sm"
           onClick={showModal}
         >
-          <IoLogoWechat className="text-4xl" />
+          <IoLogoWechat className="text-2xl" />
           챗봇
         </Link>
         {nowLocation === "/search/strf" && (

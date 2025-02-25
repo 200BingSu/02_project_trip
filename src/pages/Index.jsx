@@ -88,9 +88,9 @@ const Index = () => {
   return (
     <div>
       <header
-        className={`flex h-[60px] items-center px-[32px] max-w-3xl w-full sticky top-0 left-0 z-10 duration-300 ${scrollY ? "shadow-md" : "shadow-none"} z-50 bg-white `}
+        className={`flex h-auto items-center px-4 py-3 max-w-3xl w-full sticky top-0 left-0 z-10 duration-300 ${scrollY ? "shadow-sm" : "shadow-none"} z-50 bg-white `}
       >
-        <h1 className="w-[160px] mr-auto">
+        <h1 className="w-[32vw] max-w-32 mr-auto">
           <img
             src="/images/logo_1.png"
             alt="main_logo"
@@ -100,10 +100,10 @@ const Index = () => {
             }}
           />
         </h1>
-        <nav className=" flex gap-[16px]">
-          <BiBell className="text-3xl text-slate-400 cursor-pointer" />
+        <nav className=" flex gap-5">
+          <BiBell className="text-2xl text-slate-400 cursor-pointer" />
           <CgMenuGridO
-            className="text-3xl text-slate-400 cursor-pointer"
+            className="text-2xl text-slate-400 cursor-pointer"
             onClick={() => {
               if (accessToken) {
                 navigate("/user/index");
@@ -114,26 +114,38 @@ const Index = () => {
           />
         </nav>
       </header>
-      <main className="pb-[60px]">
-        <section className="mx-[32px] mt-[30px]">
+      <main className="pb-10">
+        <section className="px-4 mt-3">
           <Input
-            className="h-[60px] text-lg rounded-lg  !bg-slate-100 !border-slate-300  gap-[5px]"
-            placeholder="지금 어디로 여행을 떠나고  싶으신가요?"
+            className="h-auto text-sm rounded-lg  !bg-slate-100 !border-slate-300 py-[14px] px-3"
+            placeholder=" 지금 어디로 여행을 떠나고 싶으신가요?"
             readOnly
-            prefix={<FiSearch className="text-slate-400 text-2xl" />}
+            prefix={<FiSearch className="text-slate-400 text-sm" />}
             onClick={() => HandleSearchPage()}
           />
         </section>
-        <section className="mx-[32px] mt-[70px]">
+        <section className="px-4 mt-5">
           <FestivalList festivities={festivities} />
         </section>
-        <section className="mx-[32px] mt-[70px]">
+        <section className="px-4 mt-10">
           <LocationList locations={locations} />
         </section>
-        <section className="mx-[32px] mt-[70px]">
-          <img src="/images/main-banner.png" alt="" />
+        <section className="bg-[#E8F6EF] px-4 mt-10 mx-4 h-[100px] xs:h-28 md:h-36 max-h-[140px] rounded-2xl flex items-center relative">
+          <div>
+            <p className="text-xs font-light text-[#4C4C6D]">
+              신규회원 가입시 누구나
+            </p>
+            <p className="text-lg font-semibold text-[#4C4C6D]">
+              최대 20만원 쿠폰팩 증정
+            </p>
+          </div>
+          <img
+            src="/images/main-banner_img.png"
+            alt=""
+            className="w-36 xs:w-40 md:w-42 absolute right-6 -top-5 md:!-top-7"
+          />
         </section>
-        <section className="mx-[32px] mt-[70px]">
+        <section className="px-4 mt-10">
           <RecentList
             recent={recent}
             getMainList={getMainList}
@@ -143,11 +155,12 @@ const Index = () => {
             setRecommend={setRecommend}
           />
         </section>
-        <section className="mt-[70px]">
+        <section className="mt-10 bg-slate-100 w-full py-16">
           <RecommendList recommend={recommend} />
         </section>
       </main>
       <Footer />
+      <DockBar />
     </div>
   );
 };

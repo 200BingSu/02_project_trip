@@ -5,25 +5,24 @@ import { LocationPic } from "../../constants/pic";
 const LocationList = ({ locations }) => {
   return (
     <div>
-      <h1 className="text-3xl font-bold">
+      <h1 className="text-2xl font-bold text-slate-700">
         국내 여행지 <b className="text-secondary3 font-bold">BEST 10</b>
       </h1>
-      <Swiper slidesPerView={4} spaceBetween={16} className="mySwiper ">
+      <Swiper slidesPerView={3} spaceBetween={12} className="mySwiper ">
         {locations.map((item, index) => (
-          <SwiperSlide key={item.locationId} className="relative pt-[40px]">
-            <p className="absolute z-[999] bg-secondary3 text-white w-[36px] h-[36px] leading-[36px] rounded-full left-1/2 top-[24px] -translate-x-1/2 text-center inline-block text-lg">
-              {index + 1}
-            </p>
-            <div className="relative bg-black rounded-2xl overflow-hidden h-[226px]">
+          <SwiperSlide key={item.locationId} className="relative pt-5">
+            <div className="relative bg-black rounded-lg overflow-hidden h-[26.6vw]">
               <img
                 src={`${LocationPic}${item.locationPic}`}
                 alt={item.locationTitle}
                 className="opacity-70 h-full object-cover"
               />
-
-              <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 text-center text-white text-base">
-                <p>대한민국</p>
-                <h3 className="font-semibold text-2xl mt-1">
+              <p className="absolute z-[999] bg-secondary3 text-white w-6 h-6 leading-6 left-0 top-0 text-center inline-block text-xs rounded-br-lg">
+                {index + 1}
+              </p>
+              <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 text-center text-white ">
+                <p className="text-xs">대한민국</p>
+                <h3 className="font-semibold text-lg mt-1">
                   {item.locationTitle}
                 </h3>
               </div>

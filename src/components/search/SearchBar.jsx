@@ -82,10 +82,10 @@ const SearchBar = React.memo(
     }, [recentText]);
 
     return (
-      <div className="w-full px-[32px] py-[30px] flex items-center gap-[40px] relative ">
+      <div className="w-full px-4 py-6 flex items-center gap-3 relative ">
         {/* 뒤로가기 */}
         <div
-          className="text-[36px] cursor-pointer"
+          className="text-3xl cursor-pointer"
           onClick={() => {
             navigate(-1);
           }}
