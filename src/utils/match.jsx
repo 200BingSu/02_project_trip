@@ -80,7 +80,7 @@ export const matchPathTypeNumIcon = pathType => {
       return <BiSolidBus />;
     case 12: //고속/시외버스
       return <BiSolidBus />;
-    case 3: // 기차
+    case 4: // 기차
       return <BiSolidTrain />;
     case 3: //버스+지하철
       return <BiSolidBus />;
