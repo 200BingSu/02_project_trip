@@ -79,158 +79,160 @@ const SingInIndex = () => {
 
   return (
     <div
-      className="w-full h-screen px-[122px] py-[225px] 
-                    flex flex-col items-center justify-center gap-4
-                     xs:px-[16px] xs:py-[134px]
-                     xxs:px-[16px] xxs:py-[134px]
-                    "
+      className="max-w-3xl mx-auto h-screen px-[122px] py-[225px] 
+                flex flex-col items-center justify-center gap-4
+                xs:px-[16px] xs:py-[134px]
+                xxs:px-[16px] xxs:py-[134px]
+                "
     >
-      {/* 로고 */}
-      <div
-        className="w-full 
-                    flex items-center justify-center"
-      >
-        <div className="w-[330px] h-[50px] mb-[20px]">
-          <img
-            src={logo}
-            alt="main_logo"
-            className="cursor-pointer"
-            onClick={() => {
-              navigate("/");
-            }}
-          />
-        </div>
-      </div>
-      {/* 로그인 타입 */}
-      <div
-        className="w-full h-[30px] 
-                    flex items-center justify-center 
-                    gap-[30px]"
-      >
-        <button
-          type="button"
-          className={`text-2xl h-[60px] pt-[17px] pb-[16px]
-                     ${loginType === "personal" ? "text-primary" : "text-slate-400"}
-                     ${loginType === "personal" ? "border-b-[2px] border-primary" : "border-b-1 border-slate-200"}`}
-          onClick={() => setLoginType("personal")}
-        >
-          개인회원
-        </button>
-        <button
-          type="button"
-          className={`text-2xl h-[60px] pt-[17px] pb-[16px]
-                     ${loginType === "business" ? "text-primary" : "text-slate-400"}
-                     ${loginType === "business" ? "border-b-[2px] border-primary" : "border-b-1 border-slate-200"}`}
-          onClick={() => setLoginType("business")}
-        >
-          기업회원
-        </button>
-      </div>
-      {/* 로그인 폼 */}
       <div className="w-full">
-        <Form
-          form={form}
-          name="register"
-          onFinish={values => onFinish(values)}
-          style={{ maxWidth: 600 }}
-          scrollToFirstError
-        >
-          {/* 이메일 */}
-          <Form.Item
-            name="email"
-            label="이메일"
-            labelCol={{ span: 24 }}
-            initialValue={nowEmail || ""}
-            // rules={[{ required: true, message: "이메일을 입력해주세요." }]}
-          >
-            <Input
-              placeholder="이메일을 입력하세요"
-              style={{ height: "60px" }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="pw"
-            label="비밀번호"
-            labelCol={{ span: 24 }} // Label의 그리드 크기
-            // rules={[{ required: true, message: "비밀번호를 입력해주세요." }]}
-          >
-            <Input.Password
-              placeholder="비밀번호를 입력하세요"
-              style={{ height: "60px" }}
-            />
-          </Form.Item>
-          {/* 로그인 유지, 아이디 저장 */}
-          <div
-            className="w-full mb-[40px] 
-                          flex items-center justify-start"
-          >
-            <Checkbox
-              checked={isSaveLogin}
-              onChange={() => setIsSaveLogin(!isSaveLogin)}
-            >
-              로그인 유지
-            </Checkbox>
-            <Checkbox
-              checked={isSaveEmail}
-              onChange={() => setIsSaveEmail(!isSaveEmail)}
-            >
-              아이디 저장
-            </Checkbox>
-          </div>
-          {/* 제출 버튼 */}
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              className="h-[60px] font-semibold text-[16px]"
-            >
-              다음
-            </Button>
-          </Form.Item>
-        </Form>
-        {/* 아이디 찾기, 비밀번호 찾기, 회원가입 */}
+        {/* 로고 */}
         <div
           className="w-full 
+                    flex items-center justify-center"
+        >
+          <div className="w-[330px] h-[50px] mb-[20px]">
+            <img
+              src={logo}
+              alt="main_logo"
+              className="cursor-pointer"
+              onClick={() => {
+                navigate("/");
+              }}
+            />
+          </div>
+        </div>
+        {/* 로그인 타입 */}
+        <div
+          className="w-full h-[30px] 
+                    flex items-center justify-center 
+                    gap-[30px] mb-[20px]"
+        >
+          <button
+            type="button"
+            className={`text-2xl h-[60px] pt-[17px] pb-[16px]
+                     ${loginType === "personal" ? "text-primary" : "text-slate-400"}
+                     ${loginType === "personal" ? "border-b-[2px] border-primary" : "border-b-1 border-slate-200"}`}
+            onClick={() => setLoginType("personal")}
+          >
+            개인회원
+          </button>
+          <button
+            type="button"
+            className={`text-2xl h-[60px] pt-[17px] pb-[16px]
+                     ${loginType === "business" ? "text-primary" : "text-slate-400"}
+                     ${loginType === "business" ? "border-b-[2px] border-primary" : "border-b-1 border-slate-200"}`}
+            onClick={() => setLoginType("business")}
+          >
+            기업회원
+          </button>
+        </div>
+        {/* 로그인 폼 */}
+        <div className="w-full mb-[20px]">
+          <Form
+            form={form}
+            name="register"
+            onFinish={values => onFinish(values)}
+            style={{ maxWidth: 764 }}
+            scrollToFirstError
+          >
+            {/* 이메일 */}
+            <Form.Item
+              name="email"
+              label="이메일"
+              labelCol={{ span: 24 }}
+              initialValue={nowEmail || ""}
+              // rules={[{ required: true, message: "이메일을 입력해주세요." }]}
+            >
+              <Input
+                placeholder="이메일을 입력하세요"
+                style={{ height: "60px" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="pw"
+              label="비밀번호"
+              labelCol={{ span: 24 }} // Label의 그리드 크기
+              // rules={[{ required: true, message: "비밀번호를 입력해주세요." }]}
+            >
+              <Input.Password
+                placeholder="비밀번호를 입력하세요"
+                style={{ height: "60px" }}
+              />
+            </Form.Item>
+            {/* 로그인 유지, 아이디 저장 */}
+            <div
+              className="w-full mb-[40px] 
+                          flex items-center justify-start"
+            >
+              <Checkbox
+                checked={isSaveLogin}
+                onChange={() => setIsSaveLogin(!isSaveLogin)}
+              >
+                로그인 유지
+              </Checkbox>
+              <Checkbox
+                checked={isSaveEmail}
+                onChange={() => setIsSaveEmail(!isSaveEmail)}
+              >
+                아이디 저장
+              </Checkbox>
+            </div>
+            {/* 제출 버튼 */}
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                className="h-[60px] font-semibold text-[16px]"
+              >
+                다음
+              </Button>
+            </Form.Item>
+          </Form>
+          {/* 아이디 찾기, 비밀번호 찾기, 회원가입 */}
+          <div
+            className="w-full 
                         flex items-center justify-between 
                         gap-[20px]"
-        >
-          <div
-            className="flex items-center justify-center 
+          >
+            <div
+              className="flex items-center justify-center 
                           gap-[20px] 
                           text-slate-300"
-          >
-            <button type="button" className="text-slate-500">
-              아이디 찾기
-            </button>
-            |
-            <button
-              type="button"
-              className="text-slate-500"
-              onClick={() => navigate(`/user/findpw`)}
             >
-              비밀번호 찾기
-            </button>
+              <button type="button" className="text-slate-500">
+                아이디 찾기
+              </button>
+              |
+              <button
+                type="button"
+                className="text-slate-500"
+                onClick={() => navigate(`/user/findpw`)}
+              >
+                비밀번호 찾기
+              </button>
+            </div>
+            <Link to="/signup/index" className="text-slate-500 underline">
+              회원가입
+            </Link>
           </div>
-          <Link to="/signup/index" className="text-slate-500 underline">
-            회원가입
-          </Link>
         </div>
-      </div>
-      {/* 카카오 로그인 */}
-      <div className="w-full">
-        <button
-          type="button"
-          onClick={handleKakaoLogin}
-          className="w-full h-[60px]  bg-[#FEE500] hover:bg-[#FEE500]/80 rounded-md
+        {/* 카카오 로그인 */}
+        <div className="w-full">
+          <button
+            type="button"
+            onClick={handleKakaoLogin}
+            className="w-full h-[60px]  bg-[#FEE500] hover:bg-[#FEE500]/80 rounded-md
          
           flex items-center justify-center gap-[10px]"
-        >
-          <img src="/images/kakaoIcon.svg" alt="kakao" />
-          <p className="w-[265px] text-center  font-semibold text-[14px] text-[#191600] ">
-            카카오 로그인
-          </p>
-        </button>
+          >
+            <img src="/images/kakaoIcon.svg" alt="kakao" />
+            <p className="w-[265px] text-center  font-semibold text-[14px] text-[#191600] ">
+              카카오 로그인
+            </p>
+          </button>
+        </div>
       </div>
     </div>
   );

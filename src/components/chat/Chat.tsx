@@ -128,6 +128,7 @@ const Chat = (): JSX.Element => {
     if (client) {
       client.activate();
     }
+    setConnected(true);
     connectionRef.current = true;
   };
   // 클라이언트 연결 종료
@@ -144,25 +145,25 @@ const Chat = (): JSX.Element => {
   // 채팅방 생성
   // 채팅 내역 불러오기
   // 채팅방 입장 함수(현재 과거 채팅 조회 없음)
-  const joinRoom = async (): Promise<void> => {
-    console.log(client, name, connected);
-    if (client && name && connected) {
-      try {
-        client.publish({
-          destination: "/pub/chat.join",
-          body: JSON.stringify({
-            roomId: roomId,
-            sender: name,
-          }),
-        });
-        console.log("채팅방 입장 성공");
-      } catch (error) {
-        console.error("Error joining room:", error);
-      }
-    } else {
-      console.log("참여 불가: 커넥트 끊김 또는 이름 입력 없음");
-    }
-  };
+  // const joinRoom = async (): Promise<void> => {
+  //   console.log(client, name, connected);
+  //   if (client && name && connected) {
+  //     try {
+  //       client.publish({
+  //         destination: "/pub/chat.join",
+  //         body: JSON.stringify({
+  //           roomId: roomId,
+  //           sender: name,
+  //         }),
+  //       });
+  //       console.log("채팅방 입장 성공");
+  //     } catch (error) {
+  //       console.error("Error joining room:", error);
+  //     }
+  //   } else {
+  //     console.log("참여 불가: 커넥트 끊김 또는 이름 입력 없음");
+  //   }
+  // };
 
   // 채팅 메시지 전송 함수
   const sendMessage = (): void => {
