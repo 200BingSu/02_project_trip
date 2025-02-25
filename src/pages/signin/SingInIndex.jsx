@@ -10,11 +10,19 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import "../../styles/antd-styles.css";
 
+// 도흠쌤 도와줘요
+const host2 = window.location.origin;
+const redirectUrl = `${host2}/fe/redirect`;
+
 //카카오 로그인 url
-const snsUrl = "http://localhost:8080/oauth2/authorization";
+const host = window.location.origin;
+const redirect_uri = `${host}/signup/kakao`;
+// const redirect_uri = `${host}/fe/redirect`;
+const snsUrl = `http://112.222.157.157:5231/oauth2/authorization/kakao?redirect_uri=${redirect_uri}`;
 const handleKakaoLogin = () => {
   window.location.href = `${snsUrl}`;
 };
+
 const SingInIndex = () => {
   //쿠키
   const savedUserLogin = getCookie("user");
@@ -110,6 +118,7 @@ const SingInIndex = () => {
           기업회원
         </div>
       </div>
+
       <div className="w-full px-4">
         {loginType === "personal" && (
           <div>
@@ -217,10 +226,16 @@ const SingInIndex = () => {
                   카카오 로그인
                 </p>
               </button>
+              <div className="cursor">
+          <a href={`/oauth2/authorization/kakao?redirect_uri=${redirectUrl}`}>
+            도흠쌤 도와줘요
+          </a>
+        </div>
             </div>
           </div>
         )}
         {loginType === "business" && <div>🔥 탭 2의 내용</div>}
+
       </div>
     </div>
   );
