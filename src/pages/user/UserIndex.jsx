@@ -187,12 +187,12 @@ const UserIndex = () => {
           >
             <BiSolidCoupon className="text-3xl text-slate-400 mr-4" />
             쿠폰함
-            {coupon.availableCouponCount > 0 && (
+            {useProfile.couponCnt > 0 && (
               <span className="ml-auto w-9 h-6 rounded-2xl text-sm text-center leading-[1.45rem] text-primary3 bg-[#A5EEFE]/50">
-                {coupon.availableCouponCount}
+                {useProfile.couponCnt}
               </span>
             )}
-            <IoIosArrowForward className="text-slate-300 ml-auto" />
+            <IoIosArrowForward className="text-slate-300 ml-2" />
           </Link>
           <Link
             to=""
@@ -232,13 +232,13 @@ const UserIndex = () => {
             비밀번호 변경
           </Link>
           {accessToken && (
-            <Link
-              to={() => handleLogout()}
+            <p
+              onClick={() => handleLogout()}
               className="flex gap-3 items-center text-slate-500 py-5 text-sm"
             >
               <RxExit className="text-slate-300" />
               로그아웃
-            </Link>
+            </p>
           )}
         </div>
       </div>

@@ -22,6 +22,15 @@
   height: 60px;
   font-size: 18px;
 }
+
+.custom-modal-invite {
+  padding: 16px;
+}
+
+.custom-tooltip .ant-tooltip-inner {
+  background-color: #fff !important;
+}
+
 .custom-rate .ant-rate-star,
 .custom-rate .ant-rate-star-zero {
   margin-inline-end: 3px !important;

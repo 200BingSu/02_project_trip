@@ -1,22 +1,31 @@
-import { Button, Form, Input, Tooltip } from "antd";
+import { Button, Form, Input, Modal, Tooltip } from "antd";
+import axios from "axios";
 import { memo, useEffect, useMemo, useState } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiOutlinePlus, AiOutlineQuestionCircle } from "react-icons/ai";
+import { CgMoreVerticalAlt } from "react-icons/cg";
+import { FaRegQuestionCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
+import jwtAxios from "../../apis/jwt";
 import { userAtom } from "../../atoms/userAtom";
+import BottomSheet from "../../components/basic/BottomSheet";
 import TitleHeader from "../../components/layout/header/TitleHeader";
-import { LocationPic, ProfilePic } from "../../constants/pic";
+import { LocationPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import Footer from "../Footer";
-import axios from "axios";
-import jwtAxios from "../../apis/jwt";
-import { FaRegQuestionCircle } from "react-icons/fa";
+import "../../styles/antd-styles.css";
+import DockBar from "../../components/layout/DockBar/DockBar";
+import dayjs from "dayjs";
+import { duration } from "../../utils/duration";
+import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 
 const categoryArr = ["다가오는 여행", "완료된 여행"];
 const UserTrips = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [useProfile, setUseProfile] = useState({});
   const [tripListData, setTripListData] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [form] = Form.useForm();
   const accessToken = getCookie("accessToken");
@@ -114,135 +123,225 @@ const UserTrips = () => {
     };
   }, [arrow]);
 
+  const actions = [
+    {
+      label: "여행 일정 추가하기",
+      onClick: () => console.log("수정하기 클릭"),
+    },
+    {
+      label: "초대코드 입력하기",
+      onClick: () => {
+        setIsModalOpen(true);
+        setIsOpen(false);
+      },
+    },
+  ];
+  const tripMore = [
+    {
+      label: (
+        <>
+          <BiSolidEditAlt /> 해당 일정 수정하기
+        </>
+      ),
+      onClick: () => console.log("수정하기 클릭"),
+    },
+    {
+      label: (
+        <>
+          <BiTrash /> 해당 일정 삭제하기
+        </>
+      ),
+      onClick: () => {
+        setIsModalOpen(true);
+        setIsOpen(false);
+      },
+    },
+  ];
+
   return (
-    <div className="flex flex-col gap-[30px]">
+    <div className="flex flex-col gap-5">
       <TitleHeader icon="back" title="여행" onClick={navigateBack} />
-
-      {/* 여행코드 입력창 */}
-      <div className="px-[32px] flex flex-col gap-[5px]">
-        <div className="flex items-center gap-[5px]">
-          <p className="text-slate-500 text-[18px] font-semibold">여행코드</p>
-          <Button type="Outlined" className="group flex items-center focus:">
-            <FaRegQuestionCircle className="text-[18px] text-slate-300 group-hover:text-[#b8c8d1] transition-all duration-300" />
-            <p className="text-slate-300 w-0 group-hover:w-[350px] overflow-hidden transition-all duration-300">
-              생성된 일정에서 일정 코드를 받아 친구를 초대해보세요!
-            </p>
-          </Button>
+      {/* 여행 일정 만들기 */}
+      <div
+        className="w-auto h-auto p-5 bg-slate-50 rounded-lg flex items-center gap-5 mx-4 cursor-pointer"
+        onClick={() => setIsOpen(true)}
+      >
+        <i className="inline-block p-[10px] bg-primary rounded-full">
+          <AiOutlinePlus className="text-white" />
+        </i>
+        <div>
+          <p className="text-lg text-slate-700 font-semibold">
+            여행 일정 만들기
+          </p>
+          <p className="text-sm text-slate-500 tracking-tight">
+            새로운 여행 일정을 만들어 보세요 !
+          </p>
         </div>
-
-        <Input
-          placeholder="친구와 여행을 함께하기 위해 코드를 입력해주세요"
-          className="px-[32px] py-[20px] h-[79px]"
-          onChange={e => setCode(e.target.value)}
-          onKeyDown={e => {
-            if (e.code === "Enter") {
-              postTripUser();
-            }
-          }}
-        />
       </div>
-      {/* 여행 리스트 카테고리 */}
-      <div className="px-[32px]">
-        <ul className="flex items-center">
-          {categoryArr.map((item, index) => {
+
+      {/* 여행 목록 */}
+      <div className="px-4">
+        {/* 다가오는 여행 */}
+        <h1 className="text-xl font-semibold text-slate-700 mt-5">
+          다가오는 여행
+        </h1>
+        <ul className="flex flex-col">
+          {tripListData?.beforeTripList?.map((item, index) => {
             return (
               <li
-                className={`cursor-pointer w-full flex justify-center items-center
-                            pt-[17px] pb-[16px]
-                            ${category === index ? `text-primary border-b-[2px] border-primary` : `text-slate-400 border-b border-slate-200`}`}
+                className="flex items-center justify-between py-5"
                 key={index}
                 onClick={() => {
-                  setCategory(index);
+                  navigateGoTrip(item);
                 }}
               >
-                {item}
+                {/* 좌측 */}
+                <div className="flex items-center gap-3">
+                  {/* 이미지 */}
+                  <div className="w-20 h-20 bg-slate-100 rounded-full overflow-hidden">
+                    <img
+                      src={`${LocationPic}${item.locationPic}`}
+                      alt={item.title}
+                      className="w-full h-full"
+                    />
+                  </div>
+                  {/* 정보 */}
+                  <div className="flex flex-col">
+                    <h3 className="text-base text-slate-700 font-semibold">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-slate-400">
+                      <span>{item.startAt}</span>~<span>{item.endAt}</span>
+                      <span className="ml-1">
+                        ({duration(item)}박{duration(item) + 1}일)
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                {/* 우측 */}
+
+                <CgMoreVerticalAlt
+                  className="text-3xl text-slate-500"
+                  onClick={e => {
+                    e.stopPropagation();
+                    setIsOpen(true);
+                  }}
+                />
+                <BottomSheet
+                  open={isOpen}
+                  onClose={() => setIsOpen(false)}
+                  actions={actions}
+                />
+              </li>
+            );
+          })}
+        </ul>
+        <h1 className="text-xl font-semibold text-slate-700 mt-5">
+          완료된 여행
+        </h1>
+        <ul className="flex flex-col">
+          {/* 완료된 여행 */}
+          {tripListData.afterTripList?.map((item, index) => {
+            return (
+              <li
+                className="flex items-center justify-between py-5"
+                key={index}
+                onClick={() => {
+                  navigateGoTrip(item);
+                }}
+              >
+                {/* 좌측 */}
+                <div className="flex items-center gap-3">
+                  {/* 이미지 */}
+                  <div className="w-20 h-20 bg-slate-100 rounded-full overflow-hidden">
+                    <img
+                      src={`${LocationPic}${item.locationPic}`}
+                      alt={item.title}
+                      className="w-full h-full"
+                    />
+                  </div>
+                  {/* 정보 */}
+                  <div className="flex flex-col">
+                    <h3 className="text-base text-slate-700 font-semibold">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-slate-400">
+                      <span>{item.startAt}</span>~
+                      <span>
+                        {item.endAt}
+                        <span className="ml-1">
+                          ({duration(item)}박{duration(item) + 1}일)
+                        </span>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                {/* 우측 */}
+
+                <CgMoreVerticalAlt className="text-3xl text-slate-500" />
               </li>
             );
           })}
         </ul>
       </div>
-      {/* 여행 목록 */}
-      <div className="px-[28px] mb-[40px]">
-        {/* 다가오는 여행 */}
-        {category === 0 && (
-          <ul className="flex flex-col gap-[40px]">
-            {tripListData?.beforeTripList?.map((item, index) => {
-              return (
-                <li
-                  className="flex items-center justify-between"
-                  key={index}
-                  onClick={() => {
-                    navigateGoTrip(item);
-                  }}
-                >
-                  {/* 좌측 */}
-                  <div className="flex items-center gap-[29px]">
-                    {/* 이미지 */}
-                    <div className="w-[100px] h-[100px] bg-slate-100 rounded-full overflow-hidden">
-                      <img
-                        src={`${LocationPic}${item.locationPic}`}
-                        alt={item.title}
-                        className="w-full h-full"
-                      />
-                    </div>
-                    {/* 정보 */}
-                    <div className="flex flex-col gap-[5px]">
-                      <h3 className="text-[24px] text-slate-700 font-semibold">
-                        {item.title}
-                      </h3>
-                      <p className="text-[18px] text-slate-500">
-                        <span>{item.startAt}</span>~<span>{item.endAt}</span>
-                      </p>
-                    </div>
-                  </div>
-                  {/* 우측 */}
-                  <button className="w-[36px] h-[36px] bg-slate-100 px-[10px] py-[10px] rounded-full">
-                    <AiOutlinePlus className="text-slate-400" />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        {/* 완료된 여행 */}
-        {category === 1 && (
-          <ul className="flex flex-col gap-[40px]">
-            {tripListData.afterTripList?.map((item, index) => {
-              return (
-                <li
-                  className="flex items-center justify-between"
-                  key={index}
-                  onClick={() => {
-                    navigateGoTrip(item);
-                  }}
-                >
-                  {/* 좌측 */}
-                  <div className="flex items-center gap-[29px]">
-                    {/* 이미지 */}
-                    <div className="w-[100px] h-[100px] bg-slate-100 rounded-full">
-                      <img src="" alt="" />
-                    </div>
-                    {/* 정보 */}
-                    <div className="flex flex-col gap-[5px]">
-                      <h3 className="text-[24px] text-slate-700 font-semibold">
-                        {item.title}
-                      </h3>
-                      <p className="text-[18px] text-slate-500">
-                        <span>{item.startAt}</span>~<span>{item.endAt}</span>
-                      </p>
-                    </div>
-                  </div>
-                  {/* 우측 */}
-                  <button className="w-[36px] h-[36px] bg-slate-100 px-[10px] py-[10px] rounded-full">
-                    <AiOutlinePlus className="text-slate-400" />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
+      <BottomSheet
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        actions={actions}
+      />
+      <BottomSheet
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        actions={tripMore}
+      />
       <Footer />
+
+      <Modal
+        className="custom-modal-invite"
+        open={isModalOpen}
+        onOk={() => {
+          setIsModalOpen(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen(false);
+        }}
+      >
+        {/* 여행코드 입력창 */}
+        <div className="flex flex-col gap-[5px]">
+          <div className="flex items-center gap-1">
+            <p className="text-slate-700 text-xs font-semibold">
+              초대코드 입력
+            </p>
+            {/* <Button type="Outlined" className="group flex items-center focus:">
+              <AiOutlineQuestionCircle className="text-xs text-slate-300 group-hover:text-[#b8c8d1] transition-all duration-300" />
+              <p className="text-slate-300  text-[8px] overflow-hidden transition-all duration-300"></p>
+            </Button> */}
+            <Tooltip
+              placement="right"
+              className="custom-tooltip"
+              title={
+                <span className="text-[10px]">
+                  친구에게 받은 일정코드를 입력하시고 함께 여행 일정을
+                  만들어주세요
+                </span>
+              }
+            >
+              <AiOutlineQuestionCircle className="text-sm text-slate-400" />
+            </Tooltip>
+          </div>
+
+          <Input
+            placeholder="친구와 여행을 함께하기 위해 코드를 입력해주세요"
+            className=" py-[20px] h-[79px]"
+            onChange={e => setCode(e.target.value)}
+            onKeyDown={e => {
+              if (e.code === "Enter") {
+                postTripUser();
+              }
+            }}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };
