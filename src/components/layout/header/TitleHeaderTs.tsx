@@ -62,12 +62,12 @@ const TitleHeaderTs = ({
         >
           {icon === "back" ? <IoIosArrowRoundBack /> : <IoCloseSharp />}
         </button>
-        <div className="text-[20px] font-bold text-slate-700">
+        <div className="text-lg font-bold text-slate-700">
           {title ? `${title}` : ``}
         </div>
       </div>
       {/* 우측 */}
-      <div className={`flex items-center text-[36px] text-slate-700`}>
+      <div className={`flex items-center text-3xl text-slate-700`}>
         {rightContent}
       </div>
     </div>
