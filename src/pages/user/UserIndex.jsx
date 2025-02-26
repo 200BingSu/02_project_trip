@@ -232,13 +232,13 @@ const UserIndex = () => {
             비밀번호 변경
           </Link>
           {accessToken && (
-            <Link
-              to={() => handleLogout()}
+            <p
+              onClick={() => handleLogout()}
               className="flex gap-3 items-center text-slate-500 py-5 text-sm"
             >
               <RxExit className="text-slate-300" />
               로그아웃
-            </Link>
+            </p>
           )}
         </div>
       </div>
