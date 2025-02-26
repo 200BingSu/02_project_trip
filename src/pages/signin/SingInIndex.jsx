@@ -10,17 +10,15 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import "../../styles/antd-styles.css";
 
-// 도흠쌤 도와줘요
-const host2 = window.location.origin;
-const redirectUrl = `${host2}/fe/redirect`;
-
 //카카오 로그인 url
 const host = window.location.origin;
 const redirect_uri = `${host}/signup/kakao`;
-// const redirect_uri = `${host}/fe/redirect`;
-const snsUrl = `http://112.222.157.157:5231/oauth2/authorization/kakao?redirect_uri=${redirect_uri}`;
+
+const dev = "http://localhost:8080";
+const docker = "http://112.222.157.157:5231";
+const postKakaoUrl = `${docker}/oauth2/authorization/kakao?redirect_uri=${redirect_uri}`;
 const handleKakaoLogin = () => {
-  window.location.href = `${snsUrl}`;
+  window.location.href = `${postKakaoUrl}`;
 };
 
 const SingInIndex = () => {
@@ -54,7 +52,8 @@ const SingInIndex = () => {
     try {
       const res = await axios.post(`${USER.signInUser}`, data);
       // console.log("로그인 시도:", res.data);
-      if (res.data.data === 200) {
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
         // console.log("현재 시각:", moment().format("H:mm:ss"));
         setCookie(`accessToken`, res.data.accessToken);
         setCookie("user", {
@@ -62,10 +61,12 @@ const SingInIndex = () => {
           email: data.email,
           isSaveLogin: isSaveLogin,
           isSaveEmail: isSaveEmail,
+          role: resultData.role,
         });
         setLoginInfo({
           userId: res.data.userId,
           accessToken: res.data.accessToken,
+          role: resultData.role,
         });
         handleNavigateHome();
       }
@@ -226,16 +227,10 @@ const SingInIndex = () => {
                   카카오 로그인
                 </p>
               </button>
-              <div className="cursor">
-          <a href={`/oauth2/authorization/kakao?redirect_uri=${redirectUrl}`}>
-            도흠쌤 도와줘요
-          </a>
-        </div>
             </div>
           </div>
         )}
         {loginType === "business" && <div>🔥 탭 2의 내용</div>}
-
       </div>
     </div>
   );

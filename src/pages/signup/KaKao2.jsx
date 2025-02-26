@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
-
+// 주소: /fe/redirect
 const KaKao2 = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
