@@ -215,7 +215,9 @@ const Chat = (): JSX.Element => {
               <li key={index}>
                 {typeof item === "string"
                   ? item
+
                   : `user${item?.sender}: ${item?.message}`}
+
               </li>
             );
           })}

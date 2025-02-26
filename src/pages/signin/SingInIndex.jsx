@@ -91,7 +91,7 @@ const SingInIndex = () => {
     <div className="w-full h-screen flex flex-col items-center justify-center gap-4">
       {/* 로고 */}
       <div className="w-full flex items-center justify-center">
-        <div className=" w-[44.2vw] max-w-72 h-auto ">
+        <div className=" w-[44.2vw] max-w-[300px] h-auto ">
           <img
             src={logo}
             alt="main_logo"
