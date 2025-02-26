@@ -1,21 +1,19 @@
-import { Suspense, lazy } from "react";
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { createBrowserRouter } from "react-router-dom";
 
 // import companyRouter from "./companyrouter";
-import Loading from "../components/loading/Loading";
-import scheduleRouter from "./schedulerouter";
-import NotFound from "../pages/NotFound";
-import scheduleBoardRouter from "./scheduleboardrouter";
-import signUpRouter from "./signuprouter";
 import Layout from "../components/layout/Layout";
-import searchRouter from "./searchrouter";
-import { getCookie } from "../utils/cookie";
-import { userAtom } from "../atoms/userAtom";
-import { useRecoilValue } from "recoil";
-import contentsRouter from "./contentsrouter";
-import usertrouter from "./usertrouter";
-import bookingRouter from "./bookingrouter";
+import Loading from "../components/loading/Loading";
+import NotFound from "../pages/NotFound";
+import KaKao2 from "../pages/signup/KaKao2";
 import Test from "../pages/Test";
+import bookingRouter from "./bookingrouter";
+import contentsRouter from "./contentsrouter";
+import scheduleBoardRouter from "./scheduleboardrouter";
+import scheduleRouter from "./schedulerouter";
+import searchRouter from "./searchrouter";
+import signUpRouter from "./signuprouter";
+import usertrouter from "./usertrouter";
 
 // lazys
 
@@ -170,6 +168,7 @@ const router = createBrowserRouter([
         ),
         children: usertrouter(),
       },
+      { path: "/fe/redirect", element: <KaKao2 /> },
       { path: "/test", element: <Test /> },
       { path: "*", element: <NotFound /> },
     ],

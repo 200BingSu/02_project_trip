@@ -236,6 +236,8 @@ const ScheduleIndex = () => {
       console.log("드래그 정보 상태 업데이트:", dragInfo);
     }
   }, [dragInfo]);
+  // 날짜 계산
+  const duration = dayjs(tripData.endAt).diff(dayjs(tripData.startAt), "day");
 
   return (
     <div>
@@ -260,8 +262,15 @@ const ScheduleIndex = () => {
             {/* 제목 */}
             <div className="mt-[60px] flex flex-col gap-[10px] px-[32px]">
               <div className="flex items-center justify-between">
-                <p className="text-[18px] text-slate-700 ">
-                  <span>{tripData.startAt}</span>-<span>{tripData.endAt}</span>
+                <p className="text-[18px] text-slate-700 flex gap-[10px]">
+                  <span>
+                    {tripData.startAt} ~ {tripData.endAt}
+                  </span>
+                  <span>
+                    {tripData.startAt &&
+                      tripData.endAt &&
+                      `(${duration}박 ${duration + 1}일)`}
+                  </span>
                 </p>
                 <button type="button" onClick={() => setIsEdit(true)}>
                   <IoSettingsOutline className="text-[24px] text-slate-300 bg-white" />

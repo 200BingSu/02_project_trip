@@ -8,5 +8,6 @@ export const userAtom = atom({
     name: "",
     profilePic: "",
     accessToken: "",
+    role: [],
   }, // accessToken
 });

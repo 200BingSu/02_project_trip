@@ -66,10 +66,10 @@ const signUpRouter = () => {
       ),
     },
     {
-      path: "kakao",
+      path: "kakao", //signup/kakao
       element: (
         <Suspense fallback={<Loading />}>
-          <LazyCompleteSignUp />
+          <LazyKakaoSingup />
         </Suspense>
       ),
     },
