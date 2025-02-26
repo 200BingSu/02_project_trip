@@ -19,13 +19,14 @@ import dayjs from "dayjs";
 import { duration } from "../../utils/duration";
 import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 
-const categoryArr = ["다가오는 여행", "완료된 여행"];
 const UserTrips = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [useProfile, setUseProfile] = useState({});
   const [tripListData, setTripListData] = useState({});
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const [isTripOpen, setIsTripOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tripMoreActions, setTripMoreActions] = useState([]);
 
   const [form] = Form.useForm();
   const accessToken = getCookie("accessToken");
@@ -97,7 +98,7 @@ const UserTrips = () => {
   // useNavigate
   const navigate = useNavigate();
   const navigateBack = () => {
-    navigate(-1);
+    navigate(-2);
   };
   const navigateGoTrip = item => {
     console.log(item);
@@ -132,28 +133,30 @@ const UserTrips = () => {
       label: "초대코드 입력하기",
       onClick: () => {
         setIsModalOpen(true);
-        setIsOpen(false);
+        setIsMoreOpen(false);
       },
     },
   ];
-  const tripMore = [
+  const tripMore = item => [
     {
       label: (
-        <>
-          <BiSolidEditAlt /> 해당 일정 수정하기
-        </>
+        <div className="flex items-center gap-3 text-lg">
+          <BiSolidEditAlt className="text-slate-400" /> 해당 일정 수정하기
+        </div>
       ),
-      onClick: () => console.log("수정하기 클릭"),
+      onClick: () => {
+        navigate(`/schedule/index?tripId=${item.tripId}`);
+        console.log("인식");
+      },
     },
     {
       label: (
-        <>
-          <BiTrash /> 해당 일정 삭제하기
-        </>
+        <div className="flex items-center gap-3 text-lg">
+          <BiTrash className="text-slate-400" /> 해당 일정 삭제하기
+        </div>
       ),
       onClick: () => {
-        setIsModalOpen(true);
-        setIsOpen(false);
+        console.log("수정하기 클릭");
       },
     },
   ];
@@ -164,7 +167,7 @@ const UserTrips = () => {
       {/* 여행 일정 만들기 */}
       <div
         className="w-auto h-auto p-5 bg-slate-50 rounded-lg flex items-center gap-5 mx-4 cursor-pointer"
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsMoreOpen(true)}
       >
         <i className="inline-block p-[10px] bg-primary rounded-full">
           <AiOutlinePlus className="text-white" />
@@ -224,13 +227,9 @@ const UserTrips = () => {
                   className="text-3xl text-slate-500"
                   onClick={e => {
                     e.stopPropagation();
-                    setIsOpen(true);
+                    setIsTripOpen(true);
+                    setTripMoreActions(tripMore(item));
                   }}
-                />
-                <BottomSheet
-                  open={isOpen}
-                  onClose={() => setIsOpen(false)}
-                  actions={actions}
                 />
               </li>
             );
@@ -278,21 +277,28 @@ const UserTrips = () => {
                 </div>
                 {/* 우측 */}
 
-                <CgMoreVerticalAlt className="text-3xl text-slate-500" />
+                <CgMoreVerticalAlt
+                  className="text-3xl text-slate-500"
+                  onClick={e => {
+                    e.stopPropagation();
+                    setIsTripOpen(true);
+                    setTripMoreActions(tripMore(item));
+                  }}
+                />
               </li>
             );
           })}
         </ul>
       </div>
       <BottomSheet
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
+        open={isMoreOpen}
+        onClose={() => setIsMoreOpen(false)}
         actions={actions}
       />
       <BottomSheet
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        actions={tripMore}
+        open={isTripOpen}
+        onClose={() => setIsTripOpen(false)}
+        actions={tripMoreActions}
       />
       <Footer />
 
