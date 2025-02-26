@@ -35,6 +35,7 @@ const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
 const LazySignUp = lazy(() => import("../pages/signup/SignUp"));
 const LazyUser = lazy(() => import("../pages/user/User"));
 const LazyContent = lazy(() => import("../pages/contents/Contents"));
+const LazyChat = lazy(() => import("../pages/chat/ChatIndex"));
 
 // AuthWrapper 컴포넌트 생성
 // const accessToken = getCookie("accessToken");
@@ -168,8 +169,14 @@ const router = createBrowserRouter([
         ),
         children: usertrouter(),
       },
-      { path: "/fe/redirect", element: <KaKao2 /> },
-      { path: "/test", element: <Test /> },
+      {
+        path: "/chat",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyChat />
+          </Suspense>
+        ),
+      },
       { path: "*", element: <NotFound /> },
     ],
   },
