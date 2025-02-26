@@ -11,10 +11,16 @@ import moment from "moment";
 import "../../styles/antd-styles.css";
 
 //카카오 로그인 url
-const snsUrl = "http://localhost:8080/oauth2/authorization";
+const host = window.location.origin;
+const redirect_uri = `${host}/signup/kakao`;
+
+const dev = "http://localhost:8080";
+const docker = "http://112.222.157.157:5231";
+const postKakaoUrl = `${docker}/oauth2/authorization/kakao?redirect_uri=${redirect_uri}`;
 const handleKakaoLogin = () => {
-  window.location.href = `${snsUrl}`;
+  window.location.href = `${postKakaoUrl}`;
 };
+
 const SingInIndex = () => {
   //쿠키
   const savedUserLogin = getCookie("user");
@@ -46,7 +52,8 @@ const SingInIndex = () => {
     try {
       const res = await axios.post(`${USER.signInUser}`, data);
       // console.log("로그인 시도:", res.data);
-      if (res.data.data === 200) {
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
         // console.log("현재 시각:", moment().format("H:mm:ss"));
         setCookie(`accessToken`, res.data.accessToken);
         setCookie("user", {
@@ -54,10 +61,12 @@ const SingInIndex = () => {
           email: data.email,
           isSaveLogin: isSaveLogin,
           isSaveEmail: isSaveEmail,
+          role: resultData.role,
         });
         setLoginInfo({
           userId: res.data.userId,
           accessToken: res.data.accessToken,
+          role: resultData.role,
         });
         handleNavigateHome();
       }
@@ -110,6 +119,7 @@ const SingInIndex = () => {
           기업회원
         </div>
       </div>
+
       <div className="w-full px-4">
         {loginType === "personal" && (
           <div>

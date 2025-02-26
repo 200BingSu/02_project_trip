@@ -1,19 +1,25 @@
 import { Client } from "@stomp/stompjs";
 import { Button, Input } from "antd";
-import { useEffect, useState, useRef } from "react";
-import { userAtom } from "../../atoms/userAtom";
-import { useRecoilValue } from "recoil";
+import { useEffect, useRef, useState } from "react";
 import { getCookie } from "../../utils/cookie";
+import TitleHeaderTs from "../layout/header/TitleHeaderTs";
+import { useNavigate } from "react-router-dom";
+import { BsFillPatchPlusFill } from "react-icons/bs";
 
 interface IMessage {
   message: string;
   sender: number;
-  roomId: number;
+  roomId?: number;
 }
 
 const Chat = (): JSX.Element => {
   // 쿠키
   const accessToken = getCookie("accessToken");
+  // useNavigate
+  const navigate = useNavigate();
+  const navigateToBack = () => {
+    navigate(-1);
+  };
   // useState
   const [client, setClient] = useState<Client | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
@@ -29,8 +35,9 @@ const Chat = (): JSX.Element => {
     console.log("messages", messages);
   }, [messages]);
 
-  //recoil
-  const { userId } = useRecoilValue(userAtom);
+  //쿠키
+  const userInfo = getCookie("user");
+  const userId = userInfo?.userId;
   //임시
   useEffect(() => {
     if (userId !== 0) {
@@ -38,13 +45,12 @@ const Chat = (): JSX.Element => {
     }
     setRoomId(1);
   }, []);
+
   // 커넥션
   // const url = `ws://localhost:8080/chat`;
   const url = `ws://112.222.157.157:5231/chat`;
   // 구독 경로
   const topic = `/sub/chat/${roomId}`;
-
-  // const app = "/app/hello";
 
   useEffect(() => {
     const stompClient = new Client({
@@ -55,6 +61,7 @@ const Chat = (): JSX.Element => {
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
+      // 연결 성공
       onConnect: async frame => {
         console.log("Connected: ", frame);
         stompClient.subscribe(
@@ -64,7 +71,7 @@ const Chat = (): JSX.Element => {
             try {
               const receivedMessage = JSON.parse(message.body);
               console.log("파싱된 메세지:", receivedMessage);
-              setMessages(prev => [...prev, receivedMessage.content]);
+              setMessages(prev => [...prev, receivedMessage]);
             } catch (error) {
               // JSON이 아닌 일반 텍스트 메시지 처리
               console.log("일반 텍스트 메시지:", message.body);
@@ -76,13 +83,13 @@ const Chat = (): JSX.Element => {
           },
         );
         setConnected(true);
-        // stompClient를 직접 사용
+        // 바로 방 입장
         try {
           await stompClient.publish({
             destination: "/pub/chat.join",
             body: JSON.stringify({
               roomId: roomId,
-              sender: name,
+              sender: userId,
             }),
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -93,6 +100,7 @@ const Chat = (): JSX.Element => {
           console.error("Error joining room:", error);
         }
       },
+      // 연결 해제
       onDisconnect: () => {
         console.log("Disconnected");
         connectionRef.current = false;
@@ -138,29 +146,7 @@ const Chat = (): JSX.Element => {
       client.unsubscribe(topic);
       setConnected(false);
       setMessages([]);
-    }
-    connectionRef.current = false;
-  };
-  // 채팅방 생성
-  // 채팅 내역 불러오기
-  // 채팅방 입장 함수(현재 과거 채팅 조회 없음)
-  const joinRoom = async (): Promise<void> => {
-    console.log(client, name, connected);
-    if (client && name && connected) {
-      try {
-        client.publish({
-          destination: "/pub/chat.join",
-          body: JSON.stringify({
-            roomId: roomId,
-            sender: name,
-          }),
-        });
-        console.log("채팅방 입장 성공");
-      } catch (error) {
-        console.error("Error joining room:", error);
-      }
-    } else {
-      console.log("참여 불가: 커넥트 끊김 또는 이름 입력 없음");
+      connectionRef.current = false;
     }
   };
 
@@ -196,57 +182,69 @@ const Chat = (): JSX.Element => {
 
   return (
     <div>
-      <h2>WebSocket STOMP Client</h2>
-      {/* 연결/연결해제 버튼 */}
-      <div className="flex gap-5">
-        {connectionRef.current ? (
-          <Button
-            onClick={disconnect}
-            disabled={!connected}
-            className="bg-red-500"
-          >
-            연결 해제
-          </Button>
-        ) : (
-          <Button
-            onClick={connect}
-            disabled={connected}
-            className="bg-blue-500"
-          >
-            통신 연결
-          </Button>
-        )}
+      {/* 임시, 이후 useEffect로 처리하기 */}
+      <div>
+        <h2>WebSocket STOMP Client</h2>
+        {/* 연결/연결해제 버튼 */}
+        <div className="flex gap-5">
+          {connectionRef.current ? (
+            <Button
+              onClick={disconnect}
+              disabled={!connected}
+              className="bg-red-500"
+            >
+              연결 해제
+            </Button>
+          ) : (
+            <Button
+              onClick={connect}
+              disabled={connected}
+              className="bg-blue-500"
+            >
+              통신 연결
+            </Button>
+          )}
+        </div>
       </div>
-
+      <TitleHeaderTs title="채팅" icon="back" onClick={navigateToBack} />
       {/* 채팅 인터페이스 (연결된 경우에만 표시) */}
-      <div
-        style={{ display: connected ? "block" : "none" }}
-        className="flex flex-col gap-5"
-      >
-        <ul className="bg-gray-100 h-96 overflow-y-auto">
+      <div className="bg-slate-100">
+        <ul className="h-96 overflow-y-auto">
           {messages.map((item: IMessage | string, index) => {
             return (
               <li key={index}>
                 {typeof item === "string"
                   ? item
-                  : `${item?.sender}: ${item?.message}`}
+
+                  : `user${item?.sender}: ${item?.message}`}
+
               </li>
             );
           })}
         </ul>
         {/* 메시지 입력 필드 추가 */}
-        <Input
-          type="text"
-          value={inputMessage}
-          onChange={e => setInputMessage(e.target.value)}
-          placeholder="메세지 입력"
-          onPressEnter={e => {
-            if (e.key === "Enter") {
-              sendMessage();
-            }
-          }}
-        />
-        <Button onClick={sendMessage}>전송</Button>
+        <div
+          className="flex items-center gap-[12px]
+                    px-[16px] py-[16px]
+                    bg-white
+                    fixed bottom-0 left-0 right-0"
+        >
+          <Input
+            type="text"
+            value={inputMessage}
+            onChange={e => setInputMessage(e.target.value)}
+            placeholder="메세지 입력"
+            onPressEnter={e => {
+              if (e.key === "Enter") {
+                sendMessage();
+              }
+            }}
+            className="px-[16px] py-[12px]"
+          />
+          <button type="button" onClick={sendMessage}>
+            <BsFillPatchPlusFill className="text-[36px] text-primary" />
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -194,34 +194,47 @@ const ContentIndex = () => {
   };
 
   // 상품 조회(비회원)
-  const getDetailGuest = async () => {
-    try {
-      const res = await axios.get(`/api/detail/member/non?strf_id=${strfId}`);
-      const resultData = res.data.data;
-      console.log("상품조회-비회원", resultData);
+  // const getDetailGuest = async () => {
+  //   try {
+  //     const res = await axios.get(`/api/detail/member/non?strf_id=${strfId}`);
+  //     const resultData = res.data.data;
+  //     console.log("상품조회-비회원", resultData);
 
-      setContentData(resultData);
-      if (res.data.code === "200 성공") {
-        setIsLoading(true);
-        getPathList();
-      }
-    } catch (error) {
-      console.log("상품조회-비회원", error);
-    }
-  };
+  //     setContentData(resultData);
+  //     if (res.data.code === "200 성공") {
+  //       setIsLoading(true);
+  //       getPathList();
+  //     }
+  //   } catch (error) {
+  //     console.log("상품조회-비회원", error);
+  //   }
+  // };
   // 상품조회(회원)
   const getDetailMember = async () => {
-    // console.log("sendData:", sendData);
-    try {
-      const res = await jwtAxios.get(`/api/detail/member?&strf_id=${strfId}`);
-      const resultData = res.data.data;
-      console.log("상품조회-회원", resultData);
-      setContentData(resultData);
-      if (res.data.code === "200 성공") {
-        setIsLoading(true);
+    if (accessToken) {
+      try {
+        const res = await jwtAxios.get(`/api/detail/member?&strf_id=${strfId}`);
+        const resultData = res.data.data;
+        console.log("상품조회-회원", resultData);
+        setContentData(resultData);
+        if (res.data.code === "200 성공") {
+          setIsLoading(true);
+        }
+      } catch (error) {
+        console.log("상품조회-회원", error);
       }
-    } catch (error) {
-      console.log("상품조회-회원", error);
+    } else {
+      try {
+        const res = await axios.get(`/api/detail/member?&strf_id=${strfId}`);
+        const resultData = res.data.data;
+        console.log("상품조회-비회원", resultData);
+        setContentData(resultData);
+        if (res.data.code === "200 성공") {
+          setIsLoading(true);
+        }
+      } catch (error) {
+        console.log("상품조회-회원", error);
+      }
     }
   };
 
