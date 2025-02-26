@@ -103,9 +103,9 @@ const DockBar = React.memo(() => {
           여행기
         </Link>
         <Link
-          to="#"
+          to="/chat"
           className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5 text-sm"
-          onClick={showModal}
+          // onClick={showModal}
         >
           <IoLogoWechat className="text-2xl" />
           챗봇

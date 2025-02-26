@@ -5,12 +5,54 @@ import { getCookie } from "../../utils/cookie";
 import TitleHeaderTs from "../layout/header/TitleHeaderTs";
 import { useNavigate } from "react-router-dom";
 import { BsFillPatchPlusFill } from "react-icons/bs";
+import jwtAxios from "../../apis/jwt";
 
-interface IMessage {
+interface ISendMessage {
   message: string;
   sender: number;
   roomId?: number;
 }
+interface IMessage {
+  chatId: number;
+  senderId: string;
+  senderName: string;
+  senderPic: string;
+  signedUser: boolean;
+  message: string;
+}
+interface IGetChatHistoryRes {
+  code: string;
+  data: {
+    message: IMessage[];
+  };
+}
+// 더미 데이터
+const dummyresponse = {
+  code: "200 성공",
+  data: {
+    message: [
+      {
+        chatId: 1,
+        senderId: "550e8400-e29b-41d4-a716-446655440000",
+        senderName: "user1",
+        senderPic: "image.jpg",
+        signedUser: true, // 로그인 유저 인지
+        message: "나야 들기름",
+      },
+      {
+        chatId: 1,
+        senderId: "65f26e0e-e982-4182-830a-47c4edd38cf2",
+        senderName: "user2",
+        senderPic: "image.jpg",
+        signedUser: false,
+        message:
+          "니가 누군데ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      },
+    ],
+  },
+};
+const dummyResultData = dummyresponse.data;
+const dummyMessageArr: IMessage[] = dummyResultData.message;
 
 const Chat = (): JSX.Element => {
   // 쿠키
@@ -24,7 +66,7 @@ const Chat = (): JSX.Element => {
   const [client, setClient] = useState<Client | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
   const [name, setName] = useState<number>(1);
-  const [messages, setMessages] = useState<(IMessage | string)[]>([]);
+  const [messages, setMessages] = useState<(ISendMessage | string)[]>([]);
   const [roomId, setRoomId] = useState<number>(1);
   const [inputMessage, setInputMessage] = useState<string>("");
   const connectionRef = useRef<boolean>(false);
@@ -44,6 +86,22 @@ const Chat = (): JSX.Element => {
       setName(userId);
     }
     setRoomId(1);
+  }, []);
+
+  // api 채팅내역
+  const getChatHistory = async (): Promise<IGetChatHistoryRes | null> => {
+    try {
+      const res = await jwtAxios.get<IGetChatHistoryRes>(`/api/chat/history`);
+      const resultData = res.data;
+      console.log("채팅내역", resultData);
+      return resultData;
+    } catch (error) {
+      console.log("채팅내역 조회 실패", error);
+      return null;
+    }
+  };
+  useEffect(() => {
+    getChatHistory();
   }, []);
 
   // 커넥션
@@ -166,11 +224,6 @@ const Chat = (): JSX.Element => {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-        // 메시지를 즉시 화면에 표시
-        // setMessages(prev => [
-        //   ...prev,
-        //   { message: inputMessage, sender: name, roomId: roomId },
-        // ]);
         setInputMessage("");
       } catch (error) {
         console.error("Error sending message:", error);
@@ -208,16 +261,62 @@ const Chat = (): JSX.Element => {
       </div>
       <TitleHeaderTs title="채팅" icon="back" onClick={navigateToBack} />
       {/* 채팅 인터페이스 (연결된 경우에만 표시) */}
-      <div className="bg-slate-100">
-        <ul className="h-96 overflow-y-auto">
-          {messages.map((item: IMessage | string, index) => {
+      <div className="bg-slate-200 min-h-[calc(100vh-100px)] pt-[16px]">
+        <ul
+          className="h-full overflow-y-auto
+        flex flex-col gap-[16px]"
+        >
+          {/* {messages.map((item: ISendMessage | string, index) => {
             return (
               <li key={index}>
                 {typeof item === "string"
                   ? item
-
                   : `user${item?.sender}: ${item?.message}`}
-
+              </li>
+            );
+          })} */}
+          {dummyMessageArr.map((item, index) => {
+            return item.signedUser === true ? (
+              <li
+                key={index}
+                className="flex items-center justify-end gap-[12px] px-[16px]"
+              >
+                <div className="flex items-center gap-[6px]">
+                  <p
+                    className="flex items-center justify-center bg-primary px-[16px] py-[12px]
+                    rounded-b-xl rounded-tl-xl
+                    text-white text-sm
+                    max-w-56 break-all"
+                  >
+                    {item.message}
+                  </p>
+                  {/* <p>{item.createdAt}</p> */}
+                </div>
+              </li>
+            ) : (
+              <li
+                key={index}
+                className="flex items-start justify-start gap-[12px] px-[16px]"
+              >
+                <div className="w-[30px] h-[30px] bg-slate-500 rounded-full overflow-hidden">
+                  사진
+                </div>
+                <div className="flex flex-col gap-[6px]">
+                  <p className="text-sm text-slate-700 font-semibold">
+                    {item.senderName}
+                  </p>
+                  <div className="flex items-center gap-[6px]">
+                    <p
+                      className="flex items-center justify-center bg-slate-100 px-[16px] py-[12px]
+                    rounded-b-xl rounded-tr-xl
+                    text-slate-700 text-sm
+                    max-w-56 break-all"
+                    >
+                      {item.message}
+                    </p>
+                    {/* <p>{item.createdAt}</p> */}
+                  </div>
+                </div>
               </li>
             );
           })}
@@ -227,7 +326,7 @@ const Chat = (): JSX.Element => {
           className="flex items-center gap-[12px]
                     px-[16px] py-[16px]
                     bg-white
-                    fixed bottom-0 left-0 right-0"
+                    max-w-[768px] w-full h-auto fixed bottom-0 left-1/2 -translate-x-1/2"
         >
           <Input
             type="text"
@@ -235,14 +334,14 @@ const Chat = (): JSX.Element => {
             onChange={e => setInputMessage(e.target.value)}
             placeholder="메세지 입력"
             onPressEnter={e => {
-              if (e.key === "Enter") {
+              if (inputMessage.trim() && e.key === "Enter") {
                 sendMessage();
               }
             }}
             className="px-[16px] py-[12px]"
           />
           <button type="button" onClick={sendMessage}>
-            <BsFillPatchPlusFill className="text-[36px] text-primary" />
+            <BsFillPatchPlusFill className="text-3xl text-primary" />
           </button>
         </div>
       </div>
