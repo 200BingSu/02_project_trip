@@ -229,7 +229,7 @@ const Chat = (): JSX.Element => {
               <li key={index}>
                 {typeof item === "string"
                   ? item
-                  : `${item.sender}: ${item.message}`}
+                  : `${item?.sender}: ${item?.message}`}
               </li>
             );
           })}
