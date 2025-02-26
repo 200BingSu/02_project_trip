@@ -26,7 +26,7 @@ const UserBooking = () => {
   // 예약 목록 불러오기
   const getBookingList = useCallback(async () => {
     try {
-      const res = await jwtAxios.get(`/api/booking?userId=${userId}`);
+      const res = await jwtAxios.get(`/api/booking`);
       console.log("예약 목록", res.data);
       const resultData = res.data;
       setBeforeList(resultData.data.beforeList);
