@@ -116,7 +116,7 @@ const UserrRview = () => {
 
   return (
     <div>
-      <TitleHeader icon="back" title="리뷰" onClick={() => navigate(-1)} />
+      <TitleHeader icon="back" title="리뷰" onClick={() => navigate(-2)} />
       <div className="px-8">
         {reviewInfo.map((item, index) => {
           const imageUrls = item.myReviewPic.map(
