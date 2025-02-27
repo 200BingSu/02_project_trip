@@ -177,6 +177,8 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
+
+      { path: "/test", element: <Test /> },
       { path: "*", element: <NotFound /> },
     ],
   },

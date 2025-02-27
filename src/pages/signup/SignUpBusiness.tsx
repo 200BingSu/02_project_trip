@@ -1,9 +1,11 @@
+
 import { Button, Checkbox, Form, Input } from "antd";
 import axios from "axios";
 import { useState } from "react";
 import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 import { useNavigate } from "react-router-dom";
 import "../../styles/antd-styles.css";
+
 
 const SignUpBusiness = (): JSX.Element => {
   const [businessNum, setBusinessNum] = useState("");

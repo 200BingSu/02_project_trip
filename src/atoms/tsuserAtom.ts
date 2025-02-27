@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { Iuser } from "../types/interface";
+import { Iuser, ProviderType } from "../types/interface";
 
 export const tsUserAtom = atom<Iuser>({
   key: "tsUserAtom",
@@ -7,8 +7,9 @@ export const tsUserAtom = atom<Iuser>({
     userId: 0,
     email: "",
     name: "",
-    porfilePic: "",
+    profilePic: "",
     accessToken: "",
+    providerType: ProviderType.LOCAL,
     role: [],
   },
 });

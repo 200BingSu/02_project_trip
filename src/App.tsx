@@ -1,41 +1,48 @@
 import { ConfigProvider } from "antd";
-import { RouterProvider } from "react-router-dom";
-import router from "./router/root";
 import locale from "antd/es/locale/ko_KR";
-import { getCookie } from "./utils/cookie";
-import jwtAxios from "./apis/jwt";
+import axios from "axios";
 import { useEffect } from "react";
+import { RouterProvider } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { userAtom } from "./atoms/userAtom";
+import { tsUserAtom } from "./atoms/tsuserAtom";
+import router from "./router/root";
+import { Iuser } from "./types/interface";
+import { getCookie } from "./utils/cookie";
+
+interface IgetUserInfo {
+  code: string;
+  data: Iuser;
+}
 
 const App = () => {
   const accessToken = getCookie("accessToken");
   //recoil
-  const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
 
-  // 유저 정보 담기
-  const getUserInfo = async () => {
+  const getUserInfo = async (): Promise<IgetUserInfo | null> => {
     try {
-      const res = await jwtAxios.get("/api/user/userInfo");
-      // console.log("app.jsx getUserInfo", res.data);
+      const res = await axios.get<IgetUserInfo>(`/api/user/userInfo`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const resultData = res.data;
-      if (resultData) {
-        setUserInfo({
-          email: resultData.data.email,
-          name: resultData.data.name,
-          profilePic: resultData.data.profilePic,
-        });
+      // console.log("유저 정보 조회", resultData);
+      if (resultData.code === "200 성공") {
+        setTsUserInfo({ ...tsUserInfo, ...resultData.data });
       }
+      return resultData;
     } catch (error) {
-      console.log("getUserInfo error", error);
+      console.log("유저 정보 조회", error);
+      return null;
     }
   };
+  console.log("tsUserInfo", tsUserInfo);
   useEffect(() => {
     if (accessToken) {
       getUserInfo();
     }
   }, [accessToken]);
-  console.log("userInfo", userInfo);
   return (
     <ConfigProvider
       locale={locale}
@@ -55,7 +62,6 @@ const App = () => {
             dotSize: 8,
             dotCurrentSize: 10,
             iconSize: 32,
-            titleColor: "#6B4AD6",
           },
         },
       }}
