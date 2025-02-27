@@ -31,13 +31,13 @@ const BusinessTime = ({
       {/* 숙소 */}
       {type === "STAY" && (
         <div className="flex gap-[5px] items-center">
-          <BiTime className="text-[24px] text-slate-500" />
-          <span className="text-[18px] text-slate-500">매일</span>
-          <span className="text-[18px] text-slate-500">
+          <BiTime className="text-xl text-slate-500" />
+          <span className="text-base text-slate-500">매일</span>
+          <span className="text-base text-slate-500">
             {timeFormat("09:00:00")}
           </span>
-          <span className="text-[18px] text-slate-500">~</span>
-          <span className="text-[18px] text-slate-500">
+          <span className="text-base text-slate-500">~</span>
+          <span className="text-base text-slate-500">
             {timeFormat("11:59:00")}
           </span>
         </div>
@@ -46,12 +46,12 @@ const BusinessTime = ({
       {type === "RESTAUR" && (
         <div className="flex flex-col ">
           <div className="flex gap-[5px] items-center">
-            <BiTime className="text-[24px] text-slate-500" />
-            <span className="text-[18px] text-slate-700 font-semibold">
+            <BiTime className="text-xl text-slate-500" />
+            <span className="text-base text-slate-700 font-semibold">
               {status}
             </span>
-            <span className="text-[18px] text-slate-500">|</span>
-            <span className="text-[18px] text-slate-500">
+            <span className="text-base text-slate-500">|</span>
+            <span className="text-base text-slate-500">
               {timeFormat("11:59:00")} 영업 종료
             </span>
             <span
@@ -65,11 +65,11 @@ const BusinessTime = ({
           </div>
           {openBusinessTime && (
             <div className="flex gap-[5px] items-center">
-              <BiTime className="text-[24px] text-slate-500" />
-              <span className="text-[18px] text-slate-700 font-semibold">
+              <BiTime className="text-xl text-slate-500" />
+              <span className="text-base text-slate-700 font-semibold">
                 매일
               </span>
-              <span className="text-[18px] text-slate-500">
+              <span className="text-base text-slate-500">
                 {timeFormat("09:00:00")} - {timeFormat("11:59:00")}
               </span>
             </div>
@@ -79,9 +79,9 @@ const BusinessTime = ({
       {/* 관광지 */}
       {type === "TOUR" && (
         <div className="flex gap-[5px] items-center">
-          <BiTime className="text-[24px] text-slate-500" />
-          <span className="text-[18px] text-slate-500">매일</span>
-          <span className="text-[18px] text-slate-500">
+          <BiTime className="text-xl text-slate-500" />
+          <span className="text-base text-slate-500">매일</span>
+          <span className="text-base text-slate-500">
             {contentData?.open && timeFormat(contentData?.open)}
           </span>
           <span className="text-[18px] text-slate-500">~</span>
@@ -94,12 +94,12 @@ const BusinessTime = ({
       {type === "FESTIVAL" && (
         <div className="flex flex-col ">
           <div className="flex gap-[5px] items-center">
-            <BiTime className="text-[24px] text-slate-500" />
-            <span className="text-[18px] text-slate-700 font-semibold">
+            <BiTime className="text-xl text-slate-500" />
+            <span className="text-base text-slate-700 font-semibold">
               {status}
             </span>
-            <span className="text-[18px] text-slate-500">|</span>
-            <span className="text-[18px] text-slate-500">
+            <span className="text-base text-slate-500">|</span>
+            <span className="text-base text-slate-500">
               {timeFormat("11:59:00")} 영업 종료
             </span>
             <span
@@ -114,17 +114,17 @@ const BusinessTime = ({
           {openBusinessTime && (
             <div className="flex flex-col">
               <div className="flex gap-[5px] items-center">
-                <BiTime className="text-[24px] text-slate-500 opacity-0" />
-                <span className="text-[18px] text-slate-500">
+                <BiTime className="text-xl text-slate-500 opacity-0" />
+                <span className="text-base text-slate-500">
                   {timeFormat("09:00:00")} - {timeFormat("11:59:00")}
                 </span>
               </div>
               <div className="flex gap-[5px] items-center">
-                <BiTime className="text-[24px] text-slate-500 opacity-0" />
-                <span className="text-[18px] text-slate-700 font-bold">
+                <BiTime className="text-xl text-slate-500 opacity-0" />
+                <span className="text-base text-slate-700 font-bold">
                   * 입장마감
                 </span>
-                <span className="text-[18px] text-slate-700">
+                <span className="text-base text-slate-700">
                   {timeFormat("16:59:00")}
                 </span>
               </div>

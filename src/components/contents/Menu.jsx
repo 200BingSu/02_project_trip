@@ -10,6 +10,9 @@ import { MenuPic, ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
+import "dayjs/locale/ko";
+
+dayjs.locale("ko");
 dayjs.extend(customParseFormat);
 
 //datePicker
@@ -45,13 +48,22 @@ const disabledRangeTime = (_, type) => {
   };
 };
 const StyledRangePicker = styled(RangePicker)`
-  .ant-picker-input input {
-    color: "#334155" !important;
+  .ant-picker-input {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .ant-picker-input input {
+    color: "#334155" !important;
     padding: 0 10px;
-    width: 130px;
+    font-size: 1rem;
+    text-align: center;
+    padding: 0;
+  }
+
+  .ant-picker-range-separator {
+    padding: 0; // separator 주변 여백 조절
   }
 `;
 const Menu = ({ type = "STAY", strfId, contentData }) => {
@@ -123,31 +135,47 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
       {/* 메뉴: 숙소 */}
       {type === "STAY" && (
         <div className="w-full flex flex-col gap-[30px]">
-          <div className="w-full flex items-center border border-slate-300 rounded-lg">
-            <div className="w-full flex justify-center py-[20px] border-r border-slate-300 text-slate-700 text-[18px]">
+          <div className="w-full flex flex-col items-center gap-[10px]">
+            <div className="w-full flex justify-center py-5 text-slate-700 text-lg border border-slate-300 rounded-lg">
               <StyledRangePicker
                 placeholder={["입실일", "퇴실일"]}
-                disabledDate={disabledDate}
+                suffixIcon={false}
                 variant="borderless"
+                disabledDate={disabledDate}
                 onChange={handleDateChange}
-                separator={"~"}
+                separator={<span className="text-base">~</span>}
                 showTime={{
-                  format: "HH:mm", // 시간과 분만 선택하도록 설정
-                  minuteStep: 10, // 분 단위로 선택
+                  format: "HH:mm",
+                  minuteStep: 10,
                 }}
-                format="YYYY-MM-DD HH:mm"
+                format="YYYY-MM-DD (ddd) HH:mm"
+                inputFormat="YYYY-MM-DD HH:mm"
+                locale={{
+                  lang: {
+                    locale: "ko",
+                  },
+                }}
               />
             </div>
-            <div className="w-full flex items-center justify-center gap-[10px] py-[20px] text-slate-700 text-[18px">
-              <p className="text-slate-700 text-[18px">인원</p>
+            <div className="w-full flex items-center justify-center gap-[10px] py-5 text-slate-700 border border-slate-300 rounded-lg">
+              <p className="text-slate-700 text-lg">성인</p>
               <InputNumber
                 min={1}
                 // max={10}
+                variant="borderless"
                 defaultValue={1}
                 onChange={onChange}
-                className="w-[60px]"
+                className="text-lg"
+                styles={{
+                  input: {
+                    textAlign: "center",
+                  },
+                  handler: {
+                    borderTop: "none",
+                    borderBottom: "none",
+                  },
+                }}
               />
-              <p className="text-slate-700 text-[18px">명</p>
             </div>
           </div>
           <ul>

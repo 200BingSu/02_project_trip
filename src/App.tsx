@@ -51,6 +51,9 @@ const App = () => {
           colorPrimary: "#0DD1FD",
         },
         components: {
+          Button: {
+            defaultBorderColor: "#CBD5E1",
+          },
           Rate: {
             starColor: "#0DD1FD",
           },
@@ -62,6 +65,9 @@ const App = () => {
             dotSize: 8,
             dotCurrentSize: 10,
             iconSize: 32,
+          },
+          Input: {
+            colorTextPlaceholder: "#94A3B8",
           },
         },
       }}

@@ -106,8 +106,8 @@ const TitleHeader = React.memo(
 
     return (
       <div
-        className={`flex w-full mx-auto items-center justify-between 
-    h-[60px] px-4 sticky top-0 left-0 z-10 transition-colors duration-100 ${isScrolled ? "bg-white shadow-sm" : "bg-transparent"}`} // 스크롤 상태에 따라 배경색 변경
+        className={`flex  items-center justify-between 
+    w-full mx-auto h-[60px] px-4 sticky top-0 left-0 z-10 transition-colors duration-100 ${isScrolled ? "bg-white shadow-sm" : "bg-transparent"}`} // 스크롤 상태에 따라 배경색 변경
       >
         {/* 좌측 */}
         <div className="flex gap-3 items-center">

@@ -270,7 +270,7 @@ const ContentIndex = () => {
   }, []);
 
   return (
-    <div className="relative pb-[70px]">
+    <div className="relative">
       {isLoading ? (
         <>
           {/* 헤더 */}
@@ -280,7 +280,7 @@ const ContentIndex = () => {
             getDetailMember={getDetailMember}
           />
           {/* 메인 썸네일 */}
-          <div className="w-full h-[467px] bg-gray-200">
+          <div className="w-full max-h-[467px] h-[93.33vw] bg-gray-200">
             <img
               src={
                 contentData?.strfPics?.[0]?.pic
@@ -297,17 +297,17 @@ const ContentIndex = () => {
             {/* 카테고리, 업체명, 주소, 별점, 찜하기, 영업시간 */}
             <div className="w-full flex flex-col gap-[10px]">
               {/* 카테고리 */}
-              <div className="text-[16px] text-slate-500">
+              <div className="text-sm text-slate-500">
                 {categoryKor(contentData?.category || "STAY")}
               </div>
               {/* 컨텐츠 타이틀 */}
-              <div className="font-semibold text-[36px] text-slate-700 line">
+              <div className="font-semibold text-2xl text-slate-700 line">
                 {contentData?.strfTitle || "제목"}
               </div>
               {/* 주소 */}
               <div className="flex gap-[5px] items-center">
-                <FaLocationDot className="text-[18px] text-slate-300" />
-                <p className="text-[16px] text-slate-700">
+                <FaLocationDot className="text-base text-slate-300" />
+                <p className="text-base text-slate-500">
                   {contentData?.locationName || "주소"}
                 </p>
               </div>
@@ -316,11 +316,11 @@ const ContentIndex = () => {
                 {/* 별점 */}
                 <div className="flex gap-[5px] items-center">
                   <Rate disabled count={1} value={1} />
-                  <p className="text-[16px] text-slate-700 font-semibold">
+                  <p className="text-base text-slate-700 font-semibold">
                     {contentData?.ratingAvg}
                   </p>
                   <p
-                    className="text-[16px] text-primary underline"
+                    className="text-base text-primary underline"
                     onClick={() => {
                       moveTo(reviewRef);
                     }}
@@ -333,7 +333,7 @@ const ContentIndex = () => {
                     개
                   </p>
                 </div>
-                <p className="text-[16px] text-slate-300 font-light">|</p>
+                <p className="text-base text-slate-300 font-light">|</p>
                 {/* 찜하기 */}
                 <div className="flex gap-[5px] items-center">
                   {contentData?.wishIn ? (
@@ -475,22 +475,26 @@ const ContentIndex = () => {
           </div>
           {/* 일정 추가 및 리뷰쓰기 버튼 */}
           {accessToken ? (
-            <div className="px-[32px] py-[20px] flex max-w-3xl w-full mx-auto items-center gap-10 fixed bottom-[100px] left-[50%] translate-x-[-50%] z-10">
+            <div
+              className="flex items-center justify-between gap-[10px]
+                        w-full mx-auto
+                        px-4 py-[20px]
+                        sticky bottom-0 left-0 z-10
+                        bg-white"
+            >
               <button
                 type="button"
-                className="w-full flex gap-[10px] py-[10px] 
+                className="w-full flex gap-[10px] py-[14px]
                 border border-slate-300 rounded-lg items-center justify-center
                 bg-white"
                 onClick={showRegistModal}
               >
                 <FaLocationDot className="text-slate-400" />
-                <p className="text-[22px] text-slate-700 font-medium">
-                  일정 추가
-                </p>
+                <p className="text-lg text-slate-700 font-medium">일정 추가</p>
               </button>
               <button
                 type="button"
-                className="w-full flex gap-[10px] py-[10px] 
+                className="w-full flex gap-[10px] py-[14px] 
                 border border-slate-300 rounded-lg items-center justify-center
                 bg-white"
                 onClick={() => {
@@ -498,9 +502,7 @@ const ContentIndex = () => {
                 }}
               >
                 <BiSolidEditAlt className="text-slate-400" />
-                <p className="text-[22px] text-slate-700 font-medium">
-                  리뷰 쓰기
-                </p>
+                <p className="text-lg text-slate-700 font-medium">리뷰 쓰기</p>
               </button>
             </div>
           ) : null}
