@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 import { Button, Form, Input } from "antd";
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 import "../../styles/antd-styles.css";
 
 interface CERTProps {
@@ -13,7 +13,12 @@ interface CERTProps {
 const Authentication = (): JSX.Element => {
   const [isEmail, setIsEmail] = useState("");
   const [certCode, setCertCode] = useState("");
+  const [timer, setTimer] = useState<number | null>(null);
+  const [isExpired, setIsExpired] = useState(false);
+
   const navigate = useNavigate();
+  const location = useLocation();
+  const userType = location.state?.userType;
 
   const getEmailCode = async (): Promise<string | null> => {
     try {
@@ -44,8 +49,15 @@ const Authentication = (): JSX.Element => {
   };
 
   useEffect(() => {
-    getEmailCode();
-  }, []);
+    if (timer !== null && timer > 0) {
+      const interval = setInterval(() => {
+        setTimer(prev => (prev !== null && prev > 0 ? prev - 1 : 0));
+      }, 1000);
+      return () => clearInterval(interval);
+    } else if (timer === 0) {
+      setIsExpired(true);
+    }
+  }, [timer]);
 
   const onSubmit = async () => {
     const result = await postCERT({
@@ -54,9 +66,19 @@ const Authentication = (): JSX.Element => {
     });
 
     if (result) {
-      // 인증 성공 시 처리
-      console.log("인증 성공");
+      // 인증 성공 시 userType에 따라 적절한 페이지로 이동
+      if (userType === "user") {
+        navigate("/signup/user");
+      } else if (userType === "business") {
+        navigate("/signup/business");
+      }
     }
+  };
+
+  const handleRequestCode = async () => {
+    setTimer(300); // 5분 타이머 시작
+    setIsExpired(false);
+    await getEmailCode();
   };
 
   return (
@@ -67,7 +89,6 @@ const Authentication = (): JSX.Element => {
         onClick={() => navigate(-1)}
       />
       <Form
-        initialValues={{ remember: true }}
         autoComplete="off"
         className="mt-6 px-4"
         onFinish={onSubmit} // Form 제출 핸들러 추가
@@ -86,7 +107,7 @@ const Authentication = (): JSX.Element => {
           <Button
             type="primary"
             className="text-xs font-medium inline-block px-4 !h-auto"
-            onClick={getEmailCode}
+            onClick={handleRequestCode}
             disabled={!isEmail}
           >
             인증코드 받기
@@ -95,14 +116,29 @@ const Authentication = (): JSX.Element => {
 
         <Form.Item
           label="인증코드"
-          rules={[{ required: true, message: "인증 코드를 다시 입력해주세요" }]}
+          rules={[
+            {
+              required: true,
+              message: isExpired
+                ? "입력 시간이 초과되었습니다"
+                : "인증 코드를 다시 입력해주세요",
+            },
+          ]}
           className="custom-form-item !text-xs mt-3"
         >
           <Input
-            className="py-[14px] px-3"
+            className="py-[14px] px-3 relative"
             value={certCode}
             onChange={e => setCertCode(e.target.value)}
+            disabled={isExpired || timer === null}
           />
+          <div className="text-secondary3 text-base absolute top-1/2 -translate-y-1/2 right-4 ">
+            {timer !== null
+              ? timer > 0
+                ? `${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, "0")}`
+                : "시간 초과"
+              : ""}
+          </div>
         </Form.Item>
         <p className="text-xs text-slate-400">
           메일을 받지 못했다면 인증 코드 재전송을 요청하거나 스팸 메일함을
