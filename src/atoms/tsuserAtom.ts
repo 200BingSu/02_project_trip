@@ -7,7 +7,7 @@ export const tsUserAtom = atom<Iuser>({
     userId: 0,
     email: "",
     name: "",
-    porfilePic: "",
+    profilePic: "",
     accessToken: "",
     providerType: ProviderType.LOCAL,
     role: [],

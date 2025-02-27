@@ -45,8 +45,7 @@ const dummyresponse = {
         senderName: "user2",
         senderPic: "image.jpg",
         signedUser: false,
-        message:
-          "니가 누군데ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        message: "니가 누군데",
       },
     ],
   },
@@ -109,7 +108,6 @@ const Chat = (): JSX.Element => {
   const url = `ws://112.222.157.157:5231/chat`;
   // 구독 경로
   const topic = `/sub/chat/${roomId}`;
-
   useEffect(() => {
     const stompClient = new Client({
       brokerURL: url,
@@ -141,7 +139,7 @@ const Chat = (): JSX.Element => {
           },
         );
         setConnected(true);
-        // 바로 방 입장
+        //바로 방 입장
         try {
           await stompClient.publish({
             destination: "/pub/chat.join",

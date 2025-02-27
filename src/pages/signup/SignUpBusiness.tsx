@@ -1,7 +1,7 @@
 import { Button, Input, Space } from "antd";
-import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 
 const SignUpBusiness = (): JSX.Element => {
   const [businessNum, setBusinessNum] = useState("");

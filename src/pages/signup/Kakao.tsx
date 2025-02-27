@@ -41,7 +41,7 @@ const Kakao = (): JSX.Element => {
         userId: Number(userId),
         name: userName,
         email: userEmail,
-        porfilePic: pic,
+        profilePic: pic,
         accessToken: accessToken,
         providerType: ProviderType.KAKAO,
       });

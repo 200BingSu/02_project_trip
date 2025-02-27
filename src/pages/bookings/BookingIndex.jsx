@@ -130,12 +130,14 @@ const BookingIndex = () => {
         ? null
         : parseInt(selectCoupon.couponId),
       actual_paid: finallPrice,
-      order_list: [
-        {
-          menuId: locationState.item.menuId,
-          quantity: locationState.quantity,
-        },
-      ],
+      menu_id: locationState.item.menuId,
+      room_id: 1,
+      // order_list: [
+      //   {
+      //     menuId: locationState.item.menuId,
+      //     quantity: locationState.quantity,
+      //   },
+      // ],
     };
     console.log("sendData", sendData);
     try {
