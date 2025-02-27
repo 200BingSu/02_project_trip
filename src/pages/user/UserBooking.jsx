@@ -60,7 +60,7 @@ const dummyDataRes = {
 
 const dummyBookingList = dummyDataRes.data;
 
-const categoryArr = ["예약 목록", "예약 완료 내역"];
+const categoryArr = ["예약 목록", "예약 완료"];
 
 const UserBooking = () => {
   //recoil
@@ -73,8 +73,8 @@ const UserBooking = () => {
   //useState
   const [category, setCategory] = useState(0);
   const [bookingList, setBookingList] = useState([]);
-  // const [beforeList, setBeforeList] = useState([]);
-  // const [afterList, setAfterList] = useState([]);
+  const [beforeList, setBeforeList] = useState([]);
+  const [afterList, setAfterList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
 
@@ -101,19 +101,20 @@ const UserBooking = () => {
   return (
     <div className="flex flex-col gap-[30px]">
       <TitleHeader icon="back" title="내 예약" onClick={navigateBack} />
-      <div className="flex flex-col gap-[20px] px-[32px] w-full">
+      <div className="flex flex-col gap-[20px] w-full">
         {/* 카테고리 버튼 */}
         <div>
-          <ul className="flex gap-[10px] w-full">
+          <ul className="flex gap-6 w-full border-b border-slate-200 px-[32px]">
             {categoryArr.map((item, index) => {
               return (
                 <li
                   key={index}
                   onClick={() => setCategory(index)}
-                  className={`w-full flex justify-center items-center 
+                  className={`flex justify-center items-center 
                   pt-[17px] pb-[16px]
-                  text-[16px] 
-                  ${index === category ? "border-b-[2px] border-primary text-primary" : "border-b-[1px] border-slate-200 text-slate-500"}`}
+                  text-lg cursor-pointer
+                  border-b-[2px] transition-all duration-300 ease-in-out
+                  ${index === category ? "border-primary text-primary" : "border-transparent text-slate-500 hover:text-primary"}`}
                 >
                   {item}
                 </li>

@@ -115,19 +115,19 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
   return (
     <div
       className={`px-[32px] 
-        max-w-3xl w-full h-[60px] mx-auto
+        w-full max-w-[768px] h-[60px] mx-auto
         flex items-center justify-between gap-10
         fixed top-0 left-[50%] translate-x-[-50%] z-10 
-        ${scrollY > 0 ? "bg-white" : null}`}
+        ${scrollY > 0 ? "bg-white" : ""}`}
     >
-      <div className="flex gap-[40px]">
-        <div className="text-[36px] cursor-pointer" onClick={navigateBack}>
+      <div className="flex gap-10 items-center">
+        <div className="text-4xl cursor-pointer" onClick={navigateBack}>
           <IoIosArrowRoundBack
             className={scrollY > 0 ? "text-slate-700" : "text-white"}
           />
         </div>
         <div
-          className={`text-[24px] font-bold ${scrollY > 0 ? "text-slate-700'" : "text-white"}`}
+          className={`text-xl font-bold ${scrollY > 0 ? "text-slate-700" : "text-white"}`}
         >
           {contentData?.strfTitle || "제목"}
         </div>
@@ -135,13 +135,13 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
       <div className="flex gap-[20px] items-center">
         {userId !== 0 ? (
           contentData?.wishIn ? (
-            <div className="text-[36px] cursor-pointer " onClick={postWishList}>
+            <div className="text-2xl cursor-pointer " onClick={postWishList}>
               <AiFillHeart
                 className={scrollY > 0 ? "text-slate-700" : "text-white"}
               />
             </div>
           ) : (
-            <div className="text-[36px] cursor-pointer " onClick={postWishList}>
+            <div className="text-2xl cursor-pointer " onClick={postWishList}>
               <AiOutlineHeart
                 className={scrollY > 0 ? "text-slate-700" : "text-white"}
               />
@@ -149,7 +149,7 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
           )
         ) : null}
 
-        <div className="text-[36px] cursor-pointer items-center">
+        <div className="text-2xl cursor-pointer items-center">
           <Dropdown
             menu={{
               items,

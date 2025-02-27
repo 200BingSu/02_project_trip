@@ -1,9 +1,13 @@
 import { Button } from "antd";
 import dayjs from "dayjs";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { ProductPic } from "../../constants/pic";
 import "dayjs/locale/ko";
+import { CgMoreVerticalAlt } from "react-icons/cg";
+import BottomSheet from "../basic/BottomSheet";
+import { GoCommentDiscussion } from "react-icons/go";
+import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 
 dayjs.locale("ko");
 
@@ -30,6 +34,35 @@ const Bookings = data => {
     checkOutTime,
     createdAt,
   } = data.data;
+  const actions = [
+    {
+      label: (
+        <p className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <GoCommentDiscussion className="text-slate-300" />
+          문의하기
+        </p>
+      ),
+    },
+    {
+      label: (
+        <p className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiSolidEditAlt className="text-slate-300" />
+          수정하기
+        </p>
+      ),
+    },
+    {
+      label: (
+        <p className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiTrash className="text-slate-300" />
+          삭제하기
+        </p>
+      ),
+    },
+  ];
+  //useState
+  const [isOpen, setIsOpen] = useState(false);
+
   const today = dayjs().format("YYYY.MM.DD");
   //오늘 날짜 기준으로 버튼 상태 변경하기
   const categorizeDate = inputDate => {
@@ -67,7 +100,44 @@ const Bookings = data => {
         return "bg-[rgba(253,180,161,0.3)] text-secondary3";
     }
   };
-
+  const matchButton = state => {
+    switch (state) {
+      case 0:
+      case 1:
+        return (
+          <>
+            <Button className="w-full h-[12vw] rounded-lg text-base font-bold">
+              상세보기
+            </Button>
+            <Button className="w-full h-[12vw] rounded-lg text-base font-bold">
+              예약 취소
+            </Button>
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <Button className="w-full h-[12vw] rounded-lg text-base font-bold">
+              상세보기
+            </Button>
+            <Button
+              type="primary"
+              className="w-full h-[12vw] rounded-lg text-base font-bold text-white bg-primary"
+            >
+              리뷰작성
+            </Button>
+          </>
+        );
+      case 3:
+        return (
+          <>
+            <Button className="w-full h-[12vw] rounded-lg text-base font-bold">
+              상세보기
+            </Button>
+          </>
+        );
+    }
+  };
   return (
     <div
       className="w-full px-7 py-7
@@ -81,7 +151,7 @@ const Bookings = data => {
       </div>
       {/* 숙소 이름 */}
       <div>
-        <h3 className="text-[20px] font-bold text-slate-700">{strfTitle}</h3>
+        <h3 className="text-xl font-bold text-slate-700">{strfTitle}</h3>
       </div>
       {/* 내용 */}
       <div className="flex gap-[20px]">
@@ -99,47 +169,49 @@ const Bookings = data => {
         <div className="flex flex-col gap-[10px]">
           {/* 날짜 */}
           <div className="flex items-center gap-3 text-[16px] text-slate-700">
-            <h4 className="text-slate-400 font-semibold text-base">이용일시</h4>
-            <p>{dayjs(checkInDate).format("YYYY.MM.DD ddd")}</p>
-            <p>~</p>
-            <p>{dayjs(checkOutDate).format("YYYY.MM.DD ddd")}</p>
-          </div>
-          <div className="flex items-center gap-3 text-[16px] text-slate-700">
-            <h4 className="text-slate-400 font-semibold text-base">예약일시</h4>
-            <p>{dayjs(createdAt).format("YYYY.MM.DD ddd")}</p>
-          </div>
-          <div className="flex items-center gap-3 text-[16px] text-slate-700">
-            <h4 className="text-slate-400 font-semibold text-base">예약일시</h4>
-            <p>{dayjs(createdAt).format("YYYY.MM.DD ddd")}</p>
-          </div>
-          {/* 숙박일, 체크인 시간 */}
-          <div className="text-[14px] text-slate-500 flex items-center gap-[5px]">
-            <p>숙박일</p>
-            <p>|</p>
-            <p>
-              <span>체크인</span>
-              <span>{dayjs(checkInTime).format("HH:mm")}</span>
-              <span>|</span>
-              <span>체크아웃</span>
-              <span>{dayjs(checkOutTime).format("HH:mm")}</span>
+            <h4 className="text-slate-400 font-semibold text-base w-[18vw]">
+              이용일시
+            </h4>
+            <p className="text-base text-slate-700">
+              <span>{dayjs(checkInDate).format("YYYY.MM.DD ddd")}</span>
+              <span>~</span>
+              <span>{dayjs(checkOutDate).format("YYYY.MM.DD ddd")}</span>
             </p>
           </div>
-          {/* 금액 */}
-          <div className="text-[14px] text-slate-500 flex items-center gap-[5px]">
-            <p>결제 금액: </p>
-            <p>{price?.toLocaleString()}원</p>
+          <div className="flex items-center gap-3 text-[16px] text-slate-700">
+            <h4 className="text-slate-400 font-semibold text-base w-[18vw]">
+              예약일시
+            </h4>
+            <p className="text-base text-slate-700">
+              {dayjs(createdAt).format("YYYY.MM.DD ddd")}
+            </p>
+          </div>
+          <div className="flex items-center gap-3 text-[16px] text-slate-700">
+            <h4 className="text-slate-400 font-semibold text-base w-[18vw]">
+              인원
+            </h4>
+            <p className="text-base text-slate-700">
+              {dayjs(createdAt).format("YYYY.MM.DD ddd")}
+            </p>
           </div>
         </div>
       </div>
       {/* 버튼 */}
       <div className="flex gap-[8px] items-center">
-        <Button className="w-full h-[46px] rounded-lg text-[16px] font-bold">
-          상세보기
-        </Button>
-        <Button className="w-full h-[46px] rounded-lg text-[16px] font-bold">
-          예약 취소
-        </Button>
+        {matchButton(state)}
+        <button
+          type="button"
+          className="aspect-square h-[12vw] max-h-[129px] text-2xl text-slate-500 rounded-lg border border-slate-300 flex justify-center items-center"
+          onClick={() => setIsOpen(true)}
+        >
+          <CgMoreVerticalAlt />
+        </button>
       </div>
+      <BottomSheet
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        actions={actions}
+      />
     </div>
   );
 };
