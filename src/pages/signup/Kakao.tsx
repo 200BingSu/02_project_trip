@@ -1,9 +1,10 @@
 import { Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { setCookie } from "../../utils/cookie";
+import { getCookie, setCookie } from "../../utils/cookie";
 import { useRecoilState } from "recoil";
 import { tsUserAtom } from "../../atoms/tsuserAtom";
+import { ProviderType } from "../../types/interface";
 // 주소: /signup/kakao
 const Kakao = (): JSX.Element => {
   const navigate = useNavigate();
@@ -25,11 +26,14 @@ const Kakao = (): JSX.Element => {
       setCookie(`accessToken`, accessToken);
     }
     if (userId && userEmail) {
+      const userInfo = getCookie("user");
       setCookie("user", {
+        ...userInfo,
         userId: userId,
         email: userEmail,
-        isSaveLogin: true,
-        isSaveEmail: true,
+        isSaveLogin: false,
+        isSaveEmail: false,
+        providerType: ProviderType.KAKAO,
       });
     }
     if (userId && userEmail && userName && pic && accessToken) {
@@ -37,8 +41,9 @@ const Kakao = (): JSX.Element => {
         userId: Number(userId),
         name: userName,
         email: userEmail,
-        porfilePic: pic,
+        profilePic: pic,
         accessToken: accessToken,
+        providerType: ProviderType.KAKAO,
       });
     }
     if (accessToken === null) {
