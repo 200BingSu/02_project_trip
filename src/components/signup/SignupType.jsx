@@ -8,7 +8,9 @@ const SignupType = ({ type = "", btcolor = "" }) => {
   // useNavigate
   const navigate = useNavigate();
   const handleNavigate = () => {
-    navigate(`/signup/authentication`);
+    navigate(`/signup/authentication`, {
+      state: { userType: type },
+    });
   };
   return (
     <div className="w-full flex flex-col items-center rounded-lg bg-white py-12 px-8 gap-3">
