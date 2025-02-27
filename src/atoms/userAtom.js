@@ -7,7 +7,7 @@ export const userAtom = atom({
     userId: 0,
     email: "",
     name: "",
-    porfilePic: "",
+    profilePic: "",
     accessToken: "",
     providerType: "LOCAL",
     role: [],
