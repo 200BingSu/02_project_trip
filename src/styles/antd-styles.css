@@ -68,3 +68,38 @@
 .custom-star .ant-rate-star:not(:last-child) {
   margin-right: 4px;
 }
+
+.custom-form-item .ant-form-item-control-input-content {
+  display: flex;
+  gap: 4px;
+}
+
+.custom-form-item,
+.custom-form-input {
+  margin-bottom: 8px !important;
+}
+.custom-form-item .ant-form-item-label,
+.custom-form-input .ant-form-item-label {
+  padding: 0 !important;
+  padding-left: 3px !important;
+}
+.custom-form-item .ant-form-item-label > label,
+.custom-form-input .ant-form-item-label > label {
+  height: auto !important;
+  font-size: 0.75rem;
+  padding-bottom: 4px;
+}
+
+.custom-form-item .ant-form-item-explain-error,
+.custom-form-input .ant-form-item-explain-error {
+  line-height: 140%;
+  letter-spacing: -0.1px;
+  margin-top: 4px;
+  color: #ef4444;
+}
+
+.ant-btn-variant-solid:disabled {
+  border: 0;
+  background-color: #f1f5f9;
+  color: #94a3b8;
+}

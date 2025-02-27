@@ -8,6 +8,9 @@ const signUpRouter = () => {
     () => import("../pages/signup/SignUpBusiness"),
   );
   const LazyConfirmEmail = lazy(() => import("../pages/signup/ConfirmEmail"));
+  const LazyAuthentication = lazy(
+    () => import("../pages/signup/Authentication"),
+  );
   const LazyConfirmBusinessNum = lazy(
     () => import("../pages/signup/ConfirmBusinessNum"),
   );
@@ -38,6 +41,14 @@ const signUpRouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazySignUpBusiness />
+        </Suspense>
+      ),
+    },
+    {
+      path: "authentication",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyAuthentication />
         </Suspense>
       ),
     },
