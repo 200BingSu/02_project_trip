@@ -4,70 +4,80 @@ import { AiFillSetting, AiOutlineHeart, AiOutlineStar } from "react-icons/ai";
 import { BiBell, BiCoin, BiShow, BiSolidCoupon } from "react-icons/bi";
 import { GoDiscussionOutdated } from "react-icons/go";
 import { HiOutlineMap } from "react-icons/hi2";
+import { IoIosArrowForward } from "react-icons/io";
 import { IoCloseSharp, IoReaderOutline } from "react-icons/io5";
+import { RxExit } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState, useResetRecoilState } from "recoil";
-import "swiper/css";
+import { useRecoilValue, useResetRecoilState } from "recoil";
+// import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { userAtom } from "../../atoms/userAtom";
 import { LocationPic, ProfilePic } from "../../constants/pic";
 import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
-import { IoIosArrowForward } from "react-icons/io";
-import { RxExit } from "react-icons/rx";
-import { resetUserData } from "../../selectors/userSelector";
+
 import { tsUserAtom } from "../../atoms/tsuserAtom";
+import { resetUserData } from "../../selectors/userSelector";
+import { ProviderType } from "../../types/interface";
+
+//interface
+interface ITripList {
+  tripId: number;
+  locationPic: string;
+  title: string;
+  dday: number;
+}
+interface IGetUserData {
+  name: string;
+  profilePic: string;
+  couponCnt: number;
+  tripList: ITripList[];
+}
+interface IGetUsrInfo {
+  code: string;
+  data: IGetUserData;
+}
+
 const UserIndex = () => {
   //recoil
-  const resetUserData = useResetRecoilState(userAtom);
-  const [userInfo, setUserInfo] = useRecoilState(userAtom);
-  const [userInfoTs, setUserInfoTs] = useRecoilState(tsUserAtom);
+  const userInfo = useRecoilValue(tsUserAtom);
+  const resetUserInfo = useResetRecoilState(resetUserData);
 
-  const [useProfile, setUseProfile] = useState([]);
-  const [coupon, setCoupon] = useState("");
+  const [useProfile, setUseProfile] = useState<IGetUserData>({
+    name: "",
+    couponCnt: 0,
+    profilePic: "",
+    tripList: [],
+  });
+  // const [coupon, setCoupon] = useState("");
 
   const accessToken = getCookie("accessToken");
   const userLogin = getCookie("user");
 
-  const getUserInfo = async () => {
+  const getUserInfo = async (): Promise<IGetUsrInfo | null> => {
     try {
-      const res = await axios.get(`/api/home/user`, {
+      const res = await axios.get<IGetUsrInfo>(`/api/home/user`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
-      // console.log("✅  getUserInfo  res.data.data:", res.data.data);
-      setUseProfile(res.data.data);
+      const resultData = res.data;
+      setUseProfile(resultData.data);
+      return resultData;
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const getCoupon = async () => {
-    try {
-      const res = await axios.get(`/api/coupon/available-coupons`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      console.log("✅  getCoupon  res.data.data:", res.data.data);
-      setCoupon(res.data.data);
-    } catch (error) {
-      console.log("✅  getCoupon  error:", error);
+      return null;
     }
   };
 
   useEffect(() => {
     if (accessToken) {
       getUserInfo();
-      getCoupon();
     }
   }, []);
 
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    resetUserData();
+    resetUserInfo();
     removeCookie("accessToken");
     const userInfo = getCookie("user");
     if (userInfo.isSaveEmail === false) {
@@ -115,9 +125,13 @@ const UserIndex = () => {
               <div className="mx-auto w-32 h-32 rounded-full overflow-hidden">
                 <img
                   src={
-                    useProfile.profilePic
-                      ? `${ProfilePic}${userLogin?.userId}/${userInfo?.profilePic}`
-                      : `/images/user.png`
+                    userInfo.providerType === ProviderType.LOCAL
+                      ? userInfo.profilePic
+                        ? `${ProfilePic}${userLogin?.userId}/${userInfo?.profilePic}`
+                        : `/images/user.png`
+                      : userInfo.profilePic
+                        ? `${userInfo.profilePic}`
+                        : `/images/user.png`
                   }
                   alt="User-Profile"
                   className="w-full h-full object-cover"
@@ -125,7 +139,7 @@ const UserIndex = () => {
               </div>
 
               <h1 className="text-2xl font-bold text-slate-700 mt-[14px] text-center">
-                {userInfoTs.name}
+                {userInfo.name}
               </h1>
               <Swiper slidesPerView={1} className="mySwiper">
                 {useProfile.tripList?.map(content => (

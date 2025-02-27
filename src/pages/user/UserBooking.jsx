@@ -8,7 +8,60 @@ import { useRecoilValue } from "recoil";
 import { LiaComment } from "react-icons/lia";
 import Footer from "../Footer";
 import Bookings from "../../components/user/Bookings";
+
+//dummy data
+const dummyDataRes = {
+  code: "200 성공",
+  data: [
+    {
+      bookingId: 101,
+      strfId: 2001,
+      strfTitle: "Cozy Apartment Downtown",
+      strfPic: "https://example.com/image1.jpg",
+      createdAt: "2025-02-20T12:34:56Z",
+      checkInDate: "2025-03-01",
+      checkOutDate: "2025-03-05",
+      price: 50000,
+      state: 0,
+      chatRoomId: 301,
+      checkInTime: "15:00",
+      checkOutTime: "11:00",
+    },
+    {
+      bookingId: 102,
+      strfId: 2002,
+      strfTitle: "Luxury Suite with Ocean View",
+      strfPic: "https://example.com/image2.jpg",
+      createdAt: "2025-02-21T15:20:10Z",
+      checkInDate: "2025-03-10",
+      checkOutDate: "2025-03-15",
+      price: 75000,
+      state: 1,
+      chatRoomId: 302,
+      checkInTime: "14:00",
+      checkOutTime: "10:30",
+    },
+    {
+      bookingId: 103,
+      strfId: 2003,
+      strfTitle: "Rustic Cabin in the Mountains",
+      strfPic: "https://example.com/image3.jpg",
+      createdAt: "2025-02-22T18:45:30Z",
+      checkInDate: "2025-03-20",
+      checkOutDate: "2025-03-25",
+      price: 60000,
+      state: 2,
+      chatRoomId: 303,
+      checkInTime: "16:00",
+      checkOutTime: "12:00",
+    },
+  ],
+};
+
+const dummyBookingList = dummyDataRes.data;
+
 const categoryArr = ["예약 목록", "예약 완료 내역"];
+
 const UserBooking = () => {
   //recoil
   const { userId } = useRecoilValue(userAtom);
@@ -19,59 +72,62 @@ const UserBooking = () => {
   };
   //useState
   const [category, setCategory] = useState(0);
-  const [beforeList, setBeforeList] = useState([]);
-  const [afterList, setAfterList] = useState([]);
+  const [bookingList, setBookingList] = useState([]);
+  // const [beforeList, setBeforeList] = useState([]);
+  // const [afterList, setAfterList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(0);
 
   // 예약 목록 불러오기
   const getBookingList = useCallback(async () => {
     try {
-      const res = await jwtAxios.get(`/api/booking`);
+      const res = await jwtAxios.get(`/api/booking?page=${page}`);
       console.log("예약 목록", res.data);
       const resultData = res.data;
-      setBeforeList(resultData.data.beforeList);
-      setAfterList(resultData.data.afterList);
-      if (res.data) {
-        setIsLoading(true);
+      if (resultData.code === "200 성공") {
+        setBookingList(resultData.data);
       }
+      // setBeforeList(resultData.data.beforeList);
+      // setAfterList(resultData.data.afterList);
     } catch (error) {
       console.log("예약 목록 불러오기 실패", error);
     }
   }, []);
 
   useEffect(() => {
-    getBookingList();
+    // getBookingList();
   }, []);
 
   return (
-    <div
-      className="flex flex-col gap-[30px]
-                "
-    >
-      {isLoading ? (
-        <>
-          <TitleHeader icon="back" title="내 예약" onClick={navigateBack} />
-          <div className="flex flex-col gap-[20px] px-[32px] w-full">
-            {/* 카테고리 버튼 */}
-            <ul className="flex gap-[10px] w-full">
-              {categoryArr.map((item, index) => {
-                return (
-                  <li
-                    key={index}
-                    onClick={() => setCategory(index)}
-                    className={`w-full flex justify-center items-center 
+    <div className="flex flex-col gap-[30px]">
+      <TitleHeader icon="back" title="내 예약" onClick={navigateBack} />
+      <div className="flex flex-col gap-[20px] px-[32px] w-full">
+        {/* 카테고리 버튼 */}
+        <div>
+          <ul className="flex gap-[10px] w-full">
+            {categoryArr.map((item, index) => {
+              return (
+                <li
+                  key={index}
+                  onClick={() => setCategory(index)}
+                  className={`w-full flex justify-center items-center 
                   pt-[17px] pb-[16px]
                   text-[16px] 
                   ${index === category ? "border-b-[2px] border-primary text-primary" : "border-b-[1px] border-slate-200 text-slate-500"}`}
-                  >
-                    {item}
-                  </li>
-                );
-              })}
-            </ul>
-            {/* 내용 */}
-            <div className="min-h-[500px] flex flex-col justify-center items-center">
-              {category === 0 ? (
+                >
+                  {item}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {/* 내용 */}
+        <div className="min-h-[500px] flex flex-col justify-center items-center">
+          {dummyBookingList?.map((item, index) => {
+            return <Bookings key={index} data={item} />;
+          })}
+          {/* {category === 0 ? (
                 beforeList.length > 0 ? (
                   <div>
                     {beforeList.map((item, index) => {
@@ -106,16 +162,12 @@ const UserBooking = () => {
                     </p>
                   </div>
                 )
-              ) : null}
-            </div>
+              ) : null} */}
+        </div>
 
-            {/* 푸터 */}
-            <Footer />
-          </div>
-        </>
-      ) : (
-        <Loading />
-      )}
+        {/* 푸터 */}
+        <Footer />
+      </div>
     </div>
   );
 };

@@ -1,20 +1,32 @@
-import logo from "../../assets/logo_1.png";
-import { Button, Checkbox, Form, Input, Tabs } from "antd";
+import { Button, Checkbox, Form, Input } from "antd";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import { isRecoilValue, useRecoilState } from "recoil";
-import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
-import { userAtom } from "../../atoms/userAtom";
-import { USER } from "../../constants/api";
 import { useEffect, useState } from "react";
-import moment from "moment";
+import { Link, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import logo from "../../assets/logo_1.png";
+import { tsUserAtom } from "../../atoms/tsuserAtom";
+import { USER } from "../../constants/api";
 import "../../styles/antd-styles.css";
+import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
+import { ProviderType } from "../../types/interface";
+
+//interface
+interface IPostLogin {
+  code: string;
+  role: string[];
+  accessToken: string;
+  userId: number;
+}
+interface LoginFrom {
+  email: string;
+  pw: string;
+}
 
 //카카오 로그인 url
 const host = window.location.origin;
 const redirect_uri = `${host}/signup/kakao`;
 
-const dev = "http://localhost:8080";
+// const dev = "http://localhost:8080";
 const docker = "http://112.222.157.157:5231";
 const postKakaoUrl = `${docker}/oauth2/authorization/kakao?redirect_uri=${redirect_uri}`;
 const handleKakaoLogin = () => {
@@ -27,10 +39,7 @@ const SingInIndex = () => {
   const nowEmail = savedUserLogin?.email;
   const [form] = Form.useForm();
   // recoil
-  const [loginInfo, setLoginInfo] = useRecoilState(userAtom);
-  useEffect(() => {
-    // console.log("recoil", loginInfo);
-  }, [loginInfo]);
+  const [, setUserInfo] = useRecoilState(tsUserAtom);
 
   // useNavigate
   const navigate = useNavigate();
@@ -47,10 +56,11 @@ const SingInIndex = () => {
   );
 
   // 로그인 함수
-
-  const postSignInUser = async data => {
+  const postSignInUser = async (
+    data: LoginFrom,
+  ): Promise<IPostLogin | null> => {
     try {
-      const res = await axios.post(`${USER.signInUser}`, data);
+      const res = await axios.post<IPostLogin>(`${USER.signInUser}`, data);
       // console.log("로그인 시도:", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
@@ -61,25 +71,27 @@ const SingInIndex = () => {
           email: data.email,
           isSaveLogin: isSaveLogin,
           isSaveEmail: isSaveEmail,
-          sns: false,
+          ProviderType: ProviderType.LOCAL,
           role: resultData.role,
         });
-        setLoginInfo({
+        setUserInfo({
           userId: res.data.userId,
           accessToken: res.data.accessToken,
-          role: resultData.role,
-          sns: false,
+          role: [...resultData.role],
+          providerType: ProviderType.LOCAL,
         });
         handleNavigateHome();
       }
+      return resultData;
     } catch (error) {
       console.log("로그인 에러:", error);
       removeCookie(`accessToken`);
+      return null;
     }
   };
 
   // 폼 제출 함수
-  const onFinish = values => {
+  const onFinish = (values: LoginFrom) => {
     // console.log("로그인 시도 데이터:", values);
     postSignInUser(values);
   };
