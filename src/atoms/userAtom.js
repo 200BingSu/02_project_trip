@@ -1,4 +1,5 @@
 import { atom } from "recoil";
+import { ProviderType } from "../types/interface";
 
 export const userAtom = atom({
   key: "userAtom",
@@ -6,8 +7,9 @@ export const userAtom = atom({
     userId: 0,
     email: "",
     name: "",
-    profilePic: "",
+    porfilePic: "",
     accessToken: "",
+    providerType: "LOCAL",
     role: [],
-  }, // accessToken
+  },
 });

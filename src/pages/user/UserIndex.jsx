@@ -6,17 +6,22 @@ import { GoDiscussionOutdated } from "react-icons/go";
 import { HiOutlineMap } from "react-icons/hi2";
 import { IoCloseSharp, IoReaderOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { userAtom } from "../../atoms/userAtom";
 import { LocationPic, ProfilePic } from "../../constants/pic";
-import { getCookie, removeCookie } from "../../utils/cookie";
+import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
 import { IoIosArrowForward } from "react-icons/io";
 import { RxExit } from "react-icons/rx";
-
+import { resetUserData } from "../../selectors/userSelector";
+import { tsUserAtom } from "../../atoms/tsuserAtom";
 const UserIndex = () => {
+  //recoil
+  const resetUserData = useResetRecoilState(userAtom);
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const [userInfoTs, setUserInfoTs] = useRecoilState(tsUserAtom);
+
   const [useProfile, setUseProfile] = useState([]);
   const [coupon, setCoupon] = useState("");
 
@@ -62,12 +67,21 @@ const UserIndex = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    setUserInfo({
-      userId: 0,
-      accessToken: "",
-    });
+    resetUserData();
     removeCookie("accessToken");
-    // removeCookie("user");
+    const userInfo = getCookie("user");
+    if (userInfo.isSaveEmail === false) {
+      setCookie("user", { ...userInfo, email: "" });
+    }
+    if (userInfo.isSaveLogin === false) {
+      setCookie("user", {
+        ...userInfo,
+        userId: "",
+        email: "",
+        accessToken: "",
+      });
+    }
+
     navigate("/signin");
   };
 
@@ -111,7 +125,7 @@ const UserIndex = () => {
               </div>
 
               <h1 className="text-2xl font-bold text-slate-700 mt-[14px] text-center">
-                {useProfile.name}
+                {userInfoTs.name}
               </h1>
               <Swiper slidesPerView={1} className="mySwiper">
                 {useProfile.tripList?.map(content => (
