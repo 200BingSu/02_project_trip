@@ -266,11 +266,7 @@ const ContentIndex = () => {
   };
   //useEffect
   useEffect(() => {
-    if (accessToken && accessToken !== "undefined") {
-      getDetailMember();
-    } else {
-      getDetailGuest();
-    }
+    getDetailMember();
   }, []);
 
   return (

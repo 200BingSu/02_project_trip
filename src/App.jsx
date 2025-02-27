@@ -7,20 +7,33 @@ import jwtAxios from "./apis/jwt";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { userAtom } from "./atoms/userAtom";
+import { tsUserAtom } from "./atoms/tsuserAtom";
+import axios from "axios";
 
 const App = () => {
   const accessToken = getCookie("accessToken");
   //recoil
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
 
   // 유저 정보 담기
   const getUserInfo = async () => {
     try {
-      const res = await jwtAxios.get("/api/user/userInfo");
+      const res = await axios.get("/api/user/userInfo", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       // console.log("app.jsx getUserInfo", res.data);
       const resultData = res.data;
-      if (resultData) {
+      console.log("App.jsx getUserInfo", resultData);
+      if (resultData.code === "200 성공") {
         setUserInfo({
+          email: resultData.data.email,
+          name: resultData.data.name,
+          profilePic: resultData.data.profilePic,
+        });
+        setTsUserInfo({
           email: resultData.data.email,
           name: resultData.data.name,
           profilePic: resultData.data.profilePic,
@@ -35,7 +48,7 @@ const App = () => {
       getUserInfo();
     }
   }, [accessToken]);
-  console.log("userInfo", userInfo);
+  console.log("tsUserInfo", tsUserInfo);
   return (
     <ConfigProvider
       locale={locale}
@@ -55,7 +68,6 @@ const App = () => {
             dotSize: 8,
             dotCurrentSize: 10,
             iconSize: 32,
-            titleColor: "#6B4AD6",
           },
         },
       }}
