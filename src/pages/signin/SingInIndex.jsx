@@ -2,7 +2,7 @@ import logo from "../../assets/logo_1.png";
 import { Button, Checkbox, Form, Input, Tabs } from "antd";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { isRecoilValue, useRecoilState } from "recoil";
 import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
 import { userAtom } from "../../atoms/userAtom";
 import { USER } from "../../constants/api";
@@ -61,12 +61,14 @@ const SingInIndex = () => {
           email: data.email,
           isSaveLogin: isSaveLogin,
           isSaveEmail: isSaveEmail,
+          sns: false,
           role: resultData.role,
         });
         setLoginInfo({
           userId: res.data.userId,
           accessToken: res.data.accessToken,
           role: resultData.role,
+          sns: false,
         });
         handleNavigateHome();
       }
@@ -83,9 +85,21 @@ const SingInIndex = () => {
   };
 
   // 로그인 상태 저장
-  const handleSaveLogin = () => {};
+  const handleSaveLogin = () => {
+    setIsSaveLogin(!isSaveLogin);
+  };
   // 아이디 저장
-  const handleSaveEmail = () => {};
+  const handleSaveEmail = () => {
+    setIsSaveEmail(!setIsSaveEmail);
+  };
+  useEffect(() => {
+    const userInfo = getCookie("user");
+    setCookie("user", { ...userInfo, isSaveLogin: false });
+  }, [isSaveLogin]);
+  useEffect(() => {
+    const userInfo = getCookie("user");
+    setCookie("user", { ...userInfo, isSaveEmail: false, email: "" });
+  }, [isSaveEmail]);
 
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center gap-4">
@@ -162,14 +176,14 @@ const SingInIndex = () => {
                 <div className="w-full flex items-center justify-start">
                   <Checkbox
                     checked={isSaveLogin}
-                    onChange={() => setIsSaveLogin(!isSaveLogin)}
+                    onChange={handleSaveLogin}
                     className="text-slate-500 text-xs"
                   >
                     로그인 유지
                   </Checkbox>
                   <Checkbox
                     checked={isSaveEmail}
-                    onChange={() => setIsSaveEmail(!isSaveEmail)}
+                    onChange={handleSaveEmail}
                     className="text-slate-500 text-xs"
                   >
                     아이디 저장
