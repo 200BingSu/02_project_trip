@@ -1,18 +1,14 @@
 import { Outlet } from "react-router-dom";
 import SignupType from "../../components/signup/SignupType";
+import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 
 const SignUpIndex = () => {
   return (
-    <div className="flex flex-col items-center justify-center w-full px-[122px] py-[101px] gap-[30px]">
+    <div className="flex flex-col items-center justify-center w-full bg-slate-100">
       {/* 타이틀 */}
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-[36px] font-bold line-height-[140%]">회원가입</h1>
-        <p className="text-[18px] font-light line-height-[150%] text-slate-500">
-          특별한 여행의 시작, 여기에서 시작하세요!
-        </p>
-      </div>
+      <TitleHeaderTs title="회원가입" icon="back" />
       {/* 선택지 */}
-      <div className="flex flex-col items-center justify-center gap-[20px] w-full">
+      <div className="flex flex-col items-center justify-center gap-5 px-4 py-6 w-full">
         <SignupType type="user" btcolor="primary" />
         <SignupType type="business" btcolor="purple" />
       </div>
