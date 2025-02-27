@@ -30,6 +30,7 @@ import { categoryArr, orderTypeArr } from "../../constants/search";
 
 import AmenityFilter from "../../components/search/AmenityFilter";
 import { resetSearchData } from "../../selectors/searchSelector";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const SearchStrf = () => {
   const [form] = Form.useForm();
@@ -351,11 +352,10 @@ const SearchStrf = () => {
         <label htmlFor="searchBar" className="relative w-full">
           <Input
             id="searchBar"
-            className="h-[60px] text-lg rounded-lg gap-[5px]"
             placeholder="관광지, 장소, 숙소,맛집을 검색해 보세요"
             allowClear
             onClear={handleClickClear}
-            prefix={<FiSearch className="text-slate-400 text-2xl" />}
+            suffix={<FiSearch className="text-slate-400 text-2xl" />}
             onChange={onChange}
             onPressEnter={e => {
               if (e.target.value.trim()) {
@@ -364,6 +364,8 @@ const SearchStrf = () => {
             }}
             variant="filled"
             value={searchValue}
+            className="h-[60px] text-lg rounded-lg gap-[5px]
+            bg-slate-50 hover:bg-slate-100 placeholder:text-slate-400 "
           />
         </label>
       </div>
@@ -372,27 +374,30 @@ const SearchStrf = () => {
       {searchState ? (
         <div className="px-[32px] py-[30px] flex flex-col gap-[30px] min-h-screen">
           {/* 카테고리 */}
-          <ul className="flex justify-between items-center">
-            {categoryArr.map((item, index) => {
-              return (
-                <li
-                  key={index}
-                  className={`cursor-pointer font-semibold text-[16px] w-full flex justify-center items-center px-[15px] py-[10px] gap-[10px] rounded-[8px] ${
-                    index === selectedCategory
-                      ? "bg-primary text-white"
-                      : "bg-white text-slate-500"
-                  }`}
-                  onClick={() => {
-                    setStartIndex(0);
-                    setSelectedCategory(index);
-                    setSearchRecoil({ ...searchRecoil, category: index });
-                  }}
-                >
-                  {item.name}
-                </li>
-              );
-            })}
-          </ul>
+          <div>
+            <Swiper slidesPerView={4.5} spaceBetween={6}>
+              {categoryArr.map((item, index) => {
+                return (
+                  <SwiperSlide
+                    key={index}
+                    className={`cursor-pointer text-sm w-full flex justify-center items-center py-[6px] gap-[10px] rounded-xl ${
+                      index === selectedCategory
+                        ? "bg-primary text-white"
+                        : "bg-white text-slate-500"
+                    }`}
+                    onClick={() => {
+                      setStartIndex(0);
+                      setSelectedCategory(index);
+                      setSearchRecoil({ ...searchRecoil, category: index });
+                    }}
+                  >
+                    <p className="text-center"> {item.name}</p>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          </div>
+
           {/* 정렬 방식 */}
           <div className="flex items-center gap-3">
             {selectedCategory !== 0 && (
@@ -512,11 +517,11 @@ const SearchStrf = () => {
         </div>
       ) : (
         /* 검색 전 화면 */
-        <div className="flex flex-col gap-3 px-4">
+        <div className="flex flex-col gap-8 px-4">
           {/* 최근 검색어 */}
           {accessToken && (
-            <div className="flex flex-col">
-              <h2 className="text-lg font-semibold text-slate-700">
+            <div className="flex flex-col gap-3">
+              <h2 className="text-lg font-semibold text-slate-700 select-none">
                 최근 검색어
               </h2>
               {/* 최근 검색어 목록 */}
@@ -526,7 +531,7 @@ const SearchStrf = () => {
                     return (
                       <li
                         key={index}
-                        className="cursor-pointer text-slate-700 bg-slate-50 px-[20px] py-[10px] rounded-[20px]"
+                        className="cursor-pointer text-slate-700 bg-slate-50 px-4 py-[6px] rounded-[20px] text-sm select-none"
                         onClick={() => handleClickRecentText(item)}
                       >
                         {item.txt}
@@ -544,20 +549,27 @@ const SearchStrf = () => {
 
           {/* 인기 검색어 */}
           <div className="flex flex-col gap-[30px]">
-            <h2 className="text-lg  font-semibold text-slate-700">
+            <h2 className="text-lg  font-semibold text-slate-700 select-none">
               인기 검색어
             </h2>
             {/* 인기 검색어 목록 */}
-            <ul className="flex gap-[20px] flex-wrap">
+            <ul className="flex flex-col gap-[20px] flex-wrap h-[40vw]">
               {popularWordList ? (
                 popularWordList?.map((item, index) => {
                   return (
                     <li
                       key={index}
-                      className="cursor-pointer text-slate-700 bg-slate-50 px-[20px] py-[10px] rounded-[20px]"
+                      className="cursor-pointer "
                       onClick={() => handleClickPopularWord(item)}
                     >
-                      {item.strfName}
+                      <p className="flex gap-3 items-center select-none">
+                        <span className="text-slate-700 text-sm font-semibold">
+                          {index + 1}
+                        </span>
+                        <span className="text-slate-700 text-sm">
+                          {item.strfName}
+                        </span>
+                      </p>
                     </li>
                   );
                 })
@@ -572,73 +584,71 @@ const SearchStrf = () => {
           {accessToken && (
             <div className="flex flex-col gap-[30px]">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg  font-semibold text-slate-700">
-                  최근 본 목록
+                <h2 className="text-lg  font-semibold text-slate-700 select-none">
+                  최근 본 상품
                 </h2>
                 <button
                   type="button"
-                  className="text-slate-400 text-[18px]"
+                  className="text-slate-400 text-[18px] select-none"
                   onClick={() => setIsModalOpen(true)}
                 >
                   모두 삭제
                 </button>
               </div>
               {/* 최근 본 목록 목록 */}
-              <ul className="flex flex-col gap-[20px]">
-                {recentContents
-                  ? recentContents?.map((item, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="flex cursor-pointer items-center justify-between"
-                          onClick={() => handleClickList(item)}
-                        >
-                          <div className="flex gap-[15px]">
-                            <div className="w-[80px] h-[80px] rounded-2xl overflow-hidden">
-                              <img
-                                className="w-full h-full object-cover"
-                                src={
-                                  item.strfPic
-                                    ? `${ProductPic}${item.strfId}/${item.strfPic}`
-                                    : "/images/logo_icon_4.png"
-                                }
-                                alt={item.strfName}
-                              />
-                            </div>
-                            {/* 정보 */}
-                            <div className="flex flex-col gap-[5px] justify-center">
-                              {/* 제목 */}
-                              <div className="text-[18px] text-slate-700 font-semibold">
-                                {item.strfName}
-                              </div>
-                              {/* 카테고리, 지역 */}
-                              <div className="flex gap-[5px]">
-                                <span className="text-slate-500 text-[14px]">
-                                  {categoryKor(item.category)}
-                                </span>
-                                <span className="text-slate-500 text-[14px]">
-                                  •
-                                </span>
-                                <span className="text-slate-500 text-[14px]">
-                                  {item.locationTitle}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* 삭제 버튼 */}
-                          <button
-                            type="button"
-                            className="text-slate-400 text-[20px]"
-                            onClick={() => patchRecentList(item)}
+              <div className="w-full select-none">
+                <Swiper
+                  slidesPerView={2.5}
+                  spaceBetween={12}
+                  direction={"horizontal"}
+                  className="w-full flex select-none"
+                >
+                  {recentContents
+                    ? recentContents?.map((item, index) => {
+                        return (
+                          <SwiperSlide
+                            key={index}
+                            className="w-auto !h-auto shrink-0 select-none"
+                            onClick={() => handleClickList(item)}
                           >
-                            <RiCloseLargeFill />
-                          </button>
-                        </li>
-                      );
-                    })
-                  : null}
-              </ul>
+                            <div className="flex flex-col gap-[15px] w-full select-none">
+                              <div className="aspect-square w-full rounded-2xl overflow-hidden">
+                                <img
+                                  className="w-full h-full object-cover"
+                                  src={
+                                    item.strfPic
+                                      ? `${ProductPic}${item.strfId}/${item.strfPic}`
+                                      : "/images/logo_icon_4.png"
+                                  }
+                                  alt={item.strfName}
+                                />
+                              </div>
+                              {/* 정보 */}
+                              <div className="flex flex-col gap-[5px] justify-center">
+                                {/* 제목 */}
+                                <div className="text-[18px] text-slate-700 font-semibold">
+                                  {item.strfName}
+                                </div>
+                                {/* 카테고리, 지역 */}
+                                <div className="flex gap-[5px]">
+                                  <span className="text-slate-500 text-[14px]">
+                                    {categoryKor(item.category)}
+                                  </span>
+                                  <span className="text-slate-500 text-[14px]">
+                                    •
+                                  </span>
+                                  <span className="text-slate-500 text-[14px]">
+                                    {item.locationTitle}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </SwiperSlide>
+                        );
+                      })
+                    : null}
+                </Swiper>
+              </div>
             </div>
           )}
         </div>
