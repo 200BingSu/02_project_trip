@@ -132,7 +132,7 @@ const Authentication = (): JSX.Element => {
             onChange={e => setCertCode(e.target.value)}
             disabled={isExpired || timer === null}
           />
-          <div className="text-secondary3 text-base absolute top-1/2 -translate-y-1/2 right-4 ">
+          <div className="text-primary text-base absolute top-1/2 -translate-y-1/2 right-4 ">
             {timer !== null
               ? timer > 0
                 ? `${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, "0")}`

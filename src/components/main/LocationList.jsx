@@ -11,11 +11,11 @@ const LocationList = ({ locations }) => {
       <Swiper slidesPerView={3} spaceBetween={12} className="mySwiper ">
         {locations.map((item, index) => (
           <SwiperSlide key={item.locationId} className="relative pt-5">
-            <div className="relative bg-black rounded-lg overflow-hidden h-[26.6vw]">
+            <div className="relative bg-black rounded-lg overflow-hidden ">
               <img
                 src={`${LocationPic}${item.locationPic}`}
                 alt={item.locationTitle}
-                className="opacity-70 h-full object-cover"
+                className="opacity-70 w-full aspect-square object-cover"
               />
               <p className="absolute z-[999] bg-secondary3 text-white w-6 h-6 leading-6 left-0 top-0 text-center inline-block text-xs rounded-br-lg">
                 {index + 1}

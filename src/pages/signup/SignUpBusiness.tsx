@@ -1,11 +1,9 @@
-
 import { Button, Checkbox, Form, Input } from "antd";
 import axios from "axios";
 import { useState } from "react";
 import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 import { useNavigate } from "react-router-dom";
 import "../../styles/antd-styles.css";
-
 
 const SignUpBusiness = (): JSX.Element => {
   const [businessNum, setBusinessNum] = useState("");
@@ -161,10 +159,10 @@ const SignUpBusiness = (): JSX.Element => {
             />
           </Form.Item>
           {/* 약관 동의 */}
-          <Checkbox className="bg-slate-100 w-full font-medium text-lg  py-5 px-3 rounded-lg my-4 text-slate-700  ">
+          <Checkbox className="bg-slate-100 w-full font-medium text-lg  py-5 px-3 rounded-lg my-4 text-slate-700">
             전체 동의합니다.
           </Checkbox>
-          <Checkbox.Group className="flex flex-col gap-2 w-full">
+          <Checkbox.Group className="flex flex-col gap-2 w-full px-3">
             <div className="w-full flex justify-between">
               <Checkbox value="required-2" className="underline">
                 [필수] 서비스 이용약관
