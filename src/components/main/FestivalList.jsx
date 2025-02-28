@@ -11,7 +11,7 @@ const FestivalList = ({ festivities }) => {
         {festivities.map(item => (
           <SwiperSlide
             key={item.strfId}
-            className="!h-[93.33vw] cursor-pointer relative text-white rounded-tl-[60px] rounded-br-[60px] overflow-hidden after:absolute after:left-0 after:bottom-0 after:w-full after:h-[50%] after:bg-gradient-to-b after:from-transparent after:to-black after:opacity-70"
+            className="aspect-[3/4] cursor-pointer relative text-white rounded-tl-[60px] rounded-br-[60px] overflow-hidden after:absolute after:left-0 after:bottom-0 after:w-full after:h-[50%] after:bg-gradient-to-b after:from-transparent after:to-black after:opacity-70"
             onClick={() => navigate(`/contents/index?strfId=${item.strfId}`)}
           >
             <img
