@@ -9,6 +9,7 @@ import { BiSolidCamera } from "react-icons/bi";
 import { Button, Input, message, Typography } from "antd";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { getCookie } from "../../utils/cookie";
+import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 
 const UserEdit = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
@@ -84,6 +85,7 @@ const UserEdit = () => {
       });
       message.success("프로필이 수정되었습니다.");
       getUserInfo();
+      navigate(`/user/index`);
     } catch (error) {
       console.log(error);
     }
@@ -114,64 +116,63 @@ const UserEdit = () => {
 
   return (
     <div>
-      <TitleHeader
-        icon={""}
-        title={"프로필 설정"}
+      <TitleHeaderTs
+        title="이메일 인증"
+        icon="back"
         onClick={() => navigate(-1)}
       />
-      <div className="flex flex-col gap-10">
-        <div className="mt-16 ">
-          <div className="relative">
-            <div className="mx-auto w-32 h-32 rounded-full overflow-hidden">
+      <div className="flex flex-col gap-5 mt-5 py-3">
+        <div>
+          <div className="">
+            <div className="mx-auto w-32 aspect-square   relative">
               <img
                 src={originImg ? originImg : preview}
                 alt="User-Profile"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-full"
               />
+              <label
+                htmlFor="userImg"
+                className="flex bg-primary w-8 h-8 justify-center items-center rounded-full absolute bottom-0 right-0 cursor-pointer border-[3px] border-white box-content"
+              >
+                <BiSolidCamera className="text-lg text-white" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="userImg"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </label>
             </div>
-
-            <label
-              htmlFor="userImg"
-              className="flex bg-primary w-9 h-9 justify-center items-center rounded-full absolute bottom-0 right-80 cursor-pointer"
-            >
-              <BiSolidCamera className="text-lg text-white" />
-              <input
-                type="file"
-                accept="image/*"
-                id="userImg"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </label>
           </div>
         </div>
-        <div>
-          <Typography.Title
-            className="
-      !text-lg !font-semibold !text-slate-700 !mb-2 !ml-1"
+        <div className="px-3">
+          <div>
+            <Typography.Title className="!text-xs !font-semibold !text-slate-700 !mb-1 !ml-1">
+              닉네임
+            </Typography.Title>
+            <Input
+              placeholder="닉네임을 입력해 주세요."
+              className="rounded-lg text-base text-slate-700 px-3 py-[14px]"
+              allowClear={{
+                clearIcon: (
+                  <IoCloseCircleSharp className="text-xl text-slate-300 duration-300 hover:text-slate-600" />
+                ),
+              }}
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+            />
+          </div>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="w-full text-lg font-semibold py-3 text-white rounded-lg !h-auto mt-5 border-0"
+            onClick={corUserInfo}
+            disabled={!newName}
           >
-            닉네임
-          </Typography.Title>
-          <Input
-            placeholder="닉네임을 입력해 주세요."
-            className="rounded-lg text-lg text-slate-700 px-5 py-4"
-            allowClear={{
-              clearIcon: (
-                <IoCloseCircleSharp className="text-2xl text-slate-300 duration-300 hover:text-slate-600" />
-              ),
-            }}
-            value={newName}
-            onChange={e => setNewName(e.target.value)}
-          />
+            완료
+          </Button>
         </div>
-        <Button
-          type="primary"
-          htmlType="submit"
-          className="w-full h-16 text-xl font-medium text-white rounded-lg"
-          onClick={corUserInfo}
-        >
-          완료
-        </Button>
       </div>
     </div>
   );

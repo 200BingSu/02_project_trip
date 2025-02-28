@@ -158,13 +158,13 @@ const SignUpUser = () => {
   return (
     <>
       <TitleHeader icon={"back"} title={"회원가입"} onClick={navigateBack} />
-      <div className="w-full px-28 mt-[60px]">
+      <div className="w-full">
         <Form
           {...formItemLayout}
           form={form}
           name="register"
           onFinish={values => onFinish(values)}
-          className="w-full"
+          className="w-full px-4"
           layout={formLayout}
           scrollToFirstError
         >
@@ -172,6 +172,7 @@ const SignUpUser = () => {
           <Form.Item
             name="name"
             label="이름"
+            className="custom-form-item"
             rules={[
               {
                 required: true,
@@ -186,6 +187,7 @@ const SignUpUser = () => {
           <Form.Item
             name="email"
             label="이메일"
+            className="custom-form-item"
             rules={[
               {
                 type: "email",
@@ -222,6 +224,7 @@ const SignUpUser = () => {
           <Form.Item
             name="pw"
             label="비밀번호"
+            className="custom-form-item"
             rules={[
               {
                 required: true,
@@ -244,6 +247,7 @@ const SignUpUser = () => {
           <Form.Item
             name="confirm"
             label="비밀번호 확인"
+            className="custom-form-item"
             dependencies={["password"]}
             rules={[
               {
@@ -291,6 +295,7 @@ const SignUpUser = () => {
           <Form.Item
             name="birthday"
             label="생일"
+            className="custom-form-item"
             help="* 쿠폰 발급과 같은 서비스를 위한 항목입니다."
             style={{ paddingBottom: "20px" }}
           >
@@ -323,14 +328,14 @@ const SignUpUser = () => {
           <Checkbox
             onChange={onCheckAllChange}
             checked={isAllChecked}
-            className="bg-slate-100 w-full font-semibold text-lg mb-[15px] py-[10px] px-[15px] rounded-lg"
+            className="bg-slate-100 w-full font-medium text-lg  py-5 px-3 rounded-lg my-4 text-slate-700"
           >
             전체 동의합니다.
           </Checkbox>
           <Checkbox.Group
             value={selectedValues}
             onChange={handleChange}
-            className="flex flex-col gap-[10px] mb-[20px] w-full"
+            className="flex flex-col gap-2 w-full px-3"
           >
             <Checkbox value="required-1">[필수] 만 14세 이상입니다.</Checkbox>
             <div className="w-full flex justify-between">
@@ -339,7 +344,7 @@ const SignUpUser = () => {
               </Checkbox>
               <button
                 type="button"
-                className="text-[16px] text-slate-300"
+                className="text-xs text-slate-300"
                 value="required-2"
                 onClick={handleClickPolicy}
               >
@@ -352,7 +357,7 @@ const SignUpUser = () => {
               </Checkbox>
               <button
                 type="button"
-                className="text-[16px] text-slate-300"
+                className="text-xs text-slate-300"
                 value="required-3"
                 onClick={handleClickPolicy}
               >
@@ -365,7 +370,7 @@ const SignUpUser = () => {
               </Checkbox>
               <button
                 type="button"
-                className="text-[16px] text-slate-300"
+                className="text-xs text-slate-300"
                 value="required-4"
                 onClick={handleClickPolicy}
               >
@@ -392,7 +397,12 @@ const SignUpUser = () => {
 
           {/* 제출 버튼 */}
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit" block className="h-[60px]">
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              className="text-base py-3 !h-auto mt-4 mb-12"
+            >
               다음
             </Button>
           </Form.Item>
