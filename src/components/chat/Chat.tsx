@@ -10,15 +10,18 @@ import jwtAxios from "../../apis/jwt";
 interface ISendMessage {
   message: string;
   sender: number;
+  userName?: string;
   roomId?: number;
 }
 interface IMessage {
   chatId: number;
   senderId: string;
-  senderName: string;
+  senderName?: string;
+  userName?: string;
   senderPic: string;
   signedUser: boolean;
   message: string;
+  error?: string | null;
 }
 interface IGetChatHistoryRes {
   code: string;
@@ -264,15 +267,17 @@ const Chat = (): JSX.Element => {
           className="h-full overflow-y-auto
         flex flex-col gap-[16px]"
         >
-          {/* {messages.map((item: ISendMessage | string, index) => {
+          {messages.map((item: ISendMessage | string, index) => {
             return (
               <li key={index}>
                 {typeof item === "string"
                   ? item
-                  : `user${item?.sender}: ${item?.message}`}
+                  : item.userName
+                    ? `${item?.userName}가 입장합니다.`
+                    : `${item?.sender}: ${item?.message}`}
               </li>
             );
-          })} */}
+          })}
           {dummyMessageArr.map((item, index) => {
             return item.signedUser === true ? (
               <li
