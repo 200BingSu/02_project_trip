@@ -9,6 +9,7 @@ import {
 } from "antd";
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { VscSettings } from "react-icons/vsc";
 import { FiSearch } from "react-icons/fi";
 import { IoIosArrowRoundBack, IoIosArrowUp } from "react-icons/io";
 import { RiCloseLargeFill } from "react-icons/ri";
@@ -45,6 +46,7 @@ const SearchStrf = () => {
   const userId = getCookie("user")?.userId;
   //useRef
   const topRef = useRef(null);
+  const swiperRef = useRef(null);
   //useNavigate
   const navigate = useNavigate();
   const navigateToBack = () => {
@@ -54,25 +56,14 @@ const SearchStrf = () => {
   //useState
   const [searchState, setSearchState] = useState(
     searchRecoil.searchWord !== "" ? true : false,
-  ); // 검색 상태
-  const [searchValue, setSearchValue] = useState(searchRecoil.searchWord || ""); // 검색어
-  const [searchData, setSearchData] = useState(searchRecoil.searchData || []); // 검색 결과
-  const [startIndex, setStartIndex] = useState(searchRecoil.startIndex || 0); // 마지막 인덱스
-
+  );
   const [popularWordList, setPopularWordList] = useState([]); // 인기 검색어
   const [recentContents, setRecentContents] = useState([]); // 최근 본 목록
   const [recentText, setRecentText] = useState([]); // 최근 검색어
-  const [selectedCategory, setSelectedCategory] = useState(
-    searchRecoil.category || 0,
-  ); // 선택된 카테고리
-  const [orderType, setOrderType] = useState(0); // 정렬 타입
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [isSearchLoading, setIsSearchLoading] = useState(false); // 검색 로딩
-  const [isShowMore, setIsShowMore] = useState(true); // 더보기 상태
   const [isAmenityOpen, setIsAmenityOpen] = useState(false); // 편의시설 열림 상태
-
-  // Form 초기값 상태 수정
-  const [amenityValues, setAmenityValues] = useState([]);
+  const [searchCount, setSearchCount] = useState(0); // 검색 총 수
 
   // api 인기 검색어
   const getPopularWord = useCallback(async () => {
@@ -157,13 +148,20 @@ const SearchStrf = () => {
     if (accessToken) {
       try {
         const res = await jwtAxios.get(`/api/search/all?search_word=${word}`);
-        // console.log(res.data);
         const resultData = res.data;
         if (resultData) {
           setIsSearchLoading(true);
           setSearchState(true);
         }
-        setSearchData(resultData.data);
+        setSearchRecoil(prev => ({
+          ...prev,
+          searchData: resultData.data,
+          start_idx: 0,
+          category: 0,
+          amenityId: [],
+          orderType: 0,
+          more: true,
+        }));
       } catch (error) {
         console.log("전체 검색", error);
       }
@@ -176,7 +174,10 @@ const SearchStrf = () => {
           setIsSearchLoading(true);
           setSearchState(true);
         }
-        setSearchData(resultData.data);
+        setSearchRecoil(prev => ({
+          ...prev,
+          searchData: resultData.data,
+        }));
       } catch (error) {
         console.log("전체 검색", error);
       }
@@ -184,66 +185,98 @@ const SearchStrf = () => {
   }, []);
   // api 카테고리 검색
   const getCategorySearch = useCallback(async () => {
-    // console.log(
-    //   `selectedCategory: ${selectedCategory}`,
-    //   categoryArr[selectedCategory].name,
-    // );
     try {
-      // startIndex를 직접 참조하는 대신 함수 파라미터로 받도록 수정
-      const currentIndex = startIndex;
       const res = await axios.get(
-        `/api/search/category?start_idx=${currentIndex}&category=${
-          categoryArr[selectedCategory].name
-        }&search_word=${searchValue}&order_type=${orderTypeArr[orderType].type}`,
+        `/api/search/category?start_idx=${searchRecoil.start_idx}&category=${
+          categoryArr[searchRecoil.category].name
+        }&search_word=${searchRecoil.searchWord}&order_type=${searchRecoil.orderType}`,
       );
-      // console.log("카테고리 검색", res.data);
       const resultData = res.data;
       if (resultData) {
         setIsSearchLoading(true);
       }
-      // 데이터가 있을 때만 startIndex 증가
-      if (resultData.data && resultData.data.length > 0) {
-        setSearchData(prev =>
-          currentIndex === 0 ? resultData.data : [...prev, ...resultData.data],
-        );
-        setStartIndex(currentIndex + 10);
-      }
-      if (resultData.data[0]?.more === false) {
-        setIsShowMore(false);
+
+      if (resultData.data && resultData.data.length >= 10) {
+        setSearchRecoil(prev => ({
+          ...prev,
+          searchData:
+            searchRecoil.start_idx === 0
+              ? resultData.data
+              : [...prev.searchData, ...resultData.data],
+          start_idx: searchRecoil.start_idx + 10,
+          more: resultData.data[0]?.more,
+        }));
+      } else {
+        setSearchRecoil(prev => ({
+          ...prev,
+          searchData:
+            searchRecoil.start_idx === 0
+              ? resultData.data
+              : [...prev.searchData, ...resultData.data],
+          start_idx: searchRecoil.start_idx + resultData.data.length + 1,
+          more: false,
+        }));
       }
     } catch (error) {
       console.log("카테고리 검색", error);
     }
-  }, [selectedCategory, startIndex, searchValue, orderType]);
-  // api 편의시설 검색
-  const getAmenitySearch = useCallback(async amenityIds => {
+  }, [
+    searchRecoil.category,
+    searchRecoil.start_idx,
+    searchRecoil.searchWord,
+    searchRecoil.orderType,
+  ]);
+  // api 검색 총 수
+  const getSearchCount = useCallback(async () => {
     try {
       const res = await axios.get(
-        `/api/search/filter?start_idx=0&category=숙소&search_word=${searchRecoil.searchWord}&${amenityIds}`,
+        `/api/search/count?category=${categoryArr[searchRecoil.category].name}&search_word=${searchRecoil.searchWord}`,
       );
-      console.log("편의시설", res.data);
-      const resultData = res.data;
-      if (resultData.data.more === false) {
-        setIsShowMore(false);
-      }
-      setSearchData(resultData.data);
+      console.log("검색 총 수", res.data);
+      setSearchRecoil(prev => ({ ...prev, count: res.data.data }));
     } catch (error) {
-      console.log("편의시설", error);
+      console.log("검색 총 수", error);
     }
-  }, []);
+  }, [searchRecoil.category, searchRecoil.searchWord]);
+  // api 편의필터 검색 총 수
+  const getAmenitySearchCount = useCallback(async () => {
+    const amenityIds = searchRecoil.amenityId
+      .map(item => `amenity_id=${item.amenity_id}`)
+      .join("&");
+    try {
+      const res = await axios.get(
+        `/api/search/count?category=${categoryArr[searchRecoil.category].name}&search_word=${searchRecoil.searchWord}&${amenityIds}`,
+      );
+      console.log("편의필터 검색 총 수", res.data);
+      setSearchRecoil(prev => ({ ...prev, count: res.data.data }));
+    } catch (error) {
+      console.log("편의필터 검색 총 수", error);
+    }
+  }, [searchRecoil.amenityId, searchRecoil.searchWord]);
+  useEffect(() => {
+    getSearchCount();
+  }, [searchRecoil.category, searchRecoil.searchWord]);
   // 카테고리 별 데이터
-  const tourData = searchData?.filter(item => item.category === "TOUR");
-  const stayData = searchData?.filter(item => item.category === "STAY");
-  const restaurData = searchData?.filter(item => item.category === "RESTAUR");
-  const festData = searchData?.filter(item => item.category === "FEST");
+  const tourData = searchRecoil.searchData?.filter(
+    item => item.category === "TOUR",
+  );
+  const stayData = searchRecoil.searchData?.filter(
+    item => item.category === "STAY",
+  );
+  const restaurData = searchRecoil.searchData?.filter(
+    item => item.category === "RESTAUR",
+  );
+  const festData = searchRecoil.searchData?.filter(
+    item => item.category === "FEST",
+  );
   // 검색창 비우기
   const onChange = e => {
-    setSearchValue(e.target.value);
+    setSearchRecoil(prev => ({ ...prev, searchWord: e.target.value }));
   };
   // 최근 검색어 클릭
   const handleClickRecentText = useCallback(word => {
     console.log("클릭한 최근 검색어:", word);
-    setSearchValue(word.txt);
+    setSearchRecoil(prev => ({ ...prev, searchWord: word.txt }));
     postSearchAll(word.txt);
   }, []);
   // 인기 검색어 클릭
@@ -259,7 +292,7 @@ const SearchStrf = () => {
   }, []);
   // 검색창 비우기
   const handleClickClear = useCallback(() => {
-    setSearchValue("");
+    setSearchRecoil(prev => ({ ...prev, searchWord: "" }));
   }, []);
   //모달 취소
   const handleClickCancle = () => {
@@ -267,19 +300,30 @@ const SearchStrf = () => {
   };
   // 검색 엔터
   const handleClickEnter = e => {
-    if (!searchValue.trim()) return; // 빈 검색어 체크
+    if (!searchRecoil.searchWord.trim()) return; // 빈 검색어 체크
     setIsSearchLoading(false); // 로딩 상태 초기화
     postSearchAll(e.target.value);
-    setSearchRecoil({ ...searchRecoil, searchWord: searchValue });
     setSearchState(true);
   };
   // 전체보기에서 더보기 클릭
   const handleClickAllMore = cateNum => {
     moveTo(topRef);
     setSelectedCategory(cateNum);
-    setSearchRecoil({ ...searchRecoil, category: cateNum });
+    setSearchRecoil(prev => ({ ...prev, category: cateNum }));
   };
-
+  // 카테고리 선택
+  const handleChangeCategory = index => {
+    setSearchRecoil(prev => ({
+      ...prev,
+      start_idx: 0,
+      category: index,
+      orderType: 0,
+    }));
+    // 해당 슬라이드로 이동
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.slideTo(index);
+    }
+  };
   // 카테고리 검색 내 더보기
   const handleClickMore = () => {
     getCategorySearch();
@@ -288,9 +332,7 @@ const SearchStrf = () => {
   const showAmenityFilter = () => {
     setIsAmenityOpen(true);
   };
-  const handleClickAmenityFilter = () => {
-    setIsAmenityOpen(false);
-  };
+
   //useEffect
   useEffect(() => {
     getPopularWord();
@@ -300,37 +342,34 @@ const SearchStrf = () => {
     }
   }, []);
   useEffect(() => {
-    // console.log("searchValue", searchValue);
-    if (searchValue !== "") {
-      setSearchRecoil({ ...searchRecoil, searchWord: searchValue });
-    }
-  }, [searchValue]);
-  useEffect(() => {
-    // 카테고리 변경 시 상태 초기화를 즉시 실행
-    setStartIndex(0);
+    setSearchRecoil(prev => ({
+      ...prev,
+      searchData: [],
+      start_idx: 0,
+      more: true,
+    }));
     setIsSearchLoading(false);
-    setSearchData([]);
-    setIsShowMore(true);
-    setSearchRecoil(prev => ({ ...prev, startIndex: 0, searchData: [] }));
 
-    // searchValue가 비어있지 않을 때만 검색 실행
-    if (searchValue.trim()) {
+    if (searchRecoil.searchWord.trim()) {
       const timer = setTimeout(() => {
-        if (selectedCategory !== 0) {
+        if (searchRecoil.category !== 0) {
           getCategorySearch();
         } else {
-          postSearchAll(searchValue);
+          postSearchAll(searchRecoil.searchWord);
         }
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [selectedCategory, orderType]);
-  useEffect(() => {
-    // console.log("searchData", searchData);
-    if (searchData?.length > 0) {
-      setSearchRecoil({ ...searchRecoil, searchData: searchData });
-    }
-  }, [searchData]);
+  }, [searchRecoil.category, searchRecoil.orderType]);
+
+  // Update orderType handler
+  const handleOrderTypeChange = value => {
+    setSearchRecoil(prev => ({
+      ...prev,
+      orderType: value,
+      start_idx: 0,
+    }));
+  };
 
   return (
     <div className="w-full flex flex-col  mb-[100px]">
@@ -363,8 +402,8 @@ const SearchStrf = () => {
               }
             }}
             variant="filled"
-            value={searchValue}
-            className="h-[60px] text-lg rounded-lg gap-[5px]
+            value={searchRecoil.searchWord}
+            className="max-h-[60px] h-[16vw] text-lg rounded-lg gap-[5px]
             bg-slate-50 hover:bg-slate-100 placeholder:text-slate-400 "
           />
         </label>
@@ -372,23 +411,26 @@ const SearchStrf = () => {
 
       {/* 카테고리와 검색 결과 */}
       {searchState ? (
-        <div className="px-[32px] py-[30px] flex flex-col gap-[30px] min-h-screen">
+        <div className="px-[32px] py-[30px] flex flex-col min-h-screen">
           {/* 카테고리 */}
-          <div>
-            <Swiper slidesPerView={4.5} spaceBetween={6}>
+          <div className="py-4">
+            <Swiper
+              ref={swiperRef}
+              slidesPerView={4.5}
+              spaceBetween={6}
+              initialSlide={searchRecoil.category}
+            >
               {categoryArr.map((item, index) => {
                 return (
                   <SwiperSlide
                     key={index}
-                    className={`cursor-pointer text-sm w-full flex justify-center items-center py-[6px] gap-[10px] rounded-xl ${
-                      index === selectedCategory
+                    className={`cursor-pointer text-sm w-full flex justify-center items-center py-2 gap-[10px] rounded-xl ${
+                      index === searchRecoil.category
                         ? "bg-primary text-white"
                         : "bg-white text-slate-500"
                     }`}
                     onClick={() => {
-                      setStartIndex(0);
-                      setSelectedCategory(index);
-                      setSearchRecoil({ ...searchRecoil, category: index });
+                      handleChangeCategory(index);
                     }}
                   >
                     <p className="text-center"> {item.name}</p>
@@ -397,34 +439,49 @@ const SearchStrf = () => {
               })}
             </Swiper>
           </div>
-
-          {/* 정렬 방식 */}
-          <div className="flex items-center gap-3">
-            {selectedCategory !== 0 && (
-              <Select
-                value={orderType}
-                onChange={value => {
-                  setOrderType(value);
-                  setStartIndex(0);
-                }}
-                options={orderTypeArr.map((item, index) => ({
-                  value: index,
-                  label: item.name,
-                }))}
-                className="w-[120px]"
-                size="middle"
-              />
-            )}
-            <div>
-              {selectedCategory === 2 && (
-                <Button onClick={showAmenityFilter}>편의시설 필터</Button>
+          <div className="h-[2.66vw] max-h-[10px] bg-slate-100"></div>
+          {/* 총 개수, 정렬 방식 */}
+          <div className="flex items-center gap-3 justify-between py-4">
+            <div className="text-xs text-slate-700 font-semibold">
+              {searchRecoil.category === 0
+                ? null
+                : `총 ${searchRecoil.count}개`}
+            </div>
+            <div className="flex items-center gap-3">
+              {searchRecoil.category !== 0 && (
+                <Select
+                  value={searchRecoil.orderType}
+                  onChange={handleOrderTypeChange}
+                  options={orderTypeArr.map((item, index) => ({
+                    value: index,
+                    label: (
+                      <span className="text-slate-500 text-xs">
+                        {item.name}
+                      </span>
+                    ),
+                  }))}
+                  style={{ color: "#64748b" }}
+                  className="h-[4.53vw] max-h-[17px]"
+                  variant="borderless"
+                />
               )}
+              <div>
+                {searchRecoil.category === 2 && (
+                  <Button
+                    onClick={showAmenityFilter}
+                    type="button"
+                    className="text-xs text-slate-500"
+                  >
+                    필터 <VscSettings />
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
 
           {/* 검색 결과 */}
           {isSearchLoading ? (
-            searchData?.length === 0 ? (
+            searchRecoil.searchData?.length === 0 ? (
               <div className="flex flex-col gap-[20px] items-center py-[100px]">
                 <i className="text-slate-300 text-[100px]">
                   <LiaComment />
@@ -435,12 +492,12 @@ const SearchStrf = () => {
               </div>
             ) : (
               <>
-                {selectedCategory === 0 && (
+                {searchRecoil.category === 0 && (
                   <div className="flex flex-col gap-[30px]">
                     <SearchCategoryList
                       title={categoryArr[1].name}
                       categoryData={tourData}
-                      searchValue={searchValue}
+                      searchValue={searchRecoil.searchWord}
                       buttonClick={() => {
                         handleClickAllMore(1);
                       }}
@@ -448,7 +505,7 @@ const SearchStrf = () => {
                     <SearchCategoryList
                       title={categoryArr[2].name}
                       categoryData={stayData}
-                      searchValue={searchValue}
+                      searchValue={searchRecoil.searchWord}
                       buttonClick={() => {
                         handleClickAllMore(2);
                       }}
@@ -456,7 +513,7 @@ const SearchStrf = () => {
                     <SearchCategoryList
                       title={categoryArr[3].name}
                       categoryData={restaurData}
-                      searchValue={searchValue}
+                      searchValue={searchRecoil.searchWord}
                       buttonClick={() => {
                         handleClickAllMore(3);
                       }}
@@ -464,47 +521,43 @@ const SearchStrf = () => {
                     <SearchCategoryList
                       title={categoryArr[4].name}
                       categoryData={festData}
-                      searchValue={searchValue}
+                      searchValue={searchRecoil.searchWord}
                       buttonClick={() => {
                         handleClickAllMore(4);
                       }}
                     />
                   </div>
                 )}
-                {selectedCategory === 1 && (
+                {searchRecoil.category === 1 && (
                   <SearchCategoryList
                     title={categoryArr[1].name}
-                    categoryData={searchData}
-                    searchValue={searchValue}
+                    categoryData={searchRecoil.searchData}
+                    searchValue={searchRecoil.searchWord}
                     buttonClick={handleClickMore}
-                    showMore={isShowMore}
                   />
                 )}
-                {selectedCategory === 2 && (
+                {searchRecoil.category === 2 && (
                   <SearchCategoryList
                     title={categoryArr[2].name}
-                    categoryData={searchData}
-                    searchValue={searchValue}
+                    categoryData={searchRecoil.searchData}
+                    searchValue={searchRecoil.searchWord}
                     buttonClick={handleClickMore}
-                    showMore={isShowMore}
                   />
                 )}
-                {selectedCategory === 3 && (
+                {searchRecoil.category === 3 && (
                   <SearchCategoryList
                     title={categoryArr[3].name}
-                    categoryData={searchData}
-                    searchValue={searchValue}
+                    categoryData={searchRecoil.searchData}
+                    searchValue={searchRecoil.searchWord}
                     buttonClick={handleClickMore}
-                    showMore={isShowMore}
                   />
                 )}
-                {selectedCategory === 4 && (
+                {searchRecoil.category === 4 && (
                   <SearchCategoryList
                     title={categoryArr[4].name}
-                    categoryData={searchData}
-                    searchValue={searchValue}
+                    categoryData={searchRecoil.searchData}
+                    searchValue={searchRecoil.searchWord}
                     buttonClick={handleClickMore}
-                    showMore={isShowMore}
                   />
                 )}
               </>
@@ -553,7 +606,7 @@ const SearchStrf = () => {
               인기 검색어
             </h2>
             {/* 인기 검색어 목록 */}
-            <ul className="flex flex-col gap-[20px] flex-wrap h-[40vw]">
+            <ul className="flex flex-col gap-[20px] flex-wrap h-[40vw] max-h-[250px]">
               {popularWordList ? (
                 popularWordList?.map((item, index) => {
                   return (
@@ -631,13 +684,13 @@ const SearchStrf = () => {
                                 </div>
                                 {/* 카테고리, 지역 */}
                                 <div className="flex gap-[5px]">
-                                  <span className="text-slate-500 text-[14px]">
+                                  <span className="text-slate-500 text-sm">
                                     {categoryKor(item.category)}
                                   </span>
-                                  <span className="text-slate-500 text-[14px]">
+                                  <span className="text-slate-500 text-sm">
                                     •
                                   </span>
-                                  <span className="text-slate-500 text-[14px]">
+                                  <span className="text-slate-500 text-sm">
                                     {item.locationTitle}
                                   </span>
                                 </div>
@@ -662,17 +715,7 @@ const SearchStrf = () => {
           content="최근 본 목록을 모두 삭제하시겠습니까?"
         />
       )}
-      {isAmenityOpen && (
-        <AmenityFilter
-          searchData={searchData}
-          setSearchData={setSearchData}
-          amenityValues={amenityValues}
-          setAmenityValues={setAmenityValues}
-          handleClickCancle={handleClickAmenityFilter}
-          getAmenitySearch={getAmenitySearch}
-          content="편의시설 필터"
-        />
-      )}
+      {isAmenityOpen && <AmenityFilter setIsAmenityOpen={setIsAmenityOpen} />}
     </div>
   );
 };
