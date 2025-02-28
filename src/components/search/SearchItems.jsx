@@ -134,7 +134,11 @@ const SearchItems = forwardRef(
                         {item.averageRating ? item.averageRating : "0"}
                       </p>
                       <p className="text-[12px] text-slate-500">
-                        ({item.reviewCount.toLocaleString()})
+                        (
+                        {item.reviewCount
+                          ? item.reviewCount.toLocaleString()
+                          : item.reviewCnt.toLocaleString()}
+                        )
                       </p>
                     </div>
                     {/* 찜하기 */}

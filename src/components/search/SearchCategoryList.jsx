@@ -85,9 +85,9 @@ const SearchCategoryList = ({
                 <div className="flex gap-[5px] items-center">
                   <div>
                     {item.wishIn ? (
-                      <AiFillHeart className="text-secondary3" />
+                      <AiFillHeart className="text-secondary3 text-xs" />
                     ) : (
-                      <AiOutlineHeart className="text-slate-400" />
+                      <AiOutlineHeart className="text-slate-400 text-xs" />
                     )}
                   </div>
                   <p className="text-xs text-slate-500">
