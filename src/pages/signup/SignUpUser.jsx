@@ -41,6 +41,7 @@ const SignUpUser = () => {
   // useState
   const [formLayout, setFormLayout] = useState("vertical");
   const [formData, setFormData] = useState({});
+  const [file, setFile] = useState("");
   const [selectedValues, setSelectedValues] = useState([]);
   const [isAllChecked, setIsAllChecked] = useState(false);
   const [validateStatus, setValidateStatus] = useState(null); // validateStatus 상태
@@ -99,27 +100,55 @@ const SignUpUser = () => {
       console.log(error);
     }
   }, []);
+  // API postSignup
+  const postSignUpUser = async data => {
+    const postData = new FormData();
+    postData.append(
+      "p",
+      new Blob([JSON.stringify(data)], { type: "application/json" }),
+    );
+    if (file) {
+      postData.append("profilePic", file);
+    }
 
+    console.log("JSON 데이터:", data);
+    postData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
+
+    try {
+      const res = await axios.post(`${USER.signUpUser}`, postData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("회원가입 성공:", res.data);
+      // 성공 시 처리 (예: 네비게이션)
+    } catch (error) {
+      console.error("회원가입 실패:", error);
+    }
+  };
   const onFinish = values => {
-    const optionArr = selectedValues.filter(item => item === "option");
+    const { year, month, day } = values.birth;
+    const birthday = `${year}-${month}-${day}`;
+    const { confirm, ...filterData } = values;
     const requiredArr = selectedValues.filter(item =>
       item.includes("required"),
     );
-    const { confirm, ...filterData } = values;
-    const email = values.email;
-    const birthobj = values.birthday;
-    const birthString = `${birthobj.year}-${birthobj.month > 9 ? birthobj.month : `0${birthobj.month}`}-${birthobj.day > 9 ? birthobj.day : `0${birthobj.day}`}`;
-    const sendData = { ...filterData, birthday: birthString };
-    console.log("폼 제출 데이터:", sendData);
-    setFormData(sendData);
 
-    // if (requiredArr.length === 4 && validateStatus === "success") {
-    //   console.log("이메일 링크 요청", { email: email });
-    //   postEmail({ email: email });
-    //   handleClickNavigate(filterData);
-    // } else {
-    //   setErrorMessage(true);
-    // }
+    // 전화번호 포맷팅 확인
+    if (filterData.tell) {
+      filterData.tell = formatPhoneNumber(filterData.tell);
+    }
+
+    const sendData = { ...filterData, birth: birthday };
+
+    if (requiredArr.length === 4 && validateStatus === "success") {
+      postSignUpUser(sendData);
+    } else {
+      setErrorMessage(true);
+    }
+    setFormData(sendData);
   };
 
   // 약관 보기
@@ -154,6 +183,21 @@ const SignUpUser = () => {
       },
     });
   }, [form]);
+
+  // 전화번호 포맷팅 함수 수정
+  const formatPhoneNumber = value => {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    const phoneLength = phoneNumber.length;
+
+    if (phoneLength <= 3) {
+      return phoneNumber;
+    } else if (phoneLength <= 7) {
+      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    } else {
+      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
+    }
+  };
 
   return (
     <>
@@ -274,8 +318,8 @@ const SignUpUser = () => {
             />
           </Form.Item>
           {/* 휴대폰 번호 */}
-          {/* <Form.Item
-            name="phone"
+          <Form.Item
+            name="tell"
             label="휴대폰 번호"
             rules={[
               {
@@ -287,34 +331,35 @@ const SignUpUser = () => {
             help="* 휴대폰 번호는 광고 또는 서비스 이용을 위한 항목입니다."
           >
             <Input
-              placeholder="휴대폰 번호를 입력하세요"
+              placeholder="000-0000-0000"
               style={{ height: "60px" }}
+              maxLength={13}
             />
-          </Form.Item> */}
+          </Form.Item>
           {/* 생일 */}
           <Form.Item
-            name="birthday"
+            name="birth"
             label="생일"
             className="custom-form-item"
             help="* 쿠폰 발급과 같은 서비스를 위한 항목입니다."
             style={{ paddingBottom: "20px" }}
           >
             <Space.Compact block>
-              <Form.Item name={["birthday", "year"]} noStyle>
+              <Form.Item name={["birth", "year"]} noStyle>
                 <Select
                   placeholder="년도"
                   style={{ width: "33%", height: "60px" }}
                   options={yearOptions}
                 />
               </Form.Item>
-              <Form.Item name={["birthday", "month"]} noStyle>
+              <Form.Item name={["birth", "month"]} noStyle>
                 <Select
                   placeholder="월"
                   style={{ width: "33%", height: "60px" }}
                   options={monthOptions}
                 />
               </Form.Item>
-              <Form.Item name={["birthday", "day"]} noStyle>
+              <Form.Item name={["birth", "day"]} noStyle>
                 <Select
                   placeholder="일"
                   style={{ width: "34%", height: "60px" }}

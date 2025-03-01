@@ -212,7 +212,7 @@ const router = createBrowserRouter([
         element: <LazyBusiness />,
       },
       {
-        path: "booking", // '/' 제거됨
+        path: "booking",
         element: (
           <Suspense fallback={<Loading />}>
             <LazyBusinessBooking />
