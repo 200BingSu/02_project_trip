@@ -3,11 +3,11 @@ import dayjs from "dayjs";
 import { memo, useState } from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { ProductPic } from "../../constants/pic";
-import "dayjs/locale/ko";
 import { CgMoreVerticalAlt } from "react-icons/cg";
 import BottomSheet from "../basic/BottomSheet";
 import { GoCommentDiscussion } from "react-icons/go";
 import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
+import "dayjs/locale/ko";
 
 dayjs.locale("ko");
 

@@ -1,7 +1,7 @@
 import { selector } from "recoil";
 import { userAtom } from "../atoms/userAtom";
 import { tsUserAtom } from "../atoms/tsuserAtom";
-import { ProviderType } from "../types/interface";
+import { ProviderType } from "../types/enum";
 
 export const resetUserData = selector({
   key: "resetUserData",
@@ -18,6 +18,8 @@ export const resetUserData = selector({
       accessToken: "",
       role: [],
       providerType: ProviderType.LOCAL,
+      tell: "",
+      birth: "",
     });
   },
 });
