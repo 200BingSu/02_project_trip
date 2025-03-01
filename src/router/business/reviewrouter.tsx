@@ -11,7 +11,7 @@ const LazyEditReview = lazy(
 const reviewRouter = () => {
   return [
     {
-      path: "/",
+      index: true,
       element: (
         <Suspense fallback={<Loading />}>
           <LazyReviewIndex />

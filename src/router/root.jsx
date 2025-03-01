@@ -21,6 +21,7 @@ import businessBookingRouter from "./business/bookingrouter";
 import menuRouter from "./business/menurouter";
 import reviewRouter from "./business/reviewrouter";
 import storeRouter from "./business/storerouter";
+import BusinessLayout from "../components/layout/BusinessLayout";
 // 사용자 lazys
 const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/bookings/Booking"));
@@ -33,7 +34,6 @@ const LazyPayment = lazy(() => import("../pages/payment/PaymentIndex"));
 const LazySchedule = lazy(() => import("../pages/schedule/Schedule"));
 const LazyScheduleBoard = lazy(
   () => import("../pages/scheduleboard/ScheduleBoard"),
-
 );
 const LazySearch = lazy(() => import("../pages/search/SearchIndex"));
 const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
@@ -207,35 +207,46 @@ const router = createBrowserRouter([
     path: "/business",
     element: <BusinessLayout />,
     children: [
-      { path: "/", element: <LazyBusiness /> },
       {
-        path: "/booking",
-        element: <LazyBusinessBooking />,
+        index: true, // index route로 변경
+        element: <LazyBusiness />,
+      },
+      {
+        path: "booking", // '/' 제거됨
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyBusinessBooking />
+          </Suspense>
+        ),
         children: businessBookingRouter(),
       },
       {
-        path: "/coupon",
-        element: <LazyBusinessCoupon />,
+        path: "coupon",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyBusinessCoupon />
+          </Suspense>
+        ),
         children: businessCouponRouter(),
       },
       {
-        path: "/menu",
+        path: "menu",
         element: <LazyBusinessMenu />,
         children: menuRouter(),
       },
-      { path: "/mypage", element: <LazyBusinessMypage /> },
+      { path: "mypage", element: <LazyBusinessMypage /> },
       {
-        path: "/register",
+        path: "register",
         element: <LazyBusinessRegister />,
         children: registerRouter(),
       },
       {
-        path: "/review",
+        path: "review",
         element: <LazyBusinessReview />,
         children: reviewRouter(),
       },
       {
-        path: "/store",
+        path: "store",
         element: <LazyBusinessStore />,
         children: storeRouter(),
       },

@@ -11,7 +11,7 @@ const LazyBookingDetail = lazy(
 const bookingRouter = () => {
   return [
     {
-      path: "/",
+      index: true,
       element: (
         <Suspense fallback={<Loading />}>
           <LazyBookingIndex />

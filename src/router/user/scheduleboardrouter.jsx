@@ -1,15 +1,15 @@
 import { lazy, Suspense } from "react";
-import Loading from "../components/loading/Loading";
+import Loading from "../../components/loading/Loading";
 
 const scheduleBoardRouter = () => {
   const LazyScheduleBoardIndex = lazy(
-    () => import("../pages/scheduleBoard/ScheduleBoardIndex"),
+    () => import("../../pages/scheduleboard/ScheduleBoardIndex"),
   );
   const LazyScheduleDetail = lazy(
-    () => import("../pages/scheduleBoard/ScheduleDetail"),
+    () => import("../../pages/scheduleboard/ScheduleDetail"),
   );
   const LazySchedulePost = lazy(
-    () => import("../pages/scheduleboard/PostBoard"),
+    () => import("../../pages/scheduleboard/PostBoard"),
   );
   return [
     {
