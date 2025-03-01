@@ -12,7 +12,7 @@ const LazyConfirmRegister = lazy(
 const registerRouter = () => {
   return [
     {
-      path: "",
+      index: true,
       element: (
         <Suspense fallback={<Loading />}>
           <LazyRegisterIndex />
