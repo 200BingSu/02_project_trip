@@ -16,7 +16,7 @@ import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
 
 import { tsUserAtom } from "../../atoms/tsuserAtom";
 import { resetUserData } from "../../selectors/userSelector";
-import { ProviderType } from "../../types/interface";
+import { ProviderType } from "../../types/enum";
 
 //interface
 interface ITripList {
