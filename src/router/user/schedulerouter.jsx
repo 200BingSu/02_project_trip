@@ -1,13 +1,13 @@
 import { lazy, Suspense } from "react";
-import Loading from "../components/loading/Loading";
+import Loading from "../../components/loading/Loading";
 
 const scheduleRouter = () => {
   const LazyScheduleIndex = lazy(
-    () => import("../pages/schedule/ScheduleIndex"),
+    () => import("../../pages/schedule/ScheduleIndex"),
   );
-  const LazySelectDays = lazy(() => import("../pages/schedule/SelectDays"));
+  const LazySelectDays = lazy(() => import("../../pages/schedule/SelectDays"));
   const LazyCalculation = lazy(
-    () => import("../pages/calculation/Calculation"),
+    () => import("../../pages/calculation/Calculation"),
   );
   return [
     {

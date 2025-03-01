@@ -1,15 +1,19 @@
 import { lazy, Suspense } from "react";
-import Loading from "../components/loading/Loading";
+import Loading from "../../components/loading/Loading.jsx";
 
 const searchRouter = () => {
   const LazySearchLocation = lazy(
-    () => import("../pages/search/SearchLocation"),
+    () => import("../../pages/search/SearchLocation.jsx"),
   );
   const LazySearchContents = lazy(
-    () => import("../pages/search/SearchContents"),
+    () => import("../../pages/search/SearchContents.jsx"),
   );
-  const LazySearchTrip = lazy(() => import("../pages/search/SearchTrip"));
-  const LazySearchStrf = lazy(() => import("../pages/search/SearchStrf.jsx"));
+  const LazySearchTrip = lazy(
+    () => import("../../pages/search/SearchTrip.jsx"),
+  );
+  const LazySearchStrf = lazy(
+    () => import("../../pages/search/SearchStrf.jsx"),
+  );
   return [
     {
       path: "location",
