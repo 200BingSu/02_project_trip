@@ -13,7 +13,7 @@ const LazyEditMenu = lazy(() => import("../../pages/business/menu/EdigMenu"));
 const menuRouter = () => {
   return [
     {
-      path: "/",
+      index: true,
       element: (
         <Suspense fallback={<Loading />}>
           <LazyMenuIndex />

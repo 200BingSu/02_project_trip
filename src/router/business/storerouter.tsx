@@ -12,7 +12,7 @@ const LazyStoreEdit = lazy(
 const storeRouter = () => {
   return [
     {
-      path: "/",
+      index: true,
       element: (
         <Suspense fallback={<Loading />}>
           <LazyStoreIndex />
