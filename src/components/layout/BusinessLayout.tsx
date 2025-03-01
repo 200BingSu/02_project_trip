@@ -1,3 +1,5 @@
+import { Outlet } from "react-router-dom";
+
 const BusinessLayout = () => {
   //navigate
   //   const navigate = useNavigate();
@@ -7,7 +9,11 @@ const BusinessLayout = () => {
   //   if (role[0] !== "business") {
   //     return navigate("/signin");
   //   }
-  return <div>BusinessLayout</div>;
+  return (
+    <div>
+      <Outlet />
+    </div>
+  );
 };
 
 export default BusinessLayout;
