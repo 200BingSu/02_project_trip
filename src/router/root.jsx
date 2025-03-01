@@ -32,7 +32,8 @@ const LazyNotification = lazy(
 const LazyPayment = lazy(() => import("../pages/payment/PaymentIndex"));
 const LazySchedule = lazy(() => import("../pages/schedule/Schedule"));
 const LazyScheduleBoard = lazy(
-  () => import("../pages/scheduleBoard/ScheduleBoard"),
+  () => import("../pages/scheduleboard/ScheduleBoard"),
+
 );
 const LazySearch = lazy(() => import("../pages/search/SearchIndex"));
 const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
