@@ -1,6 +1,8 @@
-export enum ProviderType {
-  KAKAO = "KAKAO",
-  LOCAL = "LOCAL",
+import { ProviderType } from "./enum";
+
+// children
+export interface Ichildren {
+  children?: React.ReactNode;
 }
 
 export interface Iuser {
