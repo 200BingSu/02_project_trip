@@ -1,18 +1,20 @@
 import { lazy, Suspense } from "react";
-import Loading from "../components/loading/Loading";
+import Loading from "../../components/loading/Loading";
 
 const usertrouter = () => {
-  const LazyUserIndex = lazy(() => import("../pages/user/UserIndex"));
-  const LazyUserEdit = lazy(() => import("../pages/user/UserEdit"));
-  const LazyUserTrips = lazy(() => import("../pages/user/UserTrips"));
-  const LazyUserRecentList = lazy(() => import("../pages/user/UserRecentList"));
-  const LazyUserBooking = lazy(() => import("../pages/user/UserBooking"));
-  const LazyUserWishList = lazy(() => import("../pages/user/UserWishList"));
-  const LazyUserrRview = lazy(() => import("../pages/user/UserrRview"));
-  const LazyUserCoupon = lazy(() => import("../pages/user/UserCoupon"));
-  const LazyUserTrip = lazy(() => import("../pages/user/UserTrip"));
-  const LazyFindPw = lazy(() => import("../pages/user/FindPw"));
-  const LazyChangePw = lazy(() => import("../pages/user/ChangePw"));
+  const LazyUserIndex = lazy(() => import("../../pages/user/UserIndex"));
+  const LazyUserEdit = lazy(() => import("../../pages/user/UserEdit"));
+  const LazyUserTrips = lazy(() => import("../../pages/user/UserTrips"));
+  const LazyUserRecentList = lazy(
+    () => import("../../pages/user/UserRecentList"),
+  );
+  const LazyUserBooking = lazy(() => import("../../pages/user/UserBooking"));
+  const LazyUserWishList = lazy(() => import("../../pages/user/UserWishList"));
+  const LazyUserrRview = lazy(() => import("../../pages/user/UserrRview"));
+  const LazyUserCoupon = lazy(() => import("../../pages/user/UserCoupon"));
+  const LazyUserTrip = lazy(() => import("../../pages/user/UserTrip"));
+  const LazyFindPw = lazy(() => import("../../pages/user/FindPw"));
+  const LazyChangePw = lazy(() => import("../../pages/user/ChangePw"));
 
   return [
     {

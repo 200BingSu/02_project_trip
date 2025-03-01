@@ -1,3 +1,5 @@
+import { Outlet } from "react-router-dom";
+
 const BusinessLayout = () => {
   //navigate
   //   const navigate = useNavigate();
@@ -7,7 +9,13 @@ const BusinessLayout = () => {
   //   if (role[0] !== "business") {
   //     return navigate("/signin");
   //   }
-  return <div>BusinessLayout</div>;
+  return (
+    <div className="max-w-[768px] min-w-xs mx-auto relative h-screen ">
+      {/* {path === "/" ? <MainHeader /> : <Header />} */}
+
+      <Outlet />
+    </div>
+  );
 };
 
 export default BusinessLayout;
