@@ -15,7 +15,7 @@ const LazyEditCoupon = lazy(
 const couponRouter = () => {
   return [
     {
-      path: "/",
+      index: true,
       element: (
         <Suspense fallback={<Loading />}>
           <LazyCouponIndex />

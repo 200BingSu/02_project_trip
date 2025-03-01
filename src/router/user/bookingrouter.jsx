@@ -1,13 +1,15 @@
 // bookingRouter 수정
 import { lazy, Suspense } from "react";
-import Loading from "../components/loading/Loading";
+import Loading from "../../components/loading/Loading";
 
 const bookingRouter = () => {
-  const LazyBookingIndex = lazy(() => import("../pages/bookings/BookingIndex"));
-  const LazyCompleteBooking = lazy(
-    () => import("../pages/bookings/CompleteBooking"),
+  const LazyBookingIndex = lazy(
+    () => import("../../pages/bookings/BookingIndex"),
   );
-  const LazyWaiting = lazy(() => import("../pages/bookings/Waiting"));
+  const LazyCompleteBooking = lazy(
+    () => import("../../pages/bookings/CompleteBooking"),
+  );
+  const LazyWaiting = lazy(() => import("../../pages/bookings/Waiting"));
   return [
     {
       path: "index",
