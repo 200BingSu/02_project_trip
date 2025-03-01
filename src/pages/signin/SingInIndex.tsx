@@ -8,7 +8,7 @@ import { tsUserAtom } from "../../atoms/tsuserAtom";
 import { USER } from "../../constants/api";
 import "../../styles/antd-styles.css";
 import { getCookie, removeCookie, setCookie } from "../../utils/cookie";
-import { ProviderType } from "../../types/interface";
+import { ProviderType } from "../../types/enum";
 
 //interface
 interface IPostLogin {
