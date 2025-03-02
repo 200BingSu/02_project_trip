@@ -3,9 +3,11 @@ import Loading from "../../components/loading/Loading";
 
 const contentsRouter = () => {
   const LazyContentsIndex = lazy(
-    () => import("../../pages/contents/ContentIndex"),
+    () => import("../../pages/user/contents/ContentIndex"),
   );
-  const LazyPostReview = lazy(() => import("../../pages/contents/PostReview"));
+  const LazyPostReview = lazy(
+    () => import("../../pages/user/contents/PostReview"),
+  );
   return [
     {
       path: "index",

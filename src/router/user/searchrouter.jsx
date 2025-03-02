@@ -3,16 +3,16 @@ import Loading from "../../components/loading/Loading.jsx";
 
 const searchRouter = () => {
   const LazySearchLocation = lazy(
-    () => import("../../pages/search/SearchLocation.jsx"),
+    () => import("../../pages/user/search/SearchLocation.jsx"),
   );
   const LazySearchContents = lazy(
-    () => import("../../pages/search/SearchContents.jsx"),
+    () => import("../../pages/user/search/SearchContents.jsx"),
   );
   const LazySearchTrip = lazy(
-    () => import("../../pages/search/SearchTrip.jsx"),
+    () => import("../../pages/user/search/SearchTrip.jsx"),
   );
   const LazySearchStrf = lazy(
-    () => import("../../pages/search/SearchStrf.jsx"),
+    () => import("../../pages/user/search/SearchStrf.jsx"),
   );
   return [
     {

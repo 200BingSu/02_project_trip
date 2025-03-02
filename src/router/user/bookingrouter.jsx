@@ -4,12 +4,12 @@ import Loading from "../../components/loading/Loading";
 
 const bookingRouter = () => {
   const LazyBookingIndex = lazy(
-    () => import("../../pages/bookings/BookingIndex"),
+    () => import("../../pages/user/bookings/BookingIndex"),
   );
   const LazyCompleteBooking = lazy(
-    () => import("../../pages/bookings/CompleteBooking"),
+    () => import("../../pages/user/bookings/CompleteBooking"),
   );
-  const LazyWaiting = lazy(() => import("../../pages/bookings/Waiting"));
+  const LazyWaiting = lazy(() => import("../../pages/user/bookings/Waiting"));
   return [
     {
       path: "index",
