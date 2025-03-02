@@ -14,7 +14,7 @@ import RecentList from "../components/main/RecentList";
 import RecommendList from "../components/main/RecommendList";
 import { getCookie, removeCookie } from "../utils/cookie";
 import Footer from "./Footer";
-import UserIndex from "./user/UserIndex";
+import UserIndex from "../pages/user/user/UserIndex";
 import jwtAxios from "../apis/jwt";
 
 const Index = () => {
