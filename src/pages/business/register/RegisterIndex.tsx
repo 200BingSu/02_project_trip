@@ -1,4 +1,4 @@
-import { Button, message, Steps } from "antd";
+import { Button, message, Popover, Steps } from "antd";
 import { useRef, useState, forwardRef, RefObject } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import Step2 from "../../../components/business/register/Step2";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { moveTo } from "../../../utils/moveTo";
 import Step3 from "../../../components/business/register/Step3";
+import { AiOutlineQuestionCircle } from "react-icons/ai";
 
 export interface StepRef {
   categoryRef?: React.RefObject<HTMLLIElement>;
@@ -27,6 +28,9 @@ const RegisterIndex = (): JSX.Element => {
   const navigate = useNavigate();
   const navigateToBack = () => {
     navigate("/business");
+  };
+  const navigateToComfirm = () => {
+    navigate("/business/register/confirm");
   };
   //recoil
   const registerData = useRecoilValue(registerAtom);
@@ -161,17 +165,25 @@ const RegisterIndex = (): JSX.Element => {
           className="py-5"
           responsive={false}
         />
-        <div className="w-full h-full px-4 mb-8">{steps[current].content}</div>
+        <div className="px-4 flex flex-col gap-1">
+          <h2 className="text-2xl font-semibold text-slate-600">
+            업체의 정보를 작성해주세요({current + 1}/3)
+          </h2>
+          <p className="text-xs text-slate-400">
+            허위 정보 기재 시 숙소 삭제, 이용 제한 및 법적 책임이 발생할 수
+            있으니
+            <br /> 정확한 정보를 입력해 주세요.
+          </p>
+        </div>
+        <div className="w-full h-full px-4 mb-4">{steps[current].content}</div>
         <div
           className={`px-4 pb-8 flex items-center gap-4 ${current === 0 ? "justify-end" : "justify-between"}`}
         >
           {current > 0 && (
             <Button
-              style={{
-                margin: "0 8px",
-              }}
               onClick={() => prev()}
               size="large"
+              className="max-h-[60px] h-[16vw]"
             >
               <IoIosArrowBack />
               이전
@@ -186,7 +198,12 @@ const RegisterIndex = (): JSX.Element => {
             </p>
           )}
           {current === steps.length - 1 && (
-            <Button type="primary" size="large">
+            <Button
+              type="primary"
+              size="large"
+              className="max-h-[60px] h-[16vw]"
+              onClick={navigateToComfirm}
+            >
               등록 신청
             </Button>
           )}
@@ -196,6 +213,7 @@ const RegisterIndex = (): JSX.Element => {
               variant="solid"
               onClick={() => next()}
               size="large"
+              className="max-h-[60px] h-[16vw]"
             >
               다음
               <IoIosArrowForward />

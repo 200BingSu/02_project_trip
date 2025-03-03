@@ -33,7 +33,7 @@ export interface Imenu {
   name: string;
   price: number;
   addPrice?: number;
-  optionList?: number[];
+  roomList?: string[];
 }
 
 export interface ILocation {

@@ -1,7 +1,7 @@
 import { Select, TimePicker, Upload, UploadFile } from "antd";
 import ImgCrop from "antd-img-crop";
 import dayjs from "dayjs";
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { registerAtom } from "../../../atoms/registerAtom";
 import { StepRef } from "../../../pages/business/register/RegisterIndex";
@@ -18,7 +18,30 @@ const Step2 = ({
   const [register, setRegister] = useRecoilState(registerAtom);
 
   // 파일 업로드
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileList, setFileList] = useState<UploadFile[]>(() => {
+    // Initialize fileList from register.image if it exists
+    if (register.image && register.image.length > 0) {
+      return register.image.map(item => ({
+        uid: item.uid,
+        name: item.name || "image.jpg",
+        status: "done",
+        url: item.originFileObj ? URL.createObjectURL(item.originFileObj) : "",
+      }));
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    // Cleanup URLs when component unmounts
+    return () => {
+      fileList.forEach(file => {
+        if (file.url && file.url.startsWith("blob:")) {
+          URL.revokeObjectURL(file.url);
+        }
+      });
+    };
+  }, [fileList]);
+
   const onChange = ({ fileList: newFileList }: any) => {
     setFileList(newFileList);
     setRegister(prev => ({

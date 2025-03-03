@@ -22,6 +22,15 @@ export const registerAtom = atom<Istore>({
     checkTime: { checkIn: "", checkOut: "" },
     holiday: { frequency: "", day: [] },
     bio: "",
-    menuList: [],
+    menuList: [
+      {
+        menuId: 0,
+        menuPic: [],
+        name: "",
+        price: 0,
+        addPrice: 0,
+        roomList: [],
+      },
+    ],
   },
 });
