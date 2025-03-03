@@ -1,3 +1,4 @@
+import type { InputRef } from "antd";
 import {
   Button,
   Divider,
@@ -9,23 +10,88 @@ import {
   Upload,
   UploadFile,
 } from "antd";
-import React, { useRef, useState, useEffect } from "react";
-import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+import ImgCrop from "antd-img-crop";
+import { valueType } from "antd/es/statistic/utils";
+import React, { useEffect, useRef, useState } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
 import { useRecoilState } from "recoil";
 import { registerAtom } from "../../../atoms/registerAtom";
-import ImgCrop from "antd-img-crop";
-import type { InputRef } from "antd";
+import { Imenu } from "../../../types/interface";
+
+interface optionType {
+  label: string;
+  value: string;
+  disabled: boolean;
+}
 
 const Step3 = () => {
   // recoil
   const [register, setRegister] = useRecoilState(registerAtom);
   //useState
-  const [items, setItems] = useState<string[]>([]);
+  const [menus, setMenus] = useState<Imenu[]>([]);
+  const [items, setItems] = useState<optionType[]>([]);
+  useEffect(() => {
+    console.log(items);
+  }, [items]);
   const [roomNumber, setRoomNumber] = useState<string>("");
   // 폼
   const [form] = Form.useForm();
   const onFinish = (values: any) => {
     console.log(values);
+  };
+  // 메뉴 추가
+  const addMenu = (): void => {
+    setMenus([
+      ...menus,
+      {
+        menuId: Date.now(),
+        menuPic: [],
+        name: "",
+        price: 0,
+        addPrice: 0,
+        roomList: [],
+      },
+    ]);
+    setRegister(prev => ({
+      ...prev,
+      menuList: [
+        ...(prev.menuList || []),
+        {
+          menuId: Date.now(),
+          menuPic: [],
+          name: "",
+          price: 0,
+          addPrice: 0,
+          roomList: [],
+        },
+      ],
+    }));
+  };
+  const handleImageChange = (file: any, id: any) => {
+    const uploadFile: UploadFile = {
+      uid: file.uid || `-${Date.now()}`,
+      name: file.name,
+      status: "done",
+      url: URL.createObjectURL(file),
+      originFileObj: file,
+    };
+
+    setMenus(prevMenus =>
+      prevMenus.map(menu =>
+        menu.menuId === id
+          ? { ...menu, menuPic: [...(menu.menuPic || []), uploadFile] }
+          : menu,
+      ),
+    );
+    setRegister(prevRegister => ({
+      ...prevRegister,
+      menuList: prevRegister.menuList?.map(menu =>
+        menu.menuId === id
+          ? { ...menu, menuPic: [...(menu.menuPic || []), uploadFile] }
+          : menu,
+      ),
+    }));
+    return false;
   };
   // 객실 번호 추가
   const inputRef = useRef<InputRef>(null);
@@ -37,7 +103,10 @@ const Step3 = () => {
   ) => {
     e.preventDefault();
     if (roomNumber.trim() !== "") {
-      setItems([...items, roomNumber]);
+      setItems([
+        ...items,
+        { label: roomNumber, value: roomNumber, disabled: false },
+      ]);
       setRoomNumber("");
       setTimeout(() => {
         inputRef.current?.focus();
@@ -46,7 +115,22 @@ const Step3 = () => {
   };
   // 파일 업로드
   const [fileListMap, setFileListMap] = useState<Record<number, UploadFile[]>>(
-    {},
+    () => {
+      const initialFileListMap: Record<number, UploadFile[]> = {};
+      register.menuList?.forEach((menu, index) => {
+        if (menu.menuPic && menu.menuPic.length > 0) {
+          initialFileListMap[index] = menu.menuPic.map(item => ({
+            uid: item.uid,
+            name: item.name || "image.jpg",
+            status: "done",
+            url: item.originFileObj
+              ? URL.createObjectURL(item.originFileObj)
+              : "",
+          }));
+        }
+      });
+      return initialFileListMap;
+    },
   );
 
   const onChange =
@@ -73,19 +157,114 @@ const Step3 = () => {
     imgWindow?.document.write(image.outerHTML);
   };
 
+  // input 변경
+  const handleChangeInput = (
+    item: Imenu,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setRegister(prev => ({
+      ...prev,
+      menuList: prev.menuList?.map(menu =>
+        menu.menuId === item.menuId ? { ...menu, name: e.target.value } : menu,
+      ),
+    }));
+  };
+  // inputNum 변경
+  const handleChangeInputNum = (
+    item: Imenu,
+    key: string,
+    value: valueType | null,
+  ) => {
+    setRegister(prev => ({
+      ...prev,
+      menuList: prev.menuList?.map(menu =>
+        menu.menuId === item.menuId ? { ...menu, [key]: value } : menu,
+      ),
+    }));
+  };
+  // select 변경
+  const handleSelect = (item: Imenu, e: string[]) => {
+    // 모든 방의 disabled 상태를 초기화
+    const resetItems = items.map(room => ({
+      ...room,
+      disabled: false,
+    }));
+
+    // 다른 메뉴들이 선택한 방 번호들을 수집
+    const selectedRooms =
+      register.menuList?.reduce((acc: string[], menu) => {
+        if (menu.menuId !== item.menuId && menu.roomList) {
+          return [...acc, ...menu.roomList];
+        }
+        return acc;
+      }, []) || [];
+
+    // 선택된 방들의 disabled 상태를 true로 설정
+    const updatedItems = resetItems.map(room => ({
+      ...room,
+      disabled: selectedRooms.includes(room.value),
+    }));
+
+    setItems(updatedItems);
+
+    // 현재 메뉴의 roomList 업데이트
+    setRegister(prev => ({
+      ...prev,
+      menuList: prev.menuList?.map(menu =>
+        menu.menuId === item.menuId ? { ...menu, roomList: e } : menu,
+      ),
+    }));
+  };
   // 컴포넌트 마운트 시 초기 필드 추가
+  // useEffect(() => {
+  //   // 초기 메뉴 하나 추가
+  //   setMenus([
+  //     {
+  //       menuId: 0,
+  //       menuPic: [],
+  //       name: "",
+  //       price: 0,
+  //       addPrice: 0,
+  //       roomList: [],
+  //     },
+  //   ]);
+  //   form.setFieldsValue({
+  //     menuList: [""], // 빈 필드 하나로 시작
+  //   });
+  // }, []);
+
   useEffect(() => {
-    form.setFieldsValue({
-      menuList: [""], // 빈 필드 하나로 시작
-    });
-  }, []);
+    return () => {
+      // Cleanup created URLs
+      Object.values(fileListMap).forEach(fileList => {
+        fileList.forEach(file => {
+          if (file.url && file.url.startsWith("blob:")) {
+            URL.revokeObjectURL(file.url);
+          }
+        });
+      });
+    };
+  }, [fileListMap]);
+
+  useEffect(() => {
+    if (register.menuList && register.menuList.length > 0) {
+      const formValues = {
+        menus: register.menuList.map(menu => ({
+          name: menu.name,
+          price: menu.price,
+          addPrice: menu.addPrice,
+          roomList: menu.roomList,
+          menuPic: menu.menuPic,
+        })),
+      };
+      form.setFieldsValue(formValues);
+      setMenus(register.menuList);
+    }
+  }, [register.menuList]);
 
   return (
     <div>
       <div className="flex flex-col gap-5">
-        <h2 className="text-2xl font-semibold text-slate-600">
-          업체의 정보를 작성해주세요(3/3)
-        </h2>
         {/* 폼 */}
         <section className="flex flex-col gap-3">
           <ul className="flex flex-col gap-10 py-5">
@@ -96,208 +275,195 @@ const Step3 = () => {
               <p className="text-base text-slate-500">
                 최소 1개의 메뉴를 등록해주세요.
               </p>
-
-              <Form
-                onFinish={onFinish}
-                form={form}
-                initialValues={{ menuList: [""] }}
-              >
-                <Form.List name="menuList">
-                  {(fields, { add, remove }) => (
-                    <>
-                      {fields.map(({ name, key }, index) => (
-                        <div key={key} className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className="w-[32px] h-[32px] flex items-center justify-center border border-slate-300 rounded-full transition-all duration-300
-                            hover:border-primary hover:text-primary"
-                          >
-                            <AiOutlineMinus />
-                          </button>
-                          <div className="w-full">
-                            <Form.Item
-                              name={`menu_pic-${name}`}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "메뉴 사진을 입력해주세요.",
-                                },
-                              ]}
-                              className="w-full"
-                              help="메뉴 사진은 1장만 등록해주세요."
-                            >
-                              <ImgCrop rotationSlider>
-                                <Upload
-                                  listType="picture-card"
-                                  fileList={fileListMap[index] || []}
-                                  onChange={onChange(index)}
-                                  onPreview={onPreview}
-                                  beforeUpload={() => false}
-                                  accept="image/*"
-                                  maxCount={1}
-                                >
-                                  + Upload
-                                </Upload>
-                              </ImgCrop>
-                            </Form.Item>
-                            <Form.Item
-                              name={name}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "메뉴 이름을 입력해주세요.",
-                                },
-                              ]}
-                              label={
-                                <p className="text-slate-700 text-sm">
-                                  메뉴 이름
-                                </p>
-                              }
-                              className="w-full"
-                            >
-                              <Input
-                                required
-                                placeholder="메뉴 이름을 입력해주세요. 예) 트윈룸"
-                                size="large"
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name={`price-${name}`}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "메뉴 가격을 입력해주세요.",
-                                },
-                              ]}
-                              label={
-                                <p className="text-slate-700 text-sm">
-                                  메뉴 가격
-                                </p>
-                              }
-                              className="w-full"
-                            >
-                              <InputNumber
-                                required
-                                controls={false}
-                                formatter={value =>
-                                  `${value}원`.replace(
-                                    /\B(?=(\d{3})+(?!\d))/g,
-                                    ",",
-                                  )
-                                }
-                                placeholder="메뉴 가격을 입력해주세요. 예) 100000"
-                                size="large"
-                                className="w-full"
-                                defaultValue={0}
-                              />
-                            </Form.Item>
-                            {register.category === "숙소" && (
-                              <>
-                                <Form.Item
-                                  name={`addPrice-${name}`}
-                                  label={
-                                    <p className="text-slate-700 text-sm">
-                                      <i className="text-transparent">*</i> 추가
-                                      금액
-                                    </p>
-                                  }
-                                  help="* 지정된 인원 이상이 객실에 숙박할 경우, 추가되는 금액입니다. "
-                                  className="w-full"
-                                >
-                                  <InputNumber
-                                    required
-                                    controls={false}
-                                    formatter={value =>
-                                      `${value}원`.replace(
-                                        /\B(?=(\d{3})+(?!\d))/g,
-                                        ",",
-                                      )
-                                    }
-                                    placeholder="추가 금액을 입력해주세요. 예) 50000"
-                                    size="large"
-                                    className="w-full"
-                                    defaultValue={0}
-                                  />
-                                </Form.Item>
-                                <Form.Item
-                                  name={`roomList-${name}`}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "객실 번호를 입력해주세요.",
-                                    },
-                                  ]}
-                                  label={
-                                    <p className="text-slate-700 text-sm">
-                                      객실 번호
-                                    </p>
-                                  }
-                                  help="* 다수의 객실 번호가 존재할 경우, 쉼표로 나열해주세요. "
-                                  className="w-full"
-                                >
-                                  <Select
-                                    size="large"
-                                    placeholder="객실 번호를 입력해주세요"
-                                    mode="multiple"
-                                    allowClear
-                                    dropdownRender={menu => (
-                                      <>
-                                        {menu}
-                                        <Divider
-                                          style={{
-                                            margin: "8px 0",
-                                          }}
-                                        />
-                                        <Space
-                                          style={{
-                                            padding: "0 8px 4px",
-                                          }}
-                                        >
-                                          <Input
-                                            placeholder="객실 번호"
-                                            ref={inputRef}
-                                            value={roomNumber}
-                                            onChange={onRoomNumberChange}
-                                            onKeyDown={e => e.stopPropagation()}
-                                            onPressEnter={addItem}
-                                          />
-                                          <Button
-                                            type="text"
-                                            icon={<AiOutlinePlus />}
-                                            onClick={addItem}
-                                          >
-                                            추가
-                                          </Button>
-                                        </Space>
-                                      </>
-                                    )}
-                                    options={items.map(item => ({
-                                      label: item,
-                                      value: item,
-                                    }))}
-                                  />
-                                </Form.Item>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                      <Button
-                        type="primary"
-                        onClick={() => add()}
-                        className="w-fit flex gap-[5px] items-center"
-                        size="large"
+              <div>
+                <Form
+                  form={form}
+                  onFinish={values => {
+                    // 이미지 포함 데이터 콘솔 출력
+                    const finalData = values.menus.map(
+                      (item: any, index: any) => ({
+                        ...item,
+                        menuPic: menus[index].menuPic, // 이미지 추가
+                      }),
+                    );
+                    console.log("폼 제출 데이터:", finalData);
+                  }}
+                  layout="vertical"
+                  className="flex flex-col gap-5"
+                >
+                  {register.menuList?.map((item, index) => (
+                    <div
+                      key={item.menuId}
+                      className="border border-slate-300 rounded-lg p-5"
+                    >
+                      <Form.Item
+                        label="이미지 업로드"
+                        help="메뉴 사진은 1장만 등록됩니다."
+                        name={["menus", index, "menuPic"]}
                       >
-                        <i>
-                          <AiOutlinePlus />
-                        </i>
-                        메뉴 추가
-                      </Button>
-                    </>
-                  )}
-                </Form.List>
-              </Form>
+                        <ImgCrop rotationSlider>
+                          <Upload
+                            listType="picture-card"
+                            fileList={fileListMap[index] || []}
+                            onChange={onChange(index)}
+                            onPreview={onPreview}
+                            beforeUpload={file =>
+                              handleImageChange(file, item.menuId)
+                            }
+                            accept="image/*"
+                            maxCount={1}
+                          >
+                            + Upload
+                          </Upload>
+                        </ImgCrop>
+                      </Form.Item>
+                      <Form.Item
+                        name={["menus", index, "name"]}
+                        label={`메뉴 ${index + 1} 이름`}
+                        rules={[
+                          {
+                            required: true,
+                            message: "메뉴 이름을 입력해주세요.",
+                          },
+                        ]}
+                        className="w-full"
+                      >
+                        <Input
+                          required
+                          placeholder="메뉴 이름을 입력해주세요. 예) 트윈룸"
+                          size="large"
+                          value={item.name}
+                          onChange={e => handleChangeInput(item, e)}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={["menus", index, "price"]}
+                        label={`메뉴 ${index + 1} 가격`}
+                        rules={[
+                          {
+                            required: true,
+                            message: "메뉴 가격을 입력해주세요.",
+                          },
+                        ]}
+                        className="w-full"
+                      >
+                        <InputNumber
+                          required
+                          controls={false}
+                          formatter={value => `${value}원`}
+                          placeholder="메뉴 가격을 입력해주세요. 예) 100000"
+                          size="large"
+                          className="w-full"
+                          value={item.price}
+                          onChange={e => handleChangeInputNum(item, "price", e)}
+                        />
+                      </Form.Item>
+                      {register.category === "숙소" && (
+                        <>
+                          <Form.Item
+                            name={["menus", index, "addPrice"]}
+                            label={
+                              <p className="text-slate-700 text-sm">
+                                <i className="text-transparent">*</i> 추가 금액
+                              </p>
+                            }
+                            help="* 지정된 인원 이상이 객실에 숙박할 경우, 추가되는 금액입니다. "
+                            className="w-full"
+                          >
+                            <InputNumber
+                              required
+                              controls={false}
+                              formatter={value =>
+                                `${value}원`.replace(
+                                  /\B(?=(\d{3})+(?!\d))/g,
+                                  ",",
+                                )
+                              }
+                              placeholder="추가 금액을 입력해주세요. 예) 50000"
+                              size="large"
+                              className="w-full"
+                              value={item.addPrice}
+                              onChange={e =>
+                                handleChangeInputNum(item, "addPrice", e)
+                              }
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name={["menus", index, "roomList"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "객실 번호를 입력해주세요.",
+                              },
+                            ]}
+                            label={
+                              <p className="text-slate-700 text-sm">
+                                객실 번호
+                              </p>
+                            }
+                            help="* 다수의 객실 번호가 존재할 경우, 쉼표로 나열해주세요. "
+                            className="w-full"
+                          >
+                            <Select
+                              size="large"
+                              placeholder="객실 번호를 입력해주세요"
+                              mode="multiple"
+                              allowClear
+                              onChange={e => handleSelect(item, e)}
+                              value={item.roomList}
+                              options={items.map((roomNum: optionType) => ({
+                                label: roomNum.label,
+                                value: roomNum.value,
+                                disabled: roomNum.disabled,
+                              }))}
+                              dropdownRender={menu => (
+                                <>
+                                  {menu}
+                                  <Divider
+                                    style={{
+                                      margin: "8px 0",
+                                    }}
+                                  />
+                                  <Space
+                                    style={{
+                                      padding: "0 8px 4px",
+                                    }}
+                                  >
+                                    <Input
+                                      placeholder="객실 번호"
+                                      ref={inputRef}
+                                      value={roomNumber}
+                                      onChange={onRoomNumberChange}
+                                      onKeyDown={e => e.stopPropagation()}
+                                      onPressEnter={addItem}
+                                    />
+                                    <Button
+                                      type="text"
+                                      icon={<AiOutlinePlus />}
+                                      onClick={addItem}
+                                    >
+                                      추가
+                                    </Button>
+                                  </Space>
+                                </>
+                              )}
+                            />
+                          </Form.Item>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                  <Button
+                    type="dashed"
+                    onClick={addMenu}
+                    size="large"
+                    className="w-fit"
+                  >
+                    <AiOutlinePlus />
+                    메뉴 추가
+                  </Button>
+                </Form>
+              </div>
             </li>
           </ul>
         </section>

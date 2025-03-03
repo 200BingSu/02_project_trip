@@ -90,9 +90,6 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
   return (
     <div>
       <div className="flex flex-col gap-5">
-        <h2 className="text-2xl font-semibold text-slate-600">
-          업체의 정보를 작성해주세요(1/3)
-        </h2>
         {/* 폼 */}
         <section className="flex flex-col gap-3">
           <ul className="flex flex-col gap-10 py-5">
