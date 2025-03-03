@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ChatListProps {
   category: string;
@@ -6,11 +7,19 @@ interface ChatListProps {
 }
 
 const ChatList = ({ category }: ChatListProps): JSX.Element => {
+  // navigate
+  const navigate = useNavigate();
+  const navigateToChatRoom = (roomId: string) => {
+    navigate(`/chatroom?roomId=${roomId}`);
+  };
   console.log(category);
   return (
     <>
       <ul className="flex flex-col">
-        <li className="flex items-center justify-between gap-3 px-4 py-4">
+        <li
+          className="flex items-center justify-between gap-3 px-4 py-4 cursor-pointer"
+          onClick={() => navigateToChatRoom("1")}
+        >
           <div className="flex items-center gap-3">
             {/* 사진 */}
             <div className="w-14 h-14 bg-slate-200 flex items-center justify-center rounded-2xl overflow-hidden">

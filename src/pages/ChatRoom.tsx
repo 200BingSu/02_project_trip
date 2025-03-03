@@ -1,11 +1,11 @@
 import { Client } from "@stomp/stompjs";
 import { Button, Input } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { getCookie } from "../../utils/cookie";
-import TitleHeaderTs from "../layout/header/TitleHeaderTs";
-import { useNavigate } from "react-router-dom";
+import { getCookie } from "../utils/cookie";
+import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { BsFillPatchPlusFill } from "react-icons/bs";
-import jwtAxios from "../../apis/jwt";
+import jwtAxios from "../apis/jwt";
 
 interface ISendMessage {
   message: string;
@@ -58,7 +58,7 @@ const dummyresponse = {
 const dummyResultData = dummyresponse.data;
 const dummyMessageArr: IMessage[] = dummyResultData.message;
 
-const Chat = (): JSX.Element => {
+const ChatRoom = (): JSX.Element => {
   // 쿠키
   const accessToken = getCookie("accessToken");
   // useNavigate
@@ -66,14 +66,17 @@ const Chat = (): JSX.Element => {
   const navigateToBack = () => {
     navigate(-1);
   };
-  // useState
-  const [client, setClient] = useState<Client | null>(null);
+  // 쿼리
+  const [searchParams] = useSearchParams();
+  const roomId = searchParams.get("roomId");
+  // useState & useRef
+  const clientRef = useRef<Client | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
   const [name, setName] = useState<number>(1);
   const [messages, setMessages] = useState<(ISendMessage | string)[]>([]);
-  const [roomId, setRoomId] = useState<number>(1);
   const [inputMessage, setInputMessage] = useState<string>("");
   const connectionRef = useRef<boolean>(false);
+
   useEffect(() => {
     console.log("connectionRef", connectionRef.current);
   }, [connectionRef]);
@@ -89,7 +92,6 @@ const Chat = (): JSX.Element => {
     if (userId !== 0) {
       setName(userId);
     }
-    setRoomId(1);
   }, []);
 
   // api 채팅내역
@@ -134,7 +136,6 @@ const Chat = (): JSX.Element => {
               console.log("파싱된 메세지:", receivedMessage);
               setMessages(prev => [...prev, receivedMessage]);
             } catch (error) {
-              // JSON이 아닌 일반 텍스트 메시지 처리
               console.log("일반 텍스트 메시지:", message.body);
               setMessages(prev => [...prev, message.body]);
             }
@@ -144,6 +145,7 @@ const Chat = (): JSX.Element => {
           },
         );
         setConnected(true);
+        connectionRef.current = true;
         //바로 방 입장
         try {
           await stompClient.publish({
@@ -184,45 +186,50 @@ const Chat = (): JSX.Element => {
         setMessages(prev => [...prev, "STOMP 오류가 발생했습니다."]);
       },
     });
-    setClient(stompClient);
+
+    clientRef.current = stompClient;
 
     return () => {
-      if (stompClient && stompClient.connected) {
+      if (clientRef.current && clientRef.current.connected) {
         console.log(
           "Component unmounting - Connection status:",
-          stompClient.connected,
+          clientRef.current.connected,
         );
-        stompClient.unsubscribe(topic);
-        // 실제 연결 종료를 위해 deactivate 추가
-        stompClient.deactivate();
+        clientRef.current.unsubscribe(topic);
+        clientRef.current.deactivate();
       }
     };
   }, []);
+
   // 클라이언트 연결 활성화
   const connect = (): void => {
-    if (client) {
-      client.activate();
+    if (clientRef.current) {
+      clientRef.current.activate();
     }
     connectionRef.current = true;
   };
+
   // 클라이언트 연결 종료
   const disconnect = (): void => {
-    if (client && client.connected) {
-      // 클라이언트가 존재하고 연결된 상태인지 확인
+    if (clientRef.current && clientRef.current.connected) {
       console.log("연결 해제");
-      client.unsubscribe(topic);
+      clientRef.current.unsubscribe(topic);
       setConnected(false);
       setMessages([]);
       connectionRef.current = false;
     }
   };
 
+  useEffect(() => {
+    connect();
+  }, []);
+
   // 채팅 메시지 전송 함수
   const sendMessage = (): void => {
-    if (client && inputMessage.trim() && connected) {
+    if (clientRef.current && inputMessage.trim() && connected) {
       try {
         console.log("Sending message:", inputMessage);
-        client.publish({
+        clientRef.current.publish({
           destination: "/pub/chat.sendMessage",
           body: JSON.stringify({
             roomId: roomId,
@@ -360,4 +367,4 @@ const Chat = (): JSX.Element => {
   );
 };
 
-export default Chat;
+export default ChatRoom;
