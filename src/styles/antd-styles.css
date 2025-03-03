@@ -30,7 +30,9 @@
 .custom-tooltip .ant-tooltip-inner {
   background-color: #fff !important;
 }
-
+.custom-rate .ant-rate-star {
+  font-size: 1.2rem;
+}
 .custom-rate .ant-rate-star,
 .custom-rate .ant-rate-star-zero {
   margin-inline-end: 3px !important;
@@ -73,6 +75,9 @@
   display: flex;
   gap: 4px;
 }
+.custom-star-wish .ant-rate-star:not(:last-child) {
+  margin-right: 2px;
+}
 
 .custom-form-item,
 .custom-form-input {
@@ -102,4 +107,9 @@
   border: 0;
   background-color: #f1f5f9;
   color: #94a3b8;
+}
+
+.custom-tab .ant-tabs-nav {
+  padding: 0 16px;
+  margin-bottom: 0;
 }
