@@ -10,6 +10,9 @@ import "../../styles/antd-styles.css";
 import { getCookie } from "../../utils/cookie";
 import { RiCloseLargeFill } from "react-icons/ri";
 import jwtAxios from "../../apis/jwt";
+import { CgMoreVerticalAlt } from "react-icons/cg";
+import BottomSheet from "../../components/basic/BottomSheet";
+import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 
 // ✅ DynamicGrid 컴포넌트 추가
 const DynamicGrid = ({ images }) => {
@@ -27,7 +30,7 @@ const DynamicGrid = ({ images }) => {
 
   return (
     <div
-      className={`grid gap-2 ${gridClass} w-full h-[400px] rounded-lg overflow-hidden`}
+      className={`grid gap-1 ${gridClass} w-full aspect-[3/2] rounded-lg overflow-hidden`}
     >
       {images.map((src, index) => {
         let extraClass = "";
@@ -53,6 +56,8 @@ const UserrRview = () => {
   const [reviewInfo, setReviewInfo] = useState([]);
   const [startIndex, setStartIndex] = useState(0); // startIndex 상태 추가
   const [isShowMore, setIsShowMore] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null); // 선택된 아이템 상태 추가
   const accessToken = getCookie("accessToken");
 
   // 사용자 리뷰를 더 가져오기
@@ -108,15 +113,47 @@ const UserrRview = () => {
   };
 
   useEffect(() => {
-    getUserReview();
+    if (startIndex > 0) {
+      getUserReviewMore();
+    } else {
+      getUserReview();
+    }
   }, [startIndex]);
   // startIndex가 변경될 때마다 getUserReview 호출
 
   const navigate = useNavigate();
 
+  const actions = item => [
+    {
+      label: (
+        <div className="flex items-center gap-3 text-lg">
+          <BiSolidEditAlt className="text-slate-400" /> 수정하기
+        </div>
+      ),
+      onClick: () => {
+        console.log("인식");
+      },
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3 text-lg">
+          <BiTrash className="text-slate-400" />
+          삭제하기
+        </div>
+      ),
+      onClick: () => {
+        deleteReview(item);
+        setIsOpen(false);
+      },
+    },
+  ];
+
   return (
     <div>
       <TitleHeader icon="back" title="리뷰" onClick={() => navigate(-2)} />
+      <div className="flex justify-between py-[14px] px-4 border-b-[1px] border-t-[1px] border-slate-100 ">
+        <p className="text-sm font-semibold">총 {reviewInfo.length}개</p>
+      </div>
       <div className="px-4">
         <div>
           <p></p>
@@ -132,7 +169,7 @@ const UserrRview = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <h1
-                    className="flex items-center gap-5 h text-3xl font-bold text-slate-700 mb-3 cursor-pointer"
+                    className="flex items-center gap-2 h text-lg font-semibold text-slate-700 mb-2 cursor-pointer"
                     onClick={() =>
                       navigate(`/contents/index?strfId=${item.strfId}`)
                     }
@@ -141,43 +178,50 @@ const UserrRview = () => {
                     <IoIosArrowForward />
                   </h1>
                 </div>
-                <button
-                  type="button"
-                  className="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-[16px]"
-                  onClick={() => deleteReview(item)}
-                >
-                  삭제
-                </button>
+                <CgMoreVerticalAlt
+                  className="text-xl cursor-pointer"
+                  onClick={e => {
+                    setIsOpen(true);
+                    setSelectedItem(item); // 선택된 아이템 설정
+                  }}
+                />
               </div>
 
-              <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center gap-3 mb-2">
                 <Rate
-                  className="custom-rate flex items-center gap-1"
+                  className="custom-rate flex items-center gap-[2px]"
                   disabled
                   allowHalf
                   defaultValue={item.rating}
                 />
-                <p className="text-slate-500 text-xl">
-                  {item.reviewWriteDate.split(" ")[0]}
+                <p className="text-slate-400 text-base">
+                  {item.reviewWriteDate.split(" ")[0].replace(/-/g, ".")}
                 </p>
               </div>
-              <p className="text-2xl text-slate-700 mb-10 font-normal">
-                {item.content}
-              </p>
+              <p className="text-base text-slate-700 mb-2">{item.content}</p>
               {/* ✅ 기존 코드 → DynamicGrid 컴포넌트로 변경 */}
               <DynamicGrid images={imageUrls} />
             </div>
           );
         })}
         {isShowMore && (
-          <div className="flex justify-center mb-14">
-            <Button onClick={() => setStartIndex(prev => prev + 10)}>
-              <AiOutlinePlus />
+          <div className="flex justify-center py-[14px]">
+            <Button
+              className="text-slate-500 text-base !h-auto py-2 px-5 border-1 border-slate-200 rounded-full"
+              onClick={() => {
+                setStartIndex(prev => prev + 10);
+              }}
+            >
               더보기
             </Button>
           </div>
         )}
       </div>
+      <BottomSheet
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        actions={selectedItem ? actions(selectedItem) : []} // 선택된 아이템을 actions에 전달
+      />
     </div>
   );
 };
