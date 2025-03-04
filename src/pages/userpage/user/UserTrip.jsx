@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import TitleHeader from "../../components/layout/header/TitleHeader";
+import TitleHeader from "../../../components/layout/header/TitleHeader";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { getCookie } from "../../utils/cookie";
+import { getCookie } from "../../../utils/cookie";
 import { BiShow } from "react-icons/bi";
 import { GoThumbsup } from "react-icons/go";
 import { IoReaderOutline } from "react-icons/io5";
-import { TripReviewPic } from "../../constants/pic";
+import { TripReviewPic } from "../../../constants/pic";
 
 const UserTrip = () => {
   const [myTrip, setMyTrip] = useState([]);

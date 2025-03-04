@@ -25,6 +25,7 @@ interface IMessage {
   message: string;
   error?: string | null;
 }
+
 interface IGetChatHistoryRes {
   code: string;
   data: {
@@ -111,8 +112,8 @@ const ChatRoom = (): JSX.Element => {
   }, []);
 
   // 커넥션
-  // const url = `ws://localhost:8080/chat`;
-  const url = `ws://112.222.157.157:5231/chat`;
+  const url = `ws://localhost:8080/chat`;
+  // const url = `ws://112.222.157.157:5231/chat`;
   // 구독 경로
   const topic = `/sub/chat/${roomId}`;
   useEffect(() => {

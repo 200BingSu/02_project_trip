@@ -19,12 +19,12 @@ export interface Iuser {
 }
 
 export interface ICoupon {
-  couponId: string;
+  couponId: number;
   title: string;
   expiredAt: string;
   discountPer: number;
   distributeAt: string;
-  daysLeft: number;
+  daysLeft?: number;
 }
 
 export interface Imenu {

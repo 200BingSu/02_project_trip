@@ -10,7 +10,7 @@ import { getCookie } from "../../../utils/cookie";
 import { Button, Modal, Rate } from "antd";
 import { LiaComment } from "react-icons/lia";
 import Footer from "../../Footer";
-import "../../styles/antd-styles.css";
+import "../../../styles/antd-styles.css";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
 
 const UserRecentList = () => {
