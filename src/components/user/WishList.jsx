@@ -4,8 +4,8 @@ import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
-import { ProductPic } from "../../constants/pic";
 import SearchFilter from "../basic/SearchFilter";
+import { ProductPic } from "../../constants/pic";
 
 const WishList = ({ category }) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -15,51 +15,54 @@ const WishList = ({ category }) => {
   const [orderType, setOrderType] = useState("ratingAvg");
   const navigate = useNavigate();
 
-  const getWishList = async () => {
+  //찜하기 취소
+  const postWishItem = async item => {
+    const sendData = {
+      strfId: item.strfId,
+    };
+    try {
+      const res = await jwtAxios.post(`/api/wish-list`, { ...sendData });
+      setStartIndex(0);
+      await getWishList(0); // startIndex를 0으로 설정하여 데이터 불러오기
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  // 찜하기 가져오기
+  const getWishList = async (index = startIndex) => {
     try {
       const res = await jwtAxios.get(
-        `/api/wish-list?start_idx=${startIndex}&orderType=${orderType}&category=${category}`,
+        `/api/wish-list?start_idx=${index}&orderType=${orderType}&category=${category}`,
       );
-      console.log(res.data);
-      const resultData = res.data;
-      setWishListData(prev =>
-        startIndex === 0 ? resultData.data : [...prev, ...resultData.data],
-      );
-      setIsMore(resultData.more);
+
+      setWishListData(prev => {
+        if (index === 0) {
+          return res.data.data; // 데이터 초기화
+        } else {
+          return [...prev, ...res.data.data]; // 데이터 추가
+        }
+      });
+
+      if (res.data.data) {
+        setStartIndex(index + 10); // 이전 값을 기반으로 증가
+      }
     } catch (error) {
       console.log("찜목록 불러오기 실패", error);
     }
   };
 
-  const postWishItem = async item => {
-    const sendData = {
-      strfId: item.strfId,
-    };
-    console.log("찜하기 데이터:", sendData);
-    try {
-      const res = await jwtAxios.post(`/api/wish-list`, { ...sendData });
-      console.log("찜하기", res.data);
-      const resultData = res.data;
-      if (resultData.code === "200 성공") {
-        setStartIndex(0); // startIndex를 0으로 강제 초기화
-        getWishList(0); // 기존 데이터 초기화 후 다시 불러오기
-      }
-    } catch (error) {
-      console.log("찜하기", error);
-    }
+  // 🔹 category, orderType 변경 시 데이터 초기화 후 새로 불러오기
+  useEffect(() => {
+    setStartIndex(0); // category나 orderType이 변경될 때마다 startIndex 초기화
+    getWishList(); // 데이터 초기화 후 새로 불러오기
+  }, [category, orderType]);
+
+  // 🔹 더보기 버튼 클릭 시 데이터 추가
+  const handleLoadMore = () => {
+    getWishList(startIndex); // 현재 startIndex 값을 명시적으로 전달
+    console.log("Current startIndex:", startIndex);
   };
-
-  // 🔹 카테고리 & 정렬 변경 시 기존 데이터 초기화 및 startIndex 0으로 설정
-  useEffect(() => {
-    setWishListData([]); // 기존 데이터 초기화
-    setStartIndex(0); // startIndex 초기화
-    getWishList(0); // 초기화된 startIndex로 호출
-  }, [category, orderType]); // category, orderType 변경 시 실행
-
-  // 🔹 startIndex가 변경될 때 API 호출
-  useEffect(() => {
-    getWishList();
-  }, [startIndex]); // startIndex 변경될 때 실행
 
   const categoryArr = {
     TOUR: "관광지",
@@ -103,7 +106,7 @@ const WishList = ({ category }) => {
                 }
               >
                 {/* 썸네일 */}
-                <div className="w-32 aspect-square bg-slate-200 rounded-lg overflow-hidden relative">
+                <div className="w-32 min-w-32 aspect-square bg-slate-200 rounded-lg overflow-hidden relative">
                   <img
                     src={`${ProductPic}${item.strfId}/${item.strfPic}`}
                     alt={item.title}
@@ -114,6 +117,8 @@ const WishList = ({ category }) => {
                     onClick={e => {
                       e.stopPropagation();
                       postWishItem(item);
+                      setStartIndex(0); // startIndex 초기화
+                      setWishListData([]); // 데이터 초기화
                     }}
                   />
                 </div>
@@ -121,7 +126,7 @@ const WishList = ({ category }) => {
                 <div className="flex flex-col gap-[5px]">
                   {/* 제목, 지역 제휴 */}
                   <div className="flex gap-[5px] items-center ">
-                    <h3 className="text-lg font-semibold text-slate-700">
+                    <h3 className="text-lg font-medium text-slate-700">
                       {item.strfTitle}
                     </h3>
                   </div>
@@ -160,7 +165,7 @@ const WishList = ({ category }) => {
         <div className="px-[32px] pb-[40px] flex items-center justify-center">
           <Button
             variant="outlined"
-            onClick={() => setStartIndex(prev => prev + 10)}
+            onClick={handleLoadMore}
             className="text-slate-500 text-base !h-auto py-2 px-5 border-1 border-slate-200 rounded-full"
           >
             더보기

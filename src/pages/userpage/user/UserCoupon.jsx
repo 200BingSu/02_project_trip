@@ -1,6 +1,6 @@
 import { Tabs } from "antd";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
-import "../../styles/antd-styles.css";
+import "../../../styles/antd-styles.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { LiaComment } from "react-icons/lia";
@@ -15,10 +15,11 @@ const UserCoupon = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="h-full bg-slate-100">
+    <div className="h-full">
       <TitleHeader icon="back" title="쿠폰함" onClick={() => navigate(-1)} />
-      <div className="px-8">
+      <div>
         <Tabs
+          className="custom-tabs-nav"
           defaultActiveKey="1"
           items={[
             {
