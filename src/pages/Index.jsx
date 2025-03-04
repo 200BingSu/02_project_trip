@@ -31,11 +31,15 @@ const Index = () => {
     try {
       let res;
       if (accessToken) {
-        res = await jwtAxios.get(`/api/home`);
+        res = await axios.get(`/api/home`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
       } else {
         res = await axios.get(`/api/home`);
       }
-      console.log("메인", res.data.data);
+      // console.log("메인", res.data.data);
       const { festivalList, locationList, recentList, recommendList } =
         res.data.data;
 

@@ -7,6 +7,7 @@ const jwtAxios = axios.create();
 const beforeReq = config => {
   // console.log("1. 요청 전에 먼저 전달", config);
   const accessToken = getCookie(`accessToken`);
+  console.log("beforeReq", accessToken);
   if (!accessToken) {
     return Promise.reject({
       response: { data: { error: "accessToken이 없음" } },
