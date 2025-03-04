@@ -2,7 +2,6 @@ import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import TitleHeader from "../../../components/layout/header/TitleHeader";
 import { ProfilePic } from "../../../constants/pic";
 import { useNavigate } from "react-router-dom";
 import { BiSolidCamera } from "react-icons/bi";
@@ -117,7 +116,7 @@ const UserEdit = () => {
   return (
     <div>
       <TitleHeaderTs
-        title="이메일 인증"
+        title="프로필 설정"
         icon="back"
         onClick={() => navigate(-1)}
       />
