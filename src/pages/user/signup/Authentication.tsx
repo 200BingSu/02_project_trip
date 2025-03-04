@@ -90,6 +90,7 @@ const Authentication = (): JSX.Element => {
       />
       <Form
         autoComplete="off"
+        layout="vertical"
         className="mt-6 px-4"
         onFinish={onSubmit} // Form 제출 핸들러 추가
       >
