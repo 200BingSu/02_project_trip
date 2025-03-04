@@ -13,7 +13,7 @@ import TitleHeader from "../../../components/layout/header/TitleHeader";
 import { LocationPic } from "../../../constants/pic";
 import { getCookie } from "../../../utils/cookie";
 import Footer from "../../Footer";
-import "../../styles/antd-styles.css";
+import "../../../styles/antd-styles.css";
 import DockBar from "../../../components/layout/DockBar/DockBar";
 import dayjs from "dayjs";
 import { duration } from "../../../utils/duration";

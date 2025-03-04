@@ -1,14 +1,14 @@
+import { useState } from "react";
 import { AiFillSetting } from "react-icons/ai";
 import { BiBell } from "react-icons/bi";
 import { GoDiscussionOutdated } from "react-icons/go";
+import { IoIosArrowForward } from "react-icons/io";
 import { RxExit } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
-import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { removeCookie } from "../../../utils/cookie";
 import { useResetRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
-import { IoIosArrowForward } from "react-icons/io";
-import { useState } from "react";
+import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+import { removeCookie } from "../../../utils/cookie";
 
 const Mypage = (): JSX.Element => {
   const navigate = useNavigate();
@@ -24,19 +24,28 @@ const Mypage = (): JSX.Element => {
   const menuArr = [
     {
       name: "가게 관리",
-      path: "/business/store",
-      subMenu: [{ name: "기본 정보" }, { name: "운영정보" }],
+      path: `/business/store`,
+      subMenu: [
+        { name: "기본 정보", path: "/business/store?tab=basic" },
+        { name: "운영정보", path: "/business/store?tab=operation" },
+      ],
     },
     {
       name: "메뉴 관리",
       path: "/business/menu",
-      subMenu: [{ name: "메뉴 목록" }, { name: "메뉴 등록" }],
+      subMenu: [
+        { name: "메뉴 목록", path: "/business/menu" },
+        { name: "메뉴 등록", path: "/business/menu/create" },
+      ],
     },
 
     {
       name: "쿠폰 관리",
       path: "/business/coupon",
-      subMenu: [{ name: "쿠폰 목록" }, { name: "쿠폰 발급" }],
+      subMenu: [
+        { name: "쿠폰 목록", path: "/business/coupon" },
+        { name: "쿠폰 발급", path: "/business/coupon/create" },
+      ],
     },
     { name: "예약 관리", path: "/business/booking" },
     { name: "리뷰 관리", path: "/business/review" },
@@ -146,7 +155,8 @@ const Mypage = (): JSX.Element => {
                   {item.subMenu.map((subItem, subIndex) => (
                     <li
                       key={subIndex}
-                      className="px-10 text-xl text-slate-500 py-1"
+                      className="px-10 text-xl text-slate-500 py-1 cursor-pointer"
+                      onClick={() => navigate(subItem.path)}
                     >
                       {subItem.name}
                     </li>

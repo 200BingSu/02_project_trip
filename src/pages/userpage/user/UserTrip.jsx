@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BiShow, BiSolidEditAlt, BiTrash } from "react-icons/bi";
@@ -10,6 +11,7 @@ import BottomSheet from "../../../components/basic/BottomSheet";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
 import { TripReviewPic } from "../../../constants/pic";
 import Footer from "../../Footer";
+
 
 const UserTrip = () => {
   const [myTrip, setMyTrip] = useState([]);
