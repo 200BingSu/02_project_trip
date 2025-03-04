@@ -1,5 +1,14 @@
 import { Button } from "antd";
-import React, { memo } from "react";
+import { memo, MouseEvent } from "react";
+import { PiWarningCircleBold } from "react-icons/pi";
+import { FcHighPriority } from "react-icons/fc";
+
+interface CenterModalProps {
+  handleClickCancle?: () => void;
+  handleClickSubmit: () => void;
+  content: string;
+  type: "warning" | "error" | "info" | "success";
+}
 
 /**
  * ## 중앙 모달
@@ -13,14 +22,15 @@ import React, { memo } from "react";
 const CenterModal = ({
   handleClickCancle = () => {},
   handleClickSubmit = () => {},
-  content = null,
-}) => {
+  content = "",
+  type,
+}: CenterModalProps) => {
   //모달
   const handleBackgroundClick = () => {
     handleClickCancle();
   };
 
-  const handleModalClick = e => {
+  const handleModalClick = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
   return (
@@ -44,27 +54,38 @@ const CenterModal = ({
         onClick={handleModalClick}
       >
         {/* 모달 내용 */}
-        <div>
+        <div className="flex flex-col gap-2">
+          <div className="flex w-full">
+            <i className="text-slate-700 text-4xl">
+              {type === "warning" && (
+                <PiWarningCircleBold className="text-yellow-400" />
+              )}
+              {type === "error" && <FcHighPriority className="text-red-400" />}
+            </i>
+          </div>
           <p className="text-slate-700">{content}</p>
         </div>
         {/* 버튼 목록 */}
 
-        <div className="flex gap-[20px]">
-          <Button
-            color="default"
-            variant="filled"
-            htmlType="button"
-            className="px-[15px] py-[20px] text-[20px] text-slate-400 font-semibold
-            w-full"
-            onClick={handleClickCancle}
-          >
-            취소
-          </Button>
+        <div className="flex gap-[20px] justify-end w-full">
+          {type === "info" ||
+            (type === "success" && (
+              <Button
+                color="default"
+                variant="filled"
+                htmlType="button"
+                className="px-[15px] py-[20px] text-[20px] text-slate-400 font-semibold
+            w-fit"
+                onClick={handleClickCancle}
+              >
+                취소
+              </Button>
+            ))}
           <Button
             type="primary"
             htmlType="button"
             className="px-[15px] py-[20px] text-[20px] text-white font-semibold
-            w-full"
+            w-fit"
             onClick={handleClickSubmit}
           >
             확인
