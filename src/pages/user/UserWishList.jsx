@@ -42,10 +42,6 @@ const UserWishList = () => {
     },
   ];
 
-  const onChange = key => {
-    console.log(key);
-  };
-
   return (
     <div>
       <TitleHeader
