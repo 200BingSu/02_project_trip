@@ -2,9 +2,10 @@ import { Tabs } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TitleHeader from "../../components/layout/header/TitleHeader";
-import WishList from "../../components/user/WishList";
-import "../../styles/antd-styles.css";
+import TitleHeader from "../../../components/layout/header/TitleHeader";
+import WishList from "../../../components/user/WishList";
+import "../../../styles/antd-styles.css";
+
 
 const today = dayjs().format("YYYY-MM-DD");
 

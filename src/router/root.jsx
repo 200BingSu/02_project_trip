@@ -22,6 +22,7 @@ import menuRouter from "./business/menurouter";
 import reviewRouter from "./business/reviewrouter";
 import storeRouter from "./business/storerouter";
 import BusinessLayout from "../components/layout/BusinessLayout";
+import ChatRoom from "../pages/ChatRoom";
 // 사용자 lazys
 const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/bookings/Booking"));
@@ -251,6 +252,10 @@ const router = createBrowserRouter([
         children: storeRouter(),
       },
     ],
+  },
+  {
+    path: "/chatroom",
+    element: <ChatRoom />,
   },
 ]);
 
