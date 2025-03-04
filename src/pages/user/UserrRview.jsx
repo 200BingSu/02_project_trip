@@ -1,18 +1,15 @@
 import { Button, Rate } from "antd";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { AiFillStar, AiOutlinePlus } from "react-icons/ai";
+import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
+import { CgMoreVerticalAlt } from "react-icons/cg";
 import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import jwtAxios from "../../apis/jwt";
+import BottomSheet from "../../components/basic/BottomSheet";
 import TitleHeader from "../../components/layout/header/TitleHeader";
 import { ReviewPic } from "../../constants/pic";
 import "../../styles/antd-styles.css";
 import { getCookie } from "../../utils/cookie";
-import { RiCloseLargeFill } from "react-icons/ri";
-import jwtAxios from "../../apis/jwt";
-import { CgMoreVerticalAlt } from "react-icons/cg";
-import BottomSheet from "../../components/basic/BottomSheet";
-import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 
 // ✅ DynamicGrid 컴포넌트 추가
 const DynamicGrid = ({ images }) => {
@@ -61,65 +58,46 @@ const UserrRview = () => {
   const accessToken = getCookie("accessToken");
 
   // 사용자 리뷰를 더 가져오기
-  const getUserReviewMore = async () => {
-    try {
-      const res = await axios.get(`/api/review/my?start_idx=${startIndex}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      setReviewInfo(prev => [...prev, ...res.data]); // 기존 리뷰에 새 리뷰 추가
-      if (res.data.more === false) {
-        setIsShowMore(false);
-      }
-      console.log("✅  getUserReview  res.data.data:", res.data);
-    } catch (error) {
-      console.log("✅  getUserReview  error:", error);
-    }
-  };
-  // 사용자 리뷰를 가져오기
   const getUserReview = async () => {
     try {
-      const res = await axios.get(`/api/review/my?start_idx=${startIndex}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const res = await jwtAxios.get(`/api/review/my?start_idx=${startIndex}`);
 
-      setReviewInfo(res.data); // 기존 리뷰에 새 리뷰 추가
-      console.log("✅  getUserReview  res.data.data:", res.data);
-      if (res.data.more === false) {
-        setIsShowMore(false);
+      setReviewInfo(prev => [...prev, ...res.data]); // 기존 리뷰에 새 리뷰 추가
+      if (res.data) {
+        setStartIndex(prev => prev + 10);
       }
+      // if (res.data[0].more === false) {
+      //   setIsShowMore(false);
+      // }
+      console.log("✅  getUserReview  res.data.data:", res.data);
     } catch (error) {
       console.log("✅  getUserReview  error:", error);
     }
   };
+
   // 리뷰 삭제하기
   const deleteReview = async item => {
     console.log(item);
+
     try {
-      const res = await jwtAxios.delete(
-        `/api/review/del?review_id=${item.reviewId}`,
-      );
+      await jwtAxios.delete(`/api/review/del?review_id=${item.reviewId}`);
+      setStartIndex(0); // startIndex를 먼저 업데이트
+      setReviewInfo([]); // 기존 리뷰 초기화
       console.log("리뷰 삭제:", res.data);
-      if (res.data) {
-        getUserReview();
-      }
     } catch (error) {
       console.log("리뷰 삭제:", error);
     }
   };
 
   useEffect(() => {
-    if (startIndex > 0) {
-      getUserReviewMore();
-    } else {
+    if (reviewInfo.length === 0) {
       getUserReview();
     }
   }, [startIndex]);
-  // startIndex가 변경될 때마다 getUserReview 호출
+
+  const handleLoadMore = () => {
+    getUserReview();
+  };
 
   const navigate = useNavigate();
 
@@ -208,9 +186,7 @@ const UserrRview = () => {
           <div className="flex justify-center py-[14px]">
             <Button
               className="text-slate-500 text-base !h-auto py-2 px-5 border-1 border-slate-200 rounded-full"
-              onClick={() => {
-                setStartIndex(prev => prev + 10);
-              }}
+              onClick={() => handleLoadMore()}
             >
               더보기
             </Button>

@@ -82,7 +82,7 @@ const RecentList = ({
               navigate(`/contents/index?strfId=${content.strfId}`);
             }}
           >
-            <div className="w-[10vw] aspect-square rounded-[16px] relative overflow-hidden flex-1">
+            <div className="w-[14vw] min-w-32 aspect-square rounded-lg relative overflow-hidden">
               <img
                 src={`${ProductPic}${content.strfId}/${content.strfPic}`}
                 alt={content.strfTitle}
@@ -93,9 +93,9 @@ const RecentList = ({
                 onClick={() => postWishList(item)}
               >
                 {content.wishIn ? (
-                  <AiFillHeart className="text-secondary3 text-xl" />
+                  <AiFillHeart className="text-secondary3 text-lg" />
                 ) : (
-                  <AiOutlineHeart className="text-white text-xl" />
+                  <AiOutlineHeart className="text-white text-lg" />
                 )}
               </i>
             </div>
