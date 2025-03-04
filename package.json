@@ -26,7 +26,6 @@
     "@types/axios": "^0.9.36",
     "@types/react-router-dom": "^5.3.3",
     "antd": "^5.23.1",
-    "antd-img-crop": "^4.24.0",
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
