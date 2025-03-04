@@ -25,7 +25,7 @@ const RecommendList = ({ recommend }) => {
             <img
               src={`${ProductPic}${item.strfId}/${item.strfPic}`}
               alt={item.strfTitle}
-              className="w-full h-[53.3vw] rounded-tr-[36px] rounded-bl-[36px]"
+              className="w-full aspect-[4/3] rounded-tr-[36px] rounded-bl-[36px]"
             />
             <div className=" gap-[6px] mt-3 ml-3 w-full">
               <span className="bg-slate-800 text-white py-1 px-2 rounded-2xl font-light text-xs inline">

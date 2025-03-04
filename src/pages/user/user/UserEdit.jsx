@@ -117,7 +117,7 @@ const UserEdit = () => {
   return (
     <div>
       <TitleHeaderTs
-        title="이메일 인증"
+        title="프로필 설정"
         icon="back"
         onClick={() => navigate(-1)}
       />
