@@ -3,7 +3,6 @@ import { Outlet, useNavigate } from "react-router-dom";
 import SignupType from "../../../components/signup/SignupType";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 
-
 const SignUpIndex = () => {
   const navigate = useNavigate();
   return (
