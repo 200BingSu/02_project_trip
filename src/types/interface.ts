@@ -1,3 +1,4 @@
+import { UploadFile } from "antd";
 import { ProviderType } from "./enum";
 
 // children
@@ -25,7 +26,6 @@ export interface ICoupon {
   distributeAt: string;
   daysLeft: number;
 }
-
 
 export interface Imenu {
   menuId?: number;

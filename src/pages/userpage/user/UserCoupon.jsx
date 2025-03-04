@@ -1,6 +1,6 @@
 import { Tabs } from "antd";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
-import "../../../styles/antd-styles.css";
+import "../../styles/antd-styles.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { LiaComment } from "react-icons/lia";

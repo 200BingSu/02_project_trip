@@ -1,14 +1,15 @@
 import { useRecoilState } from "recoil";
-import { userAtom } from "../../../atoms/userAtom";
+import { userAtom } from "../../atoms/userAtom";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { ProfilePic } from "../../../constants/pic";
+import TitleHeader from "../../components/layout/header/TitleHeader";
+import { ProfilePic } from "../../constants/pic";
 import { useNavigate } from "react-router-dom";
 import { BiSolidCamera } from "react-icons/bi";
 import { Button, Input, message, Typography } from "antd";
 import { IoCloseCircleSharp } from "react-icons/io5";
-import { getCookie } from "../../../utils/cookie";
-import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+import { getCookie } from "../../utils/cookie";
+import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 
 const UserEdit = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
