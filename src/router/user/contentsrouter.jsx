@@ -8,7 +8,7 @@ const contentsRouter = () => {
   const LazyPostReview = lazy(
     () => import("../../pages/userpage/contents/PostReview"),
   );
-  const LazyPostReview = lazy(() => import("../../pages/contents/PostReview"));
+  // const LazyPostReview = lazy(() => import("../../pages/contents/PostReview"));
   return [
     {
       path: "index",
