@@ -113,3 +113,8 @@
   padding: 0 16px;
   margin-bottom: 0;
 }
+
+.custom-tabs-nav .ant-tabs-nav {
+  margin: 0;
+  padding: 0 16px;
+}
