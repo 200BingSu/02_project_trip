@@ -1,4 +1,6 @@
-export const mockCouponList = [
+import { ICoupon } from "../types/interface";
+
+export const mockCouponList: ICoupon[] = [
   {
     couponId: 51,
     title: "예약 쿠폰",
