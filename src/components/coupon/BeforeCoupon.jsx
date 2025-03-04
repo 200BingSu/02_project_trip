@@ -25,7 +25,7 @@ const BeforeCoupon = () => {
   }, []);
 
   return (
-    <div className="mt-6">
+    <div className="bg-slate-100 px-4 py-5">
       {isBefore?.coupons?.map(item => (
         <div
           key={item.couponId}
@@ -41,7 +41,6 @@ const BeforeCoupon = () => {
               {item.expiredAt.split("T")[0].replaceAll("-", ".")}
             </p>
           </div>
-          <div className="relative w-52 bg-primary border-l-4 border-dashed border-slate-100 before:absolute before:w-10 before:h-10 before:bg-slate-100 before:rounded-full before:-top-4 before:-left-[22px]"></div>
         </div>
       ))}
     </div>
