@@ -3,13 +3,13 @@ import Loading from "../../components/loading/Loading";
 
 const scheduleRouter = () => {
   const LazyScheduleIndex = lazy(
-    () => import("../../pages/user/schedule/ScheduleIndex"),
+    () => import("../../pages/userpage/schedule/ScheduleIndex"),
   );
   const LazySelectDays = lazy(
-    () => import("../../pages/user/schedule/SelectDays"),
+    () => import("../../pages/userpage/schedule/SelectDays"),
   );
   const LazyCalculation = lazy(
-    () => import("../../pages/user/calculation/Calculation"),
+    () => import("../../pages/userpage/calculation/Calculation"),
   );
   return [
     {

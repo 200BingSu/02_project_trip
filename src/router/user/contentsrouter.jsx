@@ -3,10 +3,10 @@ import Loading from "../../components/loading/Loading";
 
 const contentsRouter = () => {
   const LazyContentsIndex = lazy(
-    () => import("../../pages/user/contents/ContentIndex"),
+    () => import("../../pages/userpage/contents/ContentIndex"),
   );
   const LazyPostReview = lazy(
-    () => import("../../pages/user/contents/PostReview"),
+    () => import("../../pages/userpage/contents/PostReview"),
   );
   return [
     {

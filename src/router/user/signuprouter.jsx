@@ -2,26 +2,30 @@ import { lazy, Suspense } from "react";
 import Loading from "../../components/loading/Loading";
 
 const signUpRouter = () => {
-  const LazySignUp = lazy(() => import("../../pages/user/signup/SignUpIndex"));
+  const LazySignUp = lazy(
+    () => import("../../pages/userpage/signup/SignUpIndex"),
+  );
   const LazySignUpUser = lazy(
-    () => import("../../pages/user/signup/SignUpUser"),
+    () => import("../../pages/userpage/signup/SignUpUser"),
   );
   const LazySignUpBusiness = lazy(
-    () => import("../../pages/user/signup/SignUpBusiness"),
+    () => import("../../pages/userpage/signup/SignUpBusiness"),
   );
   const LazyConfirmEmail = lazy(
-    () => import("../../pages/user/signup/ConfirmEmail"),
+    () => import("../../pages/userpage/signup/ConfirmEmail"),
   );
   const LazyAuthentication = lazy(
-    () => import("../../pages/user/signup/Authentication"),
+    () => import("../../pages/userpage/signup/Authentication"),
   );
   const LazyConfirmBusinessNum = lazy(
-    () => import("../../pages/user/signup/ConfirmBusinessNum"),
+    () => import("../../pages/userpage/signup/ConfirmBusinessNum"),
   );
   const LazyCompleteSignUp = lazy(
-    () => import("../../pages/user/signup/CompleteSingUP"),
+    () => import("../../pages/userpage/signup/CompleteSingUP"),
   );
-  const LazyKakaoSingup = lazy(() => import("../../pages/user/signup/Kakao"));
+  const LazyKakaoSingup = lazy(
+    () => import("../../pages/userpage/signup/Kakao"),
+  );
 
   return [
     {
