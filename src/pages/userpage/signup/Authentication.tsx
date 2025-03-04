@@ -2,8 +2,8 @@ import { Button, Form, Input } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
-import "../../styles/antd-styles.css";
+import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+import "../../../styles/antd-styles.css";
 
 interface CERTProps {
   email: string;
