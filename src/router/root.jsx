@@ -5,7 +5,11 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import Loading from "../components/loading/Loading";
 import NotFound from "../pages/NotFound";
+<<<<<<< HEAD
 import KaKao2 from "../pages/signup/KaKao2";
+=======
+
+>>>>>>> socket
 import Test from "../pages/Test";
 import bookingRouter from "./user/bookingrouter";
 import contentsRouter from "./user/contentsrouter";
@@ -39,7 +43,7 @@ const LazyScheduleBoard = lazy(
 const LazySearch = lazy(() => import("../pages/search/SearchIndex"));
 const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
 const LazySignUp = lazy(() => import("../pages/signup/SignUp"));
-const LazyUser = lazy(() => import("../pages/user/User"));
+const LazyUser = lazy(() => import("../pages/userpage/User"));
 const LazyContent = lazy(() => import("../pages/contents/Contents"));
 const LazyChat = lazy(() => import("../pages/chat/ChatIndex"));
 
@@ -198,7 +202,6 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-
       { path: "/test", element: <Test /> },
       { path: "*", element: <NotFound /> },
     ],
