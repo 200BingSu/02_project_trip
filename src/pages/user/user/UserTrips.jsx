@@ -127,7 +127,7 @@ const UserTrips = () => {
   const actions = [
     {
       label: "여행 일정 추가하기",
-      onClick: () => console.log("수정하기 클릭"),
+      onClick: () => navigate(`/search/location`),
     },
     {
       label: "초대코드 입력하기",

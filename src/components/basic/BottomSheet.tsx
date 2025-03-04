@@ -30,14 +30,14 @@ const BottomSheet = ({ open, onClose, actions }: BottomSheetProps) => {
   return (
     <motion.div
       tabIndex={-1}
-      className="fixed inset-0 bg-black/50 flex justify-center items-end z-50 overflow-hidden"
+      className="max-w-[768px] w-full left-1/2 -translate-x-1/2 fixed inset-0 bg-black/50 flex justify-center items-end z-50 overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={() => onClose()} // ✅ 배경 클릭 시 onClose 실행
     >
       <motion.div
-        className="bg-white w-full rounded-t-3xl py-5 shadow-lg"
+        className=" bg-white w-full rounded-t-3xl py-5 shadow-lg"
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
