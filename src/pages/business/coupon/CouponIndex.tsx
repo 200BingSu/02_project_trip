@@ -1,7 +1,7 @@
 import { Button, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import CouponItem from "../../../components/business/coupon/CouponItem";
 import StrfInfo from "../../../components/business/StrfInfo";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
@@ -11,6 +11,9 @@ import { getCookie } from "../../../utils/cookie";
 import axios from "axios";
 
 const CouponIndex = (): JSX.Element => {
+  // 쿼리
+  const [searchParams] = useSearchParams();
+  const strfId = Number(searchParams.get("strfId"));
   // 쿠키
   const accessToken = getCookie("accessToken");
   // navigate
@@ -19,7 +22,7 @@ const CouponIndex = (): JSX.Element => {
     navigate("/business/mypage");
   };
   const navigateToCreateCoupon = () => {
-    navigate("/business/coupon/create");
+    navigate(`/business/coupon/create?strfId=${strfId}`);
   };
   //useState
   const [_, setCouponData] = useState<ICoupon[]>([]);
@@ -109,6 +112,7 @@ const CouponIndex = (): JSX.Element => {
                 return (
                   <li key={index}>
                     <CouponItem
+                      strfId={strfId}
                       item={item}
                       selected={
                         selectedCoupon === index && isOpenCouponDetail

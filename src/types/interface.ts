@@ -19,7 +19,8 @@ export interface Iuser {
 }
 
 export interface ICoupon {
-  couponId: number;
+  couponId?: number;
+  strfId?: number;
   title: string;
   expiredAt: string;
   discountPer: number;
