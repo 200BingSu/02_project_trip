@@ -60,3 +60,27 @@ export interface Istore {
   bio?: string;
   menuList?: Imenu[];
 }
+
+export interface ISendMessage {
+  message: string;
+  sender: number;
+  userName?: string;
+  roomId?: number;
+}
+export interface IMessage {
+  chatId: number;
+  senderId: string;
+  senderName?: string;
+  userName?: string;
+  senderPic: string;
+  signedUser: boolean;
+  message: string;
+  error?: string | null;
+}
+
+export interface IGetChatHistoryRes {
+  code: string;
+  data: {
+    message: IMessage[];
+  };
+}

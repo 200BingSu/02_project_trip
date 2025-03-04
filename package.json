@@ -25,6 +25,7 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/axios": "^0.9.36",
     "@types/react-router-dom": "^5.3.3",
+    "@types/stompjs": "^2.3.9",
     "antd": "^5.23.1",
     "antd-img-crop": "^4.24.0",
     "axios": "^1.7.9",
