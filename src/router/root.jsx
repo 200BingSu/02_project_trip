@@ -5,11 +5,6 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import Loading from "../components/loading/Loading";
 import NotFound from "../pages/NotFound";
-<<<<<<< HEAD
-import KaKao2 from "../pages/signup/KaKao2";
-=======
-
->>>>>>> socket
 import Test from "../pages/Test";
 import bookingRouter from "./user/bookingrouter";
 import contentsRouter from "./user/contentsrouter";
@@ -29,23 +24,25 @@ import BusinessLayout from "../components/layout/BusinessLayout";
 import ChatRoom from "../pages/ChatRoom";
 // 사용자 lazys
 const LazyHome = lazy(() => import("../pages/Index"));
-const LazyBooking = lazy(() => import("../pages/bookings/Booking"));
-const LazyBudget = lazy(() => import("../pages/budget/BudgetIndex"));
-const LazyCoupon = lazy(() => import("../pages/coupon/CouponIndex"));
+const LazyBooking = lazy(() => import("../pages/userpage/bookings/Booking"));
+const LazyBudget = lazy(() => import("../pages/userpage/budget/BudgetIndex"));
+const LazyCoupon = lazy(() => import("../pages/userpage/coupon/CouponIndex"));
 const LazyNotification = lazy(
-  () => import("../pages/notification/NotificationIndex"),
+  () => import("../pages/userpage/notification/NotificationIndex"),
 );
-const LazyPayment = lazy(() => import("../pages/payment/PaymentIndex"));
-const LazySchedule = lazy(() => import("../pages/schedule/Schedule"));
+const LazyPayment = lazy(
+  () => import("../pages/userpage/payment/PaymentIndex"),
+);
+const LazySchedule = lazy(() => import("../pages/userpage/schedule/Schedule"));
 const LazyScheduleBoard = lazy(
-  () => import("../pages/scheduleboard/ScheduleBoard"),
+  () => import("../pages/userpage/scheduleboard/ScheduleBoard"),
 );
-const LazySearch = lazy(() => import("../pages/search/SearchIndex"));
-const LazySignIn = lazy(() => import("../pages/signin/SingInIndex"));
-const LazySignUp = lazy(() => import("../pages/signup/SignUp"));
-const LazyUser = lazy(() => import("../pages/userpage/User"));
-const LazyContent = lazy(() => import("../pages/contents/Contents"));
-const LazyChat = lazy(() => import("../pages/chat/ChatIndex"));
+const LazySearch = lazy(() => import("../pages/userpage/search/SearchIndex"));
+const LazySignIn = lazy(() => import("../pages/userpage/signin/SingInIndex"));
+const LazySignUp = lazy(() => import("../pages/userpage/signup/SignUp"));
+const LazyUser = lazy(() => import("../pages/userpage/user/User"));
+const LazyContent = lazy(() => import("../pages/userpage/contents/Contents"));
+const LazyChat = lazy(() => import("../pages/userpage/chat/ChatIndex"));
 
 // 사업자
 const LazyBusiness = lazy(() => import("../pages/business/BusinessIndex"));
