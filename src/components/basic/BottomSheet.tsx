@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect } from "react";
 
 type Action = {
-  label: string;
+  label: string | React.ReactNode;
   onClick: () => void;
 };
 
@@ -12,6 +12,13 @@ type BottomSheetProps = {
   actions?: Action[];
 };
 
+/**
+ * ## BottomSheet
+ *
+ * @param open 바텀 시트 열림 여부
+ * @param onClose 바텀 시트 닫기 함수
+ * @param actions 바텀 시트 액션 목록
+ */
 const BottomSheet = ({ open, onClose, actions }: BottomSheetProps) => {
   useEffect(() => {
     if (open) {
