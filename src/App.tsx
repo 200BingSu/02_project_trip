@@ -57,6 +57,15 @@ const App = () => {
           Rate: {
             starColor: "#0DD1FD",
           },
+          Steps: {
+            colorPrimary: "#6B4AD6",
+            controlItemBgActive: "#AF9DE9",
+            colorTextDescription: "#666666",
+            colorSplit: "#E2E8F0",
+            dotSize: 8,
+            dotCurrentSize: 10,
+            iconSize: 32,
+          },
           Input: {
             colorTextPlaceholder: "#94A3B8",
           },
