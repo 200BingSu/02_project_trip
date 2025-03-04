@@ -82,7 +82,7 @@ const RecentList = ({
               navigate(`/contents/index?strfId=${content.strfId}`);
             }}
           >
-            <div className="w-[34.6vw] aspect-square rounded-[16px] relative overflow-hidden flex-1">
+            <div className="w-[10vw] aspect-square rounded-[16px] relative overflow-hidden flex-1">
               <img
                 src={`${ProductPic}${content.strfId}/${content.strfPic}`}
                 alt={content.strfTitle}
