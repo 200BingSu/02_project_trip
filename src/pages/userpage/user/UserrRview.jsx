@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { AiFillStar, AiOutlinePlus } from "react-icons/ai";
 import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import TitleHeader from "../../../components/layout/header/TitleHeader";
-import { ReviewPic } from "../../../constants/pic";
-import "../../../styles/antd-styles.css";
-import { getCookie } from "../../../utils/cookie";
+import TitleHeader from "../../components/layout/header/TitleHeader";
+import { ReviewPic } from "../../constants/pic";
+import "../../styles/antd-styles.css";
+import { getCookie } from "../../utils/cookie";
 import { RiCloseLargeFill } from "react-icons/ri";
-import jwtAxios from "../../../apis/jwt";
+import jwtAxios from "../../apis/jwt";
 import { CgMoreVerticalAlt } from "react-icons/cg";
-import BottomSheet from "../../../components/basic/BottomSheet";
+import BottomSheet from "../../components/basic/BottomSheet";
 import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 
 // ✅ DynamicGrid 컴포넌트 추가

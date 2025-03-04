@@ -36,9 +36,7 @@ const Step3 = () => {
   const [roomNumber, setRoomNumber] = useState<string>("");
   // 폼
   const [form] = Form.useForm();
-  const onFinish = (values: any) => {
-    console.log(values);
-  };
+
   // 메뉴 추가
   const addMenu = (): void => {
     setMenus([

@@ -103,7 +103,7 @@ const WishList = ({ category }) => {
                 }
               >
                 {/* 썸네일 */}
-                <div className="w-32 min-w-32 aspect-square bg-slate-200 rounded-lg overflow-hidden relative">
+                <div className="w-32 aspect-square bg-slate-200 rounded-lg overflow-hidden relative">
                   <img
                     src={`${ProductPic}${item.strfId}/${item.strfPic}`}
                     alt={item.title}
@@ -121,7 +121,7 @@ const WishList = ({ category }) => {
                 <div className="flex flex-col gap-[5px]">
                   {/* 제목, 지역 제휴 */}
                   <div className="flex gap-[5px] items-center ">
-                    <h3 className="text-lg font-medium text-slate-700">
+                    <h3 className="text-lg font-semibold text-slate-700">
                       {item.strfTitle}
                     </h3>
                   </div>
