@@ -6,7 +6,19 @@ import { registerAtom } from "../../../atoms/registerAtom";
 import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
 import { CATEGORY_LIST, ICategory } from "../../../constants/register";
 import { StepRef } from "../../../pages/business/register/RegisterIndex";
+import FindLatLong from "./FindLatLong";
+
 const { Option } = Select;
+
+const { kakao } = window;
+
+interface Marker {
+  position: {
+    lat: number;
+    lng: number;
+  };
+  content: string;
+}
 
 const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
   const [register, setRegister] = useRecoilState(registerAtom);
@@ -46,6 +58,7 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
     }
 
     console.log(fullAddress); // e.g. '서울 성동구 왕십리로2길 20 (성수동1가)'
+
     setRegister(prev => ({
       ...prev,
       location: {
@@ -87,6 +100,7 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
     }
     return trimmed;
   };
+
   return (
     <div>
       <div className="flex flex-col gap-5">
@@ -244,6 +258,7 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
             </li>
           </ul>
         </section>
+        <FindLatLong />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { memo, ReactNode, useEffect, useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoCloseSharp } from "react-icons/io5";
 
@@ -73,4 +73,4 @@ const TitleHeaderTs = ({
     </div>
   );
 };
-export default TitleHeaderTs;
+export default memo(TitleHeaderTs);

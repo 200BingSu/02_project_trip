@@ -26,7 +26,7 @@ const ChatIndex = () => {
   // useNavigate
   const navigate = useNavigate();
   const navigateToBack = () => {
-    navigate(-1);
+    navigate("/");
   };
   //useState
   const [category, setCategory] = useState<string>("전체");
@@ -48,6 +48,9 @@ const ChatIndex = () => {
       console.log("채팅 목록 조회", resultData);
       if (resultData.code === "200 성공") {
         setChatLlist(resultData.data);
+      }
+      if (resultData.data.length === 30) {
+        setPage(page + 1);
       }
       return resultData;
     } catch (error) {

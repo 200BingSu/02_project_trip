@@ -1,11 +1,11 @@
-import Chat from "../components/chat/Chat";
+import FindLatLong from "../components/business/register/FindLatLong";
 
 (window as any).global = window;
 
 const Test = () => {
   return (
     <div>
-      <Chat />
+      <FindLatLong />
     </div>
   );
 };
