@@ -1,6 +1,6 @@
 import { Client } from "@stomp/stompjs";
 import { Button, Input } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { getCookie } from "../utils/cookie";
 import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -25,38 +25,13 @@ interface IMessage {
   userName?: string;
   message: string;
   error?: string | null;
+  createdAt?: string;
 }
 
 interface IGetChatHistoryRes {
   code: string;
   data: IMessage[];
 }
-// 더미 데이터
-const dummyresponse = {
-  code: "200 성공",
-  data: {
-    message: [
-      {
-        chatId: 1,
-        senderId: "550e8400-e29b-41d4-a716-446655440000",
-        senderName: "user1",
-        senderPic: "image.jpg",
-        signedUser: true, // 로그인 유저 인지
-        message: "나야 들기름",
-      },
-      {
-        chatId: 1,
-        senderId: "65f26e0e-e982-4182-830a-47c4edd38cf2",
-        senderName: "user2",
-        senderPic: "image.jpg",
-        signedUser: false,
-        message: "니가 누군데",
-      },
-    ],
-  },
-};
-const dummyResultData = dummyresponse.data;
-const dummyMessageArr: IMessage[] = dummyResultData.message;
 
 const ChatRoom = (): JSX.Element => {
   // 쿠키
@@ -70,14 +45,18 @@ const ChatRoom = (): JSX.Element => {
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get("roomId");
   // useState & useRef
-  const clientRef = useRef<Client | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
   const [name, setName] = useState<number>(1);
   const [messages, setMessages] = useState<(ISendMessage | string)[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
-  const connectionRef = useRef<boolean>(false);
   const [chatHistory, setChatHistory] = useState<IMessage[]>([]);
   const [page, setPage] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  //useRef
+  const clientRef = useRef<Client | null>(null);
+  const connectionRef = useRef<boolean>(false);
+  const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     console.log("connectionRef", connectionRef.current);
@@ -97,33 +76,38 @@ const ChatRoom = (): JSX.Element => {
   }, []);
 
   // api 채팅내역
-  const getChatHistory = async (): Promise<IGetChatHistoryRes | null> => {
-    const url = `/api/chat-room`;
-    try {
-      const res = await axios.get<IGetChatHistoryRes>(
-        `${url}/${roomId}?page=${page}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
+  const getChatHistory =
+    useCallback(async (): Promise<IGetChatHistoryRes | null> => {
+      const url = `/api/chat-room`;
+      setIsLoading(true);
+      try {
+        const res = await axios.get<IGetChatHistoryRes>(
+          `${url}/${roomId}?page=${page}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           },
-        },
-      );
-      const resultData = res.data;
-      console.log("채팅내역", resultData);
-      setChatHistory(resultData.data);
-      return resultData;
-    } catch (error) {
-      console.log("채팅내역 조회 실패", error);
-      return null;
-    }
-  };
+        );
+        const resultData = res.data;
+        console.log("채팅내역", resultData);
+        setChatHistory(prev => [...prev, ...resultData.data]);
+        setIsLoading(false);
+        return resultData;
+      } catch (error) {
+        console.log("채팅내역 조회 실패", error);
+        setIsLoading(false);
+        return null;
+      }
+    }, []);
+
   useEffect(() => {
     getChatHistory();
-  }, []);
+  }, [messages]);
 
   // 커넥션
-  const url = `ws://localhost:8080/chat`;
-  // const url = `ws://112.222.157.157:5231/chat`;
+  // const url = `ws://localhost:8080/chat`;
+  const url = `ws://112.222.157.157:5231/chat`;
   // 구독 경로
   const topic = `/sub/chat/${roomId}`;
   useEffect(() => {
@@ -225,19 +209,19 @@ const ChatRoom = (): JSX.Element => {
     console.log("연결 해제");
     if (clientRef.current) {
       clientRef.current.unsubscribe(topic);
-      clientRef.current.deactivate();
+      // clientRef.current.deactivate();
       setConnected(false);
       setMessages([]);
       connectionRef.current = false;
     }
   };
 
-  // 자동 연결을 위한 useEffect 수정
-  // useEffect(() => {
-  //   if (!connectionRef.current) {
-  //     connect();
-  //   }
-  // }, []);
+  //자동 연결을 위한 useEffect 수정
+  useEffect(() => {
+    if (!connectionRef.current) {
+      connect();
+    }
+  }, []);
 
   // 채팅 메시지 전송 함수
   const sendMessage = (): void => {
@@ -265,43 +249,43 @@ const ChatRoom = (): JSX.Element => {
   };
   // 나가기
   const handleClickToBack = async () => {
-    await navigate("/chat");
+    await navigateToBack();
     await disconnect();
   };
+  // 관찰
+  const handleObserver = (entities: IntersectionObserverEntry[]) => {
+    const target = entities[0];
+    if (target.isIntersecting && !isLoading) {
+      console.log("페이지 증가");
+      setPage(prevPage => prevPage + 1);
+    }
+  };
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, {
+      threshold: 0.1,
+    });
+    // 관찰 시작
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+    // cleanup
+    return () => observer.disconnect();
+  }, [isLoading]);
+
+  useEffect(() => {
+    getChatHistory();
+    console.log("page", page);
+  }, [page, getChatHistory]);
   return (
-    <div>
-      {/* 임시, 이후 useEffect로 처리하기 */}
-      <div>
-        <h2>WebSocket STOMP Client</h2>
-        {/* 연결/연결해제 버튼 */}
-        <div className="flex gap-5">
-          {connectionRef.current ? (
-            <Button
-              onClick={disconnect}
-              disabled={!connected}
-              className="bg-red-500"
-            >
-              연결 해제
-            </Button>
-          ) : (
-            <Button
-              onClick={connect}
-              disabled={connected}
-              className="bg-blue-500"
-            >
-              통신 연결
-            </Button>
-          )}
-        </div>
-      </div>
+    <div className="max-w-[768px] min-w-xs mx-auto relative h-screen ">
       <TitleHeaderTs title="채팅" icon="back" onClick={handleClickToBack} />
       {/* 채팅 인터페이스 (연결된 경우에만 표시) */}
-      <div className="bg-slate-200 min-h-[calc(100vh-100px)] pt-[16px]">
+      <div className="min-h-[calc(100vh-100px)] pt-[16px]">
         <ul
           className="h-full overflow-y-auto
         flex flex-col gap-[16px]"
         >
-          {messages?.map((item: ISendMessage | string, index) => {
+          {/* {messages?.map((item: ISendMessage | string, index) => {
             return (
               <li key={index}>
                 {typeof item === "string"
@@ -311,23 +295,23 @@ const ChatRoom = (): JSX.Element => {
                     : `${item?.sender}: ${item?.message}`}
               </li>
             );
-          })}
+          })} */}
           {chatHistory?.map((item, index) => {
             return item.signedUser === true ? (
               <li
                 key={index}
                 className="flex items-center justify-end gap-[12px] px-[16px]"
               >
-                <div className="flex items-center gap-[6px]">
+                <div className="flex items-end gap-3">
+                  <p className="text-sm text-slate-400">{item.createdAt}</p>
                   <p
                     className="flex items-center justify-center bg-primary px-[16px] py-[12px]
                     rounded-b-xl rounded-tl-xl
-                    text-white text-sm
+                    text-white text-base
                     max-w-56 break-all"
                   >
                     {item.message}
                   </p>
-                  {/* <p>{item.createdAt}</p> */}
                 </div>
               </li>
             ) : (
@@ -346,17 +330,20 @@ const ChatRoom = (): JSX.Element => {
                     <p
                       className="flex items-center justify-center bg-slate-100 px-[16px] py-[12px]
                     rounded-b-xl rounded-tr-xl
-                    text-slate-700 text-sm
+                    text-slate-700 text-2xl
                     max-w-56 break-all"
                     >
                       {item.message}
                     </p>
-                    {/* <p>{item.createdAt}</p> */}
+                    <p className="text-lg text-slate-400">{item.createdAt}</p>
                   </div>
                 </div>
               </li>
             );
           })}
+          <li id="observer" ref={observerTarget}>
+            페이징 처리 관찰 대상
+          </li>
         </ul>
         {/* 메시지 입력 필드 추가 */}
         <div
@@ -386,4 +373,4 @@ const ChatRoom = (): JSX.Element => {
   );
 };
 
-export default ChatRoom;
+export default memo(ChatRoom);
