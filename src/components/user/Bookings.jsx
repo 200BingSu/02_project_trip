@@ -106,10 +106,10 @@ const Bookings = data => {
       case 1:
         return (
           <>
-            <Button className="w-full h-[12vw] rounded-lg text-base font-bold">
+            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
               상세보기
             </Button>
-            <Button className="w-full h-[12vw] rounded-lg text-base font-bold">
+            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
               예약 취소
             </Button>
           </>
@@ -117,12 +117,12 @@ const Bookings = data => {
       case 2:
         return (
           <>
-            <Button className="w-full h-[12vw] rounded-lg text-base font-bold">
+            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
               상세보기
             </Button>
             <Button
               type="primary"
-              className="w-full h-[12vw] rounded-lg text-base font-bold text-white bg-primary"
+              className="w-full h-auto py-3 rounded-lg text-base font-semibold  text-white bg-primary"
             >
               리뷰작성
             </Button>
@@ -131,7 +131,7 @@ const Bookings = data => {
       case 3:
         return (
           <>
-            <Button className="w-full h-[12vw] rounded-lg text-base font-bold">
+            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
               상세보기
             </Button>
           </>
@@ -139,10 +139,7 @@ const Bookings = data => {
     }
   };
   return (
-    <div
-      className="w-full px-7 py-7
-    flex flex-col gap-[18px]"
-    >
+    <div className="w-full px-6 py-4 flex flex-col gap-4 border-b-[10px] border-slate-100 last:border-none">
       {/* 예약 상태 */}
       <div
         className={`w-fit flex items-center justify-center px-2 py-1 text-sm font-bold ${matchStateStyle(state)}`}
@@ -169,7 +166,7 @@ const Bookings = data => {
         <div className="flex flex-col gap-[10px]">
           {/* 날짜 */}
           <div className="flex items-center gap-3 text-[16px] text-slate-700">
-            <h4 className="text-slate-400 font-semibold text-base w-[18vw]">
+            <h4 className="text-slate-400 font-semibold text-base tracking-tight">
               이용일시
             </h4>
             <p className="text-base text-slate-700">
@@ -179,15 +176,13 @@ const Bookings = data => {
             </p>
           </div>
           <div className="flex items-center gap-3 text-[16px] text-slate-700">
-            <h4 className="text-slate-400 font-semibold text-base w-[18vw]">
-              예약일시
-            </h4>
-            <p className="text-base text-slate-700">
+            <h4 className="text-slate-400 font-semibold text-base">예약일시</h4>
+            <p className="text-base text-slate-700 tracking-tight">
               {dayjs(createdAt).format("YYYY.MM.DD ddd")}
             </p>
           </div>
           <div className="flex items-center gap-3 text-[16px] text-slate-700">
-            <h4 className="text-slate-400 font-semibold text-base w-[18vw]">
+            <h4 className="text-slate-400 font-semibold text-base tracking-tight">
               인원
             </h4>
             <p className="text-base text-slate-700">
@@ -201,7 +196,7 @@ const Bookings = data => {
         {matchButton(state)}
         <button
           type="button"
-          className="aspect-square h-[12vw] max-h-[129px] text-2xl text-slate-500 rounded-lg border border-slate-300 flex justify-center items-center"
+          className="aspect-square h-auto py-3 px-3 text-2xl text-slate-700 rounded-lg border border-slate-300 flex justify-center items-center"
           onClick={() => setIsOpen(true)}
         >
           <CgMoreVerticalAlt />

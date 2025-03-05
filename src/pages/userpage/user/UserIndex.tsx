@@ -223,7 +223,7 @@ const UserIndex = () => {
             <IoIosArrowForward className="text-slate-300 ml-2" />
           </Link>
           <Link
-            to=""
+            to="/user/userpoint"
             className="flex items-center py-5 text-xl text-slate-700 font-normal"
           >
             <BiCoin className="text-3xl text-slate-400 mr-4" />

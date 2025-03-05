@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BiShow, BiSolidEditAlt, BiTrash } from "react-icons/bi";
@@ -11,7 +10,6 @@ import BottomSheet from "../../../components/basic/BottomSheet";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
 import { TripReviewPic } from "../../../constants/pic";
 import Footer from "../../Footer";
-
 
 const UserTrip = () => {
   const [myTrip, setMyTrip] = useState([]);
@@ -52,6 +50,19 @@ const UserTrip = () => {
     );
   };
 
+  const postTripScrap = async () => {
+    try {
+      await jwtAxios.post(`/api/trip-review/scrap`, {
+        tripReviewId: 76,
+        copyTripId: 1148,
+        newStartAt: "2025-04-01",
+        newEndAt: "2025-04-11",
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   useEffect(() => {
     getTravelPost();
   }, []);
@@ -63,7 +74,7 @@ const UserTrip = () => {
           <MdOutlineContentCopy className="text-slate-400" /> 스크랩하기
         </div>
       ),
-      onClick: () => console.log("인식"),
+      onClick: () => postTripScrap(),
     },
     {
       label: (
