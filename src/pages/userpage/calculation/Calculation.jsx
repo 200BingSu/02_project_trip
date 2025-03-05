@@ -122,7 +122,7 @@ const Calculation = () => {
                       style={{ zIndex: 9 - index }} // zIndex 값 동적 적용
                     >
                       <img
-                        src={`${ProfilePic}${member?.user_id}/${member?.profile_pic}`}
+                        src={`${ProfilePic}/${member?.user_id}/${member?.profile_pic}`}
                         alt={member.name}
                       />
                       {index !== item.paidUserList.length - 1 && ", "}

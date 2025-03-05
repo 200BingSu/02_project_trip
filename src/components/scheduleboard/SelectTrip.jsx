@@ -118,7 +118,7 @@ const SelectTrip = ({
 
                   <div className="w-[50px] h-[50px] bg-slate-100 rounded-full overflow-hidden">
                     <img
-                      src={`${LocationPic}${item.locationPic}`}
+                      src={`${LocationPic}/${item.locationPic}`}
                       alt=""
                       className="w-full h-full object-cover"
                     />

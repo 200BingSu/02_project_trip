@@ -38,7 +38,7 @@ const SearchCategoryList = ({
               {/* 썸네일 */}
               <div className="aspect-square w-[26.67vw] max-w-[200px] bg-slate-200 rounded-[8px] overflow-hidden">
                 <img
-                  src={`${ProductPic}${item.strfId}/${item.strfPic}`}
+                  src={`${ProductPic}/${item.strfId}/${item.strfPic}`}
                   alt={item.title}
                   className="w-full h-full object-cover"
                 />

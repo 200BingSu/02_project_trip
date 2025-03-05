@@ -84,7 +84,7 @@ const RecentList = ({
           >
             <div className="w-[14vw] min-w-32 aspect-square rounded-lg relative overflow-hidden">
               <img
-                src={`${ProductPic}${content.strfId}/${content.strfPic}`}
+                src={`${ProductPic}/${content.strfId}/${content.strfPic}`}
                 alt={content.strfTitle}
                 className="w-full h-full object-cover"
               />

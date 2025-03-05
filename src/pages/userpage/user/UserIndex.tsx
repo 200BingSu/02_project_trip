@@ -109,7 +109,7 @@ const UserIndex = () => {
         <div className="px-4">
           <div className="flex justify-between py-[14px]">
             <IoCloseSharp
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/")}
               className="text-3xl cursor-pointer text-slate-700"
             />
             <h1 className="flex gap-5">
@@ -127,7 +127,7 @@ const UserIndex = () => {
                   src={
                     userInfo.providerType === ProviderType.LOCAL
                       ? userInfo.profilePic
-                        ? `${ProfilePic}${userLogin?.userId}/${userInfo?.profilePic}`
+                        ? `${ProfilePic}/${userLogin?.userId}/${userInfo?.profilePic}`
                         : `/images/user.png`
                       : userInfo.profilePic
                         ? `${userInfo.profilePic}`
@@ -150,7 +150,7 @@ const UserIndex = () => {
                     >
                       <div className="flex items-center">
                         <img
-                          src={`${LocationPic}${content.locationPic}`}
+                          src={`${LocationPic}/${content.locationPic}`}
                           alt=""
                           className="w-8 h-8 rounded-full mr-3"
                         />

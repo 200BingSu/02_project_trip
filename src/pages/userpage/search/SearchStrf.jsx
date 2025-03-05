@@ -670,7 +670,7 @@ const SearchStrf = () => {
                                   className="w-full h-full object-cover"
                                   src={
                                     item.strfPic
-                                      ? `${ProductPic}${item.strfId}/${item.strfPic}`
+                                      ? `${ProductPic}/${item.strfId}/${item.strfPic}`
                                       : "/images/logo_icon_4.png"
                                   }
                                   alt={item.strfName}

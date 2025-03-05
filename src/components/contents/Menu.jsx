@@ -192,7 +192,7 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
                       {/* 이미지 */}
                       <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
                         <img
-                          src={`${MenuPic}${contentData.strfId}/menu/${item.menuPic}`}
+                          src={`${MenuPic}/${contentData.strfId}/menu/${item.menuPic}`}
                           alt={item.menuTitle}
                           className="w-full h-full object-cover"
                           ref={imgRef}
@@ -291,7 +291,7 @@ const Menu = ({ type = "STAY", strfId, contentData }) => {
                     {/* 이미지 */}
                     <div className="w-full h-[300px] bg-slate-200 rounded-[16px] overflow-hidden">
                       <img
-                        src={`${MenuPic}${contentData.strfId}/menu/${item.menuPic}`}
+                        src={`${MenuPic}/${contentData.strfId}/menu/${item.menuPic}`}
                         alt={item.menuTitle}
                         className="w-full h-full object-cover"
                       />

@@ -108,7 +108,7 @@ const WishList = ({ category }) => {
                 {/* 썸네일 */}
                 <div className="w-32 min-w-32 aspect-square bg-slate-200 rounded-lg overflow-hidden relative">
                   <img
-                    src={`${ProductPic}${item.strfId}/${item.strfPic}`}
+                    src={`${ProductPic}/${item.strfId}/${item.strfPic}`}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
