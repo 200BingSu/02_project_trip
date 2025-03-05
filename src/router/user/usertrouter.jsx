@@ -24,6 +24,9 @@ const usertrouter = () => {
   const LazyUserCoupon = lazy(
     () => import("../../pages/userpage/user/UserCoupon"),
   );
+  const LazyUserPoint = lazy(
+    () => import("../../pages/userpage/user/UserPoint"),
+  );
   const LazyUserTrip = lazy(() => import("../../pages/userpage/user/UserTrip"));
   const LazyFindPw = lazy(() => import("../../pages/userpage/user/FindPw"));
   const LazyChangePw = lazy(() => import("../../pages/userpage/user/ChangePw"));
@@ -90,6 +93,14 @@ const usertrouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazyUserCoupon />
+        </Suspense>
+      ),
+    },
+    {
+      path: "userpoint",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyUserPoint />
         </Suspense>
       ),
     },
