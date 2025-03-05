@@ -7,17 +7,14 @@ import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
 import { CATEGORY_LIST, ICategory } from "../../../constants/register";
 import { StepRef } from "../../../pages/business/register/RegisterIndex";
 import FindLatLong from "./FindLatLong";
+import axios from "axios";
+import { Documents, Meta } from "../../../types/kakao";
 
 const { Option } = Select;
 
-const { kakao } = window;
-
-interface Marker {
-  position: {
-    lat: number;
-    lng: number;
-  };
-  content: string;
+interface IGetGeoCode {
+  meta: Meta;
+  documents: Documents[];
 }
 
 const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
@@ -26,7 +23,7 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
 
   // 카테고리 선택
   const handleCategory = (item: ICategory) => {
-    setRegister(prev => ({ ...prev, category: item.name }));
+    setRegister(prev => ({ ...prev, category: item.category }));
   };
   // 우편 번호 및 주소
   useEffect(() => {
@@ -58,7 +55,7 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
     }
 
     console.log(fullAddress); // e.g. '서울 성동구 왕십리로2길 20 (성수동1가)'
-
+    getGeoCode(fullAddress);
     setRegister(prev => ({
       ...prev,
       location: {
@@ -100,7 +97,41 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
     }
     return trimmed;
   };
-
+  // 카카오 REST API
+  const getGeoCode = async (address: string): Promise<IGetGeoCode | null> => {
+    const url = "https://dapi.kakao.com/v2/local/search/address";
+    try {
+      const res = await axios.get<IGetGeoCode>(`${url}?query=${address}`, {
+        headers: {
+          Authorization: `KakaoAK ${import.meta.env.VITE_KKO_REST_API_KEY}`,
+        },
+      });
+      console.log("좌표", res.data.documents[0]);
+      setRegister(prev => ({
+        ...prev,
+        location: {
+          ...prev.location,
+          latitude: Number(res.data.documents[0].y),
+          longitude: Number(res.data.documents[0].x),
+        },
+      }));
+      return res.data;
+    } catch (error) {
+      console.log("error", error);
+      return null;
+    }
+  };
+  // 상세 주소 작성
+  const handleAddressDetail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRegister(prev => ({
+      ...prev,
+      location: { ...prev.location, addressDetail: e.target.value },
+    }));
+  };
+  const handleBlurAddressDetail = async () => {
+    const address = `${register.location?.address} ${register.location?.addressDetail}`;
+    await getGeoCode(address);
+  };
   return (
     <div>
       <div className="flex flex-col gap-5">
@@ -120,7 +151,7 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
                       key={index}
                       type="button"
                       className={`flex items-center gap-2 px-[10px] py-[5px] rounded-2xl border ${
-                        register.category === item.name
+                        register.category === item.category
                           ? "border-primary"
                           : "border-slate-300"
                       } transition-all duration-300`}
@@ -211,17 +242,10 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
                 <Input
                   size="large"
                   placeholder="상세주소를 입력해주세요."
-                  onChange={e =>
-                    setRegister(prev => ({
-                      ...prev,
-                      location: {
-                        ...prev.location,
-                        addressDetail: e.target.value,
-                      },
-                    }))
-                  }
+                  onChange={handleAddressDetail}
                   className="w-full"
                   value={register.location?.addressDetail}
+                  onBlur={handleBlurAddressDetail}
                 />
               </label>
 
@@ -258,7 +282,6 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
             </li>
           </ul>
         </section>
-        <FindLatLong />
       </div>
     </div>
   );

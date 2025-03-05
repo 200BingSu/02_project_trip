@@ -17,6 +17,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useRecoilState } from "recoil";
 import { registerAtom } from "../../../atoms/registerAtom";
 import { Imenu } from "../../../types/interface";
+import { CategoryType } from "../../../types/enum";
 
 interface optionType {
   label: string;
@@ -42,10 +43,13 @@ const Step3 = () => {
     setMenus([
       ...menus,
       {
+        // strfId: register.strfId,
         menuId: Date.now(),
         menuPic: [],
         name: "",
         price: 0,
+        recomCapacity: 0,
+        maxCapacity: 0,
         addPrice: 0,
         roomList: [],
       },
@@ -56,9 +60,12 @@ const Step3 = () => {
         ...(prev.menuList || []),
         {
           menuId: Date.now(),
+          // strfId: register.strfId,
           menuPic: [],
           name: "",
           price: 0,
+          recomCapacity: 0,
+          maxCapacity: 0,
           addPrice: 0,
           roomList: [],
         },
@@ -213,23 +220,6 @@ const Step3 = () => {
       ),
     }));
   };
-  // 컴포넌트 마운트 시 초기 필드 추가
-  // useEffect(() => {
-  //   // 초기 메뉴 하나 추가
-  //   setMenus([
-  //     {
-  //       menuId: 0,
-  //       menuPic: [],
-  //       name: "",
-  //       price: 0,
-  //       addPrice: 0,
-  //       roomList: [],
-  //     },
-  //   ]);
-  //   form.setFieldsValue({
-  //     menuList: [""], // 빈 필드 하나로 시작
-  //   });
-  // }, []);
 
   useEffect(() => {
     return () => {
@@ -253,6 +243,8 @@ const Step3 = () => {
           addPrice: menu.addPrice,
           roomList: menu.roomList,
           menuPic: menu.menuPic,
+          recomCapacity: menu.recomCapacity,
+          maxCapacity: menu.maxCapacity,
         })),
       };
       form.setFieldsValue(formValues);
@@ -260,6 +252,13 @@ const Step3 = () => {
     }
   }, [register.menuList]);
 
+  const matchName = (category: string) => {
+    if (category === CategoryType.HOTEL) {
+      return "객실";
+    } else {
+      return "메뉴";
+    }
+  };
   return (
     <div>
       <div className="flex flex-col gap-5">
@@ -268,10 +267,11 @@ const Step3 = () => {
           <ul className="flex flex-col gap-10 py-5">
             <li className="flex flex-col gap-1">
               <h3 className="text-slate-700 text-lg font-semibold">
-                <i className="text-secondary3_3">*</i> 메뉴를 추가해주세요
+                <i className="text-secondary3_3">*</i>{" "}
+                {matchName(register.category || "")}를 추가해주세요
               </h3>
               <p className="text-base text-slate-500">
-                최소 1개의 메뉴를 등록해주세요.
+                최소 1개의 {matchName(register.category || "")}를 등록해주세요.
               </p>
               <div>
                 <Form
@@ -296,7 +296,7 @@ const Step3 = () => {
                     >
                       <Form.Item
                         label="이미지 업로드"
-                        help="메뉴 사진은 1장만 등록됩니다."
+                        help={`${matchName(register.category || "")} 사진은 1장만 등록됩니다.`}
                         name={["menus", index, "menuPic"]}
                       >
                         <ImgCrop rotationSlider>
@@ -317,18 +317,22 @@ const Step3 = () => {
                       </Form.Item>
                       <Form.Item
                         name={["menus", index, "name"]}
-                        label={`메뉴 ${index + 1} 이름`}
+                        label={
+                          <p className="text-slate-700 text-sm">
+                            {matchName(register.category || "")} 이름
+                          </p>
+                        }
                         rules={[
                           {
                             required: true,
-                            message: "메뉴 이름을 입력해주세요.",
+                            message: `${matchName(register.category || "")} 이름을 입력해주세요.`,
                           },
                         ]}
-                        className="w-full"
+                        className="w-1/2"
                       >
                         <Input
                           required
-                          placeholder="메뉴 이름을 입력해주세요. 예) 트윈룸"
+                          placeholder={`${matchName(register.category || "")} 이름을 입력해주세요. 예) ${register.category === CategoryType.HOTEL ? "트윈룸" : "피자"}`}
                           size="large"
                           value={item.name}
                           onChange={e => handleChangeInput(item, e)}
@@ -336,56 +340,40 @@ const Step3 = () => {
                       </Form.Item>
                       <Form.Item
                         name={["menus", index, "price"]}
-                        label={`메뉴 ${index + 1} 가격`}
+                        label={
+                          <p className="text-slate-700 text-sm">
+                            {matchName(register.category || "")} 가격
+                          </p>
+                        }
                         rules={[
                           {
                             required: true,
-                            message: "메뉴 가격을 입력해주세요.",
+                            message: `${matchName(register.category || "")} 가격을 입력해주세요.`,
                           },
                         ]}
-                        className="w-full"
+                        className="w-1/2"
                       >
                         <InputNumber
                           required
                           controls={false}
-                          formatter={value => `${value}원`}
-                          placeholder="메뉴 가격을 입력해주세요. 예) 100000"
+                          formatter={value =>
+                            value
+                              ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                              : ""
+                          }
+                          parser={value =>
+                            value ? Number(value.replace(/\$\s?|(,*)/g, "")) : 0
+                          }
+                          suffix="원"
+                          placeholder={`${matchName(register.category || "")} 가격을 입력해주세요. 예) 100000`}
                           size="large"
                           className="w-full"
                           value={item.price}
                           onChange={e => handleChangeInputNum(item, "price", e)}
                         />
                       </Form.Item>
-                      {register.category === "숙소" && (
+                      {register.category === CategoryType.HOTEL && (
                         <>
-                          <Form.Item
-                            name={["menus", index, "addPrice"]}
-                            label={
-                              <p className="text-slate-700 text-sm">
-                                <i className="text-transparent">*</i> 추가 금액
-                              </p>
-                            }
-                            help="* 지정된 인원 이상이 객실에 숙박할 경우, 추가되는 금액입니다. "
-                            className="w-full"
-                          >
-                            <InputNumber
-                              required
-                              controls={false}
-                              formatter={value =>
-                                `${value}원`.replace(
-                                  /\B(?=(\d{3})+(?!\d))/g,
-                                  ",",
-                                )
-                              }
-                              placeholder="추가 금액을 입력해주세요. 예) 50000"
-                              size="large"
-                              className="w-full"
-                              value={item.addPrice}
-                              onChange={e =>
-                                handleChangeInputNum(item, "addPrice", e)
-                              }
-                            />
-                          </Form.Item>
                           <Form.Item
                             name={["menus", index, "roomList"]}
                             rules={[
@@ -400,7 +388,7 @@ const Step3 = () => {
                               </p>
                             }
                             help="* 다수의 객실 번호가 존재할 경우, 쉼표로 나열해주세요. "
-                            className="w-full"
+                            className="w-1/2"
                           >
                             <Select
                               size="large"
@@ -445,6 +433,92 @@ const Step3 = () => {
                                   </Space>
                                 </>
                               )}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name={["menus", index, "recomCapacity"]}
+                            label={
+                              <p className="text-slate-700 text-sm">
+                                권장 인원
+                              </p>
+                            }
+                            className="w-1/2"
+                            rules={[
+                              {
+                                required: true,
+                                message: "객실 권장 인원을 입력해주세요.",
+                              },
+                            ]}
+                          >
+                            <InputNumber
+                              required
+                              controls={false}
+                              formatter={value => (value ? `${value}` : "")}
+                              parser={value => (value ? Number(value) : 0)}
+                              placeholder="권장 인원을 입력해주세요. 예) 2명"
+                              suffix="명"
+                              size="large"
+                              className="w-full"
+                              value={item.recomCapacity}
+                              onChange={e =>
+                                handleChangeInputNum(item, "recomCapacity", e)
+                              }
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name={["menus", index, "maxCapacity"]}
+                            label={
+                              <p className="text-slate-700 text-sm">
+                                최대 인원
+                              </p>
+                            }
+                            className="w-1/2"
+                            rules={[
+                              {
+                                required: true,
+                                message: "객실 최대 인원을 입력해주세요.",
+                              },
+                            ]}
+                          >
+                            <InputNumber
+                              required
+                              controls={false}
+                              formatter={value => (value ? `${value}` : "")}
+                              parser={value => (value ? Number(value) : 0)}
+                              placeholder="최대 인원을 입력해주세요. 예) 3명"
+                              suffix="명"
+                              size="large"
+                              className="w-full"
+                              value={item.maxCapacity}
+                              onChange={e =>
+                                handleChangeInputNum(item, "maxCapacity", e)
+                              }
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name={["menus", index, "addPrice"]}
+                            label={
+                              <p className="text-slate-700 text-sm">
+                                <i className="text-transparent">*</i> 추가 금액
+                              </p>
+                            }
+                            help="* 지정된 인원 이상이 객실에 숙박할 경우, 추가되는 금액입니다. "
+                            className="w-1/2"
+                          >
+                            <InputNumber
+                              required
+                              controls={false}
+                              formatter={value =>
+                                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                              }
+                              placeholder="추가 금액을 입력해주세요. 예) 50000"
+                              suffix="원"
+                              size="large"
+                              className="w-full"
+                              value={item.addPrice}
+                              onChange={e =>
+                                handleChangeInputNum(item, "addPrice", e)
+                              }
                             />
                           </Form.Item>
                         </>
