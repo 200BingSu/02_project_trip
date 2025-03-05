@@ -118,3 +118,11 @@
   margin: 0;
   padding: 0 16px;
 }
+
+.custom-tabs-coupon .ant-tabs-tab-btn {
+  font-size: 18px;
+  padding: 16px 0;
+}
+.custom-tabs-coupon .ant-tabs-tab {
+  padding: 0;
+}

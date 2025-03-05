@@ -19,16 +19,16 @@ const UserCoupon = () => {
       <TitleHeader icon="back" title="쿠폰함" onClick={() => navigate(-1)} />
       <div>
         <Tabs
-          className="custom-tabs-nav"
+          className="custom-tabs-nav custom-tabs-coupon"
           defaultActiveKey="1"
           items={[
             {
-              label: "사용 가능한 쿠폰",
+              label: "사용가능 쿠폰",
               key: "1",
               children: <BeforeCoupon />,
             },
             {
-              label: "사용 / 만료 된 쿠폰",
+              label: "사용 / 만료 쿠폰",
               key: "2",
               children: <AfterCoupon />,
             },
