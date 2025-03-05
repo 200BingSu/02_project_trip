@@ -42,26 +42,28 @@ const Bookings = data => {
           문의하기
         </p>
       ),
-    },
-    {
-      label: (
-        <p className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
-          <BiSolidEditAlt className="text-slate-300" />
-          수정하기
-        </p>
-      ),
-    },
-    {
-      label: (
-        <p className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
-          <BiTrash className="text-slate-300" />
-          삭제하기
-        </p>
-      ),
+      onClick: () => {
+        createChatRoom();
+      },
     },
   ];
   //useState
   const [isOpen, setIsOpen] = useState(false);
+
+  // API 채팅방 생성
+  const createChatRoom = async () => {
+    const url = "/api/chat-room";
+    const data = {
+      strfId: strfId,
+      title: strfTitle,
+    };
+    try {
+      const res = await axios.post(url, data);
+      console.log(res.data);
+    } catch (error) {
+      console.log("채팅방 생성", error);
+    }
+  };
 
   const today = dayjs().format("YYYY.MM.DD");
   //오늘 날짜 기준으로 버튼 상태 변경하기

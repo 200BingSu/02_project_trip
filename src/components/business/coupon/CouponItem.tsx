@@ -8,6 +8,7 @@ import { useState } from "react";
 import BottomSheet from "../../basic/BottomSheet";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
+import { formatId } from "../../../utils/format";
 
 dayjs.locale("ko");
 dayjs.extend(customParseFormat);
@@ -29,7 +30,9 @@ const CouponItem = ({
   //usenavigate
   const navigate = useNavigate();
   const navigateToEditCoupon = () => {
-    navigate(`/business/coupon/edit?strfId=${strfId}&couponId=${couponId}`);
+    navigate(
+      `/business/coupon/edit?strfId=${strfId}&couponId=${couponId}&title=${title}&discountPer=${discountPer}&expiredAt=${expiredAt}&distributeAt=${distributeAt}`,
+    );
   };
   const [isEdit, setIsEdit] = useState(false);
 
@@ -37,18 +40,7 @@ const CouponItem = ({
   const matchDate = (date: string): string => {
     return dayjs(date).format("YYYY-MM-DD(ddd)");
   };
-  // 쿠폰 ID 포멧
-  const formatCouponId = (couponId: number): string => {
-    if (couponId.toString().length > 3) {
-      return couponId.toString();
-    } else if (couponId.toString().length > 2) {
-      return "00" + couponId;
-    } else if (couponId.toString().length > 1) {
-      return "000" + couponId;
-    } else {
-      return "0000" + couponId;
-    }
-  };
+
   // 바텀시트 action
   const actions = [
     {
@@ -69,14 +61,14 @@ const CouponItem = ({
   };
 
   return (
-    <div className="px-2 pt-2 pb-5 flex flex-col gap-3">
+    <div className="px-2 pt-2 pb-5 flex flex-col gap-3 border-b border-slate-200">
       <div className="flex flex-col gap-2">
         {/* 쿠폰 내용 */}
         <ul className="flex flex-col gap-1 w-full ">
           <li className="flex justify-between items-center">
             <h4 className="text-lg text-slate-700 font-semibold">쿠폰 ID</h4>
             <p className="text-base text-slate-500 font-semibold">
-              {formatCouponId(couponId ?? 0)}
+              {formatId(couponId ?? 0)}
             </p>
           </li>
           <li className="flex justify-between items-center">
@@ -127,7 +119,7 @@ const CouponItem = ({
                 쿠폰 ID
               </h5>
               <p className="text-sm text-slate-500 ">
-                {formatCouponId(couponId ?? 0)}
+                {formatId(couponId ?? 0)}
               </p>
             </li>
             <li className="flex justify-between items-center">

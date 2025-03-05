@@ -6,6 +6,8 @@ export enum ProviderType {
 export enum CategoryType {
   RESTAURANT = "RESTAURANT",
   HOTEL = "HOTEL",
+  FEST = "FEST",
+  TOUR = "TOUR",
 }
 
 export enum ROLE {

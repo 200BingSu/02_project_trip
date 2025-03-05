@@ -26,7 +26,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
         <ul className="h-[400px] rounded-lg overflow-hidden">
           <li className="w-full h-full bg-slate-200">
             <img
-              src={`${ReviewPic}${reviewId}/${imgArr[0].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[0].pic}`}
               alt={`${reviewId}`}
               ref={imgRef}
               className="w-full h-full object-cover cursor-pointer"
@@ -39,7 +39,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
         <ul className="h-[400px] grid grid-cols-2 gap-[10px] rounded-lg overflow-hidden">
           <li className="w-full h-full bg-slate-200">
             <img
-              src={`${ReviewPic}${reviewId}/${imgArr[0].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[0].pic}`}
               alt={`${imgArr[0].reviewId}`}
               className="w-full h-full object-cover cursor-pointer"
               onClick={handleImageClick}
@@ -47,7 +47,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           </li>
           <li className="w-full h-full bg-slate-200">
             <img
-              src={`${ReviewPic}${reviewId}/${imgArr[1].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[1].pic}`}
               alt={`${imgArr[1].reviewId}`}
               className="w-full h-full object-cover cursor-pointer"
               onClick={handleImageClick}
@@ -60,7 +60,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="bg-slate-200 col-span-2 row-span-4">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[0].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[0].pic}`}
               alt={`${imgArr[0].reviewId}`}
               onClick={handleImageClick}
             />
@@ -68,7 +68,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="bg-slate-200 col-span-2 row-span-2 col-start-3 row-start-1">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[1].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[1].pic}`}
               alt={`${imgArr[1].reviewId}`}
               onClick={handleImageClick}
             />
@@ -76,7 +76,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="bg-slate-200 col-span-2 row-span-2 col-start-3 row-start-3">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[2].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[2].pic}`}
               alt={`${imgArr[2].reviewId}`}
               onClick={handleImageClick}
             />
@@ -88,7 +88,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="bg-slate-200 col-start-3 col-end-5 row-start-1 row-end-3">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[0].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[0].pic}`}
               alt={`${imgArr[0].reviewId}`}
               onClick={handleImageClick}
             />
@@ -96,7 +96,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="bg-slate-200 col-start-3 col-end-5 row-start-3 row-end-5">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[1].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[1].pic}`}
               alt={`${imgArr[1].reviewId}`}
               onClick={handleImageClick}
             />
@@ -104,7 +104,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="bg-slate-200 col-start-1 col-end-3 row-start-1 row-end-3">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[2].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[2].pic}`}
               alt={`${imgArr[2].reviewId}`}
               onClick={handleImageClick}
             />
@@ -112,7 +112,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="bg-slate-200 col-start-1 col-end-3 row-start-3 row-end-5">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[3].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[3].pic}`}
               alt={`${imgArr[3].reviewId}`}
               onClick={handleImageClick}
             />
@@ -124,7 +124,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-1 col-end-3 row-start-1 row-end-5 bg-slate-200">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[0].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[0].pic}`}
               alt={`${imgArr[0].reviewId}`}
               onClick={handleImageClick}
             />
@@ -132,7 +132,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-3 col-end-4 row-start-1 row-end-3 bg-slate-200">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[1].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[1].pic}`}
               alt={`${imgArr[1].reviewId}`}
               onClick={handleImageClick}
             />
@@ -140,7 +140,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-3 col-end-4 row-start-3 row-end-5 bg-slate-200">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[2].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[2].pic}`}
               alt={`${imgArr[2].reviewId}`}
               onClick={handleImageClick}
             />
@@ -148,7 +148,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-4 col-end-5 row-start-1 row-end-3 bg-slate-200">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[3].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[3].pic}`}
               alt={`${imgArr[3].reviewId}`}
               onClick={handleImageClick}
             />
@@ -156,7 +156,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-4 col-end-5 row-start-3 row-end-5 bg-slate-200">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[4].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[4].pic}`}
               alt={`${imgArr[4].reviewId}`}
               onClick={handleImageClick}
             />
@@ -168,7 +168,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-1 col-end-3 row-start-1 row-end-5 bg-slate-200">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[0].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[0].pic}`}
               alt={`${imgArr[0].reviewId}`}
               onClick={handleImageClick}
             />
@@ -176,7 +176,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-3 col-end-4 row-start-1 row-end-3 bg-slate-200">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[1].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[1].pic}`}
               alt={`${imgArr[1].reviewId}`}
               onClick={handleImageClick}
             />
@@ -184,7 +184,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-3 col-end-4 row-start-3 row-end-5 bg-slate-200">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[2].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[2].pic}`}
               alt={`${imgArr[2].reviewId}`}
               onClick={handleImageClick}
             />
@@ -192,7 +192,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-4 col-end-5 row-start-1 row-end-3 bg-slate-200">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[3].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[3].pic}`}
               alt={`${imgArr[3].reviewId}`}
               onClick={handleImageClick}
             />
@@ -200,7 +200,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
           <li className="col-start-4 col-end-5 row-start-3 row-end-5 bg-slate-200 relative rounded-lg">
             <img
               className="w-full h-full object-cover cursor-pointer"
-              src={`${ReviewPic}${reviewId}/${imgArr[4].pic}`}
+              src={`${ReviewPic}/${reviewId}/${imgArr[4].pic}`}
               alt={`${imgArr[4].reviewId}`}
               onClick={handleImageClick}
             />
@@ -229,7 +229,7 @@ const ReviewImage = ({ imgArr, reviewId }) => {
                   <SwiperSlide key={index}>
                     <div className="w-full h-full">
                       <img
-                        src={`${ReviewPic}${reviewId}/${item.pic}`}
+                        src={`${ReviewPic}/${reviewId}/${item.pic}`}
                         alt={`${item.reviewId}`}
                         className="w-full h-full object-contain"
                       />

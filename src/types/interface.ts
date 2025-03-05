@@ -21,10 +21,10 @@ export interface Iuser {
 export interface ICoupon {
   couponId?: number;
   strfId?: number;
-  title: string;
-  expiredAt: string;
-  discountPer: number;
-  distributeAt: string;
+  title?: string;
+  expiredAt?: string;
+  discountPer?: number;
+  distributeAt?: string;
   daysLeft?: number;
 }
 
@@ -84,4 +84,13 @@ export interface IGetChatHistoryRes {
   data: {
     message: IMessage[];
   };
+}
+
+export interface IChatList {
+  roomId: string;
+  title: string;
+  latestChat: string;
+  lastChatTime: string;
+  pic: string;
+  unreadChat: number;
 }

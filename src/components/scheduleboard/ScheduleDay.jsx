@@ -555,7 +555,7 @@ const SortableScheduleItem = ({
                 {/* 이미지 */}
                 <div className="w-[60px] h-[60px] bg-slate-200 rounded-lg overflow-hidden">
                   <img
-                    src={`${ProductPic}${item.strfId}/${item.picName}`}
+                    src={`${ProductPic}/${item.strfId}/${item.picName}`}
                     alt="thum"
                     className="w-full h-full object-cover"
                   />

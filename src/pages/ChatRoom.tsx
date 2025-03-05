@@ -6,6 +6,7 @@ import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BsFillPatchPlusFill } from "react-icons/bs";
 import jwtAxios from "../apis/jwt";
+import axios from "axios";
 
 interface ISendMessage {
   message: string;
@@ -17,20 +18,18 @@ interface ISendMessage {
 }
 interface IMessage {
   chatId: number;
-  senderId: string;
   senderName?: string;
-  userName?: string;
+  senderId: string;
   senderPic: string;
   signedUser: boolean;
+  userName?: string;
   message: string;
   error?: string | null;
 }
 
 interface IGetChatHistoryRes {
   code: string;
-  data: {
-    message: IMessage[];
-  };
+  data: IMessage[];
 }
 // 더미 데이터
 const dummyresponse = {
@@ -77,6 +76,8 @@ const ChatRoom = (): JSX.Element => {
   const [messages, setMessages] = useState<(ISendMessage | string)[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
   const connectionRef = useRef<boolean>(false);
+  const [chatHistory, setChatHistory] = useState<IMessage[]>([]);
+  const [page, setPage] = useState<number>(0);
 
   useEffect(() => {
     console.log("connectionRef", connectionRef.current);
@@ -97,10 +98,19 @@ const ChatRoom = (): JSX.Element => {
 
   // api 채팅내역
   const getChatHistory = async (): Promise<IGetChatHistoryRes | null> => {
+    const url = `/api/chat-room`;
     try {
-      const res = await jwtAxios.get<IGetChatHistoryRes>(`/api/chat/history`);
+      const res = await axios.get<IGetChatHistoryRes>(
+        `${url}/${roomId}?page=${page}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
       const resultData = res.data;
       console.log("채팅내역", resultData);
+      setChatHistory(resultData.data);
       return resultData;
     } catch (error) {
       console.log("채팅내역 조회 실패", error);
@@ -202,28 +212,32 @@ const ChatRoom = (): JSX.Element => {
     };
   }, []);
 
-  // 클라이언트 연결 활성화
+  // connect 함수 수정
   const connect = (): void => {
     if (clientRef.current) {
       clientRef.current.activate();
+      connectionRef.current = true;
     }
-    connectionRef.current = true;
   };
 
-  // 클라이언트 연결 종료
+  // disconnect 함수 수정
   const disconnect = (): void => {
-    if (clientRef.current && clientRef.current.connected) {
-      console.log("연결 해제");
+    console.log("연결 해제");
+    if (clientRef.current) {
       clientRef.current.unsubscribe(topic);
+      clientRef.current.deactivate();
       setConnected(false);
       setMessages([]);
       connectionRef.current = false;
     }
   };
 
-  useEffect(() => {
-    connect();
-  }, []);
+  // 자동 연결을 위한 useEffect 수정
+  // useEffect(() => {
+  //   if (!connectionRef.current) {
+  //     connect();
+  //   }
+  // }, []);
 
   // 채팅 메시지 전송 함수
   const sendMessage = (): void => {
@@ -249,7 +263,11 @@ const ChatRoom = (): JSX.Element => {
       console.log("메세지 전송 오류: 커넥트 끊김 또는 메세지 입력 없음");
     }
   };
-
+  // 나가기
+  const handleClickToBack = async () => {
+    await navigate("/chat");
+    await disconnect();
+  };
   return (
     <div>
       {/* 임시, 이후 useEffect로 처리하기 */}
@@ -276,14 +294,14 @@ const ChatRoom = (): JSX.Element => {
           )}
         </div>
       </div>
-      <TitleHeaderTs title="채팅" icon="back" onClick={navigateToBack} />
+      <TitleHeaderTs title="채팅" icon="back" onClick={handleClickToBack} />
       {/* 채팅 인터페이스 (연결된 경우에만 표시) */}
       <div className="bg-slate-200 min-h-[calc(100vh-100px)] pt-[16px]">
         <ul
           className="h-full overflow-y-auto
         flex flex-col gap-[16px]"
         >
-          {messages.map((item: ISendMessage | string, index) => {
+          {messages?.map((item: ISendMessage | string, index) => {
             return (
               <li key={index}>
                 {typeof item === "string"
@@ -294,7 +312,7 @@ const ChatRoom = (): JSX.Element => {
               </li>
             );
           })}
-          {dummyMessageArr.map((item, index) => {
+          {chatHistory?.map((item, index) => {
             return item.signedUser === true ? (
               <li
                 key={index}

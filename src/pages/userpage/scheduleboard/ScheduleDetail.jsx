@@ -138,7 +138,7 @@ const ScheduleDetail = () => {
                         className="max-w-3xl h-[406px] bg-slate-200"
                       >
                         <img
-                          src={`${TripReviewPic}${tripReviewData[0].tripReviewId}/${item}`}
+                          src={`${TripReviewPic}/${tripReviewData[0].tripReviewId}/${item}`}
                           alt="thum"
                           className="w-full h-full object-cover"
                         />

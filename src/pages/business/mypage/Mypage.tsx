@@ -5,8 +5,8 @@ import { GoDiscussionOutdated } from "react-icons/go";
 import { IoIosArrowForward } from "react-icons/io";
 import { RxExit } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
-import { useResetRecoilState } from "recoil";
-import { userAtom } from "../../../atoms/userAtom";
+import { useRecoilValue, useResetRecoilState } from "recoil";
+import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { removeCookie } from "../../../utils/cookie";
 
@@ -16,7 +16,9 @@ const strfId = 1;
 const Mypage = (): JSX.Element => {
   const navigate = useNavigate();
   // recoil
-  const resetUserData = useResetRecoilState(userAtom);
+  const userInfo = useRecoilValue(tsUserAtom);
+  console.log("userInfo", userInfo);
+  const resetUserData = useResetRecoilState(tsUserAtom);
   const navigateToBusiness = () => {
     navigate("/business");
   };
@@ -111,7 +113,7 @@ const Mypage = (): JSX.Element => {
         {/* 사장님 프로필 */}
         <div className="flex items-end justify-between px-5 pt-5 ">
           <div className="text-2xl text-slate-700">
-            <span className="text-3xl font-semibold ">사장님 이름 </span>님
+            <span className="text-3xl font-semibold ">{userInfo?.name}</span> 님
           </div>
           <div>
             <button
@@ -122,7 +124,6 @@ const Mypage = (): JSX.Element => {
             </button>
           </div>
         </div>
-
         {/* 라인 */}
         <div className="w-full h-[2.67vw] max-h-[10px] bg-slate-100"></div>
         {/* 메뉴 */}
