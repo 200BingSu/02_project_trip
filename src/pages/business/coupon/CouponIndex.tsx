@@ -25,16 +25,11 @@ const CouponIndex = (): JSX.Element => {
     navigate(`/business/coupon/create?strfId=${strfId}`);
   };
   //useState
-  const [_, setCouponData] = useState<ICoupon[]>([]);
+  const [couponData, setCouponData] = useState<ICoupon[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenCouponDetail, setIsOpenCouponDetail] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState(0);
-  useEffect(() => {
-    console.log("isOpenCouponDetail", isOpenCouponDetail);
-  }, [isOpenCouponDetail]);
-  useEffect(() => {
-    console.log("selectedCoupon", selectedCoupon);
-  }, [selectedCoupon]);
+
   // 쿠폰 자세히 보기 선택
   const handleClickCoupon = (index: number): void => {
     if (isOpenCouponDetail === false) {
@@ -79,10 +74,11 @@ const CouponIndex = (): JSX.Element => {
   useEffect(() => {
     getCouponList();
   }, []);
+
   return (
     <div>
       <TitleHeaderTs icon="back" onClick={navigateToBack} title="쿠폰 관리" />
-      <StrfInfo name="업체 이름" id="1234" category="숙소" />
+      <StrfInfo name="업체 이름" id={strfId} category="숙소" />
       <Spin spinning={isLoading}>
         <section className="px-4 py-3 flex flex-col gap-5">
           {/* 안내문 */}
@@ -108,7 +104,7 @@ const CouponIndex = (): JSX.Element => {
           {/* 쿠폰 목록 */}
           <div>
             <ul className="flex flex-col gap-5">
-              {mockCouponList.map((item, index) => {
+              {couponData?.map((item, index) => {
                 return (
                   <li key={index}>
                     <CouponItem

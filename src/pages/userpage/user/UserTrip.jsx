@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BiShow, BiSolidEditAlt, BiTrash } from "react-icons/bi";
@@ -11,7 +10,6 @@ import BottomSheet from "../../../components/basic/BottomSheet";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
 import { TripReviewPic } from "../../../constants/pic";
 import Footer from "../../Footer";
-
 
 const UserTrip = () => {
   const [myTrip, setMyTrip] = useState([]);
@@ -123,7 +121,7 @@ const UserTrip = () => {
                   <img
                     src={
                       item.tripReviewPics !== null
-                        ? `${TripReviewPic}${item.tripReviewId}/${item.tripReviewPics[0]}`
+                        ? `${TripReviewPic}/${item.tripReviewId}/${item.tripReviewPics[0]}`
                         : ``
                     }
                     alt="여행기 사진"

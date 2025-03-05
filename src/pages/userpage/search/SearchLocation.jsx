@@ -136,7 +136,7 @@ const SearchLocation = () => {
                     <div className="w-[100px] h-[100px] rounded-2xl overflow-hidden">
                       {item.locationPic ? (
                         <img
-                          src={`${LocationPic}${item.locationPic}`}
+                          src={`${LocationPic}/${item.locationPic}`}
                           alt={item.title}
                           ref={imgRef}
                           className="w-full h-full object-cover"

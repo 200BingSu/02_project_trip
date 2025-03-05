@@ -13,16 +13,13 @@ const CreateCoupon = (): JSX.Element => {
   console.log(formType);
   const couponId = Number(searchParams.get("couponId"));
 
-  const navigateToCouponList = () => {
-    navigate("/business/coupon");
+  const navigateToBack = () => {
+    navigate(-1);
   };
+
   return (
     <div>
-      <TitleHeaderTs
-        title="쿠폰 관리"
-        icon="back"
-        onClick={navigateToCouponList}
-      />
+      <TitleHeaderTs title="쿠폰 관리" icon="back" onClick={navigateToBack} />
       <CouponForm formType={formType} couponId={couponId} strfId={strfId} />
     </div>
   );

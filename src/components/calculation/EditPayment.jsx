@@ -165,7 +165,7 @@ const EditPayment = ({
             <div className="flex items-center gap-5 ">
               <p className="w-16 h-16 rounded-full overflow-hidden">
                 <img
-                  src={`${ProfilePic}${item?.user_id}/${item.profile_pic}`}
+                  src={`${ProfilePic}/${item?.user_id}/${item.profile_pic}`}
                   alt={item.name}
                 />
               </p>
