@@ -283,7 +283,7 @@ const ContentIndex = () => {
             <img
               src={
                 contentData?.strfPics?.[0]?.pic
-                  ? `${ProductPic}${strfId}/${contentData.strfPics[0].pic}`
+                  ? `${ProductPic}/${strfId}/${contentData.strfPics[0].pic}`
                   : ""
               }
               alt={contentData?.strfTitle || ""}

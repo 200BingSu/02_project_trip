@@ -203,7 +203,7 @@ const UserTrips = () => {
                   {/* 이미지 */}
                   <div className="w-20 h-20 bg-slate-100 rounded-full overflow-hidden">
                     <img
-                      src={`${LocationPic}${item.locationPic}`}
+                      src={`${LocationPic}/${item.locationPic}`}
                       alt={item.title}
                       className="w-full h-full"
                     />
@@ -254,7 +254,7 @@ const UserTrips = () => {
                   {/* 이미지 */}
                   <div className="w-20 h-20 bg-slate-100 rounded-full overflow-hidden">
                     <img
-                      src={`${LocationPic}${item.locationPic}`}
+                      src={`${LocationPic}/${item.locationPic}`}
                       alt={item.title}
                       className="w-full h-full"
                     />

@@ -1,3 +1,5 @@
+import { TripReviewPic } from "../../constants/pic";
+
 const TripReview = () => {
   return (
     <li
@@ -40,7 +42,7 @@ const TripReview = () => {
         {/* 이미지 */}
         <div className="w-full h-[322px] bg-slate-200 rounded-2xl">
           <img
-            src={`${TripReviewPic}${item.tripReviewId}/${item.tripReviewPics[0]}`}
+            src={`${TripReviewPic}/${item.tripReviewId}/${item.tripReviewPics[0]}`}
             alt="여행기 사진"
             className="w-full h-full object-cover"
             ref={imgRef}

@@ -13,7 +13,7 @@ const LocationList = ({ locations }) => {
           <SwiperSlide key={item.locationId} className="relative pt-5">
             <div className="relative bg-black rounded-lg overflow-hidden ">
               <img
-                src={`${LocationPic}${item.locationPic}`}
+                src={`${LocationPic}/${item.locationPic}`}
                 alt={item.locationTitle}
                 className="opacity-70 w-full aspect-square object-cover"
               />

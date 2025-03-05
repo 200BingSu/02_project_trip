@@ -75,7 +75,7 @@ const Reviews = () =>
                       <div className="flex gap-[10px] items-center">
                         <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
                           <img
-                            src={`${ProfilePic}${item.writerUserId}/${item.writerUserPic}`}
+                            src={`${ProfilePic}/${item.writerUserId}/${item.writerUserPic}`}
                             alt="pofilePic"
                             className="w-full h-full object-cover"
                           />

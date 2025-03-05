@@ -134,7 +134,7 @@ const UserTrip = () => {
                   <img
                     src={
                       item.tripReviewPics !== null
-                        ? `${TripReviewPic}${item.tripReviewId}/${item.tripReviewPics[0]}`
+                        ? `${TripReviewPic}/${item.tripReviewId}/${item.tripReviewPics[0]}`
                         : ``
                     }
                     alt="여행기 사진"

@@ -15,7 +15,7 @@ const FestivalList = ({ festivities }) => {
             onClick={() => navigate(`/contents/index?strfId=${item.strfId}`)}
           >
             <img
-              src={`${ProductPic}${item.strfId}/${item.strfPic}`}
+              src={`${ProductPic}/${item.strfId}/${item.strfPic}`}
               alt={item.festTitle}
               className="w-full h-full object-cover"
             />

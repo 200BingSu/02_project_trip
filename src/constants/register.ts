@@ -17,4 +17,14 @@ export const CATEGORY_LIST: ICategory[] = [
     name: "식당",
     emoji: "/images/emoji/rice.png",
   },
+  {
+    category: CategoryType.FEST,
+    name: "축제",
+    emoji: "/images/emoji/fest.png",
+  },
+  {
+    category: CategoryType.TOUR,
+    name: "관광지",
+    emoji: "/images/emoji/tour.png",
+  },
 ];

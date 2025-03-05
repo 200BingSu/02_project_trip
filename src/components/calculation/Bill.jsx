@@ -89,7 +89,7 @@ const Bill = ({ isOpen, setIsOpen, deId, tripId, getStatement }) => {
                   <div className="flex items-center gap-5 mr-auto">
                     <p className="w-12 h-12 rounded-full overflow-hidden">
                       <img
-                        src={`${ProfilePic}${item?.userId}/${item?.profilePic}`}
+                        src={`${ProfilePic}/${item?.userId}/${item?.profilePic}`}
                         alt={item.name}
                       />
                     </p>

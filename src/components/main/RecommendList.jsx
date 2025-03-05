@@ -23,7 +23,7 @@ const RecommendList = ({ recommend }) => {
             onClick={() => navigate(`/contents/index?strfId=${item.strfId}`)}
           >
             <img
-              src={`${ProductPic}${item.strfId}/${item.strfPic}`}
+              src={`${ProductPic}/${item.strfId}/${item.strfPic}`}
               alt={item.strfTitle}
               className="w-full aspect-[6/4] rounded-tr-[36px] rounded-bl-[36px]"
             />
