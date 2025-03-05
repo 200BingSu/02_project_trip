@@ -29,12 +29,15 @@ export interface ICoupon {
 }
 
 export interface Imenu {
+  strfId?: number;
   menuId?: number;
   menuPic?: UploadFile[];
   name: string;
   price: number;
   addPrice?: number;
   roomList?: string[];
+  recomCapacity: number;
+  maxCapacity: number;
 }
 
 export interface ILocation {
@@ -59,6 +62,7 @@ export interface Istore {
   checkTime?: { checkIn?: string; checkOut?: string };
   holiday?: { frequency?: string; day?: string[] };
   bio?: string;
+  amenity?: number[];
   menuList?: Imenu[];
 }
 
