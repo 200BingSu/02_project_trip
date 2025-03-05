@@ -6,6 +6,7 @@ import { useRecoilState } from "recoil";
 import { registerAtom } from "../../../atoms/registerAtom";
 import { StepRef } from "../../../pages/business/register/RegisterIndex";
 import TextArea from "antd/es/input/TextArea";
+import { amenities } from "../../../constants/dataArr";
 const { RangePicker } = TimePicker;
 
 const Step2 = ({
@@ -79,6 +80,20 @@ const Step2 = ({
       { label: "토", value: "sat" },
       { label: "일", value: "sun" },
     ],
+  };
+  // 편의시설 추가
+  const handleAmenity = (amenity_id: number): void => {
+    if (register.amenity && register.amenity.includes(amenity_id)) {
+      setRegister(prev => ({
+        ...prev,
+        amenity: prev.amenity?.filter(item => item !== amenity_id),
+      }));
+    } else {
+      setRegister(prev => ({
+        ...prev,
+        amenity: [...(prev.amenity || []), amenity_id],
+      }));
+    }
   };
   return (
     <div>
@@ -244,6 +259,28 @@ const Step2 = ({
                 style={{ resize: "none", height: "27.73vw" }}
                 value={register.bio}
               />
+            </li>
+            {/* 업체 편의시설 */}
+            <li>
+              <h3 className="text-slate-700 text-lg font-semibold">
+                업체 편의시설
+              </h3>
+              <p className="text-base text-slate-500">
+                업체 편의시설을 작성해주세요.
+              </p>
+              <div className="flex gap-3 flex-wrap px-3 py-3">
+                {amenities.map(item => (
+                  <div
+                    key={item.amenity_id}
+                    className={`flex gap-1 items-center border  rounded-xl px-2 py-1 cursor-pointer transition-all duration-300
+                     ${register.amenity?.includes(item.amenity_id) ? "border-primary" : "border-slate-300"} `}
+                    onClick={() => handleAmenity(item.amenity_id)}
+                  >
+                    <i className="text-sm text-slate-500">{item.icon}</i>
+                    <p className="text-sm text-slate-700">{item.key}</p>
+                  </div>
+                ))}
+              </div>
             </li>
           </ul>
         </section>
