@@ -27,6 +27,9 @@ const usertrouter = () => {
   const LazyUserPoint = lazy(
     () => import("../../pages/userpage/user/UserPoint"),
   );
+  const LazyUserPointPayment = lazy(
+    () => import("../../components/point/PointPayment"),
+  );
   const LazyUserTrip = lazy(() => import("../../pages/userpage/user/UserTrip"));
   const LazyFindPw = lazy(() => import("../../pages/userpage/user/FindPw"));
   const LazyChangePw = lazy(() => import("../../pages/userpage/user/ChangePw"));
@@ -97,10 +100,18 @@ const usertrouter = () => {
       ),
     },
     {
-      path: "userpoint",
+      path: "point",
       element: (
         <Suspense fallback={<Loading />}>
           <LazyUserPoint />
+        </Suspense>
+      ),
+    },
+    {
+      path: "point/payment",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyUserPointPayment />
         </Suspense>
       ),
     },
