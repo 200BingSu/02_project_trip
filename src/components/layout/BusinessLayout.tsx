@@ -14,6 +14,7 @@ const BusinessLayout = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
   //사업자가 아니라면 로그인으로 보내기
   const userInfo = getCookie("user");
+  // console.log(userInfo);
   const { role } = userInfo;
 
   const hanldeClickSubmit = () => {

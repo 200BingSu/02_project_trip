@@ -8,7 +8,7 @@ import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import { USER } from "../../../constants/api";
 import "../../../styles/antd-styles.css";
 import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
-import { ProviderType } from "../../../types/enum";
+import { ProviderType, ROLE } from "../../../types/enum";
 
 //interface
 interface IPostLogin {
@@ -46,6 +46,9 @@ const SingInIndex = () => {
   const handleNavigateHome = () => {
     navigate(`/`);
   };
+  const navigateToBusiness = () => {
+    navigate("/business");
+  };
   // useState
   const [loginType, setLoginType] = useState("personal");
   const [isSaveLogin, setIsSaveLogin] = useState(
@@ -61,7 +64,7 @@ const SingInIndex = () => {
   ): Promise<IPostLogin | null> => {
     try {
       const res = await axios.post<IPostLogin>(`${USER.signInUser}`, data);
-      // console.log("로그인 시도:", res.data);
+      console.log("로그인 시도:", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
         // console.log("현재 시각:", moment().format("H:mm:ss"));
@@ -80,6 +83,13 @@ const SingInIndex = () => {
           role: [...resultData.role],
           providerType: ProviderType.LOCAL,
         });
+      }
+      // 사업자 탭 분리안되어 있어서 임시조치
+      if (resultData.role.includes(ROLE.BUSI) === true) {
+        navigateToBusiness();
+        // console.log(false);
+      } else {
+        // console.log(true);
         handleNavigateHome();
       }
       return resultData;

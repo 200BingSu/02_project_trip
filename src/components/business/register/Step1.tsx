@@ -1,4 +1,5 @@
 import { Button, Input, Select } from "antd";
+import axios from "axios";
 import { memo, useEffect, useState } from "react";
 import DaumPostcodeEmbed from "react-daum-postcode";
 import { useRecoilState } from "recoil";
@@ -6,8 +7,6 @@ import { registerAtom } from "../../../atoms/registerAtom";
 import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
 import { CATEGORY_LIST, ICategory } from "../../../constants/register";
 import { StepRef } from "../../../pages/business/register/RegisterIndex";
-import FindLatLong from "./FindLatLong";
-import axios from "axios";
 import { Documents, Meta } from "../../../types/kakao";
 
 const { Option } = Select;
@@ -109,6 +108,7 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
       console.log("좌표", res.data.documents[0]);
       setRegister(prev => ({
         ...prev,
+        locationTitle: res.data.documents[0].address.region_2depth_name,
         location: {
           ...prev.location,
           latitude: Number(res.data.documents[0].y),

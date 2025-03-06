@@ -8,6 +8,8 @@ import { useRecoilValue } from "recoil";
 import { LiaComment } from "react-icons/lia";
 import Footer from "../../Footer";
 import Bookings from "../../../components/user/Bookings";
+import axios from "axios";
+import { getCookie } from "../../../utils/cookie";
 
 //dummy data
 const dummyDataRes = {
@@ -15,8 +17,8 @@ const dummyDataRes = {
   data: [
     {
       bookingId: 101,
-      strfId: 2001,
-      strfTitle: "Cozy Apartment Downtown",
+      strfId: 1,
+      strfTitle: "효자베베",
       strfPic: "https://example.com/image1.jpg",
       createdAt: "2025-02-20T12:34:56Z",
       checkInDate: "2025-03-01",
@@ -63,6 +65,8 @@ const dummyBookingList = dummyDataRes.data;
 const categoryArr = ["예약 목록", "예약 완료"];
 
 const UserBooking = () => {
+  // 쿠키
+  const accessToken = getCookie("accessToken");
   //recoil
   const { userId } = useRecoilValue(userAtom);
   // useNavigate
@@ -81,7 +85,11 @@ const UserBooking = () => {
   // 예약 목록 불러오기
   const getBookingList = useCallback(async () => {
     try {
-      const res = await jwtAxios.get(`/api/booking?page=${page}`);
+      const res = await axios.get(`/api/booking?page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       console.log("예약 목록", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {

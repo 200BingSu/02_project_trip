@@ -1,4 +1,4 @@
-import { Button, Steps } from "antd";
+import { Button, Steps, UploadFile } from "antd";
 import { RefObject, useRef, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,9 @@ import Step2 from "../../../components/business/register/Step2";
 import Step3 from "../../../components/business/register/Step3";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { moveTo } from "../../../utils/moveTo";
+import { getCookie } from "../../../utils/cookie";
+import { Istore } from "../../../types/interface";
+import axios from "axios";
 
 export interface StepRef {
   categoryRef?: React.RefObject<HTMLLIElement>;
@@ -21,6 +24,38 @@ export interface StepRef {
   holidayRef?: React.RefObject<HTMLLIElement>;
   bioRef?: React.RefObject<HTMLLIElement>;
 }
+interface ITime {
+  hour: number;
+  minute: number;
+  second: number;
+  nano?: number;
+}
+interface PType {
+  category: string;
+  title: string;
+  lat: number;
+  lng: number;
+  address: string;
+  locationTitle: string;
+  post: string;
+  tell: string;
+  startAt: string; // YYYY-MM-DD
+  endAt: string;
+  openCheckIn: ITime;
+  closeCheckOut: ITime;
+  detail: string;
+  busiNum: string;
+  state: number;
+  restdates: string[];
+}
+
+interface ICreateStrf {
+  strfPic: UploadFile[];
+  p: PType;
+}
+
+// 하드 코딩용
+const busiNum = "994-47-97252";
 
 const RegisterIndex = (): JSX.Element => {
   //useNavigate
@@ -31,6 +66,8 @@ const RegisterIndex = (): JSX.Element => {
   const navigateToComfirm = () => {
     navigate("/business/register/confirm");
   };
+  // 쿠키
+  const accessToken = getCookie("accessToken");
   //recoil
   const registerData = useRecoilValue(registerAtom);
   console.log("registerData", registerData);
@@ -50,6 +87,67 @@ const RegisterIndex = (): JSX.Element => {
   const holidayRef = useRef<HTMLLIElement>(null);
   const bioRef = useRef<HTMLLIElement>(null);
 
+  // API 상품 등록
+  const createStrf = async (data: Istore): Promise<ICreateStrf | null> => {
+    const url = "/api/detail/info";
+    const sendData: PType = {
+      category: `${registerData.category}`,
+      title: `${registerData.name}`,
+      lat: registerData.location?.latitude ?? 0,
+      lng: registerData.location?.longitude ?? 0,
+      address: `${registerData.location?.address}${registerData.location?.addressDetail}`,
+      locationTitle: registerData.locationTitle ?? "",
+      post: registerData.location?.postcode ?? "",
+      tell: registerData.tell?.number ?? "",
+      startAt: registerData.businessHours?.startTime ?? "",
+      endAt: registerData.businessHours?.endTime ?? "",
+      openCheckIn: {
+        hour: Number(registerData.checkTime?.checkIn?.split(":")[0]) ?? 0,
+        minute: Number(registerData.checkTime?.checkIn?.split(":")[1]) ?? 0,
+        second: Number(registerData.checkTime?.checkIn?.split(":")[2]) ?? 0,
+        nano: 0,
+      },
+      closeCheckOut: {
+        hour: Number(registerData.checkTime?.checkOut?.split(":")[0]) ?? 0,
+        minute: Number(registerData.checkTime?.checkOut?.split(":")[1]) ?? 0,
+        second: Number(registerData.checkTime?.checkOut?.split(":")[2]) ?? 0,
+        nano: 0,
+      },
+      detail: registerData.bio ?? "",
+      busiNum: busiNum,
+      state: 0,
+      restdates: registerData.holiday?.day ?? [],
+    };
+    const formData = new FormData();
+    formData.append(
+      "p",
+      new Blob([JSON.stringify(sendData)], { type: "application/json" }),
+    );
+    if (registerData.image?.length ?? 0 > 0) {
+      registerData.image?.forEach(image => {
+        formData.append("strfPic", image.originFileObj ?? new Blob());
+      });
+    }
+    console.log("p의 내용", formData.get("p"));
+    try {
+      const res = await axios.post<ICreateStrf>(url, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("상품 등록", res.data);
+      return res.data;
+    } catch (error) {
+      console.log("상품 등록", error);
+      return null;
+    }
+  };
+  // 제출
+  const handleDone = async () => {
+    // await createStrf(sendData);
+    await navigateToComfirm();
+  };
+  //  antD Step
   const steps = [
     {
       title: "",
@@ -66,20 +164,17 @@ const RegisterIndex = (): JSX.Element => {
       title: "",
       content: (
         <Step2
-          picRef={picRef}
           businessHoursRef={businessHoursRef}
           checkTimeRef={checkTimeRef}
           holidayRef={holidayRef}
-          bioRef={bioRef}
         />
       ),
     },
     {
       title: "",
-      content: <Step3 />,
+      content: <Step3 picRef={picRef} bioRef={bioRef} />,
     },
   ];
-
   const onChange = (value: number) => {
     console.log("onChange:", value);
     setCurrent(value);
@@ -102,6 +197,7 @@ const RegisterIndex = (): JSX.Element => {
     key: item.title,
     title: item.title,
   }));
+
   // 에러메세지
   const matchErrorMessage = () => {
     if (current === 0) {
@@ -119,9 +215,6 @@ const RegisterIndex = (): JSX.Element => {
       }
     }
     if (current === 1) {
-      if (registerData.image?.length === 0) {
-        return { message: "업체 사진을 업로드해주세요.", ref: picRef };
-      }
       if (
         !registerData.businessHours?.startTime ||
         !registerData.businessHours?.endTime
@@ -145,6 +238,11 @@ const RegisterIndex = (): JSX.Element => {
         registerData.holiday?.frequency === ""
       ) {
         return { message: "휴무 주기를 선택해주세요.", ref: holidayRef };
+      }
+    }
+    if (current === 2) {
+      if (registerData.image?.length === 0) {
+        return { message: "업체 사진을 업로드해주세요.", ref: picRef };
       }
       if (!registerData.bio) {
         return { message: "업체 소개를 작성해주세요.", ref: bioRef };
@@ -182,7 +280,7 @@ const RegisterIndex = (): JSX.Element => {
             <Button
               onClick={() => prev()}
               size="large"
-              className="max-h-[60px] h-[16vw]"
+              className="max-h-[50px] h-[16vw]"
             >
               <IoIosArrowBack />
               이전
@@ -200,8 +298,8 @@ const RegisterIndex = (): JSX.Element => {
             <Button
               type="primary"
               size="large"
-              className="max-h-[60px] h-[16vw]"
-              onClick={navigateToComfirm}
+              className="max-h-[50px] h-[16vw]"
+              onClick={handleDone}
             >
               등록 신청
             </Button>
@@ -212,7 +310,7 @@ const RegisterIndex = (): JSX.Element => {
               variant="solid"
               onClick={() => next()}
               size="large"
-              className="max-h-[60px] h-[16vw]"
+              className="max-h-[50px] h-[16vw]"
             >
               다음
               <IoIosArrowForward />
