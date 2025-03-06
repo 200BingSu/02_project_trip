@@ -92,7 +92,7 @@ const Step3 = ({ picRef, bioRef }: StepRef): JSX.Element => {
               onChange={e => {
                 setRegister(prev => ({ ...prev, bio: e.target.value }));
               }}
-              style={{ resize: "none", height: "27.73vw" }}
+              style={{ resize: "none", height: "27.73vw", padding: "20px" }}
               value={register.bio}
             />
           </li>

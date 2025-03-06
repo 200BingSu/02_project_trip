@@ -16,7 +16,9 @@ interface IgetUserInfo {
 
 const App = () => {
   const accessToken = getCookie("accessToken");
-  const role = getCookie("role");
+  const userInfo = getCookie("user");
+  // console.log(userInfo);
+  const { role } = userInfo;
   //recoil
   const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
 
