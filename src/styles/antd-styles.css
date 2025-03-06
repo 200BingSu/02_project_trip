@@ -126,3 +126,22 @@
 .custom-tabs-coupon .ant-tabs-tab {
   padding: 0;
 }
+.custom-radio {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.custom-radio .ant-radio-wrapper {
+  border-bottom: 1px solid #e2e8f0;
+}
+.custom-radio .ant-radio-wrapper:last-child {
+  border: none;
+}
+.custom-radio .ant-radio-wrapper > span:nth-child(2) {
+  width: 100%;
+}
+
+.custom-radio .ant-radio-wrapper > span .ant-flex {
+  flex-direction: row;
+  justify-content: space-between;
+}
