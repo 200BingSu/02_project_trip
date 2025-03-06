@@ -9,7 +9,7 @@ interface ChatListProps {
   children?: React.ReactNode;
 }
 
-const ChatList = ({ category, chatList }: ChatListProps): JSX.Element => {
+const ChatList = ({ chatList }: ChatListProps): JSX.Element => {
   // navigate
   const navigate = useNavigate();
   const navigateToChatRoom = (roomId: string) => {

@@ -37,7 +37,7 @@ const CouponItem = ({
   const [isEdit, setIsEdit] = useState(false);
 
   // 날짜 포멧
-  const matchDate = (date: string): string => {
+  const matchDate = (date: string | undefined): string => {
     return dayjs(date).format("YYYY-MM-DD(ddd)");
   };
 

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { AiFillSetting } from "react-icons/ai";
-import { BiBell } from "react-icons/bi";
+import { useEffect, useState } from "react";
+import { AiFillSetting, AiOutlineStar } from "react-icons/ai";
+import { BiBell, BiSolidCoupon } from "react-icons/bi";
 import { GoDiscussionOutdated } from "react-icons/go";
 import { IoIosArrowForward } from "react-icons/io";
 import { RxExit } from "react-icons/rx";
@@ -8,26 +8,45 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useResetRecoilState } from "recoil";
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { removeCookie } from "../../../utils/cookie";
+import { getCookie, removeCookie } from "../../../utils/cookie";
+import {
+  matchcategoryIcon,
+  matchMenuIcon,
+  matchName,
+} from "../../../utils/match";
+import { CategoryType } from "../../../types/enum";
 
 // 현재 상품 id (임시)
 const strfId = 1;
+const category = CategoryType.STAY;
 
 const Mypage = (): JSX.Element => {
   const navigate = useNavigate();
+  // 쿠키
+  const userInfo = getCookie("user");
+  console.log("쿠키", userInfo);
   // recoil
-  const userInfo = useRecoilValue(tsUserAtom);
-  console.log("userInfo", userInfo);
   const resetUserData = useResetRecoilState(tsUserAtom);
+  const recoilInfo = useRecoilValue(tsUserAtom);
   const navigateToBusiness = () => {
     navigate("/business");
   };
   // useState
   const [openMenu, setOpenMenu] = useState<number>(0);
+  const [openOption, setOpenOption] = useState<number>(0);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
+  const [isOpenOption, setIsOpenOption] = useState<boolean>(false);
+  useEffect(() => {
+    console.log("openMenu", openMenu);
+  }, [openMenu]);
+  useEffect(() => {
+    console.log("openOption", openOption);
+  }, [openOption]);
+
   // 메뉴
-  const menuArr = [
+  const mainMenuArr = [
     {
+      icon: matchcategoryIcon(category),
       name: "가게 관리",
       path: `/business/store`,
       subMenu: [
@@ -42,15 +61,30 @@ const Mypage = (): JSX.Element => {
       ],
     },
     {
-      name: "메뉴 관리",
+      icon: matchMenuIcon(category),
+      name: `${matchName(category)} 관리`,
       path: "/business/menu",
       subMenu: [
-        { name: "메뉴 목록", path: `/business/menu?strfId=${strfId}` },
-        { name: "메뉴 등록", path: `/business/menu/create?strfId=${strfId}` },
+        {
+          name: `${matchName(category)} 목록`,
+          path: `/business/menu?strfId=${strfId}&category=${category}`,
+        },
+        {
+          name: `${matchName(category)} 등록`,
+          path: `/business/menu/create?strfId=${strfId}&category=${category}`,
+        },
       ],
     },
-
     {
+      icon: <AiOutlineStar />,
+      name: "리뷰 관리",
+      path: `/business/review?strfId=${strfId}`,
+    },
+  ];
+  // 상품 카테고리 별 메뉴
+  const optionMenuArr = [
+    {
+      icon: <BiSolidCoupon />,
       name: "쿠폰 관리",
       path: "/business/coupon",
       subMenu: [
@@ -60,9 +94,14 @@ const Mypage = (): JSX.Element => {
           path: `/business/coupon/create?strfId=${strfId}`,
         },
       ],
+      category: [CategoryType.STAY],
     },
-    { name: "예약 관리", path: `/business/booking?strfId=${strfId}` },
-    { name: "리뷰 관리", path: `/business/review?strfId=${strfId}` },
+    {
+      icon: <GoDiscussionOutdated />,
+      name: "예약 관리",
+      path: `/business/booking?strfId=${strfId}`,
+      category: [CategoryType.STAY],
+    },
   ];
   // 관리 메뉴
   const manageMenuArr = [
@@ -85,12 +124,27 @@ const Mypage = (): JSX.Element => {
       setIsOpenMenu(false);
     }
   };
+  // 옵션 메뉴 열기
+  const handleOpenOption = (index: number) => {
+    if (isOpenOption === false) {
+      if (openOption === index) {
+        setIsOpenOption(true);
+      }
+      if (openOption !== index) {
+        setOpenOption(index);
+        setIsOpenOption(true);
+      }
+    }
+    if (isOpenOption === true) {
+      setIsOpenOption(false);
+    }
+  };
   // 로그아웃
   const handleLogout = () => {
     removeCookie("accessToken");
     removeCookie("user");
     resetUserData();
-    navigate("/business");
+    navigate("/signin");
   };
   return (
     <div className="flex flex-col gap-5">
@@ -113,7 +167,8 @@ const Mypage = (): JSX.Element => {
         {/* 사장님 프로필 */}
         <div className="flex items-end justify-between px-5 pt-5 ">
           <div className="text-2xl text-slate-700">
-            <span className="text-3xl font-semibold ">{userInfo?.name}</span> 님
+            <span className="text-3xl font-semibold ">{recoilInfo?.name}</span>{" "}
+            님
           </div>
           <div>
             <button
@@ -128,7 +183,8 @@ const Mypage = (): JSX.Element => {
         <div className="w-full h-[2.67vw] max-h-[10px] bg-slate-100"></div>
         {/* 메뉴 */}
         <ul className="flex flex-col gap-5 px-6">
-          {menuArr.map((item, index) => (
+          {/* 메인메뉴 */}
+          {mainMenuArr.map((item, index) => (
             <li key={index} className="py-4">
               <button
                 type="button"
@@ -137,9 +193,7 @@ const Mypage = (): JSX.Element => {
                 }}
                 className="flex items-center gap-4 text-2xl font-medium text-slate-700"
               >
-                <i className="text-2xl text-slate-400">
-                  <GoDiscussionOutdated />
-                </i>
+                <i className="text-2xl text-slate-400">{item.icon}</i>
                 {item.name}
                 {item.subMenu && (
                   <i
@@ -163,6 +217,58 @@ const Mypage = (): JSX.Element => {
                   style={{
                     transitionProperty: "opacity, max-height, visibility",
                     transitionDuration: openMenu === index ? "400ms" : "300ms",
+                  }}
+                >
+                  {item.subMenu.map((subItem, subIndex) => (
+                    <li
+                      key={subIndex}
+                      className="px-10 text-xl text-slate-500 py-1 cursor-pointer"
+                      onClick={() => navigate(subItem.path)}
+                    >
+                      {subItem.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+          {/* 옵션 메뉴 */}
+          {optionMenuArr.map((item, index) => (
+            <li key={index} className="py-4">
+              <button
+                type="button"
+                onClick={() => {
+                  item.subMenu ? handleOpenOption(index) : navigate(item.path);
+                }}
+                className="flex items-center gap-4 text-2xl font-medium text-slate-700"
+              >
+                <i className="text-2xl text-slate-400">
+                  <GoDiscussionOutdated />
+                </i>
+                {item.name}
+                {item.subMenu && (
+                  <i
+                    className={`text-2xl text-slate-500 ${
+                      openOption === index && isOpenOption === true
+                        ? "rotate-90"
+                        : "rotate-0"
+                    } transition-transform duration-300`}
+                  >
+                    <IoIosArrowForward />
+                  </i>
+                )}
+              </button>
+              {item.subMenu && (
+                <ul
+                  className={`flex flex-col gap-2 py-4 ${
+                    openOption === index && isOpenOption === true
+                      ? "visible h-auto opacity-100 relative"
+                      : "invisible max-h-0 opacity-0 absolute"
+                  } overflow-hidden transition-[max-height] duration-300 ease-in-out opacity-transition`}
+                  style={{
+                    transitionProperty: "opacity, max-height, visibility",
+                    transitionDuration:
+                      openOption === index ? "400ms" : "300ms",
                   }}
                 >
                   {item.subMenu.map((subItem, subIndex) => (

@@ -12,6 +12,7 @@ export const registerAtom = atom<Istore>({
       longitude: 0,
       address: "",
       addressDetail: "",
+      locationDetailId: 0,
     },
     tell: {
       areaCode: "053",
@@ -22,18 +23,18 @@ export const registerAtom = atom<Istore>({
     checkTime: { checkIn: "", checkOut: "" },
     holiday: { frequency: "", day: [] },
     bio: "",
-    amenity: [],
-    menuList: [
-      {
-        menuId: 0,
-        menuPic: [],
-        name: "",
-        price: 0,
-        recomCapacity: 0,
-        maxCapacity: 0,
-        addPrice: 0,
-        roomList: [],
-      },
-    ],
+    // amenity: [],
+    // menuList: [
+    //   {
+    //     menuId: 0,
+    //     menuPic: [],
+    //     name: "",
+    //     price: 0,
+    //     recomCapacity: 0,
+    //     maxCapacity: 0,
+    //     addPrice: 0,
+    //     roomList: [],
+    //   },
+    // ],
   },
 });
