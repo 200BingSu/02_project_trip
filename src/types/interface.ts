@@ -107,3 +107,36 @@ export interface Iamenity {
   key?: string;
   icon?: ReactNode;
 }
+
+export interface IReview {
+  reviewId?: number;
+  review_id?: number;
+  strfId?: number;
+  strf_id?: number;
+  strfTitle?: string;
+  strf_title?: string;
+  state: number;
+  reviewCnt: number;
+  wishCnt: number;
+  ratingAvg: number;
+  created_at?: string;
+  createdAt?: string;
+  content: string;
+  rating: number;
+  user_id?: number;
+  userName?: string;
+  writerUserId: string;
+  writerUserName: string;
+  writerUserProfilePic?: string;
+  writerUserPic?: string;
+  providerType: number;
+  userWriteReviewCnt: number;
+  reviewWriteDate: string;
+  reviewPic?: { pic: string }[];
+  reviewPicList?: { title: string }[];
+  more: boolean;
+}
+
+export interface IBusinessReview {
+  reviewReply: string | null;
+}
