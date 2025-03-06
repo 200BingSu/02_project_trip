@@ -1,13 +1,7 @@
-import FindLatLong from "../components/business/register/FindLatLong";
-
 (window as any).global = window;
 
 const Test = () => {
-  return (
-    <div>
-      <FindLatLong />
-    </div>
-  );
+  return <div>test</div>;
 };
 
 export default Test;

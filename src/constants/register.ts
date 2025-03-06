@@ -8,7 +8,7 @@ export interface ICategory {
 
 export const CATEGORY_LIST: ICategory[] = [
   {
-    category: CategoryType.HOTEL,
+    category: CategoryType.STAY,
     name: "숙소",
     emoji: "/images/emoji/hotel.png",
   },

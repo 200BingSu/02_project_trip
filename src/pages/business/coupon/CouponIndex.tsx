@@ -1,14 +1,13 @@
 import { Button, Spin } from "antd";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import CouponItem from "../../../components/business/coupon/CouponItem";
 import StrfInfo from "../../../components/business/StrfInfo";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { mockCouponList } from "../../../mock/coupon";
 import { ICoupon } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
-import axios from "axios";
 
 const CouponIndex = (): JSX.Element => {
   // 쿼리

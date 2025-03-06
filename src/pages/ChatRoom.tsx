@@ -1,12 +1,11 @@
 import { Client } from "@stomp/stompjs";
-import { Button, Input } from "antd";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { getCookie } from "../utils/cookie";
-import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { BsFillPatchPlusFill } from "react-icons/bs";
-import jwtAxios from "../apis/jwt";
+import { Input } from "antd";
 import axios from "axios";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { BsFillPatchPlusFill } from "react-icons/bs";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
+import { getCookie } from "../utils/cookie";
 
 interface ISendMessage {
   message: string;
@@ -341,9 +340,9 @@ const ChatRoom = (): JSX.Element => {
               </li>
             );
           })}
-          <li id="observer" ref={observerTarget}>
+          <div id="observer" ref={observerTarget}>
             페이징 처리 관찰 대상
-          </li>
+          </div>
         </ul>
         {/* 메시지 입력 필드 추가 */}
         <div

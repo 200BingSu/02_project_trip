@@ -81,13 +81,6 @@ const CouponForm = ({
     }
   };
   // 날짜 비활성화
-  const range = (start: number, end: number) => {
-    const result = [];
-    for (let i = start; i < end; i++) {
-      result.push(i);
-    }
-    return result;
-  };
   const disabledDate = (current: dayjs.Dayjs) => {
     // 오늘 이전 날짜만 비활성화
     return current && current < dayjs().startOf("day");
