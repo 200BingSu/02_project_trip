@@ -8,6 +8,8 @@ import BottomSheet from "../basic/BottomSheet";
 import { GoCommentDiscussion } from "react-icons/go";
 import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 import "dayjs/locale/ko";
+import { getCookie } from "../../utils/cookie";
+import axios from "axios";
 
 dayjs.locale("ko");
 
@@ -34,6 +36,9 @@ const Bookings = data => {
     checkOutTime,
     createdAt,
   } = data.data;
+
+  // 쿠키
+  const accessToken = getCookie("accessToken");
   const actions = [
     {
       label: (
@@ -57,8 +62,13 @@ const Bookings = data => {
       strfId: strfId,
       title: strfTitle,
     };
+    console.log("채팅방 생성 요청", data);
     try {
-      const res = await axios.post(url, data);
+      const res = await axios.post(url, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       console.log(res.data);
     } catch (error) {
       console.log("채팅방 생성", error);

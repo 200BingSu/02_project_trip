@@ -1,4 +1,5 @@
 import { UploadFile } from "antd";
+import { ReactNode } from "react";
 import { ProviderType } from "./enum";
 
 // children
@@ -46,13 +47,15 @@ export interface ILocation {
   longitude?: number;
   address?: string;
   addressDetail?: string;
+  locationDetailId?: number;
 }
 
 export interface Istore {
-  storeId?: number;
+  strfId?: number;
   category?: string;
   name?: string;
   location?: ILocation;
+  locationTitle?: string;
   tell?: {
     areaCode?: string;
     number?: string;
@@ -97,4 +100,10 @@ export interface IChatList {
   lastChatTime: string;
   pic: string;
   unreadChat: number;
+}
+
+export interface Iamenity {
+  amenity_id: number;
+  key?: string;
+  icon?: ReactNode;
 }

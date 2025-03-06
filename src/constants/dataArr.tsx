@@ -22,12 +22,14 @@ import {
   PiMonitorBold,
   PiWashingMachineBold,
 } from "react-icons/pi";
+import { Iamenity } from "../types/interface";
 
 export const strfArr = ["STAY", "TOUR", "RESTAUR", "FEST"];
 export const pathType = ["모두", "지하철", "버스", "버스+지하철"];
 
 // 편의시설 아이콘
-export const amenities = [
+
+export const amenities: Iamenity[] = [
   { amenity_id: 1, key: "트윈베드", icon: <IoIosBed /> },
   { amenity_id: 2, key: "싱글베드", icon: <FaBed /> },
   { amenity_id: 3, key: "와이파이", icon: <BiWifi /> },

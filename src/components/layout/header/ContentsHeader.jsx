@@ -12,7 +12,7 @@ import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCookie } from "../../../utils/cookie";
-import { Dropdown } from "antd";
+import { Dropdown, Popover } from "antd";
 import { MdContentCopy } from "react-icons/md";
 import { searchAtom } from "../../../atoms/searchAtom";
 
@@ -150,22 +150,31 @@ const ContentsHeader = ({ contentData, strfId, getDetailMember }) => {
         ) : null}
 
         <div className="text-2xl cursor-pointer items-center">
-          <Dropdown
-            menu={{
-              items,
-            }}
-            trigger={["click"]}
-            overlayStyle={{ marginTop: "10px" }}
-            className="flex items-center"
+          <Popover
+            placement="bottom"
+            content={
+              <div
+                onClick={() => handleCopy()}
+                className="flex flex-col gap-[10px] items-center justify-center"
+              >
+                <p className="bg-slate-100 px-[15px] py-[10px] rounded-lg text-slate-600">
+                  {localeIp}
+                </p>
+                <p className="flex items-center gap-1 border-b border-slate-300">
+                  <i className="text-slate-500">
+                    <MdContentCopy />
+                  </i>
+                  <span className="text-slate-500">URL 복사하기</span>
+                </p>
+              </div>
+            }
           >
-            <a onClick={e => e.preventDefault()}>
-              <button type="button">
-                <AiOutlineImport
-                  className={scrollY > 0 ? "text-slate-700" : "text-white"}
-                />
-              </button>
-            </a>
-          </Dropdown>
+            <button type="button">
+              <AiOutlineImport
+                className={scrollY > 0 ? "text-slate-700" : "text-white"}
+              />
+            </button>
+          </Popover>
         </div>
       </div>
     </div>

@@ -31,7 +31,7 @@ const ChatIndex = () => {
   //useState
   const [category, setCategory] = useState<string>("전체");
   const [chatList, setChatLlist] = useState<IChatList[]>([]);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   // APi 채팅방 목록
   const getChatList = async (): Promise<IGetChatList | null> => {
     try {

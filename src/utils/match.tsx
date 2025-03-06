@@ -1,14 +1,19 @@
-import { AiTwotoneHeart } from "react-icons/ai";
-import { BiNavigation, BiSolidBus, BiSolidTrain } from "react-icons/bi";
-import { BsQuestionLg } from "react-icons/bs";
-import { FaWalking } from "react-icons/fa";
-import { FaLocationDot, FaTrainSubway } from "react-icons/fa6";
-import { IoAirplane, IoReaderOutline } from "react-icons/io5";
-import { MdOutlineAutoAwesomeMotion } from "react-icons/md";
+import { ReactNode } from "react";
+import {
+  BiNavigation,
+  BiSolidBus,
+  BiSolidFoodMenu,
+  BiSolidTrain,
+} from "react-icons/bi";
+import { FaHotel } from "react-icons/fa";
+import { FaTrainSubway } from "react-icons/fa6";
+import { IoAirplane, IoBalloon, IoRestaurant, IoTicket } from "react-icons/io5";
+import { MdBedroomChild } from "react-icons/md";
 import { amenities } from "../constants/dataArr";
+import { CategoryType } from "../types/enum";
 
 // day 색깔
-export const dayTextColor = dayNum => {
+export const dayTextColor = (dayNum: number): string => {
   switch (dayNum % 3) {
     case 1:
       return "text-primary";
@@ -21,7 +26,7 @@ export const dayTextColor = dayNum => {
   }
 };
 // day 배경색
-export const dayBgColor = dayNum => {
+export const dayBgColor = (dayNum: number): string => {
   switch (dayNum % 3) {
     case 1:
       return "bg-primary";
@@ -34,7 +39,7 @@ export const dayBgColor = dayNum => {
   }
 };
 // day 선 색깔
-export const dayLineColor = dayNum => {
+export const dayLineColor = (dayNum: number): string => {
   switch (dayNum % 3) {
     case 1:
       return "#0DD1FD";
@@ -47,7 +52,7 @@ export const dayLineColor = dayNum => {
   }
 };
 // pathType 아이콘
-export const matchPathTypeIcon = pathType => {
+export const matchPathTypeIcon = (pathType: string): ReactNode => {
   switch (pathType) {
     case "지하철": //지하철
       return <FaTrainSubway />;
@@ -72,7 +77,7 @@ export const matchPathTypeIcon = pathType => {
   }
 };
 // pathType 숫자
-export const matchPathTypeNumIcon = pathType => {
+export const matchPathTypeNumIcon = (pathType: number): ReactNode => {
   switch (pathType) {
     case 1: //지하철
       return <FaTrainSubway />;
@@ -88,7 +93,7 @@ export const matchPathTypeNumIcon = pathType => {
       return <BiSolidTrain />;
     case 20: //버스+열차
       return <BiSolidBus />;
-    case "지하철+열차": //지하철+열차
+    case 21: //지하철+열차
       return <BiSolidTrain />;
     case 13: //항공
       return <IoAirplane />;
@@ -97,7 +102,7 @@ export const matchPathTypeNumIcon = pathType => {
   }
 };
 // 날씨 아이콘
-export const matchWeatherIcon = weather => {
+export const matchWeatherIcon = (weather: string) => {
   switch (weather) {
     case "sunny":
       return <img src="/images/weathericon/sunny.svg" alt="sunny" />;
@@ -115,7 +120,7 @@ export const matchWeatherIcon = weather => {
 };
 
 // 카테고리 한글 변환
-export const categoryKor = category => {
+export const categoryKor = (category: string | null) => {
   if (category === "STAY") return "숙소";
   if (category === "RESTAUR") return "식당";
   if (category === "TOUR") return "관광지";
@@ -124,7 +129,45 @@ export const categoryKor = category => {
 };
 
 // 편의시설 아이콘 매칭
-export const matchAmenitiesIcon = amenityId => {
-  const amenity = amenities.find(item => item.amenity_id === amenityId);
-  return amenity.icon;
+export const matchAmenitiesIcon = (amenityId: number) => {
+  const amenity = amenities.find(item => item.amenity_id === amenityId) ?? null;
+  return amenity?.icon;
+};
+
+export const matchName = (category: string) => {
+  switch (category) {
+    case CategoryType.STAY:
+      return "객실";
+    case CategoryType.RESTAURANT:
+      return "메뉴";
+    case CategoryType.FEST:
+    case CategoryType.TOUR:
+      return "입장권";
+  }
+};
+
+export const matchcategoryIcon = (category: string): ReactNode => {
+  switch (category) {
+    case CategoryType.STAY:
+      return <FaHotel />;
+    case CategoryType.RESTAURANT:
+      return <IoRestaurant />;
+    case CategoryType.FEST:
+      return <IoBalloon />;
+    case CategoryType.TOUR:
+      return <IoBalloon />;
+  }
+};
+
+export const matchMenuIcon = (category: string): ReactNode => {
+  switch (category) {
+    case CategoryType.STAY:
+      return <MdBedroomChild />;
+    case CategoryType.RESTAURANT:
+      return <BiSolidFoodMenu />;
+    case CategoryType.FEST:
+      return <IoTicket />;
+    case CategoryType.TOUR:
+      return <IoTicket />;
+  }
 };
