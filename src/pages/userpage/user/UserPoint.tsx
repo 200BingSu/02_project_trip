@@ -1,8 +1,8 @@
 import { IoIosArrowDown } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { useState } from "react";
-import Point from "../../../components/user/Point";
+import Point from "../../../components/point/Point";
 
 const UserPoint = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,14 +40,17 @@ const UserPoint = (): JSX.Element => {
               />
               <p className="text-sm text-slate-700">QR/스마트 결제</p>
             </div>
-            <div className="flex flex-col flex-1 items-center gap-[6px] cursor-pointer">
+            <Link
+              to="payment"
+              className="flex flex-col flex-1 items-center gap-[6px] cursor-pointer"
+            >
               <img
                 src="/public/images/icon/AiOutlinePlusCircle.svg"
                 alt="AiOutlinePlusCircle"
                 className="w-6 aspect-square"
               />
               <p className="text-sm text-slate-700">포인트 충전</p>
-            </div>
+            </Link>
           </div>
         </div>
         <ul className="px-4">
