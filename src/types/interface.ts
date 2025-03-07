@@ -124,6 +124,7 @@ export interface IReview {
   content: string;
   rating: number;
   user_id?: number;
+  userId?: number;
   userName?: string;
   writerUserId: string;
   writerUserName: string;

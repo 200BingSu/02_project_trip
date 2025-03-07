@@ -1,12 +1,16 @@
-import { Button, Rate } from "antd";
-import { useState, useRef, useEffect } from "react";
-import { ProfilePic } from "../../../constants/pic";
-import { IReviewItem } from "../../../pages/business/review/ReviewIndex";
-import ReviewImage from "../../contents/ReviewImage";
+import { Button, message, Rate } from "antd";
+import { useEffect, useRef, useState } from "react";
 import { CgMoreVerticalAlt } from "react-icons/cg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { editReviewAtom } from "../../../atoms/editReviewAtom";
+import { ProfilePic } from "../../../constants/pic";
+import { IReviewItem } from "../../../pages/business/review/ReviewIndex";
+import BottomSheet from "../../basic/BottomSheet";
+import ReviewImage from "../../contents/ReviewImage";
+import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
+import CenterModalTs from "../../common/CenterModalTs";
+import axios from "axios";
 
 interface IReviewItemProps {
   strfId: number;
@@ -18,7 +22,12 @@ const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
   const navigate = useNavigate();
   const navigateToWriteReply = () => {
     navigate(
-      `/business/review/edit?type=create&strfId=${strfId}&reviewId=${item.review_id}`,
+      `/business/review/edit?type=create&strfId=${strfId}&reviewId=${item.reviewId}`,
+    );
+  };
+  const navigateToEditReply = () => {
+    navigate(
+      `/business/review/edit?type=edit&strfId=${strfId}&reviewId=${item.reviewId}&replayId=${item.reviewReplyId}`,
     );
   };
   // useLocation
@@ -30,11 +39,67 @@ const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
   // useState
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOverflow, setIsOverflow] = useState<boolean>(false);
+  const [isOpenBottom, setIsOpenBottom] = useState<boolean>(false);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const contentRef = useRef<HTMLParagraphElement>(null);
+
+  // API 삭제하기
+  const deleteReview = async (): Promise<string | null> => {
+    const url = `/api/business/review/delete?reviewReplyId=${item.reviewReplyId}`;
+    try {
+      const res = await axios.delete<string | null>(url);
+      const resultData = res.data;
+      console.log("삭제", resultData);
+      message.success("삭제가 완료되었습니다");
+      return resultData;
+    } catch (error) {
+      console.log("삭제", error);
+      message.error("삭제를 실패했습니다");
+      return null;
+    }
+  };
+
+  const actions = [
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiSolidEditAlt className="text-slate-300" />
+          수정하기
+        </div>
+      ),
+      onClick: () => handleClickEdit(),
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiTrash className="text-slate-400" />
+          삭제하기
+        </div>
+      ),
+      onClick: () => handleClickDelete(),
+    },
+  ];
+
+  // 바텀시트
+  const handleBottomSheet = () => {
+    setIsOpenBottom(!isOpenBottom);
+  };
   // 댓글 버튼
   const handleClickButton = () => {
     setEditReview({ ...editReview, userReview: item });
     navigateToWriteReply();
+  };
+  // 수정하기 버튼
+  const handleClickEdit = () => {
+    setEditReview({
+      ...editReview,
+      userReview: item,
+      reviewReply: item.reviewReply ?? "",
+    });
+    navigateToEditReply();
+  };
+  const handleClickDelete = () => {
+    setIsOpenModal(true);
   };
   useEffect(() => {
     if (contentRef.current) {
@@ -43,14 +108,14 @@ const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
   }, [item.content]);
 
   return (
-    <div className="flex flex-col gap-4 px-4">
+    <div className="flex flex-col gap-4 px-4 py-5">
       {/* 유저 리뷰 */}
       <section className="flex flex-col gap-3">
         {/* 유저 정보 */}
         <div className="flex items-center gap-4">
           <div className="bg-slate-200 rounded-full w-10 h-10 overflow-hidden">
             <img
-              src={`${ProfilePic}/${item.user_id}/${item.writerUserProfilePic}`}
+              src={`${ProfilePic}/${item.userId}/${item.writerUserProfilePic}`}
               alt="프로필 사진"
             />
           </div>
@@ -66,7 +131,7 @@ const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
               {item.ratingAvg}
             </p>
           </div>
-          <p className="text-sm text-slate-500">{item.created_at}</p>
+          <p className="text-sm text-slate-500">{item.createdAt}</p>
         </div>
         {/* 리뷰 내용 */}
         <div>
@@ -89,10 +154,7 @@ const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
           )}
         </div>
         {/* 사진 */}
-        <ReviewImage
-          imgArr={[{ pic: "1.png" }, { pic: "2.png" }, { pic: "3.png" }]}
-          reviewId={1}
-        />
+        <ReviewImage imgArr={item.reviewPicList} reviewId={item.reviewId} />
       </section>
       {/* 사장님 리뷰 */}
       {item.reviewReply && (
@@ -101,13 +163,20 @@ const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
           <div className="flex items-center justify-between">
             <p className="text-lg font-semibold text-slate-700">사장님</p>
             <div className="flex items-center gap-2">
-              <p className="text-sm text-slate-500">2025-03-06</p>
-              <button
-                type="button"
-                className="text-slate-500 text-xl font-semibold"
-              >
-                <CgMoreVerticalAlt />
-              </button>
+              <p className="text-sm text-slate-500">
+                {item.reviewReplyCreatedAt}
+              </p>
+              {pathname !== "/business/review/edit" && (
+                <button
+                  type="button"
+                  className="text-slate-500 text-xl font-semibold"
+                  onClick={() => {
+                    setIsOpenBottom(true);
+                  }}
+                >
+                  <CgMoreVerticalAlt />
+                </button>
+              )}
             </div>
           </div>
           {/* 리뷰 내용 */}
@@ -126,6 +195,18 @@ const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
         >
           댓글 작성
         </Button>
+      )}
+      <BottomSheet
+        open={isOpenBottom}
+        onClose={handleBottomSheet}
+        actions={actions}
+      />
+      {isOpenModal && (
+        <CenterModalTs
+          handleClickCancle={() => setIsOpenModal(false)}
+          handleClickSubmit={deleteReview}
+          content="삭제하시겠습니까?"
+        />
       )}
     </div>
   );

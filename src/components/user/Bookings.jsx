@@ -70,6 +70,10 @@ const Bookings = data => {
         },
       });
       console.log(res.data);
+      const resultData = res.data;
+      if (resultData) {
+        navigate(`/chatroom?roomId=${resultData.data.roomId}`);
+      }
     } catch (error) {
       console.log("채팅방 생성", error);
     }

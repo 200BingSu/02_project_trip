@@ -19,7 +19,6 @@ const CreateCoupon = (): JSX.Element => {
 
   return (
     <div>
-      <TitleHeaderTs title="쿠폰 관리" icon="back" onClick={navigateToBack} />
       <CouponForm formType={formType} couponId={couponId} strfId={strfId} />
     </div>
   );

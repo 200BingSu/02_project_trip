@@ -5,10 +5,16 @@ import {
   BiSolidFoodMenu,
   BiSolidTrain,
 } from "react-icons/bi";
-import { FaHotel } from "react-icons/fa";
 import { FaTrainSubway } from "react-icons/fa6";
-import { IoAirplane, IoBalloon, IoRestaurant, IoTicket } from "react-icons/io5";
+import {
+  IoAirplane,
+  IoBalloon,
+  IoKeyOutline,
+  IoRestaurant,
+  IoTicket,
+} from "react-icons/io5";
 import { MdBedroomChild } from "react-icons/md";
+import { RiHotelLine } from "react-icons/ri";
 import { amenities } from "../constants/dataArr";
 import { CategoryType } from "../types/enum";
 
@@ -149,7 +155,7 @@ export const matchName = (category: string) => {
 export const matchcategoryIcon = (category: string): ReactNode => {
   switch (category) {
     case CategoryType.STAY:
-      return <FaHotel />;
+      return <RiHotelLine />;
     case CategoryType.RESTAURANT:
       return <IoRestaurant />;
     case CategoryType.FEST:
@@ -162,7 +168,7 @@ export const matchcategoryIcon = (category: string): ReactNode => {
 export const matchMenuIcon = (category: string): ReactNode => {
   switch (category) {
     case CategoryType.STAY:
-      return <MdBedroomChild />;
+      return <IoKeyOutline />;
     case CategoryType.RESTAURANT:
       return <BiSolidFoodMenu />;
     case CategoryType.FEST:

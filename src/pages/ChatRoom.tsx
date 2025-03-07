@@ -1,11 +1,16 @@
 import { Client } from "@stomp/stompjs";
-import { Input } from "antd";
+import { Input, message } from "antd";
 import axios from "axios";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { BsFillPatchPlusFill } from "react-icons/bs";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
 import { getCookie } from "../utils/cookie";
+import { chatDataAtom, IChatData } from "../atoms/chatAtom";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { chatDataSelector } from "../selectors/chatSelector";
+import { IoIosArrowUp } from "react-icons/io";
+import { ProductPic, ProfilePic } from "../constants/pic";
 
 interface ISendMessage {
   message: string;
@@ -29,7 +34,7 @@ interface IMessage {
 
 interface IGetChatHistoryRes {
   code: string;
-  data: IMessage[];
+  data: IChatData[];
 }
 
 const ChatRoom = (): JSX.Element => {
@@ -43,19 +48,25 @@ const ChatRoom = (): JSX.Element => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get("roomId");
+  // recoil
+  const filteredChatHistory = useRecoilValue(chatDataSelector);
+  const [chatHistory, setChatHistory] = useRecoilState(chatDataAtom);
+  const resetChatHistory = useResetRecoilState(chatDataAtom);
   // useState & useRef
   const [connected, setConnected] = useState<boolean>(false);
   const [name, setName] = useState<number>(1);
   const [messages, setMessages] = useState<(ISendMessage | string)[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
-  const [chatHistory, setChatHistory] = useState<IMessage[]>([]);
   const [page, setPage] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isMore, setIsMore] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   //useRef
   const clientRef = useRef<Client | null>(null);
   const connectionRef = useRef<boolean>(false);
   const observerTarget = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     console.log("connectionRef", connectionRef.current);
@@ -90,7 +101,7 @@ const ChatRoom = (): JSX.Element => {
         );
         const resultData = res.data;
         console.log("채팅내역", resultData);
-        setChatHistory(prev => [...prev, ...resultData.data]);
+        setChatHistory(resultData.data);
         setIsLoading(false);
         return resultData;
       } catch (error) {
@@ -162,22 +173,19 @@ const ChatRoom = (): JSX.Element => {
         console.log("Disconnected");
         connectionRef.current = false;
         setConnected(false);
-        setMessages(prev => [...prev, "연결이 끊어졌습니다."]);
+        // message.error("채팅연결에 실패했습니다");
       },
       onWebSocketError: error => {
         console.error("WebSocket error: ", error);
         connectionRef.current = false;
         setConnected(false);
-        setMessages(prev => [
-          ...prev,
-          "연결 오류가 발생했습니다. 재연결을 시도합니다.",
-        ]);
+        message.error("채팅연결에 실패했습니다");
       },
       onStompError: frame => {
         console.error("STOMP error: ", frame.headers["message"], frame.body);
         connectionRef.current = false;
         setConnected(false);
-        setMessages(prev => [...prev, "STOMP 오류가 발생했습니다."]);
+        message.error("채팅연결에 실패했습니다");
       },
     });
 
@@ -215,13 +223,6 @@ const ChatRoom = (): JSX.Element => {
     }
   };
 
-  //자동 연결을 위한 useEffect 수정
-  useEffect(() => {
-    if (!connectionRef.current) {
-      connect();
-    }
-  }, []);
-
   // 채팅 메시지 전송 함수
   const sendMessage = (): void => {
     if (clientRef.current && inputMessage.trim() && connected) {
@@ -250,6 +251,7 @@ const ChatRoom = (): JSX.Element => {
   const handleClickToBack = async () => {
     await navigateToBack();
     await disconnect();
+    resetChatHistory();
   };
   // 관찰
   const handleObserver = (entities: IntersectionObserverEntry[]) => {
@@ -264,7 +266,7 @@ const ChatRoom = (): JSX.Element => {
       threshold: 0.1,
     });
     // 관찰 시작
-    if (observerTarget.current) {
+    if (observerTarget.current && isMore) {
       observer.observe(observerTarget.current);
     }
     // cleanup
@@ -275,14 +277,86 @@ const ChatRoom = (): JSX.Element => {
     getChatHistory();
     console.log("page", page);
   }, [page, getChatHistory]);
+
+  useEffect(() => {
+    connect();
+  }, []);
+  // 스크롤 이벤트
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollButton(window.scrollY > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // 초기 채팅 내역을 불러온 후 스크롤 조정
+  useEffect(() => {
+    if (chatContainerRef.current && chatHistory.length > 0) {
+      const container = chatContainerRef.current;
+      const scrollHeight = container.scrollHeight;
+      const clientHeight = container.clientHeight;
+      const maxScroll = scrollHeight - clientHeight;
+
+      container.scrollTo({
+        top: maxScroll,
+        behavior: "auto", // 초기 로딩시에는 즉시 스크롤
+      });
+    }
+  }, [chatHistory.length]); // chatHistory가 처음 로드될 때 실행
+
+  // 새로운 메시지에 대한 기존 스크롤 효과는 유지
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      const container = chatContainerRef.current;
+      const scrollHeight = container.scrollHeight;
+      const clientHeight = container.clientHeight;
+      const maxScroll = scrollHeight - clientHeight;
+
+      container.scrollTo({
+        top: maxScroll,
+        behavior: "smooth",
+      });
+    }
+  }, [filteredChatHistory]);
+
+  // 새로운 메시지가 추가될 때 스크롤 조정
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      const container = chatContainerRef.current;
+      const scrollHeight = container.scrollHeight;
+      const clientHeight = container.clientHeight;
+      const maxScroll = scrollHeight - clientHeight;
+
+      // 부드러운 스크롤 효과로 이동
+      container.scrollTo({
+        top: maxScroll,
+        behavior: "smooth",
+      });
+    }
+  }, [filteredChatHistory]);
+
   return (
-    <div className="max-w-[768px] min-w-xs mx-auto relative h-screen ">
-      <TitleHeaderTs title="채팅" icon="back" onClick={handleClickToBack} />
+    <div className="max-w-[768px] min-w-xs mx-auto relative min-h-screen ">
+      <TitleHeaderTs
+        title="채팅"
+        icon="back"
+        onClick={handleClickToBack}
+        scrollEvent={false}
+      />
       {/* 채팅 인터페이스 (연결된 경우에만 표시) */}
       <div className="min-h-[calc(100vh-100px)] pt-[16px]">
         <ul
+          ref={chatContainerRef}
           className="h-full overflow-y-auto
-        flex flex-col gap-[16px]"
+        flex flex-col gap-[16px] pb-20"
         >
           {/* {messages?.map((item: ISendMessage | string, index) => {
             return (
@@ -295,7 +369,7 @@ const ChatRoom = (): JSX.Element => {
               </li>
             );
           })} */}
-          {chatHistory?.map((item, index) => {
+          {filteredChatHistory?.map((item, index) => {
             return item.signedUser === true ? (
               <li
                 key={index}
@@ -318,8 +392,11 @@ const ChatRoom = (): JSX.Element => {
                 key={index}
                 className="flex items-start justify-start gap-[12px] px-[16px]"
               >
-                <div className="w-[30px] h-[30px] bg-slate-500 rounded-full overflow-hidden">
-                  사진
+                <div className="aspect-square w-[8vw] max-w-[35px] max-h-[35px] bg-slate-500 rounded-full overflow-hidden">
+                  <img
+                    src={`${ProfilePic}/${item.senderId}/${item.senderPic}`}
+                    alt=""
+                  />
                 </div>
                 <div className="flex flex-col gap-[6px]">
                   <p className="text-sm text-slate-700 font-semibold">
@@ -329,19 +406,19 @@ const ChatRoom = (): JSX.Element => {
                     <p
                       className="flex items-center justify-center bg-slate-100 px-[16px] py-[12px]
                     rounded-b-xl rounded-tr-xl
-                    text-slate-700 text-2xl
+                    text-slate-700 text-base
                     max-w-56 break-all"
                     >
                       {item.message}
                     </p>
-                    <p className="text-lg text-slate-400">{item.createdAt}</p>
+                    <p className="text-sm text-slate-400">{item.createdAt}</p>
                   </div>
                 </div>
               </li>
             );
           })}
           <div id="observer" ref={observerTarget}>
-            페이징 처리 관찰 대상
+            {/* 페이징 처리 관찰 대상 */}
           </div>
         </ul>
         {/* 메시지 입력 필드 추가 */}
@@ -349,7 +426,8 @@ const ChatRoom = (): JSX.Element => {
           className="flex items-center gap-[12px]
                     px-[16px] py-[16px]
                     bg-white
-                    max-w-[768px] w-full h-auto fixed bottom-0 left-1/2 -translate-x-1/2"
+                    max-w-[768px] w-full h-auto fixed bottom-0 left-1/2 -translate-x-1/2
+                    "
         >
           <Input
             type="text"
@@ -366,6 +444,20 @@ const ChatRoom = (): JSX.Element => {
           <button type="button" onClick={sendMessage}>
             <BsFillPatchPlusFill className="text-3xl text-primary" />
           </button>
+          {/* 위로가기 */}
+          <div
+            className={`absolute bottom-[100px] left-0 translate-x-1/2 transition-all duration-300 ${
+              showScrollButton ? "opacity-100 visible" : "opacity-0 invisible"
+            }`}
+          >
+            <button
+              type="button"
+              className="bg-primary text-white rounded-full p-1 text-xl shadow-lg hover:bg-primary/90 transition-colors"
+              onClick={scrollToTop}
+            >
+              <IoIosArrowUp />
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -44,9 +44,11 @@ const ChatList = ({ chatList }: ChatListProps): JSX.Element => {
               {/* 시간, 알림 */}
               <div className="flex flex-col items-end justify-between">
                 <p className="text-sm text-slate-400">{item.lastChatTime}</p>
-                <p className="px-3 py-[5px] bg-primary rounded-2xl text-white text-sm">
-                  {item.unreadChat}
-                </p>
+                {item.unreadChat && (
+                  <p className="px-3 py-[5px] bg-primary rounded-2xl text-white text-sm">
+                    {item.unreadChat}
+                  </p>
+                )}
               </div>
             </li>
           );

@@ -40,11 +40,6 @@ const EditCoupon = (): JSX.Element => {
 
   return (
     <div>
-      <TitleHeaderTs
-        title="쿠폰 관리"
-        icon="back"
-        onClick={navigateToCouponList}
-      />
       <StrfInfo name="업체 이름" id="1234" category="숙소" />
       <CouponForm
         formType={formType}
