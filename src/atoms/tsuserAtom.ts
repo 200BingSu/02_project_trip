@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 import { Iuser } from "../types/interface";
-import { ProviderType } from "../types/enum";
+import { ProviderType, ROLE } from "../types/enum";
 
 export const tsUserAtom = atom<Iuser>({
   key: "tsUserAtom",
@@ -11,7 +11,7 @@ export const tsUserAtom = atom<Iuser>({
     profilePic: "",
     accessToken: "",
     providerType: ProviderType.LOCAL,
-    role: [],
+    role: [ROLE.GUEST],
     tell: "",
     birth: "",
   },

@@ -13,7 +13,7 @@ const BusinessLayout = () => {
   //useState
   const [isOpenModal, setIsOpenModal] = useState(false);
   //사업자가 아니라면 로그인으로 보내기
-  const userInfo = getCookie("user");
+  const userInfo = getCookie("user") ?? {};
   // console.log(userInfo);
   const { role } = userInfo;
 
@@ -21,7 +21,7 @@ const BusinessLayout = () => {
     navigateToLogin();
   };
   useEffect(() => {
-    if (role.includes(ROLE.BUSI) === false) {
+    if (role && role.includes(ROLE.BUSI) === false) {
       console.log("사업자가 아닙니다.");
       setIsOpenModal(true);
     }
