@@ -7,6 +7,7 @@ interface TitleHeaderTsProps {
   icon?: string;
   onClick?: () => void;
   rightContent?: ReactNode | null;
+  scrollEvent?: boolean;
 }
 /**
  * props
@@ -28,10 +29,16 @@ const TitleHeaderTs = ({
   title = "",
   onClick = () => {},
   rightContent = null,
+  scrollEvent = true,
 }: TitleHeaderTsProps): JSX.Element => {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   // 스크롤
   useEffect(() => {
+    if (!scrollEvent) {
+      setIsScrolled(false);
+      return;
+    }
+
     const handleScroll = () => {
       if (window.scrollY > 0) {
         setIsScrolled(true);
@@ -43,15 +50,15 @@ const TitleHeaderTs = ({
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [scrollEvent]);
   return (
     <div
       className={`
-        max-w-3xl w-full mx-auto h-[60px]
+        max-w-[768px] w-full mx-auto h-[60px]
         flex  items-center justify-between 
         px-[16px] 
-        sticky top-0 left-0 z-10 
-        transition-colors duration-100 ${isScrolled ? "bg-white" : "bg-transparent"}`} // 스크롤 상태에 따라 배경색 변경
+        sticky top-0 left-0 z-10
+        transition-colors duration-100 ${scrollEvent ? (isScrolled ? "bg-white" : "bg-transparent") : "bg-white"}`}
     >
       {/* 좌측 */}
       <div className="flex gap-[12px] items-center">

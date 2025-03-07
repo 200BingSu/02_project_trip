@@ -4,6 +4,7 @@ interface StrfInfoProps {
   name: string;
   id: string | number;
   category: string;
+  ref?: React.RefObject<HTMLLIElement>;
 }
 
 const StrfInfo = ({ name, id, category }: StrfInfoProps): JSX.Element => {
