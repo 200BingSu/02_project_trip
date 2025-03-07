@@ -13,6 +13,7 @@ export enum CategoryType {
 export enum ROLE {
   USER = "USER",
   BUSI = "BUSI",
+  GUEST = "GUEST",
 }
 
 export enum ORDER_TYPE {
