@@ -7,7 +7,7 @@ interface CenterModalProps {
   handleClickCancle?: () => void;
   handleClickSubmit: () => void;
   content: string;
-  type: "warning" | "error" | "info" | "success";
+  type?: "warning" | "error" | "info" | "success";
 }
 
 /**

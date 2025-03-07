@@ -26,3 +26,19 @@ export const chatAtom = atom<ChatState>({
     messages: [],
   },
 });
+
+export interface IChatData {
+  chatId: string;
+  senderName: string;
+  senderId: string;
+  senderPic: string;
+  signedUser: boolean;
+  message: string;
+  title: string;
+  createdAt: string;
+}
+
+export const chatDataAtom = atom<IChatData[]>({
+  key: "chatData",
+  default: [],
+});

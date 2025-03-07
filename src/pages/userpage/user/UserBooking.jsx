@@ -31,8 +31,8 @@ const dummyDataRes = {
     },
     {
       bookingId: 102,
-      strfId: 2002,
-      strfTitle: "Luxury Suite with Ocean View",
+      strfId: 4,
+      strfTitle: "4번",
       strfPic: "https://example.com/image2.jpg",
       createdAt: "2025-02-21T15:20:10Z",
       checkInDate: "2025-03-10",
