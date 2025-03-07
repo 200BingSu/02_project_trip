@@ -13,10 +13,10 @@ export interface Iuser {
   name?: string;
   profilePic?: string;
   providerType?: ProviderType | null;
-  userId?: number;
-  accessToken?: string;
-  role?: string[];
+  userId: number;
+  role: string[];
   tell?: string;
+  accessToken: string;
 }
 
 export interface ICoupon {
