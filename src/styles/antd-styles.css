@@ -145,3 +145,14 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+.custom-checkbox > span:nth-child(2) {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0 6px 8px;
+}
+.custom-all-checkbox .ant-checkbox-inner {
+  width: 18px;
+  height: 18px;
+}
