@@ -5,7 +5,6 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import CouponItem from "../../../components/business/coupon/CouponItem";
 import StrfInfo from "../../../components/business/StrfInfo";
-import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { ICoupon } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
 
@@ -64,7 +63,7 @@ const CouponIndex = (): JSX.Element => {
       }
       return resultData;
     } catch (error) {
-      console.log("사업자 쿠폰 조회", error);
+      console.log(error);
       setCouponData([]);
       setIsLoading(false);
       return null;
@@ -76,7 +75,6 @@ const CouponIndex = (): JSX.Element => {
 
   return (
     <div>
-      <TitleHeaderTs icon="back" onClick={navigateToBack} title="쿠폰 관리" />
       <StrfInfo name="업체 이름" id={strfId} category="숙소" />
       <Spin spinning={isLoading}>
         <section className="px-4 py-3 flex flex-col gap-5">

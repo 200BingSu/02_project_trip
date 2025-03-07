@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AiFillSetting, AiOutlineStar } from "react-icons/ai";
+import { AiFillSetting, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
 import { BiBell, BiSolidCoupon } from "react-icons/bi";
 import { GoDiscussionOutdated } from "react-icons/go";
 import { IoIosArrowForward } from "react-icons/io";
@@ -15,9 +15,10 @@ import {
   matchName,
 } from "../../../utils/match";
 import { CategoryType } from "../../../types/enum";
+import { Button } from "antd";
 
 // 현재 상품 id (임시)
-const strfId = 1;
+const strfId = 305;
 const category = CategoryType.STAY;
 
 const Mypage = (): JSX.Element => {
@@ -171,12 +172,12 @@ const Mypage = (): JSX.Element => {
             님
           </div>
           <div>
-            <button
-              type="button"
+            <Button
               onClick={() => navigate("/business/register")}
+              className="flex items-center gap-1 rounded-2xl text-slate-500"
             >
-              + 업체 등록
-            </button>
+              <AiOutlinePlus /> 업체 등록
+            </Button>
           </div>
         </div>
         {/* 라인 */}
