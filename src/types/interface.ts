@@ -17,6 +17,10 @@ export interface Iuser {
   role: string[];
   tell?: string;
   accessToken: string;
+  busiNum?: string;
+  strfId?: string;
+  title?: string;
+  category?: string;
 }
 
 export interface ICoupon {
@@ -29,16 +33,28 @@ export interface ICoupon {
   daysLeft?: number;
 }
 
+// 메뉴 목록
+export interface MenuType {
+  menuId: number;
+  menuPrice: number;
+  menuTitle: string;
+  menuPic: string;
+  strfId: number;
+}
+
+// 등록할 때
 export interface Imenu {
   strfId?: number;
   menuId?: number;
   menuPic?: UploadFile[];
-  name: string;
-  price: number;
+  name?: string;
+  menuTitle?: string;
+  price?: number;
+  menuPrice?: number;
   addPrice?: number;
   roomList?: string[];
-  recomCapacity: number;
-  maxCapacity: number;
+  recomCapacity?: number;
+  maxCapacity?: number;
 }
 
 export interface ILocation {

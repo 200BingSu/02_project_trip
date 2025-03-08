@@ -16,7 +16,7 @@ import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import { resetUserData } from "../../../selectors/userSelector";
-import { ProviderType } from "../../../types/enum";
+import { ProviderType, ROLE } from "../../../types/enum";
 
 //interface
 interface ITripList {
@@ -89,6 +89,7 @@ const UserIndex = () => {
         userId: "",
         email: "",
         accessToken: "",
+        role: [ROLE.GUEST],
       });
     }
 

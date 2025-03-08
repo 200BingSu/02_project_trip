@@ -1,13 +1,12 @@
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+import { useEffect, useState } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
 import CouponForm from "../../../components/business/coupon/CouponForm";
 import StrfInfo from "../../../components/business/StrfInfo";
 import { ICoupon } from "../../../types/interface";
-import { useEffect, useState } from "react";
 
 const EditCoupon = (): JSX.Element => {
   // useNavigate
-  const navigate = useNavigate();
+
   const location = useLocation();
   // 쿼리
   const [searchParams] = useSearchParams();
@@ -24,9 +23,6 @@ const EditCoupon = (): JSX.Element => {
   const formType = pathname.includes("edit") ? "edit" : "create";
   console.log(formType);
 
-  const navigateToCouponList = () => {
-    navigate("/business/coupon");
-  };
   useEffect(() => {
     if (title && discountPer && expiredAt && distributeAt) {
       setCouponData({
@@ -40,7 +36,7 @@ const EditCoupon = (): JSX.Element => {
 
   return (
     <div>
-      <StrfInfo name="업체 이름" id="1234" category="숙소" />
+      <StrfInfo />
       <CouponForm
         formType={formType}
         strfId={strfId}

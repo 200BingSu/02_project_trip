@@ -14,5 +14,9 @@ export const tsUserAtom = atom<Iuser>({
     role: [ROLE.GUEST],
     tell: "",
     birth: "",
+    busiNum: "",
+    strfId: "",
+    title: "",
+    category: "",
   },
 });

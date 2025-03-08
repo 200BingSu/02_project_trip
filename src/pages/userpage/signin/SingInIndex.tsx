@@ -9,13 +9,11 @@ import { USER } from "../../../constants/api";
 import "../../../styles/antd-styles.css";
 import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 import { ProviderType, ROLE } from "../../../types/enum";
+import { Iuser } from "../../../types/interface";
 
 //interface
-interface IPostLogin {
+interface IPostLogin extends Iuser {
   code: string;
-  role: string[];
-  accessToken: string;
-  userId: number;
 }
 interface LoginFrom {
   email: string;
@@ -36,6 +34,7 @@ const handleKakaoLogin = () => {
 const SingInIndex = () => {
   //쿠키
   const savedUserLogin = getCookie("user");
+  console.log("savedUserLogin", savedUserLogin);
   const nowEmail = savedUserLogin?.email;
   const [form] = Form.useForm();
   // recoil
@@ -50,7 +49,9 @@ const SingInIndex = () => {
     navigate("/business");
   };
   // useState
-  const [loginType, setLoginType] = useState("personal");
+  const [loginType, setLoginType] = useState<"personal" | "business" | "guest">(
+    "personal",
+  );
   const [isSaveLogin, setIsSaveLogin] = useState(
     savedUserLogin ? savedUserLogin.isSaveLogin : false,
   );
@@ -62,8 +63,10 @@ const SingInIndex = () => {
   const postSignInUser = async (
     data: LoginFrom,
   ): Promise<IPostLogin | null> => {
+    const url =
+      loginType === "personal" ? USER.signInUser : USER.signInBusiness;
     try {
-      const res = await axios.post<IPostLogin>(`${USER.signInUser}`, data);
+      const res = await axios.post<IPostLogin>(`${url}`, data);
       console.log("로그인 시도:", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
@@ -76,12 +79,20 @@ const SingInIndex = () => {
           isSaveEmail: isSaveEmail,
           ProviderType: ProviderType.LOCAL,
           role: resultData.role,
+          busiNum: res.data.busiNum ?? "",
+          strfId: res.data.strfId ?? "",
+          title: res.data.title ?? "",
+          category: res.data.category ?? "",
         });
         setUserInfo({
           userId: res.data.userId,
           accessToken: res.data.accessToken,
           role: [...resultData.role],
           providerType: ProviderType.LOCAL,
+          busiNum: res.data.busiNum ?? "",
+          strfId: res.data.strfId ?? "",
+          title: res.data.title ?? "",
+          category: res.data.category ?? "",
         });
       }
       // 사업자 탭 분리안되어 있어서 임시조치
@@ -122,7 +133,7 @@ const SingInIndex = () => {
     const userInfo = getCookie("user");
     setCookie("user", { ...userInfo, isSaveEmail: false, email: "" });
   }, [isSaveEmail]);
-
+  useEffect(() => {}, [loginType]);
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center gap-4">
       {/* 로고 */}
@@ -157,116 +168,116 @@ const SingInIndex = () => {
       </div>
 
       <div className="w-full px-4">
-        {loginType === "personal" && (
-          <div>
-            {/* 로그인 폼 */}
-            <div className="w-full">
-              <Form
-                form={form}
-                name="register"
-                className="custom-form"
-                onFinish={values => onFinish(values)}
-                scrollToFirstError
+        {/* {loginType === "personal" && ( */}
+        <div>
+          {/* 로그인 폼 */}
+          <div className="w-full">
+            <Form
+              form={form}
+              name="register"
+              className="custom-form"
+              onFinish={values => onFinish(values)}
+              scrollToFirstError
+            >
+              {/* 이메일 */}
+              <Form.Item
+                name="email"
+                label="이메일"
+                labelCol={{ span: 24 }}
+                initialValue={nowEmail || ""}
+                className="custom-input-item"
+                // rules={[{ required: true, message: "이메일을 입력해주세요." }]}
               >
-                {/* 이메일 */}
-                <Form.Item
-                  name="email"
-                  label="이메일"
-                  labelCol={{ span: 24 }}
-                  initialValue={nowEmail || ""}
-                  className="custom-input-item"
-                  // rules={[{ required: true, message: "이메일을 입력해주세요." }]}
+                <Input
+                  placeholder="이메일을 입력하세요"
+                  style={{ height: "48px" }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="pw"
+                label="비밀번호"
+                labelCol={{ span: 24 }} // Label의 그리드 크기
+                className="custom-input-item"
+                // rules={[{ required: true, message: "비밀번호를 입력해주세요." }]}
+              >
+                <Input.Password
+                  placeholder="비밀번호를 입력하세요"
+                  style={{ height: "48px" }}
+                />
+              </Form.Item>
+              {/* 로그인 유지, 아이디 저장 */}
+              <div className="w-full flex items-center justify-start">
+                <Checkbox
+                  checked={isSaveLogin}
+                  onChange={handleSaveLogin}
+                  className="text-slate-500 text-xs"
                 >
-                  <Input
-                    placeholder="이메일을 입력하세요"
-                    style={{ height: "48px" }}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="pw"
-                  label="비밀번호"
-                  labelCol={{ span: 24 }} // Label의 그리드 크기
-                  className="custom-input-item"
-                  // rules={[{ required: true, message: "비밀번호를 입력해주세요." }]}
+                  로그인 유지
+                </Checkbox>
+                <Checkbox
+                  checked={isSaveEmail}
+                  onChange={handleSaveEmail}
+                  className="text-slate-500 text-xs"
                 >
-                  <Input.Password
-                    placeholder="비밀번호를 입력하세요"
-                    style={{ height: "48px" }}
-                  />
-                </Form.Item>
-                {/* 로그인 유지, 아이디 저장 */}
-                <div className="w-full flex items-center justify-start">
-                  <Checkbox
-                    checked={isSaveLogin}
-                    onChange={handleSaveLogin}
-                    className="text-slate-500 text-xs"
-                  >
-                    로그인 유지
-                  </Checkbox>
-                  <Checkbox
-                    checked={isSaveEmail}
-                    onChange={handleSaveEmail}
-                    className="text-slate-500 text-xs"
-                  >
-                    아이디 저장
-                  </Checkbox>
-                </div>
-                {/* 제출 버튼 */}
-                <Form.Item className="m-0">
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    block
-                    className="font-semibold text-base h-12 my-4"
-                  >
-                    로그인
-                  </Button>
-                </Form.Item>
-              </Form>
-              {/* 아이디 찾기, 비밀번호 찾기, 회원가입 */}
-              <div className="w-full flex items-center justify-center gap-6">
-                <button
-                  type="button"
-                  className="text-slate-500 text-xs sm:text-sm "
-                >
-                  아이디 찾기
-                </button>
-                <span className="text-slate-200">|</span>
-                <button
-                  type="button"
-                  className="text-slate-500 text-xs sm:text-sm "
-                  onClick={() => navigate(`/user/findpw`)}
-                >
-                  비밀번호 찾기
-                </button>
-                <span className="text-slate-200">|</span>
-                <Link
-                  to="/signup/index"
-                  className="text-slate-500 text-xs sm:text-sm "
-                >
-                  회원가입
-                </Link>
+                  아이디 저장
+                </Checkbox>
               </div>
-            </div>
-            {/* 카카오 로그인 */}
-            <div className="w-full">
-              <p className="text-slate-500 text-center text-sm relative my-4 before:absolute before:w-2/5 before:h-[1px] before:bg-slate-200 before:top-1/2 before:left-0 after:absolute after:w-2/5 after:h-[1px] after:bg-slate-200 after:top-1/2 after:right-0">
-                또는
-              </p>
+              {/* 제출 버튼 */}
+              <Form.Item className="m-0">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  block
+                  className="font-semibold text-base h-12 my-4"
+                >
+                  로그인
+                </Button>
+              </Form.Item>
+            </Form>
+            {/* 아이디 찾기, 비밀번호 찾기, 회원가입 */}
+            <div className="w-full flex items-center justify-center gap-6">
               <button
                 type="button"
-                onClick={handleKakaoLogin}
-                className="w-full h-12 px-6 bg-[#FEE500] hover:bg-[#FEE500]/80 rounded-md flex items-center"
+                className="text-slate-500 text-xs sm:text-sm "
               >
-                <img src="/images/kakaoIcon.svg" alt="kakao" />
-                <p className="w-full text-center font-semibold text-base text-[#191600] ">
-                  카카오 로그인
-                </p>
+                아이디 찾기
               </button>
+              <span className="text-slate-200">|</span>
+              <button
+                type="button"
+                className="text-slate-500 text-xs sm:text-sm "
+                onClick={() => navigate(`/user/findpw`)}
+              >
+                비밀번호 찾기
+              </button>
+              <span className="text-slate-200">|</span>
+              <Link
+                to="/signup/index"
+                className="text-slate-500 text-xs sm:text-sm "
+              >
+                회원가입
+              </Link>
             </div>
           </div>
-        )}
-        {loginType === "business" && <div>🔥 탭 2의 내용</div>}
+          {/* 카카오 로그인 */}
+          <div className="w-full">
+            <p className="text-slate-500 text-center text-sm relative my-4 before:absolute before:w-2/5 before:h-[1px] before:bg-slate-200 before:top-1/2 before:left-0 after:absolute after:w-2/5 after:h-[1px] after:bg-slate-200 after:top-1/2 after:right-0">
+              또는
+            </p>
+            <button
+              type="button"
+              onClick={handleKakaoLogin}
+              className="w-full h-12 px-6 bg-[#FEE500] hover:bg-[#FEE500]/80 rounded-md flex items-center"
+            >
+              <img src="/images/kakaoIcon.svg" alt="kakao" />
+              <p className="w-full text-center font-semibold text-base text-[#191600] ">
+                카카오 로그인
+              </p>
+            </button>
+          </div>
+        </div>
+        {/* )} */}
+        {/* {loginType === "business" && <div>🔥 탭 2의 내용</div>} */}
       </div>
     </div>
   );
