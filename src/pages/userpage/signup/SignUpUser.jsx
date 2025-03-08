@@ -115,9 +115,9 @@ const SignUpUser = () => {
     postData.forEach((value, key) => {
       console.log(`${key}:`, value);
     });
-
+    const url = "/api/user/sign-up";
     try {
-      const res = await axios.post(`${USER.signUpUser}`, postData, {
+      const res = await axios.post(url, postData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -292,7 +292,7 @@ const SignUpUser = () => {
             name="confirm"
             label="비밀번호 확인"
             className="custom-form-item"
-            dependencies={["password"]}
+            dependencies={["pw"]}
             rules={[
               {
                 required: true,
@@ -323,17 +323,31 @@ const SignUpUser = () => {
             label="휴대폰 번호"
             rules={[
               {
-                pattern: /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
-                message:
-                  "올바른 휴대폰 번호 형식이 아닙니다. (예: 010-1234-5678)",
+                required: false,
+                validator: async (_, value) => {
+                  if (!value) return Promise.resolve();
+                  const phoneRegex =
+                    /^01([0|1|6|7|8|9])-([0-9]{3,4})-([0-9]{4})$/;
+                  if (!phoneRegex.test(value)) {
+                    return Promise.reject(
+                      "올바른 휴대폰 번호 형식이 아닙니다. (예: 010-1234-5678)",
+                    );
+                  }
+                  return Promise.resolve();
+                },
               },
             ]}
             help="* 휴대폰 번호는 광고 또는 서비스 이용을 위한 항목입니다."
           >
             <Input
-              placeholder="000-0000-0000"
+              placeholder="010-0000-0000"
               style={{ height: "60px" }}
               maxLength={13}
+              onChange={e => {
+                const value = e.target.value.replace(/[^\d]/g, "");
+                const formattedNumber = formatPhoneNumber(value);
+                form.setFieldsValue({ tell: formattedNumber });
+              }}
             />
           </Form.Item>
           {/* 생일 */}

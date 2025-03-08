@@ -42,7 +42,7 @@ const LazySignIn = lazy(() => import("../pages/userpage/signin/SingInIndex"));
 const LazySignUp = lazy(() => import("../pages/userpage/signup/SignUp"));
 const LazyUser = lazy(() => import("../pages/userpage/user/User"));
 const LazyContent = lazy(() => import("../pages/userpage/contents/Contents"));
-const LazyChat = lazy(() => import("../pages/userpage/chat/ChatIndex"));
+const LazyChat = lazy(() => import("../pages/ChatIndex"));
 
 // 사업자
 const LazyBusiness = lazy(() => import("../pages/business/BusinessIndex"));
@@ -191,14 +191,6 @@ const router = createBrowserRouter([
         ),
         children: usertrouter(),
       },
-      {
-        path: "/chat",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <LazyChat />
-          </Suspense>
-        ),
-      },
       { path: "/test", element: <Test /> },
       { path: "*", element: <NotFound /> },
     ],
@@ -252,6 +244,14 @@ const router = createBrowserRouter([
         children: storeRouter(),
       },
     ],
+  },
+  {
+    path: "/chat",
+    element: (
+      <Suspense fallback={<Loading />}>
+        <LazyChat />
+      </Suspense>
+    ),
   },
   {
     path: "/chatroom",

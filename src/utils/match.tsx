@@ -128,10 +128,18 @@ export const matchWeatherIcon = (weather: string) => {
 // 카테고리 한글 변환
 export const categoryKor = (category: string | null) => {
   if (category === "STAY") return "숙소";
-  if (category === "RESTAUR") return "식당";
+  if (category === "RESTAUR") return "맛집";
   if (category === "TOUR") return "관광지";
   if (category === "FEST") return "축제";
   if (category === null) return "카테고리";
+};
+
+// 한글 카테고리 => Enum
+export const categoryToEnum = (category: string) => {
+  if (category === "숙소") return CategoryType.STAY;
+  if (category === "맛집") return CategoryType.RESTAURANT;
+  if (category === "관광지") return CategoryType.TOUR;
+  if (category === "축제") return CategoryType.FEST;
 };
 
 // 편의시설 아이콘 매칭
@@ -140,7 +148,7 @@ export const matchAmenitiesIcon = (amenityId: number) => {
   return amenity?.icon;
 };
 
-export const matchName = (category: string) => {
+export const matchName = (category: string | null) => {
   switch (category) {
     case CategoryType.STAY:
       return "객실";

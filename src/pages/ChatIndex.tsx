@@ -2,10 +2,10 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { LiaComment } from "react-icons/lia";
 import { useNavigate } from "react-router-dom";
-import ChatList from "../../../components/chat/ChatList";
-import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { IChatList } from "../../../types/interface";
-import { getCookie } from "../../../utils/cookie";
+import ChatList from "../components/chat/ChatList";
+import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
+import { IChatList } from "../types/interface";
+import { getCookie } from "../utils/cookie";
 
 interface IChatCategory {
   key: string;
@@ -84,7 +84,7 @@ const ChatIndex = () => {
   }, []);
 
   return (
-    <div>
+    <div className="max-w-[768px] min-w-xs mx-auto relative min-h-screen ">
       <TitleHeaderTs title="채팅" icon="back" onClick={navigateToBack} />
       <div>
         {/* <Tabs

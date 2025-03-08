@@ -45,8 +45,8 @@ const dummyDataRes = {
     },
     {
       bookingId: 103,
-      strfId: 2003,
-      strfTitle: "Rustic Cabin in the Mountains",
+      strfId: 305,
+      strfTitle: "사업쨔 나와",
       strfPic: "https://example.com/image3.jpg",
       createdAt: "2025-02-22T18:45:30Z",
       checkInDate: "2025-03-20",
@@ -103,7 +103,7 @@ const UserBooking = () => {
   }, []);
 
   useEffect(() => {
-    // getBookingList();
+    getBookingList();
   }, []);
 
   return (

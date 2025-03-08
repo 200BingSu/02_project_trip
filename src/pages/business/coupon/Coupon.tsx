@@ -24,7 +24,7 @@ const Coupon = (): JSX.Element => {
   const pathname = location.pathname;
   console.log(pathname);
   return (
-    <div>
+    <div className="min-h-screen">
       <TitleHeaderTs
         title="리뷰 관리"
         onClick={
