@@ -10,6 +10,7 @@ type BottomSheetProps = {
   open: boolean;
   onClose: () => void;
   actions?: Action[];
+  title?: string;
 };
 
 /**
@@ -18,8 +19,14 @@ type BottomSheetProps = {
  * @param open 바텀 시트 열림 여부
  * @param onClose 바텀 시트 닫기 함수
  * @param actions 바텀 시트 액션 목록
+ * @param title 바텀 시트 타이틀
  */
-const BottomSheet = ({ open, onClose, actions }: BottomSheetProps) => {
+const BottomSheet = ({
+  open,
+  onClose,
+  actions,
+  title = "",
+}: BottomSheetProps) => {
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden"; // ✅ 스크롤 막기
@@ -62,6 +69,11 @@ const BottomSheet = ({ open, onClose, actions }: BottomSheetProps) => {
 
         {/* Bottom Sheet Main */}
         <div>
+          {title && (
+            <p className="text-2xl font-semibold text-slate-700 px-7 py-4">
+              {title}
+            </p>
+          )}
           {actions?.map((action, index) => (
             <button
               key={index}

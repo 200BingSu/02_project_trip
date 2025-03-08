@@ -16,9 +16,7 @@ const CouponIndex = (): JSX.Element => {
   const accessToken = getCookie("accessToken");
   // navigate
   const navigate = useNavigate();
-  const navigateToBack = () => {
-    navigate("/business/mypage");
-  };
+
   const navigateToCreateCoupon = () => {
     navigate(`/business/coupon/create?strfId=${strfId}`);
   };
@@ -75,7 +73,7 @@ const CouponIndex = (): JSX.Element => {
 
   return (
     <div>
-      <StrfInfo name="업체 이름" id={strfId} category="숙소" />
+      <StrfInfo />
       <Spin spinning={isLoading}>
         <section className="px-4 py-3 flex flex-col gap-5">
           {/* 안내문 */}

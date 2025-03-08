@@ -8,24 +8,25 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useResetRecoilState } from "recoil";
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { getCookie, removeCookie } from "../../../utils/cookie";
+import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 import {
+  categoryToEnum,
   matchcategoryIcon,
   matchMenuIcon,
   matchName,
 } from "../../../utils/match";
-import { CategoryType } from "../../../types/enum";
+import { CategoryType, ROLE } from "../../../types/enum";
 import { Button } from "antd";
 
 // 현재 상품 id (임시)
-const strfId = 305;
-const category = CategoryType.STAY;
 
 const Mypage = (): JSX.Element => {
   const navigate = useNavigate();
   // 쿠키
   const userInfo = getCookie("user");
   console.log("쿠키", userInfo);
+  const strfId = userInfo?.strfId;
+  const category = categoryToEnum(userInfo?.category) || CategoryType.STAY;
   // recoil
   const resetUserData = useResetRecoilState(tsUserAtom);
   const recoilInfo = useRecoilValue(tsUserAtom);
@@ -37,12 +38,6 @@ const Mypage = (): JSX.Element => {
   const [openOption, setOpenOption] = useState<number>(0);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const [isOpenOption, setIsOpenOption] = useState<boolean>(false);
-  useEffect(() => {
-    console.log("openMenu", openMenu);
-  }, [openMenu]);
-  useEffect(() => {
-    console.log("openOption", openOption);
-  }, [openOption]);
 
   // 메뉴
   const mainMenuArr = [
@@ -62,6 +57,7 @@ const Mypage = (): JSX.Element => {
       ],
     },
     {
+      // 메뉴 관리
       icon: matchMenuIcon(category),
       name: `${matchName(category)} 관리`,
       path: "/business/menu",
@@ -142,9 +138,22 @@ const Mypage = (): JSX.Element => {
   };
   // 로그아웃
   const handleLogout = () => {
-    removeCookie("accessToken");
-    removeCookie("user");
     resetUserData();
+    removeCookie("accessToken");
+    const userInfo = getCookie("user");
+    if (userInfo.isSaveEmail === false) {
+      setCookie("user", { ...userInfo, email: "" });
+    }
+    if (userInfo.isSaveLogin === false) {
+      setCookie("user", {
+        ...userInfo,
+        userId: "",
+        email: "",
+        accessToken: "",
+        role: [ROLE.GUEST],
+      });
+    }
+
     navigate("/signin");
   };
   return (
@@ -171,14 +180,16 @@ const Mypage = (): JSX.Element => {
             <span className="text-3xl font-semibold ">{recoilInfo?.name}</span>{" "}
             님
           </div>
-          <div>
-            <Button
-              onClick={() => navigate("/business/register")}
-              className="flex items-center gap-1 rounded-2xl text-slate-500"
-            >
-              <AiOutlinePlus /> 업체 등록
-            </Button>
-          </div>
+          {!strfId && (
+            <div>
+              <Button
+                onClick={() => navigate("/business/register")}
+                className="flex items-center gap-1 rounded-2xl text-slate-500"
+              >
+                <AiOutlinePlus /> 업체 등록
+              </Button>
+            </div>
+          )}
         </div>
         {/* 라인 */}
         <div className="w-full h-[2.67vw] max-h-[10px] bg-slate-100"></div>

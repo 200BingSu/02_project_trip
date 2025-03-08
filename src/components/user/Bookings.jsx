@@ -10,6 +10,7 @@ import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 import "dayjs/locale/ko";
 import { getCookie } from "../../utils/cookie";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 dayjs.locale("ko");
 
@@ -36,7 +37,8 @@ const Bookings = data => {
     checkOutTime,
     createdAt,
   } = data.data;
-
+  // useNavigate
+  const navigate = useNavigate();
   // 쿠키
   const accessToken = getCookie("accessToken");
   const actions = [
@@ -69,7 +71,7 @@ const Bookings = data => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log(res.data);
+      console.log("채팅방 생성", res.data);
       const resultData = res.data;
       if (resultData) {
         navigate(`/chatroom?roomId=${resultData.data.roomId}`);

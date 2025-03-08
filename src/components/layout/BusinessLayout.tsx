@@ -3,12 +3,16 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { ROLE } from "../../types/enum";
 import { getCookie } from "../../utils/cookie";
 import CenterModalTs from "../common/CenterModalTs";
+import { AiFillWechat } from "react-icons/ai";
 
 const BusinessLayout = () => {
   //navigate
   const navigate = useNavigate();
   const navigateToLogin = () => {
     navigate("/signin");
+  };
+  const navigateToChat = () => {
+    navigate("/chat?type=business");
   };
   //useState
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -37,6 +41,16 @@ const BusinessLayout = () => {
           handleClickSubmit={hanldeClickSubmit}
         />
       )}
+      {/* 채팅 여부 버튼 */}
+      <div className="sticky bottom-0 right-0 flex justify-end p-10">
+        <button
+          className="aspect-square w-12 flex items-center justify-center
+                            bg-primary text-white rounded-full shadow-lg py-2 text-2xl"
+          onClick={navigateToChat}
+        >
+          <AiFillWechat />
+        </button>
+      </div>
     </div>
   );
 };

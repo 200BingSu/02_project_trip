@@ -9,7 +9,7 @@ const LazyMenuDetail = lazy(
 const LazyCreateMenu = lazy(
   () => import("../../pages/business/menu/CreateMenu"),
 );
-const LazyEditMenu = lazy(() => import("../../pages/business/menu/EdigMenu"));
+const LazyEditMenu = lazy(() => import("../../pages/business/menu/EditMenu"));
 const menuRouter = () => {
   return [
     {
@@ -28,19 +28,20 @@ const menuRouter = () => {
         </Suspense>
       ),
     },
-    {
-      path: "create",
-      element: (
-        <Suspense fallback={<Loading />}>
-          <LazyCreateMenu />
-        </Suspense>
-      ),
-    },
+
     {
       path: "edit",
       element: (
         <Suspense fallback={<Loading />}>
           <LazyEditMenu />
+        </Suspense>
+      ),
+    },
+    {
+      path: "create",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyCreateMenu />
         </Suspense>
       ),
     },

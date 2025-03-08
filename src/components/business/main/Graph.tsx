@@ -10,7 +10,7 @@ interface GraphProps {
 
 const Graph = ({ data }: GraphProps) => {
   return (
-    <div style={{ width: "100%", height: "500px" }}>
+    <div className="w-full h-[500px] relative">
       <ResponsiveLine
         data={data}
         margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
@@ -46,7 +46,7 @@ const Graph = ({ data }: GraphProps) => {
           legendPosition: "middle",
           truncateTickAt: 0,
           format: value =>
-            value > 0 ? `${(value / 10000).toLocaleString()}만` : 0,
+            value > 0 ? `${(value / 10000).toLocaleString()}만` : "0",
         }}
         pointSize={4}
         pointColor={{ from: "color", modifiers: [] }}
@@ -75,6 +75,22 @@ const Graph = ({ data }: GraphProps) => {
             </div>
           );
         }}
+        theme={{
+          axis: {
+            ticks: {
+              text: {
+                fontSize: 12,
+              },
+            },
+            legend: {
+              text: {
+                fontSize: 12,
+                fontWeight: "bold",
+              },
+            },
+          },
+        }}
+        animate={false}
       />
     </div>
   );

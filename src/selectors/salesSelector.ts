@@ -63,26 +63,25 @@ export const SortSalesData = selectorFamily({
         y: Number(y),
       }));
       const sortedData = salesData.sort((a, b) =>
-        param === "asc" ? a.y - b.y : b.y - a.y,
+        param === "asc" ? a.x.localeCompare(b.x) : b.x.localeCompare(a.x),
       );
       return sortedData;
     },
 });
 
-export interface ISalesTableDataSource {
-  key: string;
-  x: string;
-  y: number | string;
-}
-export const salesTableDataSourceSelector = selector({
-  key: "salesTableDataSourceSelector",
-  get: ({ get }): ISalesTableDataSource[] => {
-    const sales = get(salesAtom);
-    const salesData = Object.entries(sales).map(([x, y], index) => ({
-      key: index.toString(),
-      x: matchMonth(x),
-      y: Number(y).toLocaleString(),
-    }));
-    return salesData;
-  },
+export const SortSalesDataBySales = selectorFamily({
+  key: "SortSalesDataBySales",
+  get:
+    (param: "asc" | "desc") =>
+    ({ get }) => {
+      const sales = get(salesAtom);
+      const salesData = Object.entries(sales).map(([x, y]) => ({
+        x: matchMonth(x),
+        y: Number(y),
+      }));
+      const sortedData = salesData.sort((a, b) =>
+        param === "asc" ? a.y - b.y : b.y - a.y,
+      );
+      return sortedData;
+    },
 });
