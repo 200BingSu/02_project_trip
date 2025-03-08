@@ -1,12 +1,11 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+import { LiaComment } from "react-icons/lia";
 import { useNavigate } from "react-router-dom";
-import { Tabs } from "antd";
 import ChatList from "../../../components/chat/ChatList";
+import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { IChatList } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
-import axios from "axios";
-import { LiaComment } from "react-icons/lia";
 
 interface IChatCategory {
   key: string;
@@ -88,12 +87,12 @@ const ChatIndex = () => {
     <div>
       <TitleHeaderTs title="채팅" icon="back" onClick={navigateToBack} />
       <div>
-        <Tabs
+        {/* <Tabs
           defaultActiveKey="전체"
           items={chatCategory}
           onChange={onChange}
           className="px-[16px]"
-        />
+        /> */}
         {chatList.length > 0 ? (
           <ChatList category={category} chatList={chatList} />
         ) : (
