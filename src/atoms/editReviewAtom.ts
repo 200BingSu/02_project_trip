@@ -1,6 +1,5 @@
-import { Client as StompClient } from "@stomp/stompjs";
 import { atom } from "recoil";
-import { IMessage, IReview } from "../types/interface";
+import { IReview } from "../types/interface";
 
 /**
  * StompClient

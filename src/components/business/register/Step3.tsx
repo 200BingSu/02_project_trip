@@ -1,5 +1,5 @@
 import { Upload, UploadFile } from "antd";
-
+import ImgCrop from "antd-img-crop";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -67,18 +67,18 @@ const Step3 = ({ picRef, bioRef }: StepRef): JSX.Element => {
             <p className="text-base text-slate-500">
               고객에게 보여지는 업체 이미지를 등록해주세요.
             </p>
-            {/* <ImgCrop rotationSlider> */}
-            <Upload
-              listType="picture-card"
-              fileList={fileList}
-              onChange={onChange}
-              onPreview={onPreview}
-              beforeUpload={() => false}
-              accept="image/*"
-            >
-              {fileList.length < 5 && "+ Upload"}
-            </Upload>
-            {/* </ImgCrop> */}
+            <ImgCrop rotationSlider>
+              <Upload
+                listType="picture-card"
+                fileList={fileList}
+                onChange={onChange}
+                onPreview={onPreview}
+                beforeUpload={() => false}
+                accept="image/*"
+              >
+                {fileList.length < 5 && "+ Upload"}
+              </Upload>
+            </ImgCrop>
           </li>
           {/* 업체 소개 */}
           <li className="flex flex-col gap-1" ref={bioRef}>

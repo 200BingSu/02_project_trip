@@ -108,7 +108,7 @@ const EditReview = (): JSX.Element => {
   }, []);
   return (
     <div className="flex flex-col gap-5">
-      <StrfInfo name="업체 이름" id={strfId} category="숙소" />
+      <StrfInfo />
       <div className="px-4">
         <h2 className="text-2xl font-semibold text-slate-600">
           {type === "create" ? "댓글 작성" : "댓글 수정"}

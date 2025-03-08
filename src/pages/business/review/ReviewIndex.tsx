@@ -56,7 +56,7 @@ const ReviewIndex = (): JSX.Element => {
   }, []);
   return (
     <div className="flex flex-col gap-5">
-      <StrfInfo name="업체 이름" id={strfId} category="숙소" />
+      <StrfInfo />
       {/* 리뷰 목록 */}
       <Spin spinning={isLoading}>
         <section className="flex flex-col gap-10 pb-10">
