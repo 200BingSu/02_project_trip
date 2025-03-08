@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-interface ISalesAtom {
+export interface ISalesAtom {
   sumMonth1: string;
   sumMonth2?: string;
   sumMonth3?: string;

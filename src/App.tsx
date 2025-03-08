@@ -29,7 +29,7 @@ const App = () => {
         },
       });
       const resultData = res.data;
-      console.log("유저 정보 조회", resultData);
+      // console.log("유저 정보 조회", resultData);
       if (resultData.code === "200 성공") {
         setTsUserInfo({
           ...tsUserInfo,
@@ -43,7 +43,7 @@ const App = () => {
       return null;
     }
   };
-  console.log("tsUserInfo", tsUserInfo);
+  // console.log("tsUserInfo", tsUserInfo);
   useEffect(() => {
     if (accessToken) {
       getUserInfo();
