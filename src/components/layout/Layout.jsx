@@ -8,7 +8,7 @@ import { tsUserAtom } from "../../atoms/tsuserAtom";
 const Layout = () => {
   const userInfo = getCookie("user") ?? {};
   const { role } = userInfo;
-  console.log(role);
+  // console.log(role);
   const navigate = useNavigate();
   const path = window.location.pathname;
   useEffect(() => {
