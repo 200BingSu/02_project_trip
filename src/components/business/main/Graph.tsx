@@ -10,7 +10,7 @@ interface GraphProps {
 
 const Graph = ({ data }: GraphProps) => {
   return (
-    <div className="w-full h-[500px]">
+    <div style={{ width: "100%", height: "500px" }}>
       <ResponsiveLine
         data={data}
         margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
@@ -24,6 +24,8 @@ const Graph = ({ data }: GraphProps) => {
           stacked: false,
           reverse: false,
         }}
+        enableGridX={true}
+        enableGridY={true}
         axisTop={null}
         axisRight={null}
         axisBottom={{
@@ -39,10 +41,12 @@ const Graph = ({ data }: GraphProps) => {
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          legend: "매출 금액 (10,000원 단위)",
-          legendOffset: -40,
+          legend: "매출 금액 (단위: 10,000원)",
+          legendOffset: -50,
           legendPosition: "middle",
           truncateTickAt: 0,
+          format: value =>
+            value > 0 ? `${(value / 10000).toLocaleString()}만` : 0,
         }}
         pointSize={4}
         pointColor={{ from: "color", modifiers: [] }}
@@ -66,7 +70,7 @@ const Graph = ({ data }: GraphProps) => {
               </div>
               <div className="text-sm text-slate-600">
                 <span className="font-medium">매출:</span>{" "}
-                {(Number(point.data.y) * 10000).toLocaleString()}원
+                {Number(point.data.y).toLocaleString()}만원
               </div>
             </div>
           );

@@ -19,6 +19,7 @@ import { registerAtom } from "../../../atoms/registerAtom";
 import { Imenu } from "../../../types/interface";
 import { CategoryType } from "../../../types/enum";
 import { matchName } from "../../../utils/match";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 interface optionType {
   label: string;
@@ -27,6 +28,9 @@ interface optionType {
 }
 
 const CreateMenu = (): JSX.Element => {
+  // 쿼리
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get("category");
   // recoil
   const [register, setRegister] = useRecoilState(registerAtom);
   //useState
@@ -319,14 +323,14 @@ const CreateMenu = (): JSX.Element => {
                         rules={[
                           {
                             required: true,
-                            message: `${matchName(register.category || "")} 이름을 입력해주세요.`,
+                            message: `${matchName(category || "")} 이름을 입력해주세요.`,
                           },
                         ]}
                         className="w-1/2"
                       >
                         <Input
                           required
-                          placeholder={`${matchName(register.category || "")} 이름을 입력해주세요. 예) ${register.category === CategoryType.HOTEL ? "트윈룸" : "피자"}`}
+                          placeholder={`${matchName(category || "")} 이름을 입력해주세요. 예) ${register.category === CategoryType.HOTEL ? "트윈룸" : "피자"}`}
                           size="large"
                           value={item.name}
                           onChange={e => handleChangeInput(item, e)}
@@ -342,7 +346,7 @@ const CreateMenu = (): JSX.Element => {
                         rules={[
                           {
                             required: true,
-                            message: `${matchName(register.category || "")} 가격을 입력해주세요.`,
+                            message: `${matchName(category || "")} 가격을 입력해주세요.`,
                           },
                         ]}
                         className="w-1/2"
@@ -359,14 +363,14 @@ const CreateMenu = (): JSX.Element => {
                             value ? Number(value.replace(/\$\s?|(,*)/g, "")) : 0
                           }
                           suffix="원"
-                          placeholder={`${matchName(register.category || "")} 가격을 입력해주세요. 예) 100000`}
+                          placeholder={`${matchName(category || "")} 가격을 입력해주세요. 예) 100000`}
                           size="large"
                           className="w-full"
                           value={item.price}
                           onChange={e => handleChangeInputNum(item, "price", e)}
                         />
                       </Form.Item>
-                      {register.category === CategoryType.HOTEL && (
+                      {category === CategoryType.STAY && (
                         <>
                           <Form.Item
                             name={["menus", index, "roomList"]}
