@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { getCookie, setCookie } from "../../../utils/cookie";
 import { useRecoilState } from "recoil";
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
-import { ProviderType } from "../../../types/enum";
+import { ProviderType, ROLE } from "../../../types/enum";
 // 주소: /signup/kakao
 const Kakao = (): JSX.Element => {
   const navigate = useNavigate();
@@ -42,6 +42,7 @@ const Kakao = (): JSX.Element => {
         name: userName,
         email: userEmail,
         profilePic: pic,
+        role: [ROLE.USER],
         accessToken: accessToken,
         providerType: ProviderType.KAKAO,
       });
