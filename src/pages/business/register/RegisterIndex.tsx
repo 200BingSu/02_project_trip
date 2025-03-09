@@ -1,4 +1,5 @@
-import { Button, Steps, UploadFile } from "antd";
+import { Button, message, Spin, Steps, UploadFile } from "antd";
+import axios from "axios";
 import { RefObject, useRef, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -8,10 +9,13 @@ import Step1 from "../../../components/business/register/Step1";
 import Step2 from "../../../components/business/register/Step2";
 import Step3 from "../../../components/business/register/Step3";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { moveTo } from "../../../utils/moveTo";
 import { getCookie } from "../../../utils/cookie";
-import { Istore } from "../../../types/interface";
-import axios from "axios";
+import { moveTo } from "../../../utils/moveTo";
+import { categoryKor } from "../../../utils/match";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 export interface StepRef {
   categoryRef?: React.RefObject<HTMLLIElement>;
@@ -24,12 +28,7 @@ export interface StepRef {
   holidayRef?: React.RefObject<HTMLLIElement>;
   bioRef?: React.RefObject<HTMLLIElement>;
 }
-interface ITime {
-  hour: number;
-  minute: number;
-  second: number;
-  nano?: number;
-}
+
 interface PType {
   category: string;
   title: string;
@@ -41,8 +40,8 @@ interface PType {
   tell: string;
   startAt: string; // YYYY-MM-DD
   endAt: string;
-  openCheckIn: ITime;
-  closeCheckOut: ITime;
+  openCheckIn: string;
+  closeCheckOut: string;
   detail: string;
   busiNum: string;
   state: number;
@@ -76,6 +75,7 @@ const RegisterIndex = (): JSX.Element => {
   const [errorLocation, setErrorLocation] =
     useState<RefObject<HTMLLIElement> | null>(null);
   const [current, setCurrent] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   //useRef
   const categoryRef = useRef<HTMLLIElement>(null);
   const nameRef = useRef<HTMLLIElement>(null);
@@ -88,10 +88,33 @@ const RegisterIndex = (): JSX.Element => {
   const bioRef = useRef<HTMLLIElement>(null);
 
   // API 상품 등록
-  const createStrf = async (data: Istore): Promise<ICreateStrf | null> => {
+  const createStrf = async (data: FormData): Promise<ICreateStrf | null> => {
     const url = "/api/detail/info";
+    setIsLoading(true);
+
+    try {
+      const res = await axios.post<ICreateStrf>(url, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("상품 등록", res.data);
+      const resultData = res.data;
+      if (resultData) {
+        message.success("상품 등록이 완료되었습니다.");
+        setIsLoading(false);
+      }
+      return resultData;
+    } catch (error) {
+      setIsLoading(false);
+      console.log("상품 등록", error);
+      return null;
+    }
+  };
+  // 제출
+  const handleDone = async () => {
     const sendData: PType = {
-      category: `${registerData.category}`,
+      category: categoryKor(registerData.category) as string,
       title: `${registerData.name}`,
       lat: registerData.location?.latitude ?? 0,
       lng: registerData.location?.longitude ?? 0,
@@ -99,25 +122,26 @@ const RegisterIndex = (): JSX.Element => {
       locationTitle: registerData.locationTitle ?? "",
       post: registerData.location?.postcode ?? "",
       tell: registerData.tell?.number ?? "",
-      startAt: registerData.businessHours?.startTime ?? "",
-      endAt: registerData.businessHours?.endTime ?? "",
-      openCheckIn: {
-        hour: Number(registerData.checkTime?.checkIn?.split(":")[0]) ?? 0,
-        minute: Number(registerData.checkTime?.checkIn?.split(":")[1]) ?? 0,
-        second: Number(registerData.checkTime?.checkIn?.split(":")[2]) ?? 0,
-        nano: 0,
-      },
-      closeCheckOut: {
-        hour: Number(registerData.checkTime?.checkOut?.split(":")[0]) ?? 0,
-        minute: Number(registerData.checkTime?.checkOut?.split(":")[1]) ?? 0,
-        second: Number(registerData.checkTime?.checkOut?.split(":")[2]) ?? 0,
-        nano: 0,
-      },
+      startAt:
+        dayjs(registerData.businessHours?.startTime, "HH:mm").format(
+          "HH:mm:ss",
+        ) ?? "",
+      endAt:
+        dayjs(registerData.businessHours?.endTime, "HH:mm").format(
+          "HH:mm:ss",
+        ) ?? "",
+      openCheckIn:
+        dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm:ss") ??
+        "",
+      closeCheckOut:
+        dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm:ss") ??
+        "",
       detail: registerData.bio ?? "",
       busiNum: busiNum,
       state: 0,
       restdates: registerData.holiday?.day ?? [],
     };
+    console.log("sendData", sendData);
     const formData = new FormData();
     formData.append(
       "p",
@@ -125,27 +149,12 @@ const RegisterIndex = (): JSX.Element => {
     );
     if (registerData.image?.length ?? 0 > 0) {
       registerData.image?.forEach(image => {
-        formData.append("strfPic", image.originFileObj ?? new Blob());
+        formData.append("strfPic", image.originFileObj as Blob);
       });
     }
     console.log("p의 내용", formData.get("p"));
-    try {
-      const res = await axios.post<ICreateStrf>(url, formData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      console.log("상품 등록", res.data);
-      return res.data;
-    } catch (error) {
-      console.log("상품 등록", error);
-      return null;
-    }
-  };
-  // 제출
-  const handleDone = async () => {
-    // await createStrf(sendData);
-    await navigateToComfirm();
+    await createStrf(formData);
+    // await navigateToComfirm();
   };
   //  antD Step
   const steps = [
@@ -253,7 +262,7 @@ const RegisterIndex = (): JSX.Element => {
   return (
     <>
       <TitleHeaderTs title="업체 등록" onClick={navigateToBack} />
-      <div>
+      <Spin spinning={isLoading}>
         <Steps
           current={current}
           items={items}
@@ -317,7 +326,7 @@ const RegisterIndex = (): JSX.Element => {
             </Button>
           )}
         </div>
-      </div>
+      </Spin>
     </>
   );
 };
