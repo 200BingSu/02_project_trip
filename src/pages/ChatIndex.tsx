@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { LiaComment } from "react-icons/lia";
 import { useNavigate } from "react-router-dom";
 import ChatList from "../components/chat/ChatList";
@@ -7,10 +7,10 @@ import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
 import { IChatList } from "../types/interface";
 import { getCookie } from "../utils/cookie";
 
-interface IChatCategory {
-  key: string;
-  label: React.ReactNode;
-}
+// interface IChatCategory {
+//   key: string;
+//   label: React.ReactNode;
+// }
 
 interface IGetChatList {
   code: string;
@@ -28,7 +28,7 @@ const ChatIndex = () => {
     navigate("/");
   };
   //useState
-  const [category, setCategory] = useState<string>("전체");
+  const [category] = useState<string>("전체");
   const [chatList, setChatLlist] = useState<IChatList[]>([]);
   const [page, setPage] = useState<number>(0);
   // APi 채팅방 목록
@@ -59,25 +59,25 @@ const ChatIndex = () => {
     }
   };
   // 채팅 카테고리
-  const chatCategory: IChatCategory[] = [
-    {
-      key: "전체",
-      label: <p className="text-lg">전체</p>,
-    },
-    {
-      key: "예약문의",
-      label: <p className="text-lg">예약문의</p>,
-    },
-    {
-      key: "여행톡",
-      label: <p className="text-lg">여행톡</p>,
-    },
-  ];
+  // const chatCategory: IChatCategory[] = [
+  //   {
+  //     key: "전체",
+  //     label: <p className="text-lg">전체</p>,
+  //   },
+  //   {
+  //     key: "예약문의",
+  //     label: <p className="text-lg">예약문의</p>,
+  //   },
+  //   {
+  //     key: "여행톡",
+  //     label: <p className="text-lg">여행톡</p>,
+  //   },
+  // ];
 
-  const onChange = (key: string): void => {
-    // console.log(key);
-    setCategory(key);
-  };
+  // const onChange = (key: string): void => {
+  //   // console.log(key);
+  //   setCategory(key);
+  // };
   // useEffect
   useEffect(() => {
     getChatList();

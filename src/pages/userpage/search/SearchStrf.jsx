@@ -189,7 +189,7 @@ const SearchStrf = () => {
       const res = await axios.get(
         `/api/search/category?start_idx=${searchRecoil.start_idx}&category=${
           categoryArr[searchRecoil.category].name
-        }&search_word=${searchRecoil.searchWord}&order_type=${searchRecoil.orderType}`,
+        }&search_word=${searchRecoil.searchWord}&order_type=${orderTypeArr[searchRecoil.orderType].type}`,
       );
       const resultData = res.data;
       if (resultData) {
