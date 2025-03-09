@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { Button } from "antd";
+import { useState } from "react";
 import { AiFillSetting, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
 import { BiBell, BiSolidCoupon } from "react-icons/bi";
 import { GoDiscussionOutdated } from "react-icons/go";
@@ -8,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useResetRecoilState } from "recoil";
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+import { CategoryType, ROLE } from "../../../types/enum";
 import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 import {
   categoryToEnum,
@@ -15,8 +17,6 @@ import {
   matchMenuIcon,
   matchName,
 } from "../../../utils/match";
-import { CategoryType, ROLE } from "../../../types/enum";
-import { Button } from "antd";
 
 // 현재 상품 id (임시)
 

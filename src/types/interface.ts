@@ -7,6 +7,23 @@ export interface Ichildren {
   children?: React.ReactNode;
 }
 
+/**
+ * ### API 응답용 인터페이스
+ * @param T res.data의 타입/인터페이스
+ * @example
+ * interface dataType {
+ *  strfId:number,
+ *  name:string
+ * }
+ * const res = await axios.get<IAPI<dataType[]>>('/api/strf/list');
+ * const data = res.data.data; // data: dataType[]의 형태
+ * console.log(data);
+ */
+export interface IAPI<T> {
+  code: string;
+  data: T;
+}
+
 export interface Iuser {
   birth?: string;
   email?: string;

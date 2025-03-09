@@ -13,7 +13,6 @@ import {
   IoRestaurant,
   IoTicket,
 } from "react-icons/io5";
-import { MdBedroomChild } from "react-icons/md";
 import { RiHotelLine } from "react-icons/ri";
 import { amenities } from "../constants/dataArr";
 import { CategoryType } from "../types/enum";
