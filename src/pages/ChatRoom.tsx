@@ -3,14 +3,14 @@ import { Input, message } from "antd";
 import axios from "axios";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { BsFillPatchPlusFill } from "react-icons/bs";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
-import { getCookie } from "../utils/cookie";
-import { chatDataAtom, IChatData } from "../atoms/chatAtom";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { chatDataSelector } from "../selectors/chatSelector";
 import { IoIosArrowUp } from "react-icons/io";
-import { ProductPic, ProfilePic } from "../constants/pic";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { chatDataAtom, IChatData } from "../atoms/chatAtom";
+import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
+import { ProfilePic } from "../constants/pic";
+import { chatDataSelector } from "../selectors/chatSelector";
+import { getCookie } from "../utils/cookie";
 
 interface ISendMessage {
   message: string;
@@ -19,17 +19,6 @@ interface ISendMessage {
   roomId?: number;
   createdAt?: string;
   error?: string | null;
-}
-interface IMessage {
-  chatId: number;
-  senderName?: string;
-  senderId: string;
-  senderPic: string;
-  signedUser: boolean;
-  userName?: string;
-  message: string;
-  error?: string | null;
-  createdAt?: string;
 }
 
 interface IGetChatHistoryRes {
@@ -59,7 +48,7 @@ const ChatRoom = (): JSX.Element => {
   const [inputMessage, setInputMessage] = useState<string>("");
   const [page, setPage] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isMore, setIsMore] = useState(false);
+  const [isMore, _] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
   //useRef
