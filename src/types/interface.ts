@@ -84,6 +84,7 @@ export interface ILocation {
 }
 
 export interface Istore {
+  state: number;
   strfId?: number;
   category?: string;
   name?: string;
@@ -98,6 +99,7 @@ export interface Istore {
   checkTime?: { checkIn?: string; checkOut?: string };
   holiday?: { frequency?: string; day?: string[] };
   bio?: string;
+  detail?: string;
   amenity?: number[];
   menuList?: Imenu[];
 }
@@ -136,8 +138,10 @@ export interface IChatList {
 }
 
 export interface Iamenity {
-  amenity_id: number;
+  amenity_id?: number;
+  amenityId?: number;
   key?: string;
+  amenityTitle?: string;
   icon?: ReactNode;
 }
 
@@ -173,4 +177,46 @@ export interface IReview {
 
 export interface IBusinessReview {
   reviewReply: string | null;
+}
+
+export interface IStrf extends IRoom {
+  strfId?: string;
+  category: string;
+  strfTitle: string;
+  latit: number;
+  longitude: number;
+  address: string;
+  post: string;
+  tell: string;
+  startAt: null | string;
+  endAt: null | string;
+  openCheck: string;
+  closeCheck: string;
+  detail: string;
+  busiNum: string;
+  locationName: string;
+  state: number;
+  cid?: null | number;
+  hostProfilePic: string;
+  hostName: string;
+  inquiredAt: string;
+  wishCnt: number;
+  ratingAvg: number;
+  reviewCnt: string;
+  wishIn: number;
+  recentCheck: number;
+  recentCheckStatus: number;
+  strfPics: { strfId: string; strfPic: string }[];
+  restDate: number[];
+  amenity: Iamenity[];
+}
+
+export interface IRoom {
+  maxCapacity: number;
+  recomCapacity: number;
+  surcharge: number;
+  title: string;
+  menuId: string;
+  roomId: number;
+  roomNum: number;
 }

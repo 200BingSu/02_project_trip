@@ -125,7 +125,7 @@ export const matchWeatherIcon = (weather: string) => {
 };
 
 // 카테고리 한글 변환
-export const categoryKor = (category: string | null) => {
+export const categoryKor = (category: string | null | undefined) => {
   if (category === "STAY") return "숙소";
   if (category === "RESTAUR") return "맛집";
   if (category === "TOUR") return "관광지";

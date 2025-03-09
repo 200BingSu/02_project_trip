@@ -48,11 +48,11 @@ const Mypage = (): JSX.Element => {
       subMenu: [
         {
           name: "기본 정보",
-          path: `/business/store?strfId=${strfId}&tab=basic`,
+          path: `/business/store?strfId=${strfId}&category=${category}&tab=0`,
         },
         {
           name: "운영정보",
-          path: `/business/store?strfId=${strfId}&tab=operation`,
+          path: `/business/store?strfId=${strfId}&category=${category}&tab=1`,
         },
       ],
     },
@@ -180,16 +180,16 @@ const Mypage = (): JSX.Element => {
             <span className="text-3xl font-semibold ">{recoilInfo?.name}</span>{" "}
             님
           </div>
-          {!strfId && (
-            <div>
-              <Button
-                onClick={() => navigate("/business/register")}
-                className="flex items-center gap-1 rounded-2xl text-slate-500"
-              >
-                <AiOutlinePlus /> 업체 등록
-              </Button>
-            </div>
-          )}
+          {/* {!strfId && ( */}
+          <div>
+            <Button
+              onClick={() => navigate("/business/register")}
+              className="flex items-center gap-1 rounded-2xl text-slate-500"
+            >
+              <AiOutlinePlus /> 업체 등록
+            </Button>
+          </div>
+          {/* )} */}
         </div>
         {/* 라인 */}
         <div className="w-full h-[2.67vw] max-h-[10px] bg-slate-100"></div>
@@ -221,7 +221,7 @@ const Mypage = (): JSX.Element => {
               </button>
               {item.subMenu && (
                 <ul
-                  className={`flex flex-col gap-2 py-4 ${
+                  className={`flex flex-col py-4 ${
                     openMenu === index && isOpenMenu === true
                       ? "visible h-auto opacity-100 relative"
                       : "invisible max-h-0 opacity-0 absolute"
@@ -234,7 +234,8 @@ const Mypage = (): JSX.Element => {
                   {item.subMenu.map((subItem, subIndex) => (
                     <li
                       key={subIndex}
-                      className="px-10 text-xl text-slate-500 py-1 cursor-pointer"
+                      className="px-10 py-2 text-xl text-slate-500 cursor-pointer
+                      hover:bg-slate-100 transition-all duration-300"
                       onClick={() => navigate(subItem.path)}
                     >
                       {subItem.name}
