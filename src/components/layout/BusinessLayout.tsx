@@ -42,10 +42,10 @@ const BusinessLayout = () => {
         />
       )}
       {/* 채팅 여부 버튼 */}
-      <div className="sticky bottom-0 right-0 flex justify-end p-10">
+      <div className="sticky bottom-0 right-0 flex justify-end p-10 pointer-events-none">
         <button
           className="aspect-square w-12 flex items-center justify-center
-                            bg-primary text-white rounded-full shadow-lg py-2 text-2xl"
+                            bg-primary text-white rounded-full shadow-lg py-2 text-2xl pointer-events-auto"
           onClick={navigateToChat}
         >
           <AiFillWechat />
