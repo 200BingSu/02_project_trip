@@ -9,6 +9,8 @@ import { IAPI, IRoom, IStrf } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
 import { CategoryType } from "../../../types/enum";
 import { categoryKor } from "../../../utils/match";
+import { useRecoilState } from "recoil";
+import { strfAtom } from "../../../atoms/strfAtom";
 
 const StoreIndex = (): JSX.Element => {
   // 쿠키
@@ -18,10 +20,11 @@ const StoreIndex = (): JSX.Element => {
   const strfId = searchParams.get("strfId");
   const category = searchParams.get("category");
   const tab = Number(searchParams.get("tab"));
+  //recoil
+  const [strfData, setStrfData] = useRecoilState(strfAtom);
   //useState
   const [cateIndex, setCateIndex] = useState<number>(tab);
   const [isLoading, setIsLoading] = useState(false);
-  const [strfData, setStrfData] = useState<IStrf>();
   const [_, setRoomData] = useState<IRoom[]>([]);
 
   // API 상품 조회

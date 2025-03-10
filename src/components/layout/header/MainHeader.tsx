@@ -16,7 +16,7 @@ const MainHeader = ({ onClick }: MainHeaderProps) => {
 
   return (
     <header
-      className={`flex h-auto items-center px-4 py-3 max-w-3xl w-full sticky top-0 left-0 z-10 duration-300 ${scrollY ? "shadow-sm" : "shadow-none"} z-50 bg-white `}
+      className={`select-none flex h-auto items-center px-4 py-3 max-w-3xl w-full sticky top-0 left-0 z-10 duration-300 ${scrollY ? "shadow-sm" : "shadow-none"} z-50 bg-white `}
     >
       <h1 className="w-[32vw] max-w-32 mr-auto">
         <img
