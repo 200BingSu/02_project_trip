@@ -67,18 +67,17 @@ const Step3 = ({ picRef, bioRef }: StepRef): JSX.Element => {
             <p className="text-base text-slate-500">
               고객에게 보여지는 업체 이미지를 등록해주세요.
             </p>
-            <ImgCrop rotationSlider>
-              <Upload
-                listType="picture-card"
-                fileList={fileList}
-                onChange={onChange}
-                onPreview={onPreview}
-                beforeUpload={() => false}
-                accept="image/*"
-              >
-                {fileList.length < 5 && "+ Upload"}
-              </Upload>
-            </ImgCrop>
+
+            <Upload
+              listType="picture-card"
+              fileList={fileList}
+              onChange={onChange}
+              onPreview={onPreview}
+              beforeUpload={() => false}
+              accept="image/*"
+            >
+              {fileList.length < 5 && "+ Upload"}
+            </Upload>
           </li>
           {/* 업체 소개 */}
           <li className="flex flex-col gap-1" ref={bioRef}>

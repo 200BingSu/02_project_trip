@@ -115,12 +115,22 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
     };
     console.log("p", p);
     const formData = new FormData();
-    formData.append("menuPic", fileList[0].originFileObj as File);
+    console.log("📌 fileList:", fileList);
+    if (!fileList || fileList.length === 0) {
+      console.error("⚠️ fileList가 비어 있습니다!");
+      return;
+    }
+
+    console.log("Selected file:", fileList[0].originFileObj);
+    formData.append("menuPic", fileList[0].originFileObj as Blob);
     formData.append(
       "p",
       new Blob([JSON.stringify(p)], { type: "application/json" }),
     );
-
+    console.log("FormData entries:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
     createMenu(formData);
   };
   return (
@@ -141,7 +151,7 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
               {
                 required: true,
                 message: "메뉴 사진을 등록해주세요.",
-                validator: (_, value) => {
+                validator: () => {
                   if (fileList.length > 0) {
                     return Promise.resolve();
                   }
