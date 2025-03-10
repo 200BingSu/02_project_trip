@@ -124,19 +124,15 @@ const RegisterIndex = (): JSX.Element => {
       post: registerData.location?.postcode ?? "",
       tell: `${registerData.tell?.areaCode}-${registerData.tell?.number}`,
       startAt:
-        dayjs(registerData.businessHours?.startTime, "HH:mm").format(
-          "HH:mm:ss",
-        ) ?? "",
+        dayjs(registerData.businessHours?.startTime, "HH:mm").format("HH:mm") ??
+        "",
       endAt:
-        dayjs(registerData.businessHours?.endTime, "HH:mm").format(
-          "HH:mm:ss",
-        ) ?? "",
+        dayjs(registerData.businessHours?.endTime, "HH:mm").format("HH:mm") ??
+        "",
       openCheckIn:
-        dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm:ss") ??
-        "",
+        dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm") ?? "",
       closeCheckOut:
-        dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm:ss") ??
-        "",
+        dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm") ?? "",
       detail: registerData.bio ?? "",
       busiNum: busiNum,
       state: 0,

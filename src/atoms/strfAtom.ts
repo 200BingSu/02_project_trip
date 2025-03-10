@@ -1,0 +1,37 @@
+import { atom } from "recoil";
+import { IStrf } from "../types/interface";
+
+export const strfAtom = atom<IStrf>({
+  key: "strfAtom",
+  default: {
+    strfId: "",
+    category: "",
+    strfTitle: "",
+    latit: 0,
+    longitude: 0,
+    address: "",
+    post: "",
+    tell: "",
+    startAt: "",
+    endAt: "",
+    openCheck: "",
+    closeCheck: "",
+    detail: "",
+    busiNum: "",
+    locationName: "",
+    state: 0,
+    cid: 0,
+    hostProfilePic: "",
+    hostName: "",
+    inquiredAt: "",
+    wishCnt: 0,
+    ratingAvg: 0,
+    reviewCnt: "",
+    wishIn: 0,
+    recentCheck: 0,
+    recentCheckStatus: 0,
+    strfPics: [{ strfId: "", strfPic: "" }],
+    restDate: [],
+    amenity: [],
+  },
+});

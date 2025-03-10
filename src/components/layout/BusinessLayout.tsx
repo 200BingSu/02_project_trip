@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ROLE } from "../../types/enum";
 import { getCookie } from "../../utils/cookie";
 import CenterModalTs from "../common/CenterModalTs";
@@ -14,6 +14,10 @@ const BusinessLayout = () => {
   const navigateToChat = () => {
     navigate("/chat?type=business");
   };
+  // location
+  const location = useLocation();
+  const pathName = location.pathname;
+
   //useState
   const [isOpenModal, setIsOpenModal] = useState(false);
   //사업자가 아니라면 로그인으로 보내기
@@ -42,15 +46,17 @@ const BusinessLayout = () => {
         />
       )}
       {/* 채팅 여부 버튼 */}
-      <div className="sticky bottom-0 right-0 flex justify-end p-10 pointer-events-none">
-        <button
-          className="aspect-square w-12 flex items-center justify-center
+      {pathName !== "/business/register" && (
+        <div className="sticky bottom-0 right-0 flex justify-end p-10 pointer-events-none">
+          <button
+            className="aspect-square w-12 flex items-center justify-center
                             bg-primary text-white rounded-full shadow-lg py-2 text-2xl pointer-events-auto"
-          onClick={navigateToChat}
-        >
-          <AiFillWechat />
-        </button>
-      </div>
+            onClick={navigateToChat}
+          >
+            <AiFillWechat />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
