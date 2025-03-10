@@ -15,7 +15,7 @@ const RecommendList = ({ recommend }) => {
       <h1 className="px-4 text-2xl font-bold text-slate-700">
         회원님에게 추천하는 여행지
       </h1>
-      <Swiper slidesPerView={1} className="mySwiper mt-5">
+      <Swiper slidesPerView={2.3} className="mySwiper mt-5">
         {recommend.map(item => (
           <SwiperSlide
             key={item.strfId}
