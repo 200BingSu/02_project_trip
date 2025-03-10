@@ -2,22 +2,10 @@ import { Form, Input } from "antd";
 
 interface UserInfoFormProps {
   handleValuesChange: (changedValues: any, allValues: any) => void;
-  getEmailCheck: (email: string) => Promise<boolean>;
+  initialEmail?: string;
 }
 
-const UserInfoForm = ({
-  handleValuesChange,
-  getEmailCheck,
-}: UserInfoFormProps): JSX.Element => {
-  const [form] = Form.useForm();
-
-  const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
-    const email = e.target.value;
-    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      await getEmailCheck(email);
-    }
-  };
-
+const UserInfoForm: React.FC<UserInfoFormProps> = ({ initialEmail }) => {
   return (
     <>
       <Form.Item
@@ -59,11 +47,12 @@ const UserInfoForm = ({
           },
         ]}
         className="custom-form-input"
+        initialValue={initialEmail}
       >
         <Input
           placeholder="이메일을 입력하세요"
           className="py-[14px] px-3"
-          onBlur={handleEmailBlur}
+          disabled
         />
       </Form.Item>
       <Form.Item

@@ -6,6 +6,9 @@ const usertrouter = () => {
     () => import("../../pages/userpage/user/UserIndex"),
   );
   const LazyUserEdit = lazy(() => import("../../pages/userpage/user/UserEdit"));
+  const LazyPushNotification = lazy(
+    () => import("../../pages/userpage/user/PushNotification"),
+  );
   const LazyUserTrips = lazy(
     () => import("../../pages/userpage/user/UserTrips"),
   );
@@ -48,6 +51,14 @@ const usertrouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazyUserEdit />
+        </Suspense>
+      ),
+    },
+    {
+      path: "notification",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazyPushNotification />
         </Suspense>
       ),
     },

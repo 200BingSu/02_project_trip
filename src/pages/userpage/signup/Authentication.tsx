@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -10,11 +10,17 @@ interface CERTProps {
   code: string;
 }
 
+interface EmailCheckRes {
+  code: string;
+  data: boolean;
+}
+
 const Authentication = (): JSX.Element => {
   const [isEmail, setIsEmail] = useState("");
   const [certCode, setCertCode] = useState("");
   const [timer, setTimer] = useState<number | null>(null);
   const [isExpired, setIsExpired] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,6 +54,28 @@ const Authentication = (): JSX.Element => {
     }
   };
 
+  const getEmailCheck = async (email: string): Promise<boolean> => {
+    try {
+      const res = await axios.get<EmailCheckRes>(
+        `/api/user/sign-up?email=${email}`,
+      );
+
+      setIsEmailValid(res.data.data);
+
+      if (res.data.data === true) {
+        message.success("사용 가능한 이메일입니다");
+      } else {
+        message.error("이미 사용중인 이메일입니다");
+      }
+      return res.data.data;
+    } catch (error) {
+      console.log(error);
+      message.error("이메일 중복 확인 중 오류가 발생했습니다");
+      setIsEmailValid(false);
+      return false;
+    }
+  };
+
   useEffect(() => {
     if (timer !== null && timer > 0) {
       const interval = setInterval(() => {
@@ -66,12 +94,29 @@ const Authentication = (): JSX.Element => {
     });
 
     if (result) {
-      // 인증 성공 시 userType에 따라 적절한 페이지로 이동
+      // 인증 성공 시 userType과 이메일을 함께 전달
       if (userType === "user") {
-        navigate("/signup/user");
+        navigate("/signup/user", {
+          state: {
+            email: isEmail,
+            userType: userType,
+          },
+        });
       } else if (userType === "business") {
-        navigate("/signup/business");
+        navigate("/signup/business", {
+          state: {
+            email: isEmail,
+            userType: userType,
+          },
+        });
       }
+    }
+  };
+
+  const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const email = e.target.value;
+    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      await getEmailCheck(email);
     }
   };
 
@@ -92,7 +137,7 @@ const Authentication = (): JSX.Element => {
         autoComplete="off"
         layout="vertical"
         className="mt-6 px-4"
-        onFinish={onSubmit} // Form 제출 핸들러 추가
+        onFinish={onSubmit}
       >
         <Form.Item
           label="이메일"
@@ -103,13 +148,14 @@ const Authentication = (): JSX.Element => {
             placeholder="이메일을 입력하세요"
             className="py-[14px] px-3"
             value={isEmail}
+            onBlur={handleEmailBlur}
             onChange={e => setIsEmail(e.target.value)}
           />
           <Button
             type="primary"
             className="text-xs font-medium inline-block px-4 !h-auto"
             onClick={handleRequestCode}
-            disabled={!isEmail}
+            disabled={!isEmailValid}
           >
             인증코드 받기
           </Button>

@@ -2,7 +2,7 @@ import { Button, DatePicker, Divider, Form, Input, Select, Space } from "antd";
 import Checkbox from "antd/es/checkbox/Checkbox";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { USER } from "../../../constants/api";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
 import Policy from "../../../components/signup/Policy";
@@ -38,6 +38,8 @@ const defaultCheckedList = [];
 
 const SignUpUser = () => {
   const [form] = Form.useForm();
+  const location = useLocation();
+  const { email } = location.state || {};
   // useState
   const [formLayout, setFormLayout] = useState("vertical");
   const [formData, setFormData] = useState({});
@@ -176,13 +178,14 @@ const SignUpUser = () => {
   // Form의 초기값 설정
   useEffect(() => {
     form.setFieldsValue({
+      email: email,
       birthday: {
         year: 1999,
         month: 1,
         day: 1,
       },
     });
-  }, [form]);
+  }, [form, email]);
 
   // 전화번호 포맷팅 함수 수정
   const formatPhoneNumber = value => {
@@ -211,6 +214,7 @@ const SignUpUser = () => {
           className="w-full px-4"
           layout={formLayout}
           scrollToFirstError
+          initialValues={{ email: email }}
         >
           {/* 이름 */}
           <Form.Item
