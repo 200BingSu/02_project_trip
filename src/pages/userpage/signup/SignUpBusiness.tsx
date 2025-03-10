@@ -1,28 +1,21 @@
 import { Button, Form, message } from "antd";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import BusinessLookup from "../../../components/bussignup/BusinessLookup";
 import UserInfoForm from "../../../components/bussignup/UserInfoForm";
 import TermsAgreement from "../../../components/bussignup/TermsAgreement";
 import "../../../styles/antd-styles.css";
 import axios from "axios";
+import { IAPI } from "../../../types/interface";
 
 interface BusinessSignupProps {
-  profilePic?: string;
-  p: {
-    email: string;
-    pw: string;
-    name: string;
-    birth?: string;
-    tell?: string;
-    busiNum: string;
-  };
-}
-
-interface EmailCheckRes {
-  code: string;
-  data: boolean;
+  email: string;
+  pw: string;
+  name: string;
+  birth?: string | null;
+  tell?: string;
+  busiNum: string;
 }
 
 const SignUpBusiness = (): JSX.Element => {
@@ -32,23 +25,29 @@ const SignUpBusiness = (): JSX.Element => {
   const [isRequiredChecked, setIsRequiredChecked] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { email } = location.state || {};
 
-  const businessSigup = async (values: any): Promise<void> => {
+  const businessSigup = async (values: any): Promise<IAPI<number>> => {
     if (!isRequiredChecked) {
       message.error("필수 약관에 모두 동의해주세요.");
-      return;
+      return {
+        code: "error",
+        data: 0,
+      };
     }
 
     try {
       const data: BusinessSignupProps = {
-        p: {
-          email: values.email,
-          pw: values.pw,
-          name: values.name,
-          tell: values.tell,
-          busiNum: values.busiNum,
-        },
+        email: values.email,
+        pw: values.pw,
+        name: values.name,
+        tell: values.tell,
+        birth: null,
+        busiNum: values.busiNum || businessNum,
       };
+
+      console.log(data);
 
       const formData = new FormData();
       formData.append(
@@ -56,7 +55,7 @@ const SignUpBusiness = (): JSX.Element => {
         new Blob([JSON.stringify(data)], { type: "application/json" }),
       );
 
-      const res = await axios.post(`/api/sign-up`, formData, {
+      const res = await axios.post<IAPI<number>>(`/api/sign-up`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -65,35 +64,20 @@ const SignUpBusiness = (): JSX.Element => {
       // FormData의 내용 확인
       console.log("1. 원본 데이터:", data);
 
-      // FormData 내용 확인
-      for (const pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
-      console.log("3. 서버 응답:", res.data);
-
-      navigate("/complete", { replace: true });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getEmailCheck = async (email: string): Promise<boolean> => {
-    try {
-      const res = await axios.get<EmailCheckRes>(
-        `/api/user/sign-up?email=${email}`,
-      );
-
-      if (res.data.data === true) {
-        message.success("사용 가능한 이메일입니다");
+      if (res.data.data === 1) {
+        navigate("/signup/complete", { replace: true });
       } else {
-        message.error("이미 사용중인 이메일입니다");
+        message.error("회원가입에 실패했습니다");
       }
-      return res.data.data;
+
+      return res.data;
     } catch (error) {
       console.log(error);
-      message.error("이메일 중복 확인 중 오류가 발생했습니다");
-      return false;
+      message.error("회원가입에 실패했습니다");
+      return {
+        code: "error",
+        data: 0,
+      };
     }
   };
 
@@ -116,11 +100,9 @@ const SignUpBusiness = (): JSX.Element => {
           disabled={isDisabled}
           className="px-4"
           onFinish={businessSigup}
+          initialValues={{ email: email }}
         >
-          <UserInfoForm
-            handleValuesChange={() => {}}
-            getEmailCheck={getEmailCheck}
-          />
+          <UserInfoForm handleValuesChange={() => {}} initialEmail={email} />
           <TermsAgreement
             checkedList={checkedList}
             setCheckedList={setCheckedList}

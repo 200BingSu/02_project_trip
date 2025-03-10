@@ -101,7 +101,10 @@ const Index = () => {
           />
         </h1>
         <nav className=" flex gap-5">
-          <BiBell className="text-2xl text-slate-400 cursor-pointer" />
+          <BiBell
+            onClick={() => navigate("/user/notification")}
+            className="text-2xl text-slate-400 cursor-pointer"
+          />
           <CgMenuGridO
             className="text-2xl text-slate-400 cursor-pointer"
             onClick={() => {
@@ -155,7 +158,7 @@ const Index = () => {
             setRecommend={setRecommend}
           />
         </section>
-        <section className="mt-10 w-full py-16">
+        <section className="mt-10 w-full pt-16">
           <RecommendList recommend={recommend} />
         </section>
       </main>
