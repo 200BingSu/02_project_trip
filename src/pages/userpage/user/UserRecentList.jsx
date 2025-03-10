@@ -115,6 +115,12 @@ const UserRecentList = () => {
     setIsModalOpen(false);
   };
   const handleCancel = () => setIsModalOpen(false);
+  const categoryArr = {
+    TOUR: "관광지",
+    FEST: "축제",
+    STAY: "숙소",
+    RESTAUR: "맛집",
+  };
 
   const navigate = useNavigate();
   return (
@@ -128,75 +134,86 @@ const UserRecentList = () => {
       />
 
       {isRecents.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-[calc(100vh-60px)]">
+        <div className="flex flex-col items-center justify-center">
           <LiaComment className="w-full text-slate-300 text-8xl mb-5 " />
           <p className="text-2xl text-slate-400 font-semibold">
             최근에 본 목록이 없습니다.
           </p>
         </div>
       ) : (
-        <div className="relative flex flex-col gap-5 px-8 my-10">
-          <div className="flex items-center justify-between w-full h-16">
-            <span className=" text-slate-500 mr-auto ">
-              최근 본 상품은 최대 10개 까지 출력됩니다.
-            </span>
-            <Button onClick={showModal} className="px-4 h-8">
+        <div className="relative flex flex-col gap-6 px-4 mb-6">
+          <div className="flex justify-between py-[14px] border-b-[1px] border-slate-100 ">
+            <p className="text-sm font-semibold text-slate-700">
+              총 {isRecents.length}개
+            </p>
+
+            <button
+              onClick={showModal}
+              className="text-sm font-light text-slate-400"
+            >
               전체 삭제
-            </Button>
+            </button>
           </div>
           {isRecents?.map(item => (
-            <div
+            <li
+              className="flex gap-3 items-start cursor-pointer"
               key={item.strfId}
-              onClick={() => handleClickList(item)}
-              className="relative w-full flex gap-5 cursor-pointer"
+              onClick={() => navigate(`/contents/index?strfId=${item.strfId}`)}
             >
-              <p className=" w-32 h-32 overflow-hidden rounded-lg bg-slate-200">
+              {/* 썸네일 */}
+              <div className="w-32 min-w-32 aspect-square bg-slate-200 rounded-lg overflow-hidden relative">
                 <img
                   src={`${ProductPic}/${item.strfId}/${item.strfPic}`}
-                  alt={item.strfTitle}
+                  alt={item.title}
                   className="w-full h-full object-cover"
                 />
-              </p>
-              <div className="h-28 mt-2">
-                <p className="text-slate-700 text-xl font-semibold">
-                  {item.strfTitle}
-                </p>
-                <p className="text-sm text-slate-500 mb-3">
-                  {categoryNameMap[item.category]} ⋅ {item.locationName}
-                </p>
-                {/* <p className="text-slate-700 font-semibold text-lg">
-                {item.price}
-              </p> */}
+                <AiFillHeart className="text-secondary3 text-xl absolute top-2 right-2" />
+              </div>
+              {/* 정보 */}
+              <div className="flex flex-col gap-[5px] mr-auto">
+                {/* 제목, 지역 제휴 */}
+                <div className="flex gap-[5px] items-center ">
+                  <h3 className="text-lg font-medium text-slate-700">
+                    {item.strfTitle}
+                  </h3>
+                </div>
+                {/* 카테고리, 지역 */}
                 <div>
-                  <p className="flex items-center text-slate-400 text-sm gap-1 mb-2">
-                    <Rate
-                      disabled
-                      allowHalf
-                      defaultValue={item.ratingAvg}
-                      className="custom-rate"
-                    />
-                    <span>({item.reviewCnt})</span>
+                  <p className="text-sm text-slate-500">
+                    {categoryArr[item.category] || item.category} ·{" "}
+                    {item.locationName}
                   </p>
-                  <p className="flex items-center text-slate-400 text-sm gap-1">
-                    {item.wishIn ? (
-                      <AiFillHeart className="text-secondary3 text-xl" />
-                    ) : (
-                      <AiOutlineHeart className="text-slate-400 text-xl" />
-                    )}
-                    {item.wishCnt}
+                </div>
+                {/* 별점 */}
+                <div className="flex gap-1 items-center">
+                  <Rate
+                    disabled
+                    allowHalf
+                    value={item.ratingAvg}
+                    className="flex items-center custom-star-wish custom-star"
+                  />
+                  <p className="text-sm text-slate-500">
+                    ({item.reviewCnt?.toLocaleString()})
+                  </p>
+                </div>
+                {/* 찜하기 */}
+                <div className="flex gap-1 items-center text-sm">
+                  <AiOutlineHeart className="text-slate-400 text-lg" />
+                  <p className="text-slate-500">
+                    {item.wishCnt?.toLocaleString()}
                   </p>
                 </div>
               </div>
-              <p
-                className="absolute top-3 right-3 text-slate-400"
+              <button
                 onClick={e => {
                   e.stopPropagation(); // 이벤트 버블링 방지
                   deleteRecent(item);
                 }}
+                className="text-slate-400 text-sm w-9 text-right"
               >
                 삭제
-              </p>
-            </div>
+              </button>
+            </li>
           ))}
         </div>
       )}

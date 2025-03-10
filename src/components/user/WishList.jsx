@@ -86,7 +86,9 @@ const WishList = ({ category }) => {
         />
       )}
       <div className="flex justify-between py-[14px] px-4 border-b-[1px] border-slate-100 ">
-        <p className="text-sm font-semibold">총 {wishListData.length}개</p>
+        <p className="text-sm font-semibold text-slate-700">
+          총 {wishListData.length}개
+        </p>
         <button
           className="flex items-center gap-1 text-slate-500"
           onClick={() => setShowFilter(true)}
@@ -95,7 +97,7 @@ const WishList = ({ category }) => {
         </button>
       </div>
       <div className="px-4 py-6">
-        <ul className="w-full flex flex-col gap-[20px] mb-[30px]">
+        <ul className="w-full flex flex-col gap-3 mb-[30px]">
           {wishListData.map((item, index) => {
             return (
               <li

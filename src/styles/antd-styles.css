@@ -156,3 +156,11 @@
   width: 18px;
   height: 18px;
 }
+
+.custom-payment-radio {
+  align-items: center;
+}
+.custom-payment-checkbox .ant-checkbox {
+  margin-top: 4px;
+  align-self: start;
+}

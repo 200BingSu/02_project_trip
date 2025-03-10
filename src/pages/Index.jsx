@@ -155,7 +155,7 @@ const Index = () => {
             setRecommend={setRecommend}
           />
         </section>
-        <section className="mt-10 bg-slate-100 w-full py-16">
+        <section className="mt-10 w-full py-16">
           <RecommendList recommend={recommend} />
         </section>
       </main>
