@@ -69,7 +69,7 @@ const RegisterIndex = (): JSX.Element => {
   const accessToken = getCookie("accessToken");
   //recoil
   const registerData = useRecoilValue(registerAtom);
-  console.log("registerData", registerData);
+  // console.log("registerData", registerData);
   //useState
   const [errorMessage, setErrorMessage] = useState<boolean>(false);
   const [errorLocation, setErrorLocation] =
@@ -103,6 +103,7 @@ const RegisterIndex = (): JSX.Element => {
       if (resultData) {
         message.success("상품 등록이 완료되었습니다.");
         setIsLoading(false);
+        navigateToComfirm();
       }
       return resultData;
     } catch (error) {
@@ -118,10 +119,10 @@ const RegisterIndex = (): JSX.Element => {
       title: `${registerData.name}`,
       lat: registerData.location?.latitude ?? 0,
       lng: registerData.location?.longitude ?? 0,
-      address: `${registerData.location?.address}${registerData.location?.addressDetail}`,
+      address: `${registerData.location?.address} ${registerData.location?.addressDetail ?? null}`,
       locationTitle: registerData.locationTitle ?? "",
       post: registerData.location?.postcode ?? "",
-      tell: registerData.tell?.number ?? "",
+      tell: `${registerData.tell?.areaCode}-${registerData.tell?.number}`,
       startAt:
         dayjs(registerData.businessHours?.startTime, "HH:mm").format(
           "HH:mm:ss",
@@ -149,7 +150,7 @@ const RegisterIndex = (): JSX.Element => {
     );
     if (registerData.image?.length ?? 0 > 0) {
       registerData.image?.forEach(image => {
-        formData.append("strfPic", image.originFileObj as Blob);
+        formData.append("strfPic", image.originFileObj as File);
       });
     }
     console.log("p의 내용", formData.get("p"));

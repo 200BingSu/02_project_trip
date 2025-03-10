@@ -38,6 +38,7 @@ const BusinessIndex = (): JSX.Element => {
 
   //쿠키
   const userInfo = getCookie("user");
+  const strfId = userInfo.strfId;
   // console.log("userInfo", userInfo);
   const accessToken = getCookie("accessToken");
   // recoil
@@ -156,7 +157,9 @@ const BusinessIndex = (): JSX.Element => {
   );
 
   useEffect(() => {
-    getSales();
+    if (strfId) {
+      getSales();
+    }
   }, [period]);
 
   return (
@@ -208,7 +211,11 @@ const BusinessIndex = (): JSX.Element => {
               }))}
             />
           </div>
-          <Graph data={filteredSalesData} />
+          <Graph
+            data={
+              filteredSalesData ?? [{ id: "매출액", data: [{ x: "0", y: 0 }] }]
+            }
+          />
         </section>
         {/* 매출 표 */}
         <section className="select-none">

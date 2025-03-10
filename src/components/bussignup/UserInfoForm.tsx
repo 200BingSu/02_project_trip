@@ -5,12 +5,7 @@ interface UserInfoFormProps {
   getEmailCheck: (email: string) => Promise<boolean>;
 }
 
-const UserInfoForm = ({
-  handleValuesChange,
-  getEmailCheck,
-}: UserInfoFormProps): JSX.Element => {
-  const [form] = Form.useForm();
-
+const UserInfoForm = ({ getEmailCheck }: UserInfoFormProps): JSX.Element => {
   const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
     const email = e.target.value;
     if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

@@ -22,7 +22,7 @@ const StoreIndex = (): JSX.Element => {
   const [cateIndex, setCateIndex] = useState<number>(tab);
   const [isLoading, setIsLoading] = useState(false);
   const [strfData, setStrfData] = useState<IStrf>();
-  const [roomData, setRoomData] = useState<IRoom[]>([]);
+  const [_, setRoomData] = useState<IRoom[]>([]);
 
   // API 상품 조회
   const getStrfInfo = async (): Promise<IAPI<IStrf> | null> => {
