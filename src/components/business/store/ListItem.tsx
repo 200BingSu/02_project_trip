@@ -5,12 +5,12 @@ import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
 import TextArea from "antd/es/input/TextArea";
 import { amenities } from "../../../constants/dataArr";
 import { Iamenity } from "../../../types/interface";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 interface ListItemProps {
   children?: ReactNode;
   title: string | ReactNode;
-  content: string | ReactNode | Iamenity[] | string[];
+  content: string | ReactNode | Iamenity[] | string[] | Dayjs[];
   type: string;
 }
 const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {

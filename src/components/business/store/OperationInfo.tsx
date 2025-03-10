@@ -16,7 +16,19 @@ const OperationInfo = ({ strfData }: OperationInfoProps): JSX.Element => {
   const [searchParams] = useSearchParams();
   const category = searchParams.get("category");
   console.log(strfData);
+
   const { startAt, endAt, closeCheck, openCheck, restDate } = strfData;
+  if (
+    !strfData ||
+    !startAt ||
+    !endAt ||
+    !closeCheck ||
+    !openCheck ||
+    !restDate
+  ) {
+    // strfData가 없거나 필요한 값들이 없을 경우 처리
+    return <div>데이터가 없거나 불완전합니다</div>;
+  }
   const busiHour = [startAt, endAt];
   const checkTime = [
     dayjs(openCheck, "HH:mm:ss").format("HH:mm"),
@@ -25,6 +37,7 @@ const OperationInfo = ({ strfData }: OperationInfoProps): JSX.Element => {
   const restDateKor = restDate.map(item => {
     return matchRestDataToKor(item);
   });
+
   return (
     <>
       <ListItem title="영업 시간" content={busiHour} type="busiHour" />

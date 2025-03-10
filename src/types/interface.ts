@@ -179,7 +179,7 @@ export interface IBusinessReview {
   reviewReply: string | null;
 }
 
-export interface IStrf extends IRoom {
+export interface IStrf extends Partial<IRoom> {
   strfId?: string;
   category: string;
   strfTitle: string;
