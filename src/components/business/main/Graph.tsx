@@ -4,7 +4,7 @@ import { IGraphData } from "../../../pages/business/BusinessIndex";
 interface GraphProps {
   data: {
     id: string;
-    data: Array<IGraphData>;
+    data: IGraphData[];
   }[];
 }
 

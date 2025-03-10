@@ -272,8 +272,8 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
                   key={index}
                   className={`flex text-base items-center gap-2
                 border rounded-2xl w-fit px-2 py-1
-                ${selectedAmenities.includes(item.amenity_id) ? "border-primary text-primary" : "border-slate-300 text-slate-500"}`}
-                  onClick={() => handleAmenityClick(item.amenity_id)}
+                ${selectedAmenities.includes(item.amenity_id as number) ? "border-primary text-primary" : "border-slate-300 text-slate-500"}`}
+                  onClick={() => handleAmenityClick(item.amenity_id as number)}
                 >
                   {item.icon}
                   {item.key}

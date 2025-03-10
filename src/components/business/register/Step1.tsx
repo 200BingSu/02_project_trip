@@ -57,6 +57,7 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
     getGeoCode(fullAddress);
     setRegister(prev => ({
       ...prev,
+      locationTitle: data.sido,
       location: {
         postcode: data.zonecode,
         address: fullAddress,
@@ -108,13 +109,14 @@ const Step1 = ({ categoryRef, nameRef, locationRef, tellRef }: StepRef) => {
       console.log("좌표", res.data.documents[0]);
       setRegister(prev => ({
         ...prev,
-        locationTitle: res.data.documents[0].address.region_2depth_name,
+
         location: {
           ...prev.location,
           latitude: Number(res.data.documents[0].y),
           longitude: Number(res.data.documents[0].x),
         },
       }));
+      console.log(res.data);
       return res.data;
     } catch (error) {
       console.log("error", error);
