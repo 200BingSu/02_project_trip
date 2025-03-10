@@ -20,7 +20,7 @@ const FestivalList = ({ festivities }) => {
               className="w-full h-full object-cover"
             />
 
-            <div className="absolute bottom-10 right-8 text-right z-[99]">
+            <div className="absolute bottom-10 right-8 text-right z-[99] pl-8">
               {item.open && (
                 <span className="text-xs inline-block bg-secondary3 px-2 py-1 font-light ">
                   개최중
