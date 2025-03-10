@@ -27,9 +27,7 @@ const BasicInfo = ({ strfData }: BasicInfoProps): JSX.Element => {
         return "알 수 없음";
     }
   };
-  if (!strfData) {
-    return <div>Loading...</div>; // 또는 로딩 중 메시지나 대체 UI를 반환
-  }
+
   return (
     <>
       <ListItem title="업체 상태" content={matchState(state)} type="state" />
@@ -51,7 +49,7 @@ const BasicInfo = ({ strfData }: BasicInfoProps): JSX.Element => {
               </Popover>
             </span>
           }
-          content={matchState(state)}
+          content={amenity}
           type="amenity"
         />
       )}

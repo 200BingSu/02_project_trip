@@ -1,5 +1,5 @@
-import { Button, Checkbox, Form, Input } from "antd";
-import axios from "axios";
+import { Button, Checkbox, Form, Input, message } from "antd";
+import axios, { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -34,7 +34,7 @@ const handleKakaoLogin = () => {
 const SingInIndex = () => {
   //쿠키
   const savedUserLogin = getCookie("user");
-  console.log("savedUserLogin", savedUserLogin);
+  // console.log("savedUserLogin", savedUserLogin);
   const nowEmail = savedUserLogin?.email;
   const [form] = Form.useForm();
   // recoil
@@ -106,6 +106,14 @@ const SingInIndex = () => {
       return resultData;
     } catch (error) {
       console.log("로그인 에러:", error);
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.status);
+        message.error(
+          loginType === "personal"
+            ? "사업자 계정입니다. 개인회원 로그인을 부탁드립니다."
+            : "개인회원 계정입니다. 사업자 로그인을 부탁드립니다.",
+        );
+      }
       removeCookie(`accessToken`);
       return null;
     }
@@ -260,7 +268,9 @@ const SingInIndex = () => {
             </div>
           </div>
           {/* 카카오 로그인 */}
-          <div className="w-full">
+          <div
+            className={`w-full ${loginType !== "business" ? "visible" : "invisible"}`}
+          >
             <p className="text-slate-500 text-center text-sm relative my-4 before:absolute before:w-2/5 before:h-[1px] before:bg-slate-200 before:top-1/2 before:left-0 after:absolute after:w-2/5 after:h-[1px] after:bg-slate-200 after:top-1/2 after:right-0">
               또는
             </p>

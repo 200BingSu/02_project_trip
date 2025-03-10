@@ -1,20 +1,25 @@
-import { Input, Select, Spin } from "antd";
-import { memo, ReactNode, useEffect, useState } from "react";
+import { Input, Select, Spin, TimePicker } from "antd";
+import React, { memo, ReactNode, useEffect, useState } from "react";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
 import TextArea from "antd/es/input/TextArea";
 import { amenities } from "../../../constants/dataArr";
+import { Iamenity } from "../../../types/interface";
+import dayjs from "dayjs";
 
 interface ListItemProps {
   children?: ReactNode;
   title: string | ReactNode;
-  content: string | ReactNode;
+  content: string | ReactNode | Iamenity[] | string[];
   type: string;
 }
 const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
   const [isEdit, setIsEdit] = useState(false);
   const [isLoading] = useState(false);
   const [value, setValue] = useState<any>(null);
+  useEffect(() => {
+    console.log("value", value);
+  }, [value]);
   const [areaCode, setAreaCode] = useState<string>("");
   const [selectedAmenities, setSelectedAmenities] = useState<number[]>([]);
   // 편의 시설 클릭
@@ -57,6 +62,50 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
     }
     return trimmed;
   };
+  // 타입가드
+  const isReactNode = (value: unknown): value is ReactNode => {
+    return (
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "boolean" ||
+      value === null ||
+      value === undefined ||
+      React.isValidElement(value)
+    );
+  };
+
+  const isIamenityArray = (value: unknown): value is Iamenity[] => {
+    return (
+      Array.isArray(value) &&
+      value.every(
+        item =>
+          typeof item === "object" &&
+          type === "amenity" &&
+          "amenityTitle" in item,
+      )
+    );
+  };
+  const isStringArray = (value: unknown): value is string[] => {
+    return (
+      Array.isArray(value) && value.every(item => typeof item === "string")
+    );
+  };
+  const scheduleOptions = {
+    frequency: [
+      { label: "없음", value: "" },
+      { label: "매주", value: "weekly" },
+      { label: "격주", value: "biweekly" },
+    ],
+    day: [
+      { label: "월", value: "mon" },
+      { label: "화", value: "tue" },
+      { label: "수", value: "wed" },
+      { label: "목", value: "thu" },
+      { label: "금", value: "fri" },
+      { label: "토", value: "sat" },
+      { label: "일", value: "sun" },
+    ],
+  };
   useEffect(() => {
     if (type === "tell" && typeof content === "string") {
       const tellNum = content ? content.split("-") : ["000", "0000", "0000"];
@@ -68,6 +117,7 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
       setValue(content);
     }
   }, [content, type]);
+
   return (
     <section className="px-7 pt-4 pb-5 flex flex-col gap-2 border-b-2 border-slate-100">
       <div className="flex items-center justify-between">
@@ -89,7 +139,30 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
       <Spin spinning={isLoading}>
         {!isEdit && (
           <div className="text-lg font-medium text-slate-500 px-2 py-1">
-            {content}
+            {isReactNode(content) && <div>{content}</div>}
+            {isIamenityArray(content) && (
+              <ul>
+                {content.map(amenity => (
+                  <li key={amenity.amenityId}>
+                    {amenity.icon} {amenity.amenityTitle}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {isStringArray(content) && (
+              <>
+                {type === "busiHour" && `${content[0]}~${content[1]}`}
+                {type === "checkTime" && `${content[0]}~${content[1]}`}
+                {type === "restDate" &&
+                  content.map((item, index) => {
+                    return index !== content.length ? (
+                      <p key={index}>{item}</p>
+                    ) : (
+                      <p key={index}>{item},</p>
+                    );
+                  })}
+              </>
+            )}
           </div>
         )}
         {isEdit && type === "state" && (
@@ -137,6 +210,54 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
                 {item.key}
               </button>
             ))}
+          </div>
+        )}
+        {isEdit && type === "busiHour" && (
+          <div>
+            <TimePicker.RangePicker
+              defaultValue={
+                isStringArray(content)
+                  ? [dayjs(content[0]), dayjs(content[1])]
+                  : undefined
+              }
+              format={"HH:mm"}
+            />
+          </div>
+        )}
+        {isEdit && type === "checkTime" && (
+          <div>
+            <TimePicker.RangePicker
+              defaultValue={
+                isStringArray(content)
+                  ? [dayjs(content[0], "HH:mm"), dayjs(content[1], "HH:mm")]
+                  : undefined
+              }
+              format={"HH:mm"}
+              onChange={e => setValue(e)}
+            />
+          </div>
+        )}
+        {isEdit && type === "restDate" && (
+          <div className="flex gap-3">
+            <Select
+              options={scheduleOptions.frequency}
+              placeholder="휴무 주기"
+              onChange={value => {
+                setValue({ ...value, frequency: value });
+              }}
+              size="large"
+            />
+            <Select
+              options={scheduleOptions.day}
+              placeholder="요일 선택"
+              size="large"
+              mode="multiple"
+              allowClear
+              className="w-full"
+              onChange={value => {
+                setValue({ ...value, day: value });
+              }}
+            />
           </div>
         )}
       </Spin>
