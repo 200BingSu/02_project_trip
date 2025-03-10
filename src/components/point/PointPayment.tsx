@@ -1,12 +1,9 @@
 import { Button, Checkbox, Flex, Radio } from "antd";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TitleHeaderTs from "../layout/header/TitleHeaderTs";
 import "../../styles/antd-styles.css";
+import TitleHeaderTs from "../layout/header/TitleHeaderTs";
 
 const PointPayment = (): JSX.Element => {
-  const [money, setmoney] = useState(null);
-  const points = [10000, 30000, 50000, 70000, 100000];
   const navigate = useNavigate();
   const navPoint = () => {
     navigate("/user/point");
