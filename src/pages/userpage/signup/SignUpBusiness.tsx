@@ -55,17 +55,23 @@ const SignUpBusiness = (): JSX.Element => {
         new Blob([JSON.stringify(data)], { type: "application/json" }),
       );
 
-      const res = await axios.post<IAPI<number>>(`/api/sign-up`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+      const res = await axios.post<IAPI<number>>(
+        `/api/busi/sign-up`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         },
-      });
+      );
 
       // FormData의 내용 확인
       console.log("1. 원본 데이터:", data);
 
       if (res.data.data === 1) {
-        navigate("/signup/complete", { replace: true });
+        navigate("/signup/complete", {
+          state: { name: values.name },
+        });
       } else {
         message.error("회원가입에 실패했습니다");
       }
