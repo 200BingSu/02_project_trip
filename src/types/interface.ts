@@ -95,7 +95,7 @@ export interface Istore {
     number?: string;
   };
   image?: UploadFile[];
-  businessHours?: { startTime?: string; endTime?: string };
+  duration?: { startAt?: string; endAt?: string };
   checkTime?: { checkIn?: string; checkOut?: string };
   holiday?: { frequency?: string; day?: string[] };
   bio?: string;

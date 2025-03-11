@@ -1,5 +1,5 @@
 import { Button, Checkbox, Form, Input, message } from "antd";
-import axios, { isAxiosError } from "axios";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -7,9 +7,9 @@ import logo from "../../../assets/logo_1.png";
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import { USER } from "../../../constants/api";
 import "../../../styles/antd-styles.css";
-import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 import { ProviderType, ROLE } from "../../../types/enum";
 import { Iuser } from "../../../types/interface";
+import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 
 //interface
 interface IPostLogin extends Iuser {

@@ -203,23 +203,23 @@ const BusinessIndex = (): JSX.Element => {
                 * 해당 서비스 이용을 위해서는 업체 등록이 필요합니다
               </span>
             </div>
-            <div className="grid grid-cols-2 grid-rows-2 gap-4 select-none">
+            <div className="flex flex-col gap-4 select-none">
               <div
                 className="p-6 rounded-2xl
-                flex justify-center items-center col-span-2 
+                flex justify-center items-center 
               text-slate-50 text-xl font-semibold bg-secondary2"
               >
                 가게 관리 / 메뉴 관리
               </div>
               <div
                 className="p-6 rounded-2xl flex justify-center items-center 
-              text-slate-50 text-xl font-semibold col-span-1 bg-secondary3"
+              text-slate-50 text-xl font-semibold  bg-secondary3"
               >
                 매출 현황
               </div>
               <div
                 className="p-6 rounded-2xl flex justify-center items-center 
-              text-slate-50 text-xl font-semibold col-span-1 bg-primary"
+              text-slate-50 text-xl font-semibold  bg-primary"
               >
                 리뷰 관리
               </div>

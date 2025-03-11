@@ -19,7 +19,7 @@ export const registerAtom = atom<Istore>({
       number: "",
     },
     image: [],
-    businessHours: { startTime: "", endTime: "" },
+    duration: { startAt: "", endAt: "" },
     checkTime: { checkIn: "", checkOut: "" },
     holiday: { frequency: "", day: [] },
     bio: "",
