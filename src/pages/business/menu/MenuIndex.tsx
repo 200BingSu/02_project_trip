@@ -5,6 +5,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MenuItem from "../../../components/business/menu/MenuItem";
 import { MenuType } from "../../../types/interface";
+import { LiaComment } from "react-icons/lia";
 
 interface IGetMenuListRes {
   code: string;
@@ -22,13 +23,17 @@ const MenuIndex = (): JSX.Element => {
   const category = searchParams.get("category");
   // useState
   const [menuList, setMenuList] = useState<MenuType[]>([]);
+
   // API 메뉴 목록
   const getMenuList = async (): Promise<IGetMenuListRes | null> => {
     const url = "/api/detail/menu";
     try {
       const res = await axios.get<IGetMenuListRes>(`${url}?strf_id=${strfId}`);
       const resultData = res.data;
-      setMenuList(resultData.data);
+      if (resultData.data[0] !== null) {
+        setMenuList(resultData.data);
+      }
+
       return resultData;
     } catch (error) {
       console.log(error);
@@ -54,14 +59,21 @@ const MenuIndex = (): JSX.Element => {
       {/* 메뉴 목록 */}
       <section>
         <ul className="flex flex-col gap-3">
-          {menuList?.map((item, index) => (
-            <MenuItem
-              item={item}
-              key={index}
-              strfId={strfId}
-              category={category as string}
-            />
-          ))}
+          {menuList.length > 0 &&
+            menuList?.map((item, index) => (
+              <MenuItem
+                item={item}
+                key={index}
+                strfId={strfId}
+                category={category as string}
+              />
+            ))}
+          {menuList.length === 0 && (
+            <li className="flex flex-col gap-5 items-center justify-center text-slate-300 py-12">
+              <LiaComment className="text-7xl" />
+              <p className="text-2xl">메뉴를 등록해주세요</p>
+            </li>
+          )}
         </ul>
       </section>
     </div>

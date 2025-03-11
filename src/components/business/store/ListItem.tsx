@@ -1,11 +1,17 @@
-import { Input, Select, Spin, TimePicker } from "antd";
+import { Input, message, Select, Spin, TimePicker } from "antd";
+import TextArea from "antd/es/input/TextArea";
+import axios from "axios";
+import dayjs, { Dayjs } from "dayjs";
 import React, { memo, ReactNode, useEffect, useState } from "react";
 import { BiSolidEditAlt } from "react-icons/bi";
-import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
-import TextArea from "antd/es/input/TextArea";
+import { useSearchParams } from "react-router-dom";
 import { amenities } from "../../../constants/dataArr";
-import { Iamenity } from "../../../types/interface";
-import dayjs, { Dayjs } from "dayjs";
+import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
+import { Iamenity, IAPI, IStrf } from "../../../types/interface";
+import { getCookie } from "../../../utils/cookie";
+import { useRecoilState } from "recoil";
+import { strfAtom } from "../../../atoms/strfAtom";
+import { matchState } from "../../../utils/match";
 
 interface ListItemProps {
   children?: ReactNode;
@@ -14,12 +20,21 @@ interface ListItemProps {
   type: string;
 }
 const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
+  // 쿠키
+  const accessToken = getCookie("accessToken");
+  const userInfo = getCookie("user");
+  const busiNum = userInfo.strfDtos[0].busiNum;
+  // 쿼리
+  const [searchParams] = useSearchParams();
+  const strfId = Number(searchParams.get("strfId"));
+  //recoil
+  const [strfData, setStrfData] = useRecoilState(strfAtom);
+  console.log("ListItem strfData", strfData);
+  //useState
   const [isEdit, setIsEdit] = useState(false);
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState<any>(null);
-  useEffect(() => {
-    console.log("value", value);
-  }, [value]);
+
   const [areaCode, setAreaCode] = useState<string>("");
   const [selectedAmenities, setSelectedAmenities] = useState<number[]>([]);
   // 편의 시설 클릭
@@ -30,8 +45,98 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
       setSelectedAmenities(prev => [...prev, amenityId]);
     }
   };
+  // API 상품 조회
+  const getStrfInfo = async (): Promise<IAPI<IStrf> | null> => {
+    const url = "/api/detail/member";
+    setIsLoading(true);
+    try {
+      const res = await axios.get<IAPI<IStrf>>(`${url}?strf_id=${strfId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log(res.data);
+      const resultData = res.data;
+      if (resultData) {
+        setStrfData({ ...strfData, ...resultData.data });
+        setIsLoading(false);
+      }
+      return resultData;
+    } catch (error) {
+      setIsLoading(false);
+      console.log("상품조회", error);
+      return null;
+    }
+  };
+
+  // API 이름 변경
+  const updateTitle = async (): Promise<IAPI<string> | null> => {
+    const url = "/api/detail/title";
+    const payload = {
+      strfId: strfId,
+      busiNum: busiNum,
+      title: value,
+    };
+    console.log("payload", payload);
+    setIsLoading(true);
+    try {
+      const res = await axios.put<IAPI<string>>(
+        `${url}?strfId=${strfId}&title=${value}&busiNum=${busiNum}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      console.log(resultData);
+      if (resultData) {
+        getStrfInfo();
+        setIsLoading(false);
+        setStrfData({ ...strfData, strfTitle: value });
+        message.success("업체명 변경이 변경되었습니다");
+      }
+      return resultData;
+    } catch (error) {
+      console.log("이름 변경", error);
+      setIsLoading(false);
+      message.error("업체명 변경에 실패했습니다.");
+      return null;
+    }
+  };
+  // API 영업 상태 변경
+  const updateState = async (): Promise<IAPI<string> | null> => {
+    const url = "/api/detail/state";
+    const payload = {
+      strfId,
+      busiNum,
+      state: value,
+    };
+    console.log("payload", payload);
+    try {
+      const res = await axios.put(url, payload, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const resultData = res.data;
+      return resultData;
+    } catch (error) {
+      console.log("영업 상태 변경", error);
+      message.error("영업 상태 변경에 실패했습니다.");
+      return null;
+    }
+  };
+  // 수정/완료 클릭
   const handleClickButton = () => {
     setIsEdit(!isEdit);
+    if (isEdit === true && value.trim() !== "") {
+      type === "title" && updateTitle();
+    }
+    if (isEdit === true) {
+      type === "state" && updateState();
+    }
   };
   const selectOptions = [
     { value: 0, label: "영업중" },
@@ -139,23 +244,26 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
       <Spin spinning={isLoading}>
         {!isEdit && (
           <div className="text-lg font-medium text-slate-500 px-2 py-1">
-            {isReactNode(content) && <div>{content}</div>}
-            {isIamenityArray(content) && (
+            {type === "title" && strfData.strfTitle}
+            {type === "state" && matchState(strfData.state)}
+            {type === "tell" && strfData.tell}
+            {type === "detail" && strfData.detail}
+            {isIamenityArray(strfData) && (
               <ul>
-                {content.map(amenity => (
+                {strfData.map(amenity => (
                   <li key={amenity.amenityId}>
                     {amenity.icon} {amenity.amenityTitle}
                   </li>
                 ))}
               </ul>
             )}
-            {isStringArray(content) && (
+            {isStringArray(strfData) && (
               <>
-                {type === "busiHour" && `${content[0]}~${content[1]}`}
-                {type === "checkTime" && `${content[0]}~${content[1]}`}
+                {type === "busiHour" && `${strfData[0]}~${strfData[1]}`}
+                {type === "checkTime" && `${strfData[0]}~${strfData[1]}`}
                 {type === "restDate" &&
-                  content.map((item, index) => {
-                    return index !== content.length ? (
+                  strfData.map((item, index) => {
+                    return index !== strfData.length ? (
                       <p key={index}>{item}</p>
                     ) : (
                       <p key={index}>{item},</p>
@@ -164,6 +272,16 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
               </>
             )}
           </div>
+        )}
+        {isEdit && type === "title" && (
+          <Input
+            size="large"
+            defaultValue={content as string}
+            placeholder="업체 이름을 입력해주세요"
+            onChange={e => {
+              setValue(e.target.value);
+            }}
+          />
         )}
         {isEdit && type === "state" && (
           <Select

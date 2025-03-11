@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, message } from "antd";
 import dayjs from "dayjs";
 import { memo, useState } from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
@@ -24,7 +24,7 @@ const BookingState = ["결제완료", "예약확정", "이용완료", "취소완
  * 3. 리뷰 만료
  */
 const Bookings = data => {
-  console.log(data.data);
+  console.log(data.bookingId);
   const {
     checkInDate,
     checkOutDate,
@@ -36,6 +36,7 @@ const Bookings = data => {
     checkInTime,
     checkOutTime,
     createdAt,
+    bookingId,
   } = data.data;
   // useNavigate
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ const Bookings = data => {
     const data = {
       strfId: strfId,
       title: strfTitle,
+      bookingId: bookingId,
     };
     console.log("채팅방 생성 요청", data);
     try {
@@ -74,10 +76,11 @@ const Bookings = data => {
       console.log("채팅방 생성", res.data);
       const resultData = res.data;
       if (resultData) {
-        navigate(`/chatroom?roomId=${resultData.data.roomId}`);
+        navigate(`/chatroom?roomId=${resultData.data}`);
       }
     } catch (error) {
       console.log("채팅방 생성", error);
+      message.error("채팅방 생성에 실패했습니다.");
     }
   };
 

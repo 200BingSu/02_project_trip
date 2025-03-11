@@ -29,20 +29,14 @@ const ConfirmRegister = (): JSX.Element => {
             </p>
           </div>
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 px-10">
           <Button
             type="primary"
             className="max-h-[60px] h-[16vw] font-semibold text-xl"
-          >
-            신청 내역 보러가기
-          </Button>
-          <button
-            type="button"
-            className="text-slate-400 text-sm font-medium underline"
             onClick={navigateToBusiness}
           >
             메인으로 이동하기
-          </button>
+          </Button>
         </div>
       </div>
     </div>

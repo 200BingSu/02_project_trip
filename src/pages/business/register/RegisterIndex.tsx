@@ -1,19 +1,20 @@
 import { Button, message, Spin, Steps, UploadFile } from "antd";
 import axios from "axios";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import { RefObject, useRef, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useResetRecoilState } from "recoil";
 import { registerAtom } from "../../../atoms/registerAtom";
 import Step1 from "../../../components/business/register/Step1";
 import Step2 from "../../../components/business/register/Step2";
 import Step3 from "../../../components/business/register/Step3";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+import { CategoryType } from "../../../types/enum";
 import { getCookie } from "../../../utils/cookie";
-import { moveTo } from "../../../utils/moveTo";
 import { categoryKor } from "../../../utils/match";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
+import { moveTo } from "../../../utils/moveTo";
 
 dayjs.extend(customParseFormat);
 
@@ -53,9 +54,6 @@ interface ICreateStrf {
   p: PType;
 }
 
-// 하드 코딩용
-const busiNum = "994-47-97252";
-
 const RegisterIndex = (): JSX.Element => {
   //useNavigate
   const navigate = useNavigate();
@@ -67,9 +65,12 @@ const RegisterIndex = (): JSX.Element => {
   };
   // 쿠키
   const accessToken = getCookie("accessToken");
+  const userInfo = getCookie("user");
+  const busiNum = userInfo.busiNum[0];
   //recoil
+  const resetRegister = useResetRecoilState(registerAtom);
   const registerData = useRecoilValue(registerAtom);
-  // console.log("registerData", registerData);
+  console.log("registerData", registerData);
   //useState
   const [errorMessage, setErrorMessage] = useState<boolean>(false);
   const [errorLocation, setErrorLocation] =
@@ -103,6 +104,7 @@ const RegisterIndex = (): JSX.Element => {
       if (resultData) {
         message.success("상품 등록이 완료되었습니다.");
         setIsLoading(false);
+        resetRegister();
         navigateToComfirm();
       }
       return resultData;
@@ -124,12 +126,17 @@ const RegisterIndex = (): JSX.Element => {
       post: registerData.location?.postcode ?? "",
       tell: `${registerData.tell?.areaCode}-${registerData.tell?.number}`,
       startAt:
-        dayjs(registerData.duration?.startAt, "HH:mm").format("HH:mm") ?? "",
-      endAt: dayjs(registerData.duration?.endAt, "HH:mm").format("HH:mm") ?? "",
+        registerData.category === CategoryType.FEST
+          ? dayjs(registerData.duration?.startAt, "HH:mm").format("HH:mm")
+          : "",
+      endAt:
+        registerData.category === CategoryType.FEST
+          ? dayjs(registerData.duration?.endAt, "HH:mm").format("HH:mm")
+          : "",
       openCheckIn:
         dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm") ?? "",
       closeCheckOut:
-        dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm") ?? "",
+        dayjs(registerData.checkTime?.checkOut, "HH:mm").format("HH:mm") ?? "",
       detail: registerData.bio ?? "",
       busiNum: busiNum,
       state: 0,
@@ -218,9 +225,12 @@ const RegisterIndex = (): JSX.Element => {
       }
     }
     if (current === 1) {
-      if (!registerData.duration?.startAt || !registerData.duration?.endAt) {
-        return { message: "영업시간을 입력해주세요.", ref: businessHoursRef };
+      if (registerData.category === CategoryType.FEST) {
+        if (!registerData.duration?.startAt || !registerData.duration?.endAt) {
+          return { message: "영업시간을 입력해주세요.", ref: businessHoursRef };
+        }
       }
+
       if (!registerData.checkTime?.checkIn) {
         return { message: "체크인 시간을 입력해주세요.", ref: checkTimeRef };
       }

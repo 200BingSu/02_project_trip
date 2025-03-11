@@ -1,9 +1,11 @@
 import { Popover } from "antd";
-import { IStrf } from "../../../types/interface";
-import ListItem from "./ListItem";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { useSearchParams } from "react-router-dom";
 import { CategoryType } from "../../../types/enum";
+import { IStrf } from "../../../types/interface";
+import { getCookie } from "../../../utils/cookie";
+import ListItem from "./ListItem";
+import { matchState } from "../../../utils/match";
 
 interface BasicInfoProps {
   strfData: IStrf;
@@ -13,23 +15,16 @@ const BasicInfo = ({ strfData }: BasicInfoProps): JSX.Element => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const category = searchParams.get("category");
-  console.log(strfData);
+  // 쿠키
+  const userInfo = getCookie("user");
+  const nowTitle = userInfo.strfDtos[0].title;
+
+  // console.log(strfData);
   const { state = 0, tell = "", detail = "", amenity = [] } = strfData ?? {};
-  const matchState = (state: number) => {
-    switch (state) {
-      case 0:
-        return "영업중";
-      case 1:
-        return "휴업";
-      case 2:
-        return "폐업";
-      default:
-        return "알 수 없음";
-    }
-  };
 
   return (
     <>
+      <ListItem title="업체 이름" content={nowTitle} type="title" />
       <ListItem title="업체 상태" content={matchState(state)} type="state" />
       <ListItem title="업체 전화번호" content={tell as string} type="tell" />
       <ListItem title="업체 소개" content={detail} type="detail" />
