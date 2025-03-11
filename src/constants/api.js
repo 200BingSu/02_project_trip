@@ -12,7 +12,7 @@ export const USER = {
   checkMail: "/api/mail",
   resetPassword: "/api/user/reset-password",
   signInUser: "/api/user/sign-in",
-  signInBusiness: "/api/sign-in",
+  signInBusiness: "/api/busi/sign-in",
   getAccessToken: "/api/user/access-token",
   getUserInfo: "/api/user/userInfo?userId=",
   patchUser: "/api/user",
