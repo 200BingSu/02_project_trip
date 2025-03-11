@@ -444,8 +444,8 @@ const ContentIndex = () => {
                   setIsDetailOpen(true);
                 }}
                 className={`w-full text-[16px] h-[60px] pt-[17px] pb-[16px]
-                     ${isDetailOpen ? "text-primary" : "text-slate-400"}
-                     ${isDetailOpen ? "border-b-2 border-primary" : "border-b-1 border-slate-200"}`}
+                    ${isDetailOpen ? "text-primary" : "text-slate-400"}
+                    ${isDetailOpen ? "border-b-2 border-primary" : "border-b-1 border-slate-200"}`}
               >
                 상세보기
               </button>
@@ -455,8 +455,8 @@ const ContentIndex = () => {
                   setIsDetailOpen(false);
                 }}
                 className={`w-full text-[16px] h-[60px] pt-[17px] pb-[16px]
-                     ${isDetailOpen ? "text-slate-400" : "text-primary"}
-                     ${isDetailOpen ? "border-b border-slate-200" : "border-b-2 border-primary"}`}
+                    ${isDetailOpen ? "text-slate-400" : "text-primary"}
+                    ${isDetailOpen ? "border-b border-slate-200" : "border-b-2 border-primary"}`}
               >
                 리뷰
               </button>

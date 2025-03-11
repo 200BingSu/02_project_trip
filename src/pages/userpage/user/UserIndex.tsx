@@ -18,6 +18,8 @@ import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import { resetUserData } from "../../../selectors/userSelector";
 import { ProviderType, ROLE } from "../../../types/enum";
 
+import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
+
 //interface
 interface ITripList {
   tripId: number;
@@ -100,6 +102,24 @@ const UserIndex = () => {
     navigate("/user/useredit", { state: useProfile });
   };
 
+  const eventSource = new EventSourcePolyfill("/api/notice", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  console.log("eventSource", eventSource);
+
+  eventSource.onopen = function () {
+    console.log("SSE 연결 성공!");
+  };
+  eventSource.onmessage = function (event) {
+    console.log("새 알림:", event.data);
+  };
+  eventSource.onerror = function (error) {
+    console.error("SSE 연결 오류:", error);
+  };
+
   return (
     <div className={` w-full flex justify-end`}>
       {/* 모바일 메뉴 컨테이너 */}
@@ -114,7 +134,10 @@ const UserIndex = () => {
               className="text-3xl cursor-pointer text-slate-700"
             />
             <h1 className="flex gap-5">
-              <BiBell className="text-3xl text-slate-700 cursor-pointer" />
+              <BiBell
+                onClick={() => navigate("/user/notification")}
+                className="text-3xl text-slate-700 cursor-pointer"
+              />
               <AiFillSetting
                 className="text-3xl text-slate-700 cursor-pointer"
                 onClick={() => handleUserEdit()}
