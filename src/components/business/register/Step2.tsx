@@ -1,11 +1,11 @@
-import { Select, TimePicker } from "antd";
+import { DatePicker, Select, TimePicker } from "antd";
 
 import dayjs from "dayjs";
 import { memo } from "react";
 import { useRecoilState } from "recoil";
 import { registerAtom } from "../../../atoms/registerAtom";
 import { StepRef } from "../../../pages/business/register/RegisterIndex";
-const { RangePicker } = TimePicker;
+import { CategoryType } from "../../../types/enum";
 
 const Step2 = ({
   businessHoursRef,
@@ -17,9 +17,9 @@ const Step2 = ({
   // 휴무일
   const scheduleOptions = {
     frequency: [
-      { label: "없음", value: "" },
+      { label: "없음", value: "none" },
       { label: "매주", value: "weekly" },
-      { label: "격주", value: "biweekly" },
+      // { label: "격주", value: "biweekly" },
     ],
     day: [
       { label: "월", value: "mon" },
@@ -51,37 +51,39 @@ const Step2 = ({
         {/* 폼 */}
         <section className="flex flex-col gap-3">
           <ul className="flex flex-col gap-10 py-5">
-            {/* 영업시간 */}
-            <li className="flex flex-col gap-1" ref={businessHoursRef}>
-              <h3 className="text-slate-700 text-lg font-semibold">
-                <i className="text-secondary3_3">*</i> 영업 시간
-              </h3>
-              <p className="text-base text-slate-500">
-                업체의 영업시간을 입력해주세요.
-              </p>
-              <RangePicker
-                placeholder={["축제 시작일", "축제 종료일"]}
-                size="large"
-                format="HH:mm"
-                onChange={value => {
-                  setRegister(prev => ({
-                    ...prev,
-                    duration: {
-                      startAt: value?.[0]?.format("HH:mm") || "",
-                      endAt: value?.[1]?.format("HH:mm") || "",
-                    },
-                  }));
-                }}
-                value={[
-                  register.duration?.startAt
-                    ? dayjs(register.duration?.startAt, "HH:mm")
-                    : null,
-                  register.duration?.endAt
-                    ? dayjs(register.duration?.endAt, "HH:mm")
-                    : null,
-                ]}
-              />
-            </li>
+            {/* 기간 */}
+            {register.category === CategoryType.FEST && (
+              <li className="flex flex-col gap-1" ref={businessHoursRef}>
+                <h3 className="text-slate-700 text-lg font-semibold">
+                  <i className="text-secondary3_3">*</i> 영업 시간
+                </h3>
+                <p className="text-base text-slate-500">
+                  업체의 영업시간을 입력해주세요.
+                </p>
+                <DatePicker.RangePicker
+                  placeholder={["축제 시작일", "축제 종료일"]}
+                  size="large"
+                  onChange={value => {
+                    setRegister(prev => ({
+                      ...prev,
+                      duration: {
+                        startAt: value?.[0]?.format("YYYY-MM-DD") || "",
+                        endAt: value?.[1]?.format("YYYY-MM-DD") || "",
+                      },
+                    }));
+                  }}
+                  value={[
+                    register.duration?.startAt
+                      ? dayjs(register.duration?.startAt)
+                      : null,
+                    register.duration?.endAt
+                      ? dayjs(register.duration?.endAt)
+                      : null,
+                  ]}
+                />
+              </li>
+            )}
+
             {/* 체크인, 체크아웃 시간 */}
             <li className="flex flex-col gap-1" ref={checkTimeRef}>
               <h3 className="text-slate-700 text-lg font-semibold">
@@ -148,6 +150,12 @@ const Step2 = ({
                   options={scheduleOptions.frequency}
                   placeholder="휴무 주기"
                   onChange={value => {
+                    if (value === "none") {
+                      setRegister(prev => ({
+                        ...prev,
+                        holiday: { frequency: value, day: [] },
+                      }));
+                    }
                     setRegister(prev => ({
                       ...prev,
                       holiday: { ...prev.holiday, frequency: value },
@@ -161,6 +169,7 @@ const Step2 = ({
                   size="large"
                   mode="multiple"
                   allowClear
+                  value={register.holiday?.day}
                   className="w-full"
                   onChange={value => {
                     setRegister(prev => ({

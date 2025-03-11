@@ -17,7 +17,7 @@ import { CategoryType } from "../../../types/enum";
 import { Imenu } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
 import { categoryKor, matchName } from "../../../utils/match";
-interface Ptype {
+export interface Ptype {
   strfId: number;
   busiNum: string;
   category: string;
@@ -104,7 +104,7 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
     console.log(values);
     const p: Ptype = {
       strfId: strfId,
-      busiNum: busiNum,
+      busiNum: busiNum[0],
       category: categoryKor(category) as string,
       menus: [
         {

@@ -79,26 +79,34 @@ const SingInIndex = () => {
           isSaveEmail: isSaveEmail,
           ProviderType: ProviderType.LOCAL,
           role: resultData.role,
-          busiNum: res.data.busiNum ?? "",
-          strfId: res.data.strfId ?? "",
-          title: res.data.title ?? "",
-          category: res.data.category ?? "",
+          strfDtos: [
+            {
+              busiNum: resultData?.strfDtos[0]?.busiNum ?? "",
+              strfId: resultData?.strfDtos[0]?.strfId ?? "",
+              category: resultData?.strfDtos[0]?.category ?? "",
+              title: resultData?.strfDtos[0]?.title ?? "",
+            },
+          ],
         });
         setUserInfo({
-          userId: res.data.userId,
-          accessToken: res.data.accessToken,
+          userId: resultData.userId,
+          accessToken: resultData.accessToken,
           role: [...resultData.role],
           providerType: ProviderType.LOCAL,
-          busiNum: res.data.busiNum ?? "",
-          strfId: res.data.strfId ?? "",
-          title: res.data.title ?? "",
-          category: res.data.category ?? "",
+          strfDtos: [
+            {
+              busiNum: resultData.strfDtos[0]?.busiNum ?? "",
+              strfId: resultData.strfDtos[0]?.strfId ?? "",
+              category: resultData.strfDtos[0]?.category ?? "",
+              title: resultData.strfDtos[0]?.title ?? "",
+            },
+          ],
         });
       }
+      console.log(resultData.role);
       // 사업자 탭 분리안되어 있어서 임시조치
       if (resultData.role.includes(ROLE.BUSI) === true) {
         navigateToBusiness();
-        // console.log(false);
       } else {
         // console.log(true);
         handleNavigateHome();

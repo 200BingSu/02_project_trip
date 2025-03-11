@@ -45,9 +45,7 @@ QUADRUPLE은 2차, 3차 프로젝트를 바탕으로 시작되었으며, 여행�
 
 ## 🔗 프로젝트 자료
 
-[![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)](https://www.notion.so/176513016453805c8c29dfbc7c68277c)
-
-[![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/kr0KTm6F7ol2X8p0dTIuFH/QUADRUPLE?node-id=2-2&t=yv0n3lEl6c37KBEQ-1)
+[![노션](https://img.shields.io/badge/notion-000?style=for-the-badge&logo=notion&logoColor=white")](https://somber-ogre-ef0.notion.site/176513016453805c8c29dfbc7c68277c?pvs=4) [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/kr0KTm6F7ol2X8p0dTIuFH/QUADRUPLE?node-id=2-2&t=yv0n3lEl6c37KBEQ-1)</span>
 
 ## 💡 기여 방법
 
