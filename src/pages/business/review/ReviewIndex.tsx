@@ -6,6 +6,7 @@ import ReviewItem from "../../../components/business/review/ReviewItem";
 import StrfInfo from "../../../components/business/StrfInfo";
 import { IReview } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
+import { LiaComment } from "react-icons/lia";
 
 export interface IReviewItem extends IReview {
   reviewReply?: string | null;
@@ -60,9 +61,16 @@ const ReviewIndex = (): JSX.Element => {
       {/* 리뷰 목록 */}
       <Spin spinning={isLoading}>
         <section className="flex flex-col gap-10 pb-10">
-          {reviewList.map((item, index) => (
-            <ReviewItem key={index} item={item} strfId={strfId} />
-          ))}
+          {reviewList.length > 0 ? (
+            reviewList?.map((item, index) => (
+              <ReviewItem key={index} item={item} strfId={strfId} />
+            ))
+          ) : (
+            <div className="flex flex-col gap-5 items-center justify-center text-slate-300 py-12">
+              <LiaComment className="text-7xl" />
+              <p className="text-2xl">리뷰가 없습니다</p>
+            </div>
+          )}
         </section>
       </Spin>
     </div>

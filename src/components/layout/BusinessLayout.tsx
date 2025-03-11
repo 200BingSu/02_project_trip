@@ -28,12 +28,12 @@ const BusinessLayout = () => {
   const hanldeClickSubmit = () => {
     navigateToLogin();
   };
-  useEffect(() => {
-    if (role && role.includes(ROLE.BUSI) === false) {
-      console.log("사업자가 아닙니다.");
-      setIsOpenModal(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (role && role.includes(ROLE.BUSI) === false) {
+  //     console.log("사업자가 아닙니다.");
+  //     setIsOpenModal(true);
+  //   }
+  // }, []);
 
   return (
     <div className="max-w-[768px] min-w-xs mx-auto relative h-screen ">
