@@ -60,24 +60,24 @@ const Step2 = ({
                 업체의 영업시간을 입력해주세요.
               </p>
               <RangePicker
-                placeholder={["영업 시작 시간", "영업 종료 시간"]}
+                placeholder={["축제 시작일", "축제 종료일"]}
                 size="large"
                 format="HH:mm"
                 onChange={value => {
                   setRegister(prev => ({
                     ...prev,
-                    businessHours: {
-                      startTime: value?.[0]?.format("HH:mm") || "",
-                      endTime: value?.[1]?.format("HH:mm") || "",
+                    duration: {
+                      startAt: value?.[0]?.format("HH:mm") || "",
+                      endAt: value?.[1]?.format("HH:mm") || "",
                     },
                   }));
                 }}
                 value={[
-                  register.businessHours?.startTime
-                    ? dayjs(register.businessHours?.startTime, "HH:mm")
+                  register.duration?.startAt
+                    ? dayjs(register.duration?.startAt, "HH:mm")
                     : null,
-                  register.businessHours?.endTime
-                    ? dayjs(register.businessHours?.endTime, "HH:mm")
+                  register.duration?.endAt
+                    ? dayjs(register.duration?.endAt, "HH:mm")
                     : null,
                 ]}
               />
