@@ -16,16 +16,19 @@ import {
   matchMenuIcon,
   matchName,
 } from "../../../utils/match";
+import { salesAtom } from "../../../atoms/salesAtom";
 
 const Mypage = (): JSX.Element => {
   const navigate = useNavigate();
   // 쿠키
   const userInfo = getCookie("user");
   console.log("쿠키", userInfo);
-  const strfId = userInfo?.strfId;
-  const category = categoryToEnum(userInfo?.category) || CategoryType.STAY;
+  const strfId = userInfo?.strfDtos[0].strfId;
+  const category =
+    categoryToEnum(userInfo?.strfDtos[0].category) || CategoryType.STAY;
   // recoil
   const resetUserData = useResetRecoilState(tsUserAtom);
+  const resetSalesData = useResetRecoilState(salesAtom);
   const recoilInfo = useRecoilValue(tsUserAtom);
   const navigateToBusiness = () => {
     navigate("/business");
@@ -136,6 +139,7 @@ const Mypage = (): JSX.Element => {
   // 로그아웃
   const handleLogout = () => {
     resetUserData();
+    resetSalesData();
     removeCookie("accessToken");
     const userInfo = getCookie("user");
     if (userInfo.isSaveEmail === false) {

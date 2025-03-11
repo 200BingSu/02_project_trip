@@ -203,3 +203,15 @@ export const matchRestDataToKor = (number: number) => {
       return "토";
   }
 };
+export const matchState = (state: number) => {
+  switch (state) {
+    case 0:
+      return "영업중";
+    case 1:
+      return "휴업";
+    case 2:
+      return "폐업";
+    default:
+      return "알 수 없음";
+  }
+};

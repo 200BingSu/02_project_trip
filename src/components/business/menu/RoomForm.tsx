@@ -20,13 +20,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { categoryKor } from "../../../utils/match";
 import { amenities } from "../../../constants/dataArr";
 
-interface ParlorType {
+export interface ParlorType {
   maxCapacity: number;
   recomCapacity: number;
   surcharge: number;
   menuId: number;
 }
-interface CreateRoomDataType {
+export interface CreateRoomDataType {
   strfId: number;
   busiNum: string;
   category: string;
@@ -110,7 +110,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
     const { recomCapacity, maxCapacity, surcharge, rooms } = values;
     const sendData: CreateRoomDataType = {
       strfId: strfId,
-      busiNum: busiNum,
+      busiNum: busiNum[0],
       category: categoryKor(category) as string,
       menuId: Number(menuId),
       ameniPoints: selectedAmenities,

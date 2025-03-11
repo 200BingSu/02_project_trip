@@ -41,7 +41,7 @@ const ChatRoom = (): JSX.Element => {
   const filteredChatHistory = useRecoilValue(chatDataSelector);
   const [chatHistory, setChatHistory] = useRecoilState(chatDataAtom);
   const resetChatHistory = useResetRecoilState(chatDataAtom);
-  // useState & useRef
+  // useState
   const [connected, setConnected] = useState<boolean>(false);
   const [name, setName] = useState<number>(1);
   const [messages, setMessages] = useState<(ISendMessage | string)[]>([]);

@@ -4,28 +4,22 @@ import { ReactNode } from "react";
 import { IStrf } from "../../../types/interface";
 import { matchRestDataToKor } from "../../../utils/match";
 import ListItem from "./ListItem";
+import { useSearchParams } from "react-router-dom";
+import { CategoryType } from "../../../types/enum";
 dayjs.extend(customParseFormat);
 
 interface OperationInfoProps {
   children?: ReactNode;
   strfData: IStrf;
 }
+
 const OperationInfo = ({ strfData }: OperationInfoProps): JSX.Element => {
   // 쿼리
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get("category");
   console.log(strfData);
-
   const { startAt, endAt, closeCheck, openCheck, restDate } = strfData;
-  if (
-    !strfData ||
-    !startAt ||
-    !endAt ||
-    !closeCheck ||
-    !openCheck ||
-    !restDate
-  ) {
-    // strfData가 없거나 필요한 값들이 없을 경우 처리
-    return <div>데이터가 없거나 불완전합니다</div>;
-  }
+
   const busiHour = [startAt, endAt];
   const checkTime = [
     dayjs(openCheck, "HH:mm:ss").format("HH:mm"),
@@ -37,7 +31,9 @@ const OperationInfo = ({ strfData }: OperationInfoProps): JSX.Element => {
 
   return (
     <>
-      <ListItem title="영업 시간" content={busiHour} type="busiHour" />
+      {category === CategoryType.FEST && (
+        <ListItem title="영업 시간" content={busiHour} type="busiHour" />
+      )}
       <ListItem title="입실/퇴실 시간" content={checkTime} type="checkTime" />
       <ListItem title="휴무일" content={restDateKor} type="restDate" />
       <ListItem title="임시 휴무일 등록" content={checkTime} type="tempRest" />

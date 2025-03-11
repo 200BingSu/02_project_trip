@@ -11,57 +11,6 @@ import Bookings from "../../../components/user/Bookings";
 import axios from "axios";
 import { getCookie } from "../../../utils/cookie";
 
-//dummy data
-const dummyDataRes = {
-  code: "200 성공",
-  data: [
-    {
-      bookingId: 101,
-      strfId: 1,
-      strfTitle: "효자베베",
-      strfPic: "https://example.com/image1.jpg",
-      createdAt: "2025-02-20T12:34:56Z",
-      checkInDate: "2025-03-01",
-      checkOutDate: "2025-03-05",
-      price: 50000,
-      state: 0,
-      chatRoomId: 301,
-      checkInTime: "15:00",
-      checkOutTime: "11:00",
-    },
-    {
-      bookingId: 102,
-      strfId: 4,
-      strfTitle: "4번",
-      strfPic: "https://example.com/image2.jpg",
-      createdAt: "2025-02-21T15:20:10Z",
-      checkInDate: "2025-03-10",
-      checkOutDate: "2025-03-15",
-      price: 75000,
-      state: 1,
-      chatRoomId: 302,
-      checkInTime: "14:00",
-      checkOutTime: "10:30",
-    },
-    {
-      bookingId: 103,
-      strfId: 305,
-      strfTitle: "사업쨔 나와",
-      strfPic: "https://example.com/image3.jpg",
-      createdAt: "2025-02-22T18:45:30Z",
-      checkInDate: "2025-03-20",
-      checkOutDate: "2025-03-25",
-      price: 60000,
-      state: 2,
-      chatRoomId: 303,
-      checkInTime: "16:00",
-      checkOutTime: "12:00",
-    },
-  ],
-};
-
-const dummyBookingList = dummyDataRes.data;
-
 const categoryArr = ["예약 목록", "예약 완료"];
 
 const UserBooking = () => {
@@ -133,7 +82,7 @@ const UserBooking = () => {
 
         {/* 내용 */}
         <div className="min-h-[500px] flex flex-col justify-center items-center">
-          {dummyBookingList?.map((item, index) => {
+          {bookingList?.map((item, index) => {
             return <Bookings key={index} data={item} />;
           })}
           {/* {category === 0 ? (

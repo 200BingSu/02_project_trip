@@ -3,9 +3,9 @@ import { formatId } from "../../utils/format";
 
 const StrfInfo = (): JSX.Element => {
   const userInfo = getCookie("user");
-  const name = userInfo?.title;
-  const strfId = userInfo?.strfId;
-  const category = userInfo?.category;
+  const name = userInfo?.strfDtos[0].title;
+  const strfId = userInfo?.strfDtos[0].strfId;
+  const category = userInfo?.strfDtos[0].category;
   return (
     <div className="bg-slate-100 px-4 py-3 mb-3 flex flex-col gap-2">
       <h3 className="text-xl font-semibold text-slate-700">
