@@ -124,11 +124,8 @@ const RegisterIndex = (): JSX.Element => {
       post: registerData.location?.postcode ?? "",
       tell: `${registerData.tell?.areaCode}-${registerData.tell?.number}`,
       startAt:
-        dayjs(registerData.businessHours?.startTime, "HH:mm").format("HH:mm") ??
-        "",
-      endAt:
-        dayjs(registerData.businessHours?.endTime, "HH:mm").format("HH:mm") ??
-        "",
+        dayjs(registerData.duration?.startAt, "HH:mm").format("HH:mm") ?? "",
+      endAt: dayjs(registerData.duration?.endAt, "HH:mm").format("HH:mm") ?? "",
       openCheckIn:
         dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm") ?? "",
       closeCheckOut:
@@ -221,10 +218,7 @@ const RegisterIndex = (): JSX.Element => {
       }
     }
     if (current === 1) {
-      if (
-        !registerData.businessHours?.startTime ||
-        !registerData.businessHours?.endTime
-      ) {
+      if (!registerData.duration?.startAt || !registerData.duration?.endAt) {
         return { message: "영업시간을 입력해주세요.", ref: businessHoursRef };
       }
       if (!registerData.checkTime?.checkIn) {

@@ -1,5 +1,4 @@
 import { Upload, UploadFile } from "antd";
-import ImgCrop from "antd-img-crop";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
