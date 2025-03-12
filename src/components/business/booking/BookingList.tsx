@@ -1,23 +1,22 @@
 import { Button } from "antd";
-import dayjs from "dayjs";
 import { IoIosArrowRoundForward } from "react-icons/io";
 
 // 하드
 const state = 0;
 const BookingList = () => {
-  const today = dayjs().format("YYYY.MM.DD");
+  // const today = dayjs().format("YYYY.MM.DD");
   //오늘 날짜 기준으로 버튼 상태 변경하기
-  const categorizeDate = (inputDate: string) => {
-    const today = dayjs().startOf("day");
-    const targetDate = dayjs(inputDate).startOf("day");
-    const sevenDaysLater = today.add(7, "day");
+  // const categorizeDate = (inputDate: string) => {
+  //   const today = dayjs().startOf("day");
+  //   const targetDate = dayjs(inputDate).startOf("day");
+  //   const sevenDaysLater = today.add(7, "day");
 
-    return targetDate.isBefore(today)
-      ? "문의하기"
-      : targetDate.isBefore(sevenDaysLater)
-        ? "리뷰작성"
-        : "리뷰 만료";
-  };
+  //   return targetDate.isBefore(today)
+  //     ? "문의하기"
+  //     : targetDate.isBefore(sevenDaysLater)
+  //       ? "리뷰작성"
+  //       : "리뷰 만료";
+  // };
   const matchState = (state: number) => {
     switch (state) {
       case 0:
@@ -42,44 +41,44 @@ const BookingList = () => {
         return "bg-[rgba(253,180,161,0.3)] text-secondary3";
     }
   };
-  const matchButton = (state: number) => {
-    switch (state) {
-      case 0:
-      case 1:
-        return (
-          <>
-            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
-              상세보기
-            </Button>
-            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
-              예약 취소
-            </Button>
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
-              상세보기
-            </Button>
-            <Button
-              type="primary"
-              className="w-full h-auto py-3 rounded-lg text-base font-semibold  text-white bg-primary"
-            >
-              리뷰작성
-            </Button>
-          </>
-        );
-      case 3:
-        return (
-          <>
-            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
-              상세보기
-            </Button>
-          </>
-        );
-    }
-  };
+  // const matchButton = (state: number) => {
+  //   switch (state) {
+  //     case 0:
+  //     case 1:
+  //       return (
+  //         <>
+  //           <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
+  //             상세보기
+  //           </Button>
+  //           <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
+  //             예약 취소
+  //           </Button>
+  //         </>
+  //       );
+  //     case 2:
+  //       return (
+  //         <>
+  //           <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
+  //             상세보기
+  //           </Button>
+  //           <Button
+  //             type="primary"
+  //             className="w-full h-auto py-3 rounded-lg text-base font-semibold  text-white bg-primary"
+  //           >
+  //             리뷰작성
+  //           </Button>
+  //         </>
+  //       );
+  //     case 3:
+  //       return (
+  //         <>
+  //           <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
+  //             상세보기
+  //           </Button>
+  //         </>
+  //       );
+  //   }
+  // };
   return (
     <div className="flex flex-col gap-3">
       <div className="px-4 py-3 flex flex-col gap-2">
