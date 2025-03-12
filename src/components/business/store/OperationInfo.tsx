@@ -32,7 +32,7 @@ const OperationInfo = ({ strfData }: OperationInfoProps): JSX.Element => {
   return (
     <>
       {category === CategoryType.FEST && (
-        <ListItem title="영업 시간" type="busiHour" />
+        <ListItem title="영업 시간" type="duration" />
       )}
       <ListItem title="입실/퇴실 시간" type="checkTime" />
       <ListItem title="휴무일" type="restDate" />

@@ -1,17 +1,17 @@
-import { Input, message, Select, Spin, TimePicker } from "antd";
+import { Input, message, Select, Spin, TimePicker, Upload } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
 import dayjs from "dayjs";
 import { memo, ReactNode, useEffect, useState } from "react";
 import { BiSolidEditAlt } from "react-icons/bi";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { strfAtom } from "../../../atoms/strfAtom";
 import { amenities } from "../../../constants/dataArr";
 import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
 import { Iamenity, IAPI, IStrf } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
-import { matchState } from "../../../utils/match";
+import { matchRestDataToKor, matchState } from "../../../utils/match";
 
 interface ListItemProps {
   children?: ReactNode;
@@ -26,22 +26,36 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const strfId = Number(searchParams.get("strfId"));
+  const category = searchParams.get("category");
+  // useNavigate
+  const navigate = useNavigate();
+  const navigateToEdit = () => {
+    navigate(
+      `/business/store/edit?strfId=${strfId}&category=${category}&edit=${type}`,
+    );
+  };
   //recoil
   const [strfData, setStrfData] = useRecoilState(strfAtom);
-  console.log("ListItem strfData", strfData);
+  // console.log("strfData", strfData);
   //useState
   const [isEdit, setIsEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState<any>(null);
 
-  const [areaCode, setAreaCode] = useState<string>("");
-  const [selectedAmenities, setSelectedAmenities] = useState<number[]>([]);
+  const [, setAreaCode] = useState<string>("");
+
   // 편의 시설 클릭
   const handleAmenityClick = (amenityId: number) => {
-    if (selectedAmenities.includes(amenityId)) {
-      setSelectedAmenities(prev => prev.filter(id => id !== amenityId));
+    if (strfData.amenity?.includes(amenityId) === true) {
+      setStrfData({
+        ...strfData,
+        amenity: strfData.amenity.filter(item => item !== amenityId),
+      });
     } else {
-      setSelectedAmenities(prev => [...prev, amenityId]);
+      setStrfData({
+        ...strfData,
+        amenity: [...strfData.amenity, amenityId],
+      });
     }
   };
   // API 상품 조회
@@ -110,16 +124,20 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     const payload = {
       strfId,
       busiNum,
-      state: value,
+      state: strfData.state,
     };
     console.log("payload", payload);
     setIsLoading(true);
     try {
-      const res = await axios.put(url, payload, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      const res = await axios.put(
+        `${url}?strfId=${strfId}&state=${strfData.state}&busiNum=${busiNum}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
       const resultData = res.data;
       console.log("이름 변경", resultData);
       if (resultData.code === "200 성공") {
@@ -136,25 +154,243 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     }
   };
   // API 전화번호 변경
-  const updateTell = async () => {
+  const updateTell = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/tell";
-    setIsLoading(false);
+    setIsLoading(true);
+    const payload = {
+      strfId: strfId,
+      tell: `${strfData.areaCode}-${strfData.tell}`,
+      busiNum: busiNum,
+    };
     try {
       const res = await axios.put(
         `${url}?strfId=${strfId}&tell=${strfData.tell}&busiNum=${busiNum}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
       );
       const resultData = res.data;
+      if (resultData.code) {
+        setIsLoading(false);
+        getStrfInfo();
+        message.success("전화번호 변경이 완료되었습니다");
+      }
       console.log("전화번호 변경", resultData);
+      return resultData;
     } catch (error) {
+      setIsLoading(false);
+      message.error("전화번호 변경에 실패하였습니다");
       console.log("전화번호 변경", error);
+      return null;
+    }
+  };
+  // API 업체 소개 변경
+  const updateDetail = async (): Promise<IAPI<string> | null> => {
+    const url = "/api/detail/detail";
+    setIsLoading(true);
+    const payload = {
+      strfId: strfId,
+      detail: strfData.detail,
+      busiNum: busiNum,
+    };
+    try {
+      const res = await axios.put(
+        `${url}?strfId=${strfId}&detail=${strfData.detail}&busiNum=${busiNum}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      if (resultData.code) {
+        setIsLoading(false);
+        getStrfInfo();
+        message.success("업체 소개 변경이 완료되었습니다");
+      }
+      console.log("업체소개 변경", resultData);
+      return resultData;
+    } catch (error) {
+      setIsLoading(false);
+      message.error("업체소개 변경에 실패하였습니다");
+      console.log("업체소개 변경", error);
+      return null;
+    }
+  };
+  //  API 편의시설 변경
+  const updateAmenity = async (): Promise<IAPI<string> | null> => {
+    const url = "/api/detail/amenity";
+    setIsLoading(true);
+    const payload = {
+      strfId: strfId,
+      busiNum: busiNum,
+      category: category,
+      amenity: strfData.amenity,
+    };
+    const formatAmenity = strfData.amenity.map(item => {
+      return `ameniPoints=${item}`;
+    });
+    console.log("보낼 파라메터", formatAmenity.join("&"));
+    try {
+      const res = await axios.put(
+        `${url}?strfId=${strfId}&busiNum=${busiNum}&category=${category}&${formatAmenity.join(",")}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      if (resultData.code) {
+        setIsLoading(false);
+        getStrfInfo();
+        message.success("편의시설 변경이 완료되었습니다");
+      }
+      console.log("편의시설 변경", resultData);
+      return resultData;
+    } catch (error) {
+      setIsLoading(false);
+      message.error("편의시설 변경에 실패하였습니다");
+      console.log("편의시설 변경", error);
+      return null;
+    }
+  };
+  // API 체크인/체크아웃 변경
+  const updateCheckTime = async (): Promise<IAPI<string> | null> => {
+    const url = "/api/detail/time";
+    const payload = {
+      strfId: strfId,
+      busiNum: busiNum,
+      openCheckIn: strfData.openCheck,
+      closeCheckOut: strfData.closeCheck,
+    };
+    console.log("payload", payload);
+    setIsLoading(true);
+    try {
+      const res = await axios.put<IAPI<string>>(
+        `${url}?strfId=${strfId}&busiNum=${busiNum}&openCheckIn=${strfData.openCheck}&closeCheckOut=${strfData.closeCheck}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      console.log("체크시간 변경", resultData);
+      if (resultData) {
+        getStrfInfo();
+        setIsLoading(false);
+        setStrfData({ ...strfData, strfTitle: value });
+        message.success("체크시간 변경이 변경되었습니다");
+      }
+      return resultData;
+    } catch (error) {
+      console.log("체크시간 변경", error);
+      setIsLoading(false);
+      message.error("체크시간 변경에 실패했습니다.");
+      return null;
+    }
+  };
+  // API 축제 기간
+  const updateDuration = async (): Promise<IAPI<string> | null> => {
+    const url = "/api/detail/fest/time";
+    const payload = {
+      strfId: strfId,
+      busiNum: busiNum,
+      startAt: strfData.startAt,
+      endAt: strfData.endAt,
+    };
+    console.log("payload", payload);
+    setIsLoading(true);
+    try {
+      const res = await axios.put<IAPI<string>>(
+        `${url}?strfId=${strfId}&busiNum=${busiNum}&startAt=${strfData.startAt}&endAt=${strfData.endAt}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      console.log("기간 변경", resultData);
+      if (resultData) {
+        getStrfInfo();
+        setIsLoading(false);
+        setStrfData({ ...strfData, strfTitle: value });
+        message.success("기간이 변경되었습니다");
+      }
+      return resultData;
+    } catch (error) {
+      console.log("기간 변경", error);
+      setIsLoading(false);
+      message.error("기간 변경에 실패했습니다.");
+      return null;
+    }
+  };
+  // API 휴무일
+  const updateRestDate = async (): Promise<IAPI<string> | null> => {
+    const url = "/api/detail/rest";
+    const payload = {
+      strfId: strfId,
+      busiNum: busiNum,
+      restDates: strfData.restDate.days,
+    };
+    console.log("payload", payload);
+    setIsLoading(true);
+    const restDatesPara = strfData.restDate.days
+      .map(item => `restDates=${item}`)
+      .join("&");
+    console.log("restDatesPara", restDatesPara);
+    try {
+      const res = await axios.put<IAPI<string>>(
+        `${url}?strfId=${strfId}&busiNum=${busiNum}&${restDatesPara}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      console.log("휴무일 변경", resultData);
+      if (resultData) {
+        getStrfInfo();
+        setIsLoading(false);
+        setStrfData({ ...strfData, strfTitle: value });
+        message.success("휴무일이 변경되었습니다");
+      }
+      return resultData;
+    } catch (error) {
+      console.log("휴무일 변경", error);
+      setIsLoading(false);
+      message.error("휴무일 변경에 실패했습니다.");
+      return null;
     }
   };
   // 수정/완료 클릭
   const handleClickButton = () => {
+    if (type === "strfPic") {
+      navigateToEdit();
+      console.log("d이동");
+      return;
+    }
     setIsEdit(!isEdit);
     if (isEdit === true) {
       type === "title" && updateTitle();
       type === "state" && updateState();
+      type === "tell" && updateTell();
+      type === "detail" && updateDetail();
+      type === "amenity" && updateAmenity();
+      type === "duration" && updateDuration();
+      type === "checkTime" && updateCheckTime();
+      type === "restDate" && updateRestDate();
     }
   };
   const selectOptions = [
@@ -162,10 +398,22 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     { value: 1, label: "휴업" },
     { value: 2, label: "폐업" },
   ];
-
+  // 편의시설
+  const filterAmenities = (amenities: Iamenity[], selectedIds: number[]) => {
+    return amenities.filter(amenity => {
+      if (typeof amenity.amenity_id === "number") {
+        selectedIds.includes(amenity.amenity_id);
+      }
+    });
+  };
   // 전화번호
   const selectBefore = (
-    <Select defaultValue={areaCode}>
+    <Select
+      defaultValue={strfData.areaCode}
+      onChange={e => {
+        setStrfData({ ...strfData, areaCode: e });
+      }}
+    >
       {koreaAreaCodes.map(item => {
         return (
           <Select.Option key={item.code} value={item.code}>
@@ -186,39 +434,12 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     }
     return trimmed;
   };
-  // 타입가드
-  // const isReactNode = (value: unknown): value is ReactNode => {
-  //   return (
-  //     typeof value === "string" ||
-  //     typeof value === "number" ||
-  //     typeof value === "boolean" ||
-  //     value === null ||
-  //     value === undefined ||
-  //     React.isValidElement(value)
-  //   );
-  // };
 
-  const isIamenityArray = (value: unknown): value is Iamenity[] => {
-    return (
-      Array.isArray(value) &&
-      value.every(
-        item =>
-          typeof item === "object" &&
-          type === "amenity" &&
-          "amenityTitle" in item,
-      )
-    );
-  };
-  const isStringArray = (value: unknown): value is string[] => {
-    return (
-      Array.isArray(value) && value.every(item => typeof item === "string")
-    );
-  };
   const scheduleOptions = {
     frequency: [
       { label: "없음", value: "" },
       { label: "매주", value: "weekly" },
-      { label: "격주", value: "biweekly" },
+      // { label: "격주", value: "biweekly" },
     ],
     day: [
       { label: "월", value: "mon" },
@@ -267,31 +488,31 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
           <div className="text-lg font-medium text-slate-500 px-2 py-1">
             {type === "title" && strfData.strfTitle}
             {type === "state" && matchState(strfData.state)}
-            {type === "tell" && strfData.tell}
+            {type === "tell" && strfData.areaCode
+              ? `${strfData.areaCode}-${strfData.tell}`
+              : `${strfData.tell}`}
             {type === "detail" && strfData.detail}
-            {isIamenityArray(strfData) && (
+            {type === "amenity" && (
               <ul>
-                {strfData.map(amenity => (
+                {filterAmenities(amenities, strfData.amenity).map(amenity => (
                   <li key={amenity.amenityId}>
                     {amenity.icon} {amenity.amenityTitle}
                   </li>
                 ))}
               </ul>
             )}
-            {isStringArray(strfData) && (
-              <>
-                {type === "busiHour" && `${strfData[0]}~${strfData[1]}`}
-                {type === "checkTime" && `${strfData[0]}~${strfData[1]}`}
-                {type === "restDate" &&
-                  strfData.map((item, index) => {
-                    return index !== strfData.length ? (
-                      <p key={index}>{item}</p>
-                    ) : (
-                      <p key={index}>{item},</p>
-                    );
-                  })}
-              </>
-            )}
+            {type === "duration" && `${strfData.startAt}~${strfData.endAt}`}
+            {type === "checkTime" &&
+              `${strfData.openCheck}~${strfData.closeCheck}`}
+            {type === "restDate" &&
+              strfData.restDate.days.map((item, index) => {
+                return index === strfData.restDate.days.length - 1 ? (
+                  <span key={index}>{matchRestDataToKor(item)}</span>
+                ) : (
+                  <span key={index}>{matchRestDataToKor(item)}, </span>
+                );
+              })}
+            {type === "strfPic" && <div>사진</div>}
           </div>
         )}
         {isEdit && type === "title" && (
@@ -310,7 +531,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
             options={selectOptions}
             size="large"
             className="w-1/3 "
-            onChange={e => setValue(e)}
+            onChange={e => setStrfData({ ...strfData, state: e })}
           />
         )}
         {isEdit && type === "tell" && (
@@ -329,10 +550,10 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
             placeholder="업체 소개를 작성해주세요"
             maxLength={50}
             onChange={e => {
-              setValue(e.target.value);
+              setStrfData({ ...strfData, detail: e.target.value });
             }}
             style={{ resize: "none", height: "27.73vw", padding: "20px" }}
-            value={value}
+            value={strfData.detail}
           />
         )}
         {isEdit && type === "amenity" && (
@@ -343,7 +564,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
                 key={index}
                 className={`flex text-base items-center gap-2
                           border rounded-2xl w-fit px-2 py-1
-                          ${selectedAmenities.includes(item.amenity_id as number) ? "border-primary text-primary" : "border-slate-300 text-slate-500"}`}
+                          ${strfData.amenity.includes(item.amenity_id as number) ? "border-primary text-primary" : "border-slate-300 text-slate-500"}`}
                 onClick={() => handleAmenityClick(item.amenity_id as number)}
               >
                 {item.icon}
@@ -364,11 +585,30 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
           <div>
             <TimePicker.RangePicker
               defaultValue={[
-                dayjs(strfData.openCheck, "HH:mm"),
-                dayjs(strfData.closeCheck, "HH:mm"),
+                dayjs(
+                  strfData?.openCheck && strfData.openCheck !== ""
+                    ? strfData.openCheck
+                    : "00:00",
+                  "HH:mm",
+                ),
+                dayjs(
+                  strfData?.closeCheck && strfData.closeCheck !== ""
+                    ? strfData.closeCheck
+                    : "00:00",
+                  "HH:mm",
+                ),
               ]}
+              minuteStep={10}
               format={"HH:mm"}
-              onChange={e => setValue(e)}
+              onChange={e => {
+                if (e) {
+                  setStrfData({
+                    ...strfData,
+                    openCheck: e[0] ? e[0].format("HH:mm") : "",
+                    closeCheck: e[1] ? e[1].format("HH:mm") : "",
+                  });
+                }
+              }}
             />
           </div>
         )}
@@ -377,10 +617,9 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
             <Select
               options={scheduleOptions.frequency}
               placeholder="휴무 주기"
-              onChange={value => {
-                setValue({ ...value, frequency: value });
-              }}
+              defaultValue={"weekly"}
               size="large"
+              disabled
             />
             <Select
               options={scheduleOptions.day}
@@ -390,7 +629,10 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
               allowClear
               className="w-full"
               onChange={value => {
-                setValue({ ...value, day: value });
+                setStrfData({
+                  ...strfData,
+                  restDate: { ...strfData.restDate, days: value },
+                });
               }}
             />
           </div>
