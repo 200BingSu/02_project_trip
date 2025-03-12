@@ -140,9 +140,10 @@ const SignUpUser = () => {
       });
       console.log("회원가입 성공:", res.data);
       setIsLoading(false);
-      message.success("회원가입이 완료되었습니다.");
-      navigate("/signin");
-      // 성공 시 처리 (예: 네비게이션)
+      navigate("/signup/complete", {
+        state: { name: data.name },
+      });
+      console.log(" data.name ", data.name);
     } catch (error) {
       console.error("회원가입 실패:", error);
       setIsLoading(false);
@@ -226,20 +227,17 @@ const SignUpUser = () => {
     <>
       <TitleHeader icon={"back"} title={"회원가입"} onClick={navigateBack} />
       <div className="w-full">
-
         <Spin spinning={isLoading}>
-          
-        <Form
-          {...formItemLayout}
-          form={form}
-          name="register"
-          onFinish={values => onFinish(values)}
-          className="w-full px-4"
-          layout={formLayout}
-          scrollToFirstError
-          initialValues={{ email: email }}
-        >
-          
+          <Form
+            {...formItemLayout}
+            form={form}
+            name="register"
+            onFinish={onFinish}
+            className="w-full px-4"
+            layout={formLayout}
+            scrollToFirstError
+            initialValues={{ email: email }}
+          >
             {/* 이름 */}
             <Form.Item
               name="name"
@@ -274,15 +272,15 @@ const SignUpUser = () => {
                   message: "이메일은 필수 입력 항목입니다.",
                 },
               ]}
-              hasFeedback
-              validateStatus={validateStatus}
-              help={
-                validateStatus === "error"
-                  ? "이미 사용 중인 이메일입니다."
-                  : validateStatus === "success"
-                    ? "사용 가능한 이메일입니다."
-                    : null
-              }
+              // hasFeedback
+              // validateStatus={validateStatus}
+              // help={
+              //   validateStatus === "error"
+              //     ? "이미 사용 중인 이메일입니다."
+              //     : validateStatus === "success"
+              //       ? "사용 가능한 이메일입니다."
+              //       : null
+              // }
             >
               <Input
                 onBlur={e => {
@@ -291,6 +289,7 @@ const SignUpUser = () => {
                   }
                 }}
                 placeholder="이메일을 입력하세요"
+                disabled
                 style={{ height: "60px" }}
               />
             </Form.Item>

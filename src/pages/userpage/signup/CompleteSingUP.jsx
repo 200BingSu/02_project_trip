@@ -7,45 +7,49 @@ const CompleteSingUP = () => {
   // useNavigate
   const navigate = useNavigate();
   const location = useLocation();
-  const locationData = location.state;
-  console.log(locationData);
+  const locationName = location.state;
+  console.log(locationName);
 
   const handleNavigateClose = () => {
     navigate(`/signin`);
   };
 
   return (
-    <div>
+    <div className="h-screen">
       <TitleHeader
         icon="close"
         title="회원가입"
         onClick={handleNavigateClose}
       />
-      <div className="flex flex-col justify-center items-center gap-[30px] h-[calc(100vh-100px)]">
-        <div className="flex justify-center items-center">
-          <div className="w-[70px] h-[70px] bg-primary rounded-full flex justify-center items-center">
-            <BiCheck className="text-[45px] text-primary2" />
+      <div className="px-4">
+        <div className="w-full h-[calc(100%-150px)]  flex flex-col justify-center items-center gap-[30px]">
+          <div className="flex justify-center items-center">
+            <div className="w-36 h-36 bg-primary/80 rounded-full flex justify-center items-center">
+              <img
+                src="https://em-content.zobj.net/source/microsoft-teams/363/party-popper_1f389.png"
+                alt=""
+              />
+            </div>
+          </div>
+          <div className="flex flex-col justify-center items-center gap-[5px]">
+            <p className="text-2xl font-semibold text-slate-700">
+              <span className="text-primary">
+                {locationName ? locationName.name : "회원"}
+              </span>
+              님 환영합니다.
+            </p>
+            <p className="text-base font-light text-slate-400 text-center break-keep">
+              이제부터 쿼드러플에서 제공하는 다양한 서비스들을 이용해보세요
+            </p>
           </div>
         </div>
-        <div className="flex flex-col justify-center items-center gap-[5px]">
-          <p className="text-[36px] font-bold line-height-[140%]">
-            <span className="text-primary">
-              {locationData ? locationData.name : "닉네임"}
-            </span>
-            님 환영합니다.
-          </p>
-          <p className="text-[24px] font-medium line-height-[140%] text-slate-400">
-            회원가입이 완료되었습니다.
-          </p>
-        </div>
         <Button
-          className="px-[20px] py-[10px] gap-[10px]"
+          className="w-full py-[14px] h-auto text-base"
           type="primary"
           htmlType="button"
-          size="large"
           onClick={() => handleNavigateClose()}
         >
-          로그인 페이지로 이동
+          홈으로 돌아가기
         </Button>
       </div>
     </div>

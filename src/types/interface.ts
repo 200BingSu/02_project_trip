@@ -211,7 +211,7 @@ export interface IStrf extends Partial<IRoom> {
   recentCheckStatus: number;
   strfPics: { strfId: string; strfPic: string }[];
   restDate: number[];
-  amenity: Iamenity[];
+  amenity?: Iamenity[];
 }
 
 export interface IRoom {

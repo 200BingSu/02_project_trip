@@ -69,7 +69,9 @@ const SignUpBusiness = (): JSX.Element => {
       console.log("1. 원본 데이터:", data);
 
       if (res.data.data === 1) {
-        navigate("/signup/complete", { replace: true });
+        navigate("/signup/complete", {
+          state: { name: values.name },
+        });
       } else {
         message.error("회원가입에 실패했습니다");
       }
