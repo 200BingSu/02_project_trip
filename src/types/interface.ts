@@ -1,6 +1,7 @@
 import { UploadFile } from "antd";
 import { ReactNode } from "react";
 import { ProviderType } from "./enum";
+import { Dayjs } from "dayjs";
 
 // children
 export interface Ichildren {
@@ -191,10 +192,11 @@ export interface IStrf extends Partial<IRoom> {
   address: string;
   post: string;
   tell: string;
-  startAt: null | string;
-  endAt: null | string;
-  openCheck: string;
-  closeCheck: string;
+  areaCode?: string;
+  startAt: null | string | Dayjs;
+  endAt: null | string | Dayjs;
+  openCheck: string | Dayjs;
+  closeCheck: string | Dayjs;
   detail: string;
   busiNum: string;
   locationName: string;
@@ -210,8 +212,8 @@ export interface IStrf extends Partial<IRoom> {
   recentCheck: number;
   recentCheckStatus: number;
   strfPics: { strfId: string; strfPic: string }[];
-  restDate: number[];
-  amenity?: Iamenity[];
+  restDate: { frequency: "weekly" | "biweekly"; days: number[] };
+  amenity: number[];
 }
 
 export interface IRoom {

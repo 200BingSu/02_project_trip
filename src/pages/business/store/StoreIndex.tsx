@@ -22,6 +22,7 @@ const StoreIndex = (): JSX.Element => {
   const tab = Number(searchParams.get("tab"));
   //recoil
   const [strfData, setStrfData] = useRecoilState(strfAtom);
+  console.log("strfData", strfData);
   //useState
   const [cateIndex, setCateIndex] = useState<number>(tab);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +41,22 @@ const StoreIndex = (): JSX.Element => {
       console.log(res.data);
       const resultData = res.data;
       if (resultData) {
-        setStrfData({ ...strfData, ...resultData.data });
+        const splitTell = resultData.data.tell.split("-", 1);
+        if (splitTell[2] !== undefined) {
+          setStrfData({
+            ...strfData,
+            ...resultData.data,
+            tell: splitTell[1],
+            areaCode: splitTell[0],
+          });
+        } else {
+          setStrfData({
+            ...strfData,
+            ...resultData.data,
+            tell: resultData.data.tell,
+          });
+        }
+
         setIsLoading(false);
       }
       return resultData;
