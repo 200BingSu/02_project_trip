@@ -21,6 +21,11 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
       `/business/menu/edit?strfId=${strfId}&category=${category}&menuId=${item.menuId}`,
     );
   };
+  const navigateToDetail = () => {
+    navigate(
+      `/business/menu/detail?strfId=${strfId}&category=${category}&menuId=${item.menuId}`,
+    );
+  };
   // useState
   const [isBottomOpen, setIsBottomOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
@@ -61,31 +66,34 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
     },
   ];
   return (
-    <div className="flex items-center justify-between gap-2 py-3">
-      {/* 이미지 */}
-      <div className="aspect-square w-[21.3vw] max-w-[162px] rounded-lg overflow-hidden bg-slate-200">
-        <img
-          src={`${MenuPic}/${strfId}/menu/${item.menuPic}`}
-          alt={item.menuTitle}
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <div className="flex items-center justify-between w-40">
+    <div className="flex items-center gap-2 py-3 select-none">
+      <section
+        className="flex items-center justify-between w-full cursor-pointer"
+        onClick={navigateToDetail}
+      >
+        {/* 이미지 */}
+        <div className="aspect-square w-[21.3vw] max-w-[162px] rounded-lg overflow-hidden bg-slate-200">
+          <img
+            src={`${MenuPic}/${strfId}/menu/${item?.menuPic}`}
+            alt={item?.menuTitle}
+            className="w-full h-full object-cover"
+          />
+        </div>
         {/* 인포 */}
         <div className="flex flex-col gap-2 items-start w-50">
           <p className="text-xl font-semibold text-slate-700 text-left">
-            {item.menuTitle}
+            {item?.menuTitle}
           </p>
           <p className="text-lg text-slate-500 font-medium text-left">
-            {item.menuPrice.toLocaleString()}원
+            {item?.menuPrice.toLocaleString()}원
           </p>
         </div>
-        {/* 버튼 */}
-        <div>
-          <button type="button" onClick={handleClickBottom}>
-            <CgMoreVerticalAlt className="text-3xl text-slate-500" />
-          </button>
-        </div>
+      </section>
+      {/* 버튼 */}
+      <div>
+        <button type="button" onClick={handleClickBottom}>
+          <CgMoreVerticalAlt className="text-3xl text-slate-500" />
+        </button>
       </div>
       {isBottomOpen && (
         <BottomSheet
