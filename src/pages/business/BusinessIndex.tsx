@@ -42,7 +42,7 @@ const BusinessIndex = (): JSX.Element => {
   };
   //쿠키
   const userInfo = getCookie("user");
-  const strfId = userInfo.strfId;
+  const strfId = userInfo.strfDtos[0].strfId;
   // console.log("userInfo", userInfo);
   const accessToken = getCookie("accessToken");
   // recoil
@@ -172,27 +172,6 @@ const BusinessIndex = (): JSX.Element => {
       {/* 업체가 없을 경우 */}
       {!strfId && (
         <section className="px-8 py-20 flex flex-col gap-10 ">
-          <div
-            className="flex items-center px-10 bg-primary h-28 rounded-3xl relative cursor-pointer select-none"
-            onClick={navigateToRegister}
-          >
-            <div className="flex flex-col gap-1 text-slate-50 text-2xl font-semibold">
-              <p>서비스 이용을 위해</p>
-              <p className="px-5 flex items-center gap-5">
-                업체를 등록하세요!{" "}
-                <i>
-                  <IoIosArrowForward />
-                </i>
-              </p>
-            </div>
-            <div className="aspect-square w-24 absolute -top-1 right-8">
-              <img
-                src="/images/emoji/mail.png"
-                alt="아이콘"
-                className="w-full h-full rotate-12"
-              />
-            </div>
-          </div>
           <div className="flex flex-col gap-3">
             <div>
               <p className="text-2xl text-slate-300 font-bold">
@@ -203,7 +182,7 @@ const BusinessIndex = (): JSX.Element => {
                 * 해당 서비스 이용을 위해서는 업체 등록이 필요합니다
               </span>
             </div>
-            <div className="flex flex-col gap-4 select-none">
+            {/* <div className="flex flex-col gap-4 select-none">
               <div
                 className="p-6 rounded-2xl
                 flex justify-center items-center 
@@ -223,7 +202,6 @@ const BusinessIndex = (): JSX.Element => {
               >
                 리뷰 관리
               </div>
-              {/* 디자인은 몰까.. */}
               <ul className="flex gap-6">
                 <li className="w-16">
                   <img src="/images/emoji/store.png" alt="업체" />
@@ -235,6 +213,27 @@ const BusinessIndex = (): JSX.Element => {
                   <img src="/images/emoji/star.png" alt="업체" />
                 </li>
               </ul>
+            </div> */}
+          </div>
+          <div
+            className="flex items-center px-10 bg-primary h-28 rounded-3xl relative cursor-pointer select-none"
+            onClick={navigateToRegister}
+          >
+            <div className="flex flex-col gap-1 text-slate-50 text-2xl font-semibold">
+              <p>서비스 이용을 위해</p>
+              <p className="px-5 flex items-center gap-5">
+                업체를 등록하세요!{" "}
+                <i>
+                  <IoIosArrowForward />
+                </i>
+              </p>
+            </div>
+            <div className="aspect-square w-24 absolute -top-1 right-8">
+              <img
+                src="/images/emoji/mail.png"
+                alt="아이콘"
+                className="w-full h-full rotate-12"
+              />
             </div>
           </div>
         </section>

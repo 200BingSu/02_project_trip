@@ -24,6 +24,12 @@ export interface IAPI<T> {
   data: T;
 }
 
+export interface StrfDtosType {
+  strfId: string;
+  title: string;
+  category: string;
+  busiNum: string[];
+}
 export interface Iuser {
   birth?: string;
   email?: string;
@@ -34,10 +40,7 @@ export interface Iuser {
   role: string[];
   tell?: string;
   accessToken: string;
-  busiNum?: string;
-  strfId?: string;
-  title?: string;
-  category?: string;
+  strfDtos: StrfDtosType[];
 }
 
 export interface ICoupon {
