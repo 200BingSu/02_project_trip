@@ -18,7 +18,7 @@ import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import { resetUserData } from "../../../selectors/userSelector";
 import { ProviderType, ROLE } from "../../../types/enum";
 
-import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
 //interface
 interface ITripList {

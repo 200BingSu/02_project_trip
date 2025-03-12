@@ -1,31 +1,79 @@
 import { BiTime } from "react-icons/bi";
 import { FiUsers } from "react-icons/fi";
+import { MenuType } from "../../types/interface";
+import { useEffect, useState } from "react";
+import jwtAxios from "../../apis/jwt";
+import { MenuPic } from "../../constants/pic";
+import { Button } from "antd";
 
-const Parlor = () => {
+const Parlor = ({ strfId }: { strfId: number }) => {
+  const [menuData, setMenuData] = useState<MenuType[]>();
+
+  const getMenuDetail = async () => {
+    try {
+      const res = await jwtAxios.get(`/api/detail/menu?strf_id=${strfId}`);
+      setMenuData(res.data.data);
+      console.log("상품조회-메뉴", res.data.data);
+    } catch (error) {
+      console.log("상품조회-메뉴", error);
+    }
+  };
+
+  useEffect(() => {
+    getMenuDetail();
+  }, []);
+
   return (
-    <div>
-      <button>01.22(수)~01.23(목)</button>
-      <button>성인 2</button>
-      <div>
-        <i>
-          <img src="" alt="" />
-        </i>
-        <div>
-          <h2>스탠다드</h2>
-          <p>
-            <BiTime />
-            입실 15:00 - 퇴실 11:00
-          </p>
-          <p>
-            <FiUsers />
-            기준 2인 / 최대 4인
-          </p>
-          <div>
-            <span>69,000원</span>
-            <button>예약하기</button>
-          </div>
-        </div>
+    <div className="mt-3 ">
+      <div className="px-4">
+        <button className="w-full border border-slate-300 rounded-lg py-3 text-base text-slate-700 mb-3">
+          01.22(수)~01.23(목)
+        </button>
+        <button className="w-full border border-slate-300 rounded-lg py-3 text-base text-slate-700 mb-3">
+          성인 2
+        </button>
       </div>
+      <ul>
+        {menuData?.map(item => (
+          <li
+            key={item.menuId}
+            className="py-5 px-4 border-b-[10px] border-slate-100 last:border-b-0"
+          >
+            <i>
+              <img
+                src={`${MenuPic}/${strfId}/menu/${item?.menuPic}`}
+                alt={item?.menuTitle}
+                className="w-full aspect-[2/1] object-cover rounded-lg"
+              />
+            </i>
+            <div className="my-3">
+              <h2 className="text-2xl text-slate-700 font-semibold">
+                {item.menuTitle}
+              </h2>
+              <p className="flex items-center gap-[6px] text-slate-500 text-sm my-1">
+                <BiTime className="text-base" />
+                입실 {item.openCheckIn.replace(/:\d{2}$/, "")} - 퇴실
+                {item.closeCheckIn.replace(/:\d{2}$/, "")}
+              </p>
+              <p className="flex items-center gap-[6px] text-slate-500 text-sm ">
+                <FiUsers className="text-base" />
+                기준 {item.recomCapacity}인 / 최대 {item.maxCapacity}인
+              </p>
+              <div className="w-full border-t border-slate-100 mt-3 pt-3 flex justify-between items-center">
+                <span className="text-xl text-slate-700 font-semibold">
+                  {item.menuPrice.toLocaleString()}원
+                </span>
+                <Button
+                  type="primary"
+                  className="text-base py-2 px-4 h-auto rounded-lg"
+                >
+                  예약하기
+                </Button>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

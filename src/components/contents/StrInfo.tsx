@@ -1,30 +1,17 @@
-import { useEffect, useState } from "react";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { BiTime } from "react-icons/bi";
 import { FaLocationDot } from "react-icons/fa6";
-import { IStrf } from "../../types/interface";
-import jwtAxios from "../../apis/jwt";
-import { ProductPic } from "../../constants/pic";
 import { RxStarFilled } from "react-icons/rx";
-import { AiOutlineHeart } from "react-icons/ai";
+import { ProductPic } from "../../constants/pic";
+import { categoryKor } from "../../utils/match";
+import { IStrf } from "../../types/interface";
 
-const StrInfo = ({ strfId }: { strfId: number }) => {
-  const [contentData, setContentData] = useState<IStrf>();
+export interface StrInfoProps {
+  strfId: string | number;
+  contentData: IStrf; // ContentData 대신 IStrf 사용
+}
 
-  const getDetailMember = async () => {
-    try {
-      const res = await jwtAxios.get(`/api/detail/member?&strf_id=${strfId}`);
-      res.data.data;
-      console.log("상품조회-회원", res.data.data);
-      setContentData(res.data.data);
-    } catch (error) {
-      console.log("상품조회-회원", error);
-    }
-  };
-
-  useEffect(() => {
-    getDetailMember();
-  }, []);
-
+const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
   return (
     <div>
       <div>
@@ -34,25 +21,35 @@ const StrInfo = ({ strfId }: { strfId: number }) => {
         />
       </div>
       <div className="px-4 py-3 flex flex-col gap-2">
-        <p className="text-sm text-slate-500 -mb-[6px]">호텔</p>
+        <p className="text-sm text-slate-500 -mb-[6px]">
+          {categoryKor(contentData?.category)}
+        </p>
         <h2 className="text-2xl text-slate-700 font-semibold">
-          홀리데이 인 광주 호텔
+          {contentData?.strfTitle}
         </h2>
         <p className="text-sm text-slate-500 flex items-center gap-[6px]">
           <FaLocationDot className=" text-slate-300" />
-          광주광역시 서구 상무누리로 55
+          {contentData?.address}
         </p>
         <ul className="flex items-center gap-[6px]">
           <li>
             <RxStarFilled className="text-primary text-base" />
           </li>
-          <li className="text-sm text-slate-700 font-semibold">4.5</li>
-          <li className="text-sm text-primary underline">리뷰 252개</li>
+          <li className="text-sm text-slate-700 font-semibold">
+            {contentData?.ratingAvg}
+          </li>
+          <li className="text-sm text-primary underline">
+            리뷰 {contentData?.reviewCnt.toLocaleString()}개
+          </li>
           <li className="text-slate-300 text-base mx-1">|</li>
           <li className="text-lg text-slate-400">
-            <AiOutlineHeart />
+            {contentData?.wishIn ? (
+              <AiFillHeart className="text-secondary3" />
+            ) : (
+              <AiOutlineHeart />
+            )}
           </li>
-          <li className="text-slate-500 text-sm">232</li>
+          <li className="text-slate-500 text-sm">{contentData?.wishCnt}</li>
         </ul>
         <div>
           <p className="flex items-center gap-[6px] text-slate-500">
