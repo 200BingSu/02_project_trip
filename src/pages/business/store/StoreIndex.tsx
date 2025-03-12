@@ -73,7 +73,7 @@ const StoreIndex = (): JSX.Element => {
   const categoryList = [
     {
       label: <p>기본 정보</p>,
-      children: <BasicInfo strfData={strfData as IStrf} />,
+      children: <BasicInfo />,
     },
     {
       label: <p>운영 정보</p>,

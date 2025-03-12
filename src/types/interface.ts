@@ -40,7 +40,7 @@ export interface Iuser {
   role: string[];
   tell?: string;
   accessToken: string;
-  strfDtos: StrfDtosType[];
+  strfDtos?: StrfDtosType[];
 }
 
 export interface ICoupon {
