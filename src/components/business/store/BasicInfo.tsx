@@ -34,6 +34,7 @@ const BasicInfo = (): JSX.Element => {
           type="amenity"
         />
       )}
+      <ListItem title="업체 사진" type="strfPic" />
     </>
   );
 };
