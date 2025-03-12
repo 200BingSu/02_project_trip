@@ -1,25 +1,24 @@
 import { Input, message, Select, Spin, TimePicker } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
-import dayjs, { Dayjs } from "dayjs";
-import React, { memo, ReactNode, useEffect, useState } from "react";
+import dayjs from "dayjs";
+import { memo, ReactNode, useEffect, useState } from "react";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { useSearchParams } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { strfAtom } from "../../../atoms/strfAtom";
 import { amenities } from "../../../constants/dataArr";
 import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
 import { Iamenity, IAPI, IStrf } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
-import { useRecoilState } from "recoil";
-import { strfAtom } from "../../../atoms/strfAtom";
 import { matchState } from "../../../utils/match";
 
 interface ListItemProps {
   children?: ReactNode;
   title: string | ReactNode;
-  content: string | ReactNode | Iamenity[] | string[] | Dayjs[];
   type: string;
 }
-const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
+const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
   // 쿠키
   const accessToken = getCookie("accessToken");
   const userInfo = getCookie("user");
@@ -114,6 +113,7 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
       state: value,
     };
     console.log("payload", payload);
+    setIsLoading(true);
     try {
       const res = await axios.put(url, payload, {
         headers: {
@@ -121,20 +121,39 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
         },
       });
       const resultData = res.data;
+      console.log("이름 변경", resultData);
+      if (resultData.code === "200 성공") {
+        setIsLoading(false);
+        getStrfInfo();
+      }
+
       return resultData;
     } catch (error) {
       console.log("영업 상태 변경", error);
       message.error("영업 상태 변경에 실패했습니다.");
+      setIsLoading(false);
       return null;
+    }
+  };
+  // API 전화번호 변경
+  const updateTell = async () => {
+    const url = "/api/detail/tell";
+    setIsLoading(false);
+    try {
+      const res = await axios.put(
+        `${url}?strfId=${strfId}&tell=${strfData.tell}&busiNum=${busiNum}`,
+      );
+      const resultData = res.data;
+      console.log("전화번호 변경", resultData);
+    } catch (error) {
+      console.log("전화번호 변경", error);
     }
   };
   // 수정/완료 클릭
   const handleClickButton = () => {
     setIsEdit(!isEdit);
-    if (isEdit === true && value.trim() !== "") {
-      type === "title" && updateTitle();
-    }
     if (isEdit === true) {
+      type === "title" && updateTitle();
       type === "state" && updateState();
     }
   };
@@ -168,16 +187,16 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
     return trimmed;
   };
   // 타입가드
-  const isReactNode = (value: unknown): value is ReactNode => {
-    return (
-      typeof value === "string" ||
-      typeof value === "number" ||
-      typeof value === "boolean" ||
-      value === null ||
-      value === undefined ||
-      React.isValidElement(value)
-    );
-  };
+  // const isReactNode = (value: unknown): value is ReactNode => {
+  //   return (
+  //     typeof value === "string" ||
+  //     typeof value === "number" ||
+  //     typeof value === "boolean" ||
+  //     value === null ||
+  //     value === undefined ||
+  //     React.isValidElement(value)
+  //   );
+  // };
 
   const isIamenityArray = (value: unknown): value is Iamenity[] => {
     return (
@@ -212,16 +231,18 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
     ],
   };
   useEffect(() => {
-    if (type === "tell" && typeof content === "string") {
-      const tellNum = content ? content.split("-") : ["000", "0000", "0000"];
+    if (type === "tell" && typeof strfData.tell === "string") {
+      const tellNum = strfData.tell
+        ? strfData.tell.split("-")
+        : ["000", "0000", "0000"];
       // console.log(tellNum);
       setAreaCode(tellNum[0]);
       setValue(`${tellNum[1]}-${tellNum[2]}`);
     }
-    if (type === "detail" && typeof content === "string") {
-      setValue(content);
+    if (type === "detail" && typeof strfData.detail === "string") {
+      setValue(strfData.detail);
     }
-  }, [content, type]);
+  }, [strfData, type]);
 
   return (
     <section className="px-7 pt-4 pb-5 flex flex-col gap-2 border-b-2 border-slate-100">
@@ -276,7 +297,7 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
         {isEdit && type === "title" && (
           <Input
             size="large"
-            defaultValue={content as string}
+            defaultValue={strfData.strfTitle as string}
             placeholder="업체 이름을 입력해주세요"
             onChange={e => {
               setValue(e.target.value);
@@ -285,7 +306,7 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
         )}
         {isEdit && type === "state" && (
           <Select
-            defaultValue={content}
+            defaultValue={strfData.state}
             options={selectOptions}
             size="large"
             className="w-1/3 "
@@ -296,10 +317,11 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
           <Input
             addonBefore={selectBefore}
             size="large"
-            defaultValue={value}
+            defaultValue={strfData.tell}
             placeholder="전화번호를 입력해주세요."
-            onChange={e => setValue(e.target.value)}
-            value={formatPhoneNumber(value ?? "0")}
+            onChange={e => setStrfData({ ...strfData, tell: e.target.value })}
+            value={formatPhoneNumber(strfData.tell ?? "0")}
+            maxLength={8}
           />
         )}
         {isEdit && type === "detail" && (
@@ -333,11 +355,7 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
         {isEdit && type === "busiHour" && (
           <div>
             <TimePicker.RangePicker
-              defaultValue={
-                isStringArray(content)
-                  ? [dayjs(content[0]), dayjs(content[1])]
-                  : undefined
-              }
+              defaultValue={[dayjs(strfData.startAt), dayjs(strfData.endAt)]}
               format={"HH:mm"}
             />
           </div>
@@ -345,11 +363,10 @@ const ListItem = ({ title, content, type }: ListItemProps): JSX.Element => {
         {isEdit && type === "checkTime" && (
           <div>
             <TimePicker.RangePicker
-              defaultValue={
-                isStringArray(content)
-                  ? [dayjs(content[0], "HH:mm"), dayjs(content[1], "HH:mm")]
-                  : undefined
-              }
+              defaultValue={[
+                dayjs(strfData.openCheck, "HH:mm"),
+                dayjs(strfData.closeCheck, "HH:mm"),
+              ]}
               format={"HH:mm"}
               onChange={e => setValue(e)}
             />
