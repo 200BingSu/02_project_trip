@@ -61,6 +61,10 @@ export interface MenuType {
   menuTitle: string;
   menuPic: string;
   strfId: number;
+  openCheckIn: string;
+  closeCheckIn: string;
+  recomCapacity: number;
+  maxCapacity: number;
 }
 
 // 등록할 때
@@ -212,7 +216,7 @@ export interface IStrf extends Partial<IRoom> {
   recentCheck: number;
   recentCheckStatus: number;
   strfPics: { strfId: string; strfPic: string }[];
-  restDate: { frequency: "weekly" | "biweekly"; days: number[] };
+  restDate: (number | string)[];
   amenity: number[];
 }
 

@@ -106,6 +106,7 @@ const UserIndex = () => {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
+    heartbeatTimeout: 3600000,
   });
 
   console.log("eventSource", eventSource);

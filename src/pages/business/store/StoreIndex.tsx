@@ -8,7 +8,7 @@ import Tab from "../../../components/common/Tab";
 import { IAPI, IRoom, IStrf } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
 import { CategoryType } from "../../../types/enum";
-import { categoryKor } from "../../../utils/match";
+import { categoryKor, matchRestDataToKor } from "../../../utils/match";
 import { useRecoilState } from "recoil";
 import { strfAtom } from "../../../atoms/strfAtom";
 
@@ -42,18 +42,21 @@ const StoreIndex = (): JSX.Element => {
       const resultData = res.data;
       if (resultData) {
         const splitTell = resultData.data.tell.split("-", 1);
+
         if (splitTell[2] !== undefined) {
           setStrfData({
             ...strfData,
             ...resultData.data,
             tell: splitTell[1],
             areaCode: splitTell[0],
+            restDate: resultData.data.restDate,
           });
         } else {
           setStrfData({
             ...strfData,
             ...resultData.data,
             tell: resultData.data.tell,
+            restDate: resultData.data.restDate,
           });
         }
 

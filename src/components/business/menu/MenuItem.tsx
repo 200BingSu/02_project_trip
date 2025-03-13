@@ -6,6 +6,9 @@ import { MenuPic } from "../../../constants/pic";
 import { MenuType } from "../../../types/interface";
 import BottomSheet from "../../basic/BottomSheet";
 import CenterModalTs from "../../common/CenterModalTs";
+import { useRecoilState } from "recoil";
+import { menuAtom } from "../../../atoms/menuAtom";
+import { CategoryType } from "../../../types/enum";
 
 interface MenuItemProps {
   item: MenuType;
@@ -18,7 +21,12 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
   const navigate = useNavigate();
   const navigateToEditMenu = () => {
     navigate(
-      `/business/menu/edit?strfId=${strfId}&category=${category}&menuId=${item.menuId}`,
+      `/business/menu/edit?strfId=${strfId}&category=${category}&menuId=${item.menuId}&what=menu`,
+    );
+  };
+  const navigateToEditRoom = () => {
+    navigate(
+      `/business/menu/edit?strfId=${strfId}&category=${category}&menuId=${item.menuId}&what=room`,
     );
   };
   const navigateToDetail = () => {
@@ -26,10 +34,12 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
       `/business/menu/detail?strfId=${strfId}&category=${category}&menuId=${item.menuId}`,
     );
   };
+  // recoil
+  const [menu, setMenu] = useRecoilState(menuAtom);
   // useState
   const [isBottomOpen, setIsBottomOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
-  // API 메뉴 삭제하기
+
   const deleteMenu = () => {
     console.log("삭제");
     setIsDeleteOpen(false);
@@ -44,8 +54,25 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
     setIsBottomOpen(false);
     setIsDeleteOpen(true);
   };
-
-  const actions = [
+  const handleClickToEditMenu = () => {
+    setMenu({
+      ...menu,
+      menuTitle: item.menuTitle,
+      menuPrice: item.menuPrice,
+      menuPic: {
+        uid: "1",
+        name: item.menuPic,
+        status: "done" as const,
+        url: `${MenuPic}/${strfId}/menu/${item.menuPic}`,
+      },
+    });
+    console.log("url", `${MenuPic}/${strfId}/menu/${item.menuPic}`);
+    navigateToEditMenu();
+  };
+  const handleClickToEditRoom = () => {
+    navigateToEditRoom();
+  };
+  const actionsHasRoom = [
     {
       label: (
         <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
@@ -53,7 +80,36 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
           수정하기
         </div>
       ),
-      onClick: () => navigateToEditMenu(),
+      onClick: () => handleClickToEditMenu(),
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiTrash className="text-slate-400" />
+          삭제하기
+        </div>
+      ),
+      onClick: () => handleOpenDelete(),
+    },
+  ];
+  const actionsNoRoom = [
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiSolidEditAlt className="text-slate-300" />
+          객실/호실 등록하기
+        </div>
+      ),
+      onClick: () => handleClickToEditRoom(),
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiSolidEditAlt className="text-slate-300" />
+          수정하기
+        </div>
+      ),
+      onClick: () => handleClickToEditMenu(),
     },
     {
       label: (
@@ -84,9 +140,16 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
           <p className="text-xl font-semibold text-slate-700 text-left">
             {item?.menuTitle}
           </p>
-          <p className="text-lg text-slate-500 font-medium text-left">
-            {item?.menuPrice.toLocaleString()}원
-          </p>
+          <div>
+            <p className="text-lg text-slate-500 font-medium text-left">
+              {item?.menuPrice.toLocaleString()}원
+            </p>
+            <p
+              className={`${!item.recomCapacity && category === CategoryType.STAY ? "visible" : "invisible"} text-slate-500`}
+            >
+              * 예약을 위해 객실을 등록해주세요.
+            </p>
+          </div>
         </div>
       </section>
       {/* 버튼 */}
@@ -99,7 +162,7 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
         <BottomSheet
           open={isBottomOpen}
           onClose={handleClickBottom}
-          actions={actions}
+          actions={item.recomCapacity ? actionsHasRoom : actionsNoRoom}
           title="더보기"
         />
       )}
