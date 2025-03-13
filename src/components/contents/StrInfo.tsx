@@ -7,8 +7,8 @@ import { categoryKor } from "../../utils/match";
 import { IStrf } from "../../types/interface";
 
 export interface StrInfoProps {
-  strfId: string | number;
-  contentData: IStrf; // ContentData 대신 IStrf 사용
+  strfId: number;
+  contentData: IStrf | null;
 }
 
 const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
