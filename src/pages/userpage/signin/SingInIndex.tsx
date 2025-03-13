@@ -79,28 +79,14 @@ const SingInIndex = () => {
           isSaveEmail: isSaveEmail,
           ProviderType: ProviderType.LOCAL,
           role: resultData.role,
-          strfDtos: [
-            {
-              busiNum: resultData?.strfDtos[0]?.busiNum ?? "",
-              strfId: resultData?.strfDtos[0]?.strfId ?? "",
-              category: resultData?.strfDtos[0]?.category ?? "",
-              title: resultData?.strfDtos[0]?.title ?? "",
-            },
-          ],
+          strfDtos: resultData.strfDtos,
         });
         setUserInfo({
           userId: resultData.userId,
           accessToken: resultData.accessToken,
           role: [...resultData.role],
           providerType: ProviderType.LOCAL,
-          strfDtos: [
-            {
-              busiNum: resultData.strfDtos[0]?.busiNum ?? "",
-              strfId: resultData.strfDtos[0]?.strfId ?? "",
-              category: resultData.strfDtos[0]?.category ?? "",
-              title: resultData.strfDtos[0]?.title ?? "",
-            },
-          ],
+          strfDtos: resultData.strfDtos,
         });
       }
       console.log(resultData.role);
