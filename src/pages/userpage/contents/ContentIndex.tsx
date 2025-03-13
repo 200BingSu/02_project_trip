@@ -10,11 +10,12 @@ import "../../../styles/antd-styles.css";
 import { useEffect, useState } from "react";
 import { IStrf } from "../../../types/interface";
 import jwtAxios from "../../../apis/jwt";
+import StickyActionBar from "../../../components/contents/StickyActionBar";
 
 const ContentIndex = (): JSX.Element => {
   const [contentData, setContentData] = useState<IStrf | null>(null);
   const [searchParams] = useSearchParams();
-  const strfId = parseInt(searchParams.get("strfId") || "0");
+  const strfId = Number(searchParams.get("strfId")) || 0;
 
   const getDetailMember = async () => {
     try {
@@ -33,7 +34,13 @@ const ContentIndex = (): JSX.Element => {
 
   return (
     <div>
-      <ContentsHeader />
+      {contentData && (
+        <ContentsHeader
+          strfId={strfId}
+          contentData={contentData}
+          getDetailMember={getDetailMember}
+        />
+      )}
       <section>
         {contentData && <StrInfo strfId={strfId} contentData={contentData} />}
       </section>
@@ -66,11 +73,20 @@ const ContentIndex = (): JSX.Element => {
             {
               label: "리뷰",
               key: "2",
-              children: <Reviews />,
+              children: (
+                <>
+                  {contentData && (
+                    <Reviews strfId={strfId} contentData={contentData} />
+                  )}
+                </>
+              ),
             },
           ]}
         />
       </section>
+      {contentData && (
+        <StickyActionBar strfId={strfId} contentData={contentData} />
+      )}
     </div>
   );
 };
