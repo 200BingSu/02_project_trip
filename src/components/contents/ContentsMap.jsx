@@ -33,8 +33,8 @@ const ContentsMap = ({ contentData }) => {
     <div>
       <Map
         center={nowMap}
-        style={{ width: "100%", height: "400px", borderRadius: "8px" }}
-        level={3}
+        style={{ width: "100%", height: "200px", borderRadius: "8px" }}
+        level={5}
       >
         <MapMarker position={nowMap} />
       </Map>
