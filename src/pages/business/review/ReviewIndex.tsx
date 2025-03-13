@@ -22,7 +22,7 @@ const ReviewIndex = (): JSX.Element => {
   const accessToken = getCookie("accessToken");
   //useState
   const [reviewList, setReviewList] = useState<IReviewItem[]>([]);
-  const [startIdx, setStartIdx] = useState<number>(1);
+  const [startIdx, setStartIdx] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // API 리뷰 목록
@@ -42,7 +42,7 @@ const ReviewIndex = (): JSX.Element => {
       console.log("리뷰 목록 조회", resultData);
       if (resultData) {
         setReviewList(resultData);
-        setStartIdx(startIdx + 10);
+        setStartIdx(startIdx + 20);
       }
       setIsLoading(false);
       return resultData;
