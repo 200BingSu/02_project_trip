@@ -102,6 +102,12 @@ const SingInIndex = () => {
       console.log("로그인 에러:", error);
       if (axios.isAxiosError(error)) {
         console.log(error.response?.status);
+        if (error.response?.status === 400) {
+          message.error("계정을 찾을 수 없습니다");
+        }
+        if (error.response?.status === 401) {
+          message.error("잘못된 비밀번호입니다");
+        }
         message.error(
           loginType === "personal"
             ? "사업자 계정입니다. 개인회원 로그인을 부탁드립니다."

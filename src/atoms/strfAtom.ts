@@ -32,10 +32,7 @@ export const strfAtom = atom<IStrf>({
     recentCheck: 0,
     recentCheckStatus: 0,
     strfPics: [{ strfId: "", strfPic: "" }],
-    restDate: {
-      frequency: "weekly",
-      days: [],
-    },
+    restDate: [],
     amenity: [],
   },
 });
