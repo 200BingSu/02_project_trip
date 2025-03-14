@@ -1,4 +1,4 @@
-import { Spin } from "antd";
+import { Button, Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -26,12 +26,12 @@ const ReviewIndex = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // API 리뷰 목록
-  const getReviewList = async (): Promise<IReviewItem[] | null> => {
+  const getReviewList = async (type: string): Promise<IReviewItem[] | null> => {
     const url = "/api/business/review/all";
     setIsLoading(true);
     try {
       const res = await axios.get<IReviewItem[]>(
-        `${url}?start_idx=${startIdx}&page_size=10`,
+        `${url}?start_idx=${startIdx}&page_size=20`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -40,9 +40,12 @@ const ReviewIndex = (): JSX.Element => {
       );
       const resultData = res.data;
       console.log("리뷰 목록 조회", resultData);
-      if (resultData) {
+      if (resultData && type === "more") {
+        setReviewList([...reviewList, ...resultData]);
+      }
+      if (resultData && type === "delete") {
+        setStartIdx(0);
         setReviewList(resultData);
-        setStartIdx(startIdx + 20);
       }
       setIsLoading(false);
       return resultData;
@@ -52,9 +55,13 @@ const ReviewIndex = (): JSX.Element => {
       return null;
     }
   };
+  // 더보기
+  const handleClickMore = async () => {
+    setStartIdx(startIdx + 20);
+  };
   useEffect(() => {
-    getReviewList();
-  }, []);
+    getReviewList("more");
+  }, [startIdx]);
   return (
     <div className="flex flex-col gap-5">
       <StrfInfo />
@@ -63,7 +70,13 @@ const ReviewIndex = (): JSX.Element => {
         <section className="flex flex-col gap-10 pb-10">
           {reviewList.length > 0 ? (
             reviewList?.map((item, index) => (
-              <ReviewItem key={index} item={item} strfId={strfId} />
+              <ReviewItem
+                key={index}
+                item={item}
+                strfId={strfId}
+                setReviewList={setReviewList}
+                getReviewList={getReviewList}
+              />
             ))
           ) : (
             <div className="flex flex-col gap-5 items-center justify-center text-slate-300 py-12">
@@ -72,6 +85,15 @@ const ReviewIndex = (): JSX.Element => {
             </div>
           )}
         </section>
+        <div className="flex justify-center">
+          <Button
+            variant="outlined"
+            className="px-5 py-2 h-[9.6vw] max-h-[60px] text-xl text-slate-400 rounded-[32px]"
+            onClick={handleClickMore}
+          >
+            더보기
+          </Button>
+        </div>
       </Spin>
     </div>
   );

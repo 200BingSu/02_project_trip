@@ -102,12 +102,16 @@ const UserIndex = () => {
   //   navigate("/user/useredit", { state: useProfile });
   // };
 
-  // const eventSource = new EventSourcePolyfill("/api/notice", {
-  //   headers: {
-  //     Authorization: `Bearer ${accessToken}`,
-  //   },
-  //   heartbeatTimeout: 60000, // 30초마다 heartbeat 체크
-  // });
+
+  const eventSource = new EventSourcePolyfill("/api/notice", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+
+    heartbeatTimeout: 3600000,
+
+  });
+
 
   // console.log("eventSource 간격", eventSource);
 
