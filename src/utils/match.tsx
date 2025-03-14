@@ -235,3 +235,8 @@ export const matchState = (state: number) => {
       return "알 수 없음";
   }
 };
+
+export const matchAmenityIcon = (amenityId: number) => {
+  const finedamenity = amenities.find(item => item.amenity_id === amenityId);
+  return finedamenity?.key;
+};

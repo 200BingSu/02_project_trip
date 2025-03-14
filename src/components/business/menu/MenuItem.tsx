@@ -124,7 +124,7 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
   return (
     <div className="flex items-center gap-2 py-3 select-none">
       <section
-        className="flex items-center justify-between w-full cursor-pointer"
+        className="flex items-center w-full cursor-pointer gap-5"
         onClick={navigateToDetail}
       >
         {/* 이미지 */}
@@ -136,7 +136,7 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
           />
         </div>
         {/* 인포 */}
-        <div className="flex flex-col gap-2 items-start w-50">
+        <div className="flex flex-col gap-2 items-start">
           <p className="text-xl font-semibold text-slate-700 text-left">
             {item?.menuTitle}
           </p>

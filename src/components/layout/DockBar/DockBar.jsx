@@ -108,7 +108,8 @@ const DockBar = React.memo(() => {
           // onClick={showModal}
         >
           <IoLogoWechat className="text-2xl" />
-          챗봇
+          채팅
+          <div>채팅 있음/없음</div>
         </Link>
         {nowLocation === "/search/strf" && (
           <div

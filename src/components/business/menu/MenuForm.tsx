@@ -116,6 +116,7 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
         navigateToNext();
         hadleMenuId?.(resultData.data);
         setIsLoading(false);
+        resetMenu();
       }
       return res.data;
     } catch (error) {
@@ -142,7 +143,9 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
         setIsLoading(false);
         navigateToNext();
         message.success("메뉴 수정을 성공했습니다");
+        resetMenu();
       }
+
       return res.data;
     } catch (error) {
       console.error("메뉴 수정 실패", error);

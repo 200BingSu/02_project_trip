@@ -99,13 +99,7 @@ const EditReview = (): JSX.Element => {
   const hadleClickFinish = () => {
     type === "create" ? createReply() : updateReply();
   };
-  // 스크롤 top으로 이동
-  const moveTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-  useEffect(() => {
-    moveTop();
-  }, []);
+
   return (
     <div className="flex flex-col gap-5">
       <StrfInfo />
