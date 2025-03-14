@@ -1,4 +1,4 @@
-import { Input, message, Select, Spin, TimePicker, Upload } from "antd";
+import { Input, message, Select, Spin, TimePicker } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -11,7 +11,11 @@ import { amenities } from "../../../constants/dataArr";
 import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
 import { Iamenity, IAPI, IStrf } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
-import { matchRestDataToKor, matchState } from "../../../utils/match";
+import {
+  categoryKor,
+  matchRestDataToKor,
+  matchState,
+} from "../../../utils/match";
 
 interface ListItemProps {
   children?: ReactNode;
@@ -139,10 +143,11 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
         },
       );
       const resultData = res.data;
-      console.log("이름 변경", resultData);
+      console.log("영업 상태 변경", resultData);
       if (resultData.code === "200 성공") {
         setIsLoading(false);
         getStrfInfo();
+        message.success("영업 상태 변경에 성공했습니다.");
       }
 
       return resultData;
@@ -164,7 +169,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     };
     try {
       const res = await axios.put(
-        `${url}?strfId=${strfId}&tell=${strfData.tell}&busiNum=${busiNum}`,
+        `${url}?strfId=${strfId}&tell=${strfData.areaCode}-${strfData.tell}&busiNum=${busiNum}`,
         payload,
         {
           headers: {
@@ -228,8 +233,8 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     const payload = {
       strfId: strfId,
       busiNum: busiNum,
-      category: category,
-      amenity: strfData.amenity,
+      category: categoryKor(category),
+      ameniPoints: strfData.amenity,
     };
     const formatAmenity = strfData.amenity.map(item => {
       return `ameniPoints=${item}`;
@@ -237,7 +242,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     console.log("보낼 파라메터", formatAmenity.join("&"));
     try {
       const res = await axios.put(
-        `${url}?strfId=${strfId}&busiNum=${busiNum}&category=${category}&${formatAmenity.join(",")}`,
+        `${url}?strfId=${strfId}&busiNum=${busiNum}&category=${category}&${formatAmenity.join("&")}`,
         payload,
         {
           headers: {
@@ -334,17 +339,17 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return null;
     }
   };
-  // API 휴무일
+  // API 휴무일 변경
   const updateRestDate = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/rest";
     const payload = {
       strfId: strfId,
       busiNum: busiNum,
-      restDates: strfData.restDate.days,
+      restDates: strfData.restDate,
     };
     console.log("payload", payload);
     setIsLoading(true);
-    const restDatesPara = strfData.restDate.days
+    const restDatesPara = strfData.restDate
       .map(item => `restDates=${item}`)
       .join("&");
     console.log("restDatesPara", restDatesPara);
@@ -488,9 +493,10 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
           <div className="text-lg font-medium text-slate-500 px-2 py-1">
             {type === "title" && strfData.strfTitle}
             {type === "state" && matchState(strfData.state)}
-            {type === "tell" && strfData.areaCode
-              ? `${strfData.areaCode}-${strfData.tell}`
-              : `${strfData.tell}`}
+            {type === "tell" &&
+              (strfData.areaCode
+                ? `${strfData.areaCode}-${strfData.tell}`
+                : `${strfData.tell}`)}
             {type === "detail" && strfData.detail}
             {type === "amenity" && (
               <ul>
@@ -505,8 +511,8 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
             {type === "checkTime" &&
               `${strfData.openCheck}~${strfData.closeCheck}`}
             {type === "restDate" &&
-              strfData.restDate.days.map((item, index) => {
-                return index === strfData.restDate.days.length - 1 ? (
+              strfData.restDate.map((item, index) => {
+                return index === strfData.restDate.length - 1 ? (
                   <span key={index}>{matchRestDataToKor(item)}</span>
                 ) : (
                   <span key={index}>{matchRestDataToKor(item)}, </span>
@@ -548,7 +554,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
         {isEdit && type === "detail" && (
           <TextArea
             placeholder="업체 소개를 작성해주세요"
-            maxLength={50}
+            maxLength={300}
             onChange={e => {
               setStrfData({ ...strfData, detail: e.target.value });
             }}
@@ -628,10 +634,14 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
               mode="multiple"
               allowClear
               className="w-full"
+              defaultValue={strfData.restDate.map(item =>
+                matchRestDataToKor(item),
+              )}
               onChange={value => {
+                console.log(value);
                 setStrfData({
                   ...strfData,
-                  restDate: { ...strfData.restDate, days: value },
+                  restDate: value,
                 });
               }}
             />

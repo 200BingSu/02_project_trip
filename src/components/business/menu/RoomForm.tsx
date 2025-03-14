@@ -45,7 +45,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
   // 쿠키
   const accessToken = getCookie("accessToken");
   const userInfo = getCookie("user");
-  const busiNum = userInfo?.busiNum;
+  const busiNum = userInfo?.strfDtos[0].busiNum;
   // 쿼리
   const [searchParams] = useSearchParams();
   const strfId = Number(searchParams.get("strfId"));
@@ -110,7 +110,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
     const { recomCapacity, maxCapacity, surcharge, rooms } = values;
     const sendData: CreateRoomDataType = {
       strfId: strfId,
-      busiNum: busiNum[0],
+      busiNum: busiNum,
       category: categoryKor(category) as string,
       menuId: Number(menuId),
       ameniPoints: selectedAmenities,

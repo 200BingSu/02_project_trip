@@ -185,7 +185,7 @@ export const matchMenuIcon = (category: string): ReactNode => {
   }
 };
 
-export const matchRestDataToKor = (number: number) => {
+export const matchRestDataToKor = (number: number | string) => {
   switch (number) {
     case 0:
       return "일";
@@ -201,6 +201,8 @@ export const matchRestDataToKor = (number: number) => {
       return "금";
     case 6:
       return "토";
+    default:
+      return "없음";
   }
 };
 export const matchRestDateEnToKo = (string: string) => {
