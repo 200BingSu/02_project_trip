@@ -14,44 +14,7 @@ import { CgMoreVerticalAlt } from "react-icons/cg";
 import BottomSheet from "../../../components/basic/BottomSheet";
 import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
-
-// ✅ DynamicGrid 컴포넌트 추가
-const DynamicGrid = ({ images }) => {
-  const imageCount = images.length;
-
-  // Tailwind 동적 클래스 설정
-  const gridClass =
-    {
-      1: "grid-cols-1 grid-rows-1",
-      2: "grid-cols-2 grid-rows-1",
-      3: "grid-cols-2 grid-rows-2",
-      4: "grid-cols-2 grid-rows-2",
-      5: "grid-cols-4 grid-rows-2",
-    }[imageCount] || "grid-cols-3 grid-rows-2"; // 기본값 (5개 이상)
-
-  return (
-    <div
-      className={`grid gap-1 ${gridClass} w-full aspect-[3/2] rounded-lg overflow-hidden`}
-    >
-      {images.map((src, index) => {
-        let extraClass = "";
-        if (imageCount === 3 && index === 0) extraClass = "row-span-2";
-        if (imageCount === 5) {
-          if (index === 0) extraClass = "row-span-2 col-span-2"; // 첫 번째 이미지 (2행 1열)
-        }
-
-        return (
-          <img
-            key={index}
-            src={src}
-            alt={`image-${index}`}
-            className={`w-full h-full overflow-hidden object-cover ${extraClass}`}
-          />
-        );
-      })}
-    </div>
-  );
-};
+import DynamicGrid from "../../../components/basic/DynamicGrid";
 
 const UserrRview = () => {
   const [reviewInfo, setReviewInfo] = useState([]);
@@ -138,10 +101,6 @@ const UserrRview = () => {
       </div>
       <div>
         {reviewInfo.map((item, index) => {
-          const imageUrls = item.myReviewPic.map(
-            pic => `${ReviewPic}${item.reviewId}/${pic.pic}`,
-          );
-
           return (
             <div
               key={index}
@@ -167,7 +126,6 @@ const UserrRview = () => {
                   }}
                 />
               </div>
-
               <div className="flex items-center gap-3 mb-2">
                 <Rate
                   className="custom-rate flex items-center gap-[2px]"
@@ -180,8 +138,7 @@ const UserrRview = () => {
                 </p>
               </div>
               <p className="text-base text-slate-700 mb-2">{item.content}</p>
-              {/* ✅ 기존 코드 → DynamicGrid 컴포넌트로 변경 */}
-              {imageUrls.length > 0 && <DynamicGrid images={imageUrls} />}
+              <DynamicGrid reviewPics={item} type="myReview" />
             </div>
           );
         })}

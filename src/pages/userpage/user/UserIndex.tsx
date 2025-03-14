@@ -98,31 +98,31 @@ const UserIndex = () => {
     navigate("/signin");
   };
 
-  const handleUserEdit = () => {
-    navigate("/user/useredit", { state: useProfile });
-  };
+  // const handleUserEdit = () => {
+  //   navigate("/user/useredit", { state: useProfile });
+  // };
 
-  const eventSource = new EventSourcePolyfill("/api/notice", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    heartbeatTimeout: 3600000, // 30초마다 heartbeat 체크
-  });
+  // const eventSource = new EventSourcePolyfill("/api/notice", {
+  //   headers: {
+  //     Authorization: `Bearer ${accessToken}`,
+  //   },
+  //   heartbeatTimeout: 60000, // 30초마다 heartbeat 체크
+  // });
 
-  console.log("eventSource", eventSource);
+  // console.log("eventSource 간격", eventSource);
 
-  eventSource.onopen = function () {
-    console.log("SSE 연결 성공!");
-  };
-  eventSource.onmessage = function (event) {
-    console.log("새 알림:", event.data);
-  };
-  eventSource.onerror = function (error) {
-    console.error("SSE 연결 오류:", error);
-    setTimeout(() => {
-      eventSource;
-    }, 3600000);
-  };
+  // eventSource.onopen = function () {
+  //   console.log("SSE 연결 성공!");
+  // };
+  // eventSource.onmessage = function (event) {
+  //   console.log("새 알림:", event.data);
+  // };
+  // eventSource.onerror = function (error) {
+  //   console.error("SSE 연결 오류:", error);
+  //   setTimeout(() => {
+  //     eventSource;
+  //   }, 60000);
+  // };
 
   return (
     <div className={` w-full flex justify-end`}>
@@ -144,7 +144,7 @@ const UserIndex = () => {
               />
               <AiFillSetting
                 className="text-3xl text-slate-700 cursor-pointer"
-                onClick={() => handleUserEdit()}
+                // onClick={() => handleUserEdit()}
               />
             </h1>
           </div>
