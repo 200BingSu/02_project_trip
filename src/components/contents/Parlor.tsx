@@ -1,28 +1,16 @@
+import { Button } from "antd";
 import { BiTime } from "react-icons/bi";
 import { FiUsers } from "react-icons/fi";
-import { MenuType } from "../../types/interface";
-import { useEffect, useState } from "react";
-import jwtAxios from "../../apis/jwt";
 import { MenuPic } from "../../constants/pic";
-import { Button } from "antd";
+import { MenuType } from "../../types/interface";
 
-const Parlor = ({ strfId }: { strfId: number }) => {
-  const [menuData, setMenuData] = useState<MenuType[]>();
-
-  const getMenuDetail = async () => {
-    try {
-      const res = await jwtAxios.get(`/api/detail/menu?strf_id=${strfId}`);
-      setMenuData(res.data.data);
-      console.log("상품조회-메뉴", res.data.data);
-    } catch (error) {
-      console.log("상품조회-메뉴", error);
-    }
-  };
-
-  useEffect(() => {
-    getMenuDetail();
-  }, []);
-
+const Parlor = ({
+  strfId,
+  menuData,
+}: {
+  strfId: number;
+  menuData: MenuType[];
+}) => {
   return (
     <div className="mt-3 ">
       <div className="px-4">
@@ -48,7 +36,7 @@ const Parlor = ({ strfId }: { strfId: number }) => {
             </i>
             <div className="my-3">
               <h2 className="text-2xl text-slate-700 font-semibold">
-                {item.menuTitle}
+                {item?.menuTitle}
               </h2>
               <p className="flex items-center gap-[6px] text-slate-500 text-sm my-1">
                 <BiTime className="text-base" />
