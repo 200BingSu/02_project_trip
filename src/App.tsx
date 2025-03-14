@@ -49,6 +49,7 @@ const App = () => {
       getUserInfo();
     }
   }, [accessToken]);
+
   return (
     <ConfigProvider
       locale={locale}

@@ -250,10 +250,10 @@ const ScheduleIndex = () => {
             rightContent={
               <RightContent
                 icon1={false}
-                icon2={true}
+                icon2={false}
                 icon3Click={navigatePostBoard}
                 icon3={true}
-                icon4={true}
+                icon4={false}
               />
             }
           />

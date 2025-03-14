@@ -4,6 +4,7 @@ import { ROLE } from "../../types/enum";
 import { getCookie } from "../../utils/cookie";
 import CenterModalTs from "../common/CenterModalTs";
 import { AiFillWechat } from "react-icons/ai";
+import { moveTop } from "../../utils/moveTo";
 
 const BusinessLayout = () => {
   //navigate
@@ -28,6 +29,12 @@ const BusinessLayout = () => {
   const hanldeClickSubmit = () => {
     navigateToLogin();
   };
+  // 스크롤 top으로 이동
+
+  useEffect(() => {
+    moveTop();
+  }, [pathName]);
+
   useEffect(() => {
     if (role && role.includes(ROLE.BUSI) === false) {
       console.log("사업자가 아닙니다.");
