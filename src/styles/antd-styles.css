@@ -170,3 +170,36 @@
   padding-right: 12px;
   font-size: 18px !important;
 }
+
+.custom-modal-confirm .ant-modal-title {
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.custom-modal-confirm .ant-modal-footer {
+  display: flex;
+  gap: 0;
+}
+.custom-modal-confirm .ant-modal-footer .ant-btn {
+  width: 100%;
+  height: auto !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 1rem;
+  border-radius: 0 !important;
+  margin: 10px 0 !important;
+}
+.custom-modal-confirm .ant-modal-footer .ant-btn:first-child {
+  border-right: 1px solid #e2e8f0 !important;
+}
+
+.ant-popover .ant-popover-inner {
+  border-radius: 16px;
+}
+.custom-review-rate .ant-rate {
+  font-size: 1.2rem;
+}
+.custom-review-rate .ant-rate-star:not(:last-child) {
+  margin-right: 3px !important;
+}

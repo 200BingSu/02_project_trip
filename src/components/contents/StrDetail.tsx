@@ -15,7 +15,7 @@ const StrDetail = ({ contentData }: StrInfoProps): JSX.Element => {
         textRef.current.scrollHeight > textRef.current.clientHeight,
       );
     }
-  }, [contentData.detail]);
+  }, [contentData?.detail]);
 
   return (
     <div>
@@ -26,7 +26,7 @@ const StrDetail = ({ contentData }: StrInfoProps): JSX.Element => {
             ref={textRef}
             className={`text-base text-slate-500 ${openDetail ? "" : "line-clamp-5"}`}
           >
-            {contentData.detail}
+            {contentData?.detail}
           </p>
           {isLongText && !openDetail && (
             <div className="absolute inset-0 bg-gradient-to-t from-white/100 to-white/0"></div>
@@ -50,17 +50,17 @@ const StrDetail = ({ contentData }: StrInfoProps): JSX.Element => {
             <dt className="text-base text-slate-700 font-semibold float-left mr-3">
               주소
             </dt>
-            <dd className="text-base text-slate-400 mb-1">
-              ({contentData.post}) {contentData.address}
+            <dd className="text-base text-slate-500 mb-1">
+              ({contentData?.post}) {contentData?.address}
             </dd>
             <dt className="text-base text-slate-700 font-semibold float-left mr-3">
               전화
             </dt>
-            <dd className="text-base text-slate-400 mb-1">062-610-7000</dd>
+            <dd className="text-base text-slate-500 mb-1">062-610-7000</dd>
             <dt className="text-base text-slate-700 font-semibold float-left mr-3">
               사업자번호
             </dt>
-            <dd className="text-base text-slate-400">410-86-60209</dd>
+            <dd className="text-base text-slate-500">410-86-60209</dd>
           </dl>
         </div>
       </section>
