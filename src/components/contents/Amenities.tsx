@@ -37,7 +37,7 @@ const Amenities = ({ strfId }: { strfId: number }) => {
         {amens?.map(amen => (
           <li
             key={amen.amenityId}
-            className="min-w-[57px] flex flex-col items-center justify-center gap-[6px] text-slate-700"
+            className="min-w-14 flex flex-col items-center justify-center gap-[6px] text-slate-700"
           >
             <i className="text-2xl ">
               {matchAmenitiesIcon(amen.amenityId ?? 0)}

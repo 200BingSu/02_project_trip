@@ -106,7 +106,9 @@ const UserIndex = () => {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
+
     heartbeatTimeout: 3600000,
+
   });
 
   console.log("eventSource", eventSource);
@@ -119,6 +121,9 @@ const UserIndex = () => {
   };
   eventSource.onerror = function (error) {
     console.error("SSE 연결 오류:", error);
+    setTimeout(() => {
+      eventSource;
+    }, 3600000);
   };
 
   return (

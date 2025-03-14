@@ -229,3 +229,19 @@ export interface IRoom {
   roomId: number;
   roomNum: number;
 }
+
+export interface ISchedule {
+  seq: number;
+  day: number;
+  time: number | null;
+  distance: number | null;
+  strf_id: number;
+  trip_id: number;
+  path_type: string | null;
+}
+
+export interface ISelectPath {
+  totalTime?: number;
+  totalDistance?: number;
+  path_type?: string;
+}
