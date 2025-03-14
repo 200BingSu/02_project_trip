@@ -1,7 +1,7 @@
 import { Button, message, Spin } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import { editReviewAtom } from "../../../atoms/editReviewAtom";

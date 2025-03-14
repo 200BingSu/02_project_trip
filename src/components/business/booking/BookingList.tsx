@@ -96,10 +96,10 @@ const BookingList = ({ item }: BookingListProps) => {
         );
     }
   };
-  const duration = (start: string, end: string) => {
-    const startDate = dayjs(start, "YYYY-MM-DD dd").format("YYYY-MM-dd");
-    const endDate = dayjs(end, "YYYY-MM-DD dd");
-  };
+  // const duration = (start: string, end: string) => {
+  //   const startDate = dayjs(start, "YYYY-MM-DD dd").format("YYYY-MM-dd");
+  //   const endDate = dayjs(end, "YYYY-MM-DD dd");
+  // };
 
   return (
     <div className="flex flex-col gap-3">
