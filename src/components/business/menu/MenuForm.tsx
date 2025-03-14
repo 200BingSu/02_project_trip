@@ -3,6 +3,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Spin,
   Upload,
   UploadFile,
@@ -10,44 +11,70 @@ import {
 import ImgCrop from "antd-img-crop";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiArrowGoBackFill } from "react-icons/ri";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import { menuAtom } from "../../../atoms/menuAtom";
+import { MenuPic } from "../../../constants/pic";
 import { CategoryType } from "../../../types/enum";
-import { Imenu } from "../../../types/interface";
+import { IAPI, Imenu } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
-import { categoryKor, matchName } from "../../../utils/match";
+import { matchName } from "../../../utils/match";
 export interface Ptype {
   strfId: number;
   busiNum: string;
-  category: string;
   menus: Imenu[];
 }
 interface MenuFormProps {
-  handleCurrent: (value: number | null) => void;
-  hadleMenuId: (value: string | null) => void;
+  handleCurrent?: (value: number | null) => void;
+  hadleMenuId?: (value: string | null) => void;
 }
 const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const strfId = Number(searchParams.get("strfId"));
   const category = searchParams.get("category");
+  const menuId = Number(searchParams.get("menuId"));
+  // location
+  const location = useLocation();
+  const pathName = location.pathname;
   // navigate
   const navigate = useNavigate();
   const navigateToNext = () => {
-    if (category === CategoryType.STAY) {
-      handleCurrent(1);
-    } else {
+    if (pathName === "/business/menu/create") {
+      if (category === CategoryType.STAY) {
+        handleCurrent?.(1);
+      } else {
+        navigate(`/business/menu?strfId=${strfId}&category=${category}`);
+      }
+    }
+    if (pathName === "/business/menu/edit") {
       navigate(`/business/menu?strfId=${strfId}&category=${category}`);
     }
   };
 
   // 쿠키
   const userInfo = getCookie("user");
-  const busiNum = userInfo?.busiNum;
+  const busiNum = userInfo?.strfDtos[0].busiNum;
   const accessToken = getCookie("accessToken");
 
   const [form] = useForm();
+  // recoil
+  const [menu] = useRecoilState(menuAtom);
+  const resetMenu = useResetRecoilState(menuAtom);
+  useEffect(() => {
+    form.setFieldsValue({
+      menuPic: {
+        uid: "1",
+        name: menu.menuTitle,
+        status: "done",
+        url: `${MenuPic}/${strfId}/menu/${(menu.menuPic as UploadFile)?.url}`,
+      },
+      menuTitle: menu.menuTitle,
+      menuPrice: menu.menuPrice,
+    });
+  }, []);
   // 파일 업로드
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [, setValue] = useState<number | null>(null);
@@ -73,39 +100,63 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
     imgWindow?.document.write(image.outerHTML);
   };
   // API 메뉴 등록
-  const createMenu = async (
-    data: FormData,
-  ): Promise<{ code: string; data: string } | null> => {
+  const createMenu = async (data: FormData): Promise<IAPI<string> | null> => {
     setIsLoading(true);
     const url = "/api/detail/menu";
     try {
-      const res = await axios.post<{ code: string; data: string }>(url, data, {
+      const res = await axios.post<IAPI<string>>(url, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log("메뉴 등록", res.data);
+      console.log("메뉴 등록 code", res.data.code);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
-        setIsLoading(false);
-        hadleMenuId(resultData.data);
+        message.success("메뉴 등록을 성공했습니다");
         navigateToNext();
+        hadleMenuId?.(resultData.data);
+        setIsLoading(false);
       }
       return res.data;
     } catch (error) {
       console.error("메뉴 등록 실패", error);
       setIsLoading(false);
+      message.error("메뉴 등록에 실패했습니다");
+      return null;
+    }
+  };
+
+  // API 메뉴 수정
+  const updateMenu = async (data: FormData): Promise<IAPI<string> | null> => {
+    setIsLoading(true);
+    const url = "/api/detail/menu";
+    try {
+      const res = await axios.put<IAPI<string> | null>(url, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("메뉴 수정", res.data);
+      const resultData = res.data;
+      if (resultData?.code === "200 성공") {
+        setIsLoading(false);
+        navigateToNext();
+        message.success("메뉴 수정을 성공했습니다");
+      }
+      return res.data;
+    } catch (error) {
+      console.error("메뉴 수정 실패", error);
+      setIsLoading(false);
+      message.error("메뉴 수정에 실패했습니다");
       return null;
     }
   };
   // 메뉴 폼제출
   const onFinish = (values: any) => {
     const { menuTitle, menuPrice } = values;
-    console.log(values);
     const p: Ptype = {
       strfId: strfId,
-      busiNum: busiNum[0],
-      category: categoryKor(category) as string,
+      busiNum: busiNum,
       menus: [
         {
           menuTitle: menuTitle,
@@ -113,25 +164,52 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
         },
       ],
     };
-    console.log("p", p);
+    const menuReq: Ptype & { menuId: number } = {
+      strfId: strfId,
+      menuId: menuId,
+      busiNum: busiNum,
+      menus: [
+        {
+          menuPrice: menuPrice,
+          menuTitle: menuTitle,
+        },
+      ],
+    };
     const formData = new FormData();
-    console.log("📌 fileList:", fileList);
+    // console.log("📌 fileList:", fileList);
     if (!fileList || fileList.length === 0) {
       console.error("⚠️ fileList가 비어 있습니다!");
       return;
     }
 
-    console.log("Selected file:", fileList[0].originFileObj);
     formData.append("menuPic", fileList[0].originFileObj as Blob);
-    formData.append(
-      "p",
-      new Blob([JSON.stringify(p)], { type: "application/json" }),
-    );
+
+    if (pathName === "/business/menu/create") {
+      console.log("p", p);
+      formData.append(
+        "p",
+        new Blob([JSON.stringify(p)], { type: "application/json" }),
+      );
+      console.log("제출 데이터", formData.get("p"));
+    }
+    if (pathName === "/business/menu/edit") {
+      console.log("menuReq", menuReq);
+      formData.append(
+        "menuReq",
+        new Blob([JSON.stringify(menuReq)], { type: "application/json" }),
+      );
+      console.log("제출 데이터", formData.get("menuReq"));
+    }
     console.log("FormData entries:");
     for (let pair of formData.entries()) {
       console.log(pair[0], pair[1]);
     }
-    createMenu(formData);
+    if (pathName === "/business/menu/create") {
+      createMenu(formData);
+    }
+    if (pathName === "/business/menu/edit") {
+      updateMenu(formData);
+    }
   };
   return (
     <section className="flex flex-col gap-2 px-4 py-3">
@@ -253,15 +331,6 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
               className="text-lg"
             >
               등록하기
-            </Button>
-            <Button
-              type="default"
-              size="large"
-              htmlType="button"
-              className="mr-5 text-slate-500 text-lg"
-              onClick={() => navigateToNext()}
-            >
-              그냥 넘어가기
             </Button>
           </Form.Item>
         </Form>
