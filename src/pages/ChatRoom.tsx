@@ -110,6 +110,9 @@ const ChatRoom = (): JSX.Element => {
   // 구독 경로
   const topic = `/sub/chat/${roomId}`;
   useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
     const stompClient = new Client({
       brokerURL: url,
       connectHeaders: {
@@ -174,7 +177,7 @@ const ChatRoom = (): JSX.Element => {
         console.error("STOMP error: ", frame.headers["message"], frame.body);
         connectionRef.current = false;
         setConnected(false);
-        message.error("채팅연결에 실패했습니다");
+        message.error("스톰프 에러");
       },
     });
 
@@ -205,7 +208,7 @@ const ChatRoom = (): JSX.Element => {
     console.log("연결 해제");
     if (clientRef.current) {
       clientRef.current.unsubscribe(topic);
-      // clientRef.current.deactivate();
+      clientRef.current.deactivate();
       setConnected(false);
       setMessages([]);
       connectionRef.current = false;
@@ -237,9 +240,9 @@ const ChatRoom = (): JSX.Element => {
     }
   };
   // 나가기
-  const handleClickToBack = async () => {
-    await navigateToBack();
-    await disconnect();
+  const handleClickToBack = () => {
+    navigateToBack();
+    disconnect();
     resetChatHistory();
   };
   // 관찰
