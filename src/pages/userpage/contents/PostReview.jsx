@@ -130,7 +130,6 @@ const PostReview = () => {
               rows={4}
               placeholder="직접 경험한 솔직한 리뷰를 남겨주세요."
               variant="borderless"
-              maxLength={100}
               style={{
                 height: 300,
                 resize: "none",

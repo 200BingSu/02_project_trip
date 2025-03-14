@@ -61,6 +61,10 @@ export interface MenuType {
   menuTitle: string;
   menuPic: string;
   strfId: number;
+  openCheckIn: string;
+  closeCheckIn: string;
+  recomCapacity: number;
+  maxCapacity: number;
 }
 
 // 등록할 때
@@ -224,4 +228,20 @@ export interface IRoom {
   menuId: string;
   roomId: number;
   roomNum: number;
+}
+
+export interface ISchedule {
+  seq: number;
+  day: number;
+  time: number | null;
+  distance: number | null;
+  strf_id: number;
+  trip_id: number;
+  path_type: string | null;
+}
+
+export interface ISelectPath {
+  totalTime?: number;
+  totalDistance?: number;
+  path_type?: string;
 }
