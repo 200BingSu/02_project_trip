@@ -122,9 +122,11 @@ const BookingList = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button>예약 취소</Button>
-            <Button type="primary">예약 승인</Button>
+          <div className="flex items-center gap-3 w-full">
+            <Button className="w-full h-[16vw] max-h-[50px]">예약 취소</Button>
+            <Button type="primary" className="w-full h-[16vw] max-h-[50px]">
+              예약 승인
+            </Button>
           </div>
         </section>
       </div>

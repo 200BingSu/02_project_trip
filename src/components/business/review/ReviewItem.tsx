@@ -1,5 +1,5 @@
 import { Button, message, Rate } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, useEffect, useRef, useState } from "react";
 import { CgMoreVerticalAlt } from "react-icons/cg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -11,13 +11,19 @@ import ReviewImage from "../../contents/ReviewImage";
 import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 import CenterModalTs from "../../common/CenterModalTs";
 import axios from "axios";
+import { getCookie } from "../../../utils/cookie";
 
 interface IReviewItemProps {
   strfId: number;
   item: IReviewItem;
+  setStartIdx?: Dispatch<React.SetStateAction<number>>;
+  setReviewList?: Dispatch<React.SetStateAction<IReviewItem[]>>;
+  getReviewList?: (type: string) => Promise<IReviewItem[] | null>;
 }
 
-const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
+const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
+  // 쿠키
+  const accessToken = getCookie("accessToken");
   // useNavigate
   const navigate = useNavigate();
   const navigateToWriteReply = () => {
@@ -45,12 +51,21 @@ const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
 
   // API 삭제하기
   const deleteReview = async (): Promise<string | null> => {
-    const url = `/api/business/review/delete?reviewReplyId=${item.reviewReplyId}`;
+    const url = `/api/business/review/delete?replyId=${item.reviewReplyId}`;
     try {
-      const res = await axios.delete<string | null>(url);
+      const res = await axios.delete<string | null>(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const resultData = res.data;
       console.log("삭제", resultData);
       message.success("삭제가 완료되었습니다");
+      if (resultData) {
+        getReviewList?.("delete");
+        setIsOpenBottom(false);
+        setIsOpenModal(false);
+      }
       return resultData;
     } catch (error) {
       console.log("삭제", error);
@@ -100,6 +115,7 @@ const ReviewItem = ({ strfId, item }: IReviewItemProps) => {
   };
   const handleClickDelete = () => {
     setIsOpenModal(true);
+    setIsOpenBottom(false);
   };
   useEffect(() => {
     if (contentRef.current) {
