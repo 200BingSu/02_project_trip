@@ -17,6 +17,7 @@ import {
   matchRestDataToKor,
   matchState,
 } from "../../../utils/match";
+import { ProductPic } from "../../../constants/pic";
 
 interface ListItemProps {
   children?: ReactNode;
@@ -514,7 +515,24 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
                   <span key={index}>{matchRestDataToKor(item)}, </span>
                 );
               })}
-            {type === "strfPic" && <div>사진</div>}
+            {type === "strfPic" && (
+              <ul className="flex flex-wrap gap-2">
+                {strfData.strfPics.map((item, index) => {
+                  return (
+                    <li
+                      key={index}
+                      className="bg-slate-100 rounded-lg overflow-hidden"
+                    >
+                      <img
+                        src={`${ProductPic}/${strfId}/${item.strfPic}`}
+                        alt={item.strfPic}
+                        className="w-full h-full object-cover"
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
         )}
         {isEdit && type === "title" && (
@@ -523,7 +541,9 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
             defaultValue={strfData.strfTitle as string}
             placeholder="업체 이름을 입력해주세요"
             onChange={e => {
-              setValue(e.target.value);
+              if (e.target.value.length > 0) {
+                setValue(e.target.value);
+              }
             }}
           />
         )}

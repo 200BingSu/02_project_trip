@@ -13,6 +13,7 @@ export interface IReviewItem extends IReview {
   replyId?: number;
   reviewReplyId?: string;
   reviewReplyCreatedAt?: string;
+  isMore?: boolean;
 }
 
 const ReviewIndex = (): JSX.Element => {
@@ -24,6 +25,7 @@ const ReviewIndex = (): JSX.Element => {
   const [reviewList, setReviewList] = useState<IReviewItem[]>([]);
   const [startIdx, setStartIdx] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isMore, setIsMore] = useState(true);
 
   // API 리뷰 목록
   const getReviewList = async (type: string): Promise<IReviewItem[] | null> => {
@@ -46,6 +48,9 @@ const ReviewIndex = (): JSX.Element => {
       if (resultData && type === "delete") {
         setStartIdx(0);
         setReviewList(resultData);
+      }
+      if (resultData[0].isMore === false) {
+        setIsMore(false);
       }
       setIsLoading(false);
       return resultData;
@@ -85,15 +90,17 @@ const ReviewIndex = (): JSX.Element => {
             </div>
           )}
         </section>
-        <div className="flex justify-center">
-          <Button
-            variant="outlined"
-            className="px-5 py-2 h-[9.6vw] max-h-[60px] text-xl text-slate-400 rounded-[32px]"
-            onClick={handleClickMore}
-          >
-            더보기
-          </Button>
-        </div>
+        {isMore && (
+          <div className="flex justify-center">
+            <Button
+              variant="outlined"
+              className="px-5 py-1 h-[9.6vw] max-h-[50px] text-xl text-slate-400 rounded-[32px]"
+              onClick={handleClickMore}
+            >
+              더보기
+            </Button>
+          </div>
+        )}
       </Spin>
     </div>
   );

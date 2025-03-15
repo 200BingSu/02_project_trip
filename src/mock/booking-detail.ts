@@ -1,0 +1,16 @@
+export const bookingDetailMock = {
+  menuTitle: "싱글룸",
+  roomNum: 101,
+  checkIn: "2024-12-05 08:16:25",
+  checkOut: "2024-12-06 18:16:26",
+  bookingNum: 2,
+  name: "cop피바라",
+  tell: "010-4203-2466",
+  email: "ksj23444@gmail.com",
+  finalPayment: 60000,
+  couponTitle: "여행 패키지 쿠폰",
+  recomCapacity: 1,
+  maxCapacity: 4,
+  extraPersonCount: 1,
+  extraFee: 30000,
+};

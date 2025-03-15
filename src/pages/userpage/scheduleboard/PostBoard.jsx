@@ -89,9 +89,14 @@ const PostBoard = () => {
       const resultData = response.data;
       if (resultData.code === "200 성공") {
         message.success("여행기 등록에 성공했습니다");
+        navigateToScheduleBoard();
       }
       console.log(response.data);
     } catch (error) {
+      if (error.response.status === 400) {
+        message.error("아직 완료되지 않은 여행입니다.");
+        navigateBack();
+      }
       console.error(error);
     }
   };
@@ -180,7 +185,7 @@ const PostBoard = () => {
                 rows={4}
                 placeholder="이번 여행은 어떠셨나요? 여행에 대한 감상과 여행에서 경험한 꿀팁들을 남겨 다른 회원님들과 공유해보세요 !"
                 variant="borderless"
-                maxLength={100}
+                maxLength={500}
                 autoSize={{
                   minRows: 3,
                   maxRows: 5,

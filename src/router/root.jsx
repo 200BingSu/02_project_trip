@@ -22,6 +22,7 @@ import reviewRouter from "./business/reviewrouter";
 import storeRouter from "./business/storerouter";
 import BusinessLayout from "../components/layout/BusinessLayout";
 import ChatRoom from "../pages/ChatRoom";
+import announcementRouter from "./announcementrouter";
 // 사용자 lazys
 const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/userpage/bookings/Booking"));
@@ -64,6 +65,11 @@ const LazyBusinessBooking = lazy(
   () => import("../pages/business/booking/Booking"),
 );
 
+// 공용
+const LazyAnnouncement = lazy(
+  () => import("../pages/common/announcement/Announcement"),
+);
+const LazyQnA = lazy(() => import("../pages/common/qna/QnA"));
 const router = createBrowserRouter([
   // 사용자
   {
@@ -256,6 +262,15 @@ const router = createBrowserRouter([
   {
     path: "/chatroom",
     element: <ChatRoom />,
+  },
+  {
+    path: "/announcement",
+    element: <LazyAnnouncement />,
+    children: announcementRouter(),
+  },
+  {
+    path: "/qna",
+    element: <LazyQnA />,
   },
 ]);
 
