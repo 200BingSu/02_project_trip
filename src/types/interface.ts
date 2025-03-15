@@ -245,3 +245,16 @@ export interface ISelectPath {
   totalDistance?: number;
   path_type?: string;
 }
+
+export interface IBooking {
+  bookingId: string;
+  strfId: string;
+  title: string;
+  picName: string;
+  totalPayment: number;
+  state: string;
+  checkInDate: string;
+  checkOutDate: string;
+  checkInTime: string;
+  checkOutTime: string;
+}

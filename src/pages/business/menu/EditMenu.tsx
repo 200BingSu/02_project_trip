@@ -6,7 +6,7 @@ import { matchName } from "../../../utils/match";
 const EditMenu = (): JSX.Element => {
   // 쿼리
   const [searchParams] = useSearchParams();
-  const strfId = searchParams.get("strfId");
+  // const strfId = searchParams.get("strfId");
   const category = searchParams.get("category");
   const menuId = searchParams.get("menuId");
   const what = searchParams.get("what");

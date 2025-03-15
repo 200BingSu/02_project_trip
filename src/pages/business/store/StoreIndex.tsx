@@ -2,15 +2,15 @@ import { Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { strfAtom } from "../../../atoms/strfAtom";
 import BasicInfo from "../../../components/business/store/BasicInfo";
 import OperationInfo from "../../../components/business/store/OperationInfo";
 import Tab from "../../../components/common/Tab";
-import { IAPI, IRoom, IStrf } from "../../../types/interface";
-import { getCookie } from "../../../utils/cookie";
 import { CategoryType } from "../../../types/enum";
-import { categoryKor, matchRestDataToKor } from "../../../utils/match";
-import { useRecoilState } from "recoil";
-import { strfAtom } from "../../../atoms/strfAtom";
+import { Iamenity, IAPI, IRoom, IStrf } from "../../../types/interface";
+import { getCookie } from "../../../utils/cookie";
+import { categoryKor } from "../../../utils/match";
 
 const StoreIndex = (): JSX.Element => {
   // 쿠키
@@ -38,7 +38,7 @@ const StoreIndex = (): JSX.Element => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log(res.data);
+      // console.log("상품 조회",res.data);
       const resultData = res.data;
       if (resultData) {
         const splitTell = resultData.data.tell.split("-", 1);
@@ -82,13 +82,37 @@ const StoreIndex = (): JSX.Element => {
         setIsLoading(false);
         setRoomData(resultData.data);
       }
-      console.log("객실 조회", resultData);
+      // console.log("객실 조회", resultData);
       return resultData;
     } catch (error) {
       console.log("객실 조회", error);
       return null;
     }
   };
+  // API 상품 편의 조회
+  const getAmenity = async (): Promise<IAPI<Iamenity[]> | null> => {
+    const url = "/api/detail/amenity";
+    try {
+      const res = await axios.get<IAPI<Iamenity[]>>(
+        `${url}?strf_id=${strfId}&category=숙소`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      console.log("상품 편의 조회", resultData);
+      setStrfData({
+        ...strfData,
+        amenity: resultData.data.map(item => item.amenityId as number),
+      });
+      return resultData;
+    } catch (error) {
+      return null;
+    }
+  };
+
   const categoryList = [
     {
       label: <p>기본 정보</p>,
@@ -96,7 +120,7 @@ const StoreIndex = (): JSX.Element => {
     },
     {
       label: <p>운영 정보</p>,
-      children: <OperationInfo strfData={strfData as IStrf} />,
+      children: <OperationInfo />,
     },
   ];
   const chageCateIndex = (index: number) => {
@@ -107,6 +131,7 @@ const StoreIndex = (): JSX.Element => {
     getStrfInfo();
     if (category === CategoryType.STAY) {
       getRoomData();
+      getAmenity();
     }
   }, []);
 

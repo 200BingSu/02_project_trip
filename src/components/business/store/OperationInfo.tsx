@@ -1,23 +1,21 @@
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { ReactNode } from "react";
-import { IStrf } from "../../../types/interface";
 // import { matchRestDataToKor } from "../../../utils/match";
-import ListItem from "./ListItem";
 import { useSearchParams } from "react-router-dom";
 import { CategoryType } from "../../../types/enum";
+import ListItem from "./ListItem";
 dayjs.extend(customParseFormat);
 
 interface OperationInfoProps {
   children?: ReactNode;
-  strfData: IStrf;
 }
 
-const OperationInfo = ({ strfData }: OperationInfoProps): JSX.Element => {
+const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const category = searchParams.get("category");
-  console.log(strfData);
+
   // const { startAt, endAt, closeCheck, openCheck, restDate } = strfData;
 
   // const busiHour = [startAt, endAt];

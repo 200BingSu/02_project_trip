@@ -108,11 +108,13 @@ const SingInIndex = () => {
         if (error.response?.status === 401) {
           message.error("잘못된 비밀번호입니다");
         }
-        message.error(
-          loginType === "personal"
-            ? "사업자 계정입니다. 개인회원 로그인을 부탁드립니다."
-            : "개인회원 계정입니다. 사업자 로그인을 부탁드립니다.",
-        );
+        if (error.response?.status === 403) {
+          message.error(
+            loginType === "personal"
+              ? "사업자 계정입니다. 개인회원 로그인을 부탁드립니다."
+              : "개인회원 계정입니다. 사업자 로그인을 부탁드립니다.",
+          );
+        }
       }
       removeCookie(`accessToken`);
       return null;
@@ -146,15 +148,13 @@ const SingInIndex = () => {
     <div className="w-full h-screen flex flex-col items-center justify-center gap-4">
       {/* 로고 */}
       <div className="w-full flex items-center justify-center">
-        <div className=" w-[44.2vw] max-w-[300px] h-auto ">
-          <img
-            src={logo}
-            alt="main_logo"
-            className="cursor-pointer"
-            onClick={() => {
-              navigate("/");
-            }}
-          />
+        <div
+          className=" w-[44.2vw] max-w-[300px] h-auto "
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          <img src={logo} alt="main_logo" className="cursor-pointer" />
         </div>
       </div>
       {/* 로그인 타입 */}

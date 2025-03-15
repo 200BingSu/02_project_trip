@@ -30,8 +30,8 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
     openPathModal: false,
     isReviewModalOpen: false,
   });
-  const [selectPath, setSelectPath] = useState<ISelectPath>({});
-  const [trip, setTrip] = useRecoilState(tripAtom);
+  const [selectPath] = useState<ISelectPath>({});
+  const [trip] = useRecoilState(tripAtom);
   const [messageApi] = message.useMessage();
 
   const navigate = useNavigate();
