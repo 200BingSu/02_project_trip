@@ -26,7 +26,7 @@ const StoreIndex = (): JSX.Element => {
   //useState
   const [cateIndex, setCateIndex] = useState<number>(tab);
   const [isLoading, setIsLoading] = useState(false);
-  const [_, setRoomData] = useState<IRoom[]>([]);
+  // const [_, setRoomData] = useState<IRoom[]>([]);
 
   // API 상품 조회
   const getStrfInfo = async (): Promise<IAPI<IStrf> | null> => {
@@ -70,25 +70,25 @@ const StoreIndex = (): JSX.Element => {
     }
   };
   // API 객실 조회
-  const getRoomData = async (): Promise<IAPI<IRoom[]> | null> => {
-    const url = "/api/detail/parlor";
-    setIsLoading(true);
-    try {
-      const res = await axios.get<IAPI<IRoom[]>>(
-        `${url}?strf_id=${strfId}&category=${categoryKor(category)}`,
-      );
-      const resultData = res.data;
-      if (resultData) {
-        setIsLoading(false);
-        setRoomData(resultData.data);
-      }
-      // console.log("객실 조회", resultData);
-      return resultData;
-    } catch (error) {
-      console.log("객실 조회", error);
-      return null;
-    }
-  };
+  // const getRoomData = async (): Promise<IAPI<IRoom[]> | null> => {
+  //   const url = "/api/detail/parlor";
+  //   setIsLoading(true);
+  //   try {
+  //     const res = await axios.get<IAPI<IRoom[]>>(
+  //       `${url}?strf_id=${strfId}&category=${categoryKor(category)}`,
+  //     );
+  //     const resultData = res.data;
+  //     if (resultData) {
+  //       setIsLoading(false);
+  //       setRoomData(resultData.data);
+  //     }
+  //     // console.log("객실 조회", resultData);
+  //     return resultData;
+  //   } catch (error) {
+  //     console.log("객실 조회", error);
+  //     return null;
+  //   }
+  // };
   // API 상품 편의 조회
   const getAmenity = async (): Promise<IAPI<Iamenity[]> | null> => {
     const url = "/api/detail/amenity";
@@ -103,10 +103,10 @@ const StoreIndex = (): JSX.Element => {
       );
       const resultData = res.data;
       console.log("상품 편의 조회", resultData);
-      setStrfData({
-        ...strfData,
+      setStrfData(prevData => ({
+        ...prevData,
         amenity: resultData.data.map(item => item.amenityId as number),
-      });
+      }));
       return resultData;
     } catch (error) {
       return null;
@@ -130,7 +130,6 @@ const StoreIndex = (): JSX.Element => {
   useEffect(() => {
     getStrfInfo();
     if (category === CategoryType.STAY) {
-      getRoomData();
       getAmenity();
     }
   }, []);

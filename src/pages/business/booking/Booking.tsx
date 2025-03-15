@@ -1,29 +1,25 @@
-import {
-  Outlet,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+import StrfInfo from "../../../components/business/StrfInfo";
 
 const Booking = (): JSX.Element => {
   // 쿼리
-  const [searchParams] = useSearchParams();
-  const strfId = searchParams.get("strfId");
   // useNavigate
   const navigate = useNavigate();
   const location = useLocation();
   const pathName = location.pathname;
 
   const navigateToBack = () => {
-    pathName === "/business/booking"
-      ? navigate("/business")
-      : navigate(`/business/booking?strfId=${strfId}`);
+    pathName === "/business/booking" ? navigate("/business") : navigate(-1);
   };
   return (
     <div>
-      <TitleHeaderTs icon="back" title="예약 관리" onClick={navigateToBack} />
-      {/* <StrfInfo /> */}
+      <TitleHeaderTs
+        title="예약 관리"
+        onClick={navigateToBack}
+        icon={pathName === "/business/booking" ? "close" : "back"}
+      />
+      <StrfInfo />
       <Outlet />
     </div>
   );

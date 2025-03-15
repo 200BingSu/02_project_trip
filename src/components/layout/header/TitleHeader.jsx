@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { BiSolidShareAlt } from "react-icons/bi";
 import { CgMenuGridO } from "react-icons/cg";
@@ -48,7 +49,7 @@ export const RightContent = React.memo(
             </li>
           ) : null}
           {icon3 ? (
-            <li className="flex items-center text-[36px] text-slate-700">
+            <li className={`flex items-center text-[36px] text-slate-700`}>
               <button type="button" onClick={icon3Click}>
                 <IoReaderOutline />
               </button>

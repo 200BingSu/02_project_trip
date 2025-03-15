@@ -7,16 +7,21 @@ import { searchAtom } from "../../atoms/searchAtom";
 import TitleHeader from "../layout/header/TitleHeader";
 import { orderTypeArr } from "../../constants/search";
 import { RiArrowGoBackFill } from "react-icons/ri";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const AmenityFilter = ({ setIsAmenityOpen }) => {
   const [form] = Form.useForm();
+  //쿼리
+  const [searchParams] = useSearchParams();
+  const keyword = searchParams.get("keyword");
+  const category = searchParams.get("category");
+  const orderType = searchParams.get("orderType");
+  const filter = searchParams.get("filter");
+  // navigate
+  const navigate = useNavigate();
+
   //recoil
   const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
-
-  useEffect(() => {
-    console.log("선택된 필터", searchRecoil.amenityId);
-  }, [searchRecoil.amenityId]);
-
   // api 편의시설 검색
   const getAmenitySearch = useCallback(async () => {
     const amenityIds = searchRecoil.amenityId
@@ -24,21 +29,24 @@ const AmenityFilter = ({ setIsAmenityOpen }) => {
       .join("&");
     try {
       const res = await axios.get(
-        `/api/search/filter?start_idx=0&category=숙소&search_word=${searchRecoil.searchWord}&${amenityIds}`,
+        `/api/search/filter?start_idx=0&category=숙소&search_word=${keyword}&${amenityIds}`,
       );
       console.log("편의시설", res.data);
       const resultData = res.data;
-      if (resultData.data.more === false) {
-        setSearchRecoil(prev => ({ ...prev, more: false }));
+      if (resultData.code === "200 성공") {
+        setSearchRecoil(prev => ({
+          ...prev,
+          searchData: resultData.data,
+          more: resultData.data[0].more,
+        }));
       }
-      setSearchRecoil(prev => ({
-        ...prev,
-        searchData: resultData.data,
-      }));
     } catch (error) {
       console.log("편의시설", error);
     }
   }, []);
+  useEffect(() => {
+    console.log("선택된 필터", searchRecoil.amenityId);
+  }, [searchRecoil.amenityId]);
 
   // 뒤로가기
   const handleClickBack = () => {
@@ -70,8 +78,21 @@ const AmenityFilter = ({ setIsAmenityOpen }) => {
   // 적용하기
   const handleSubmit = () => {
     console.log("handleSubmit", searchRecoil);
+    setSearchRecoil(prev => ({
+      ...prev,
+      fromContent: false,
+    }));
     setIsAmenityOpen(false);
-    getAmenitySearch();
+    if (searchRecoil.amenityId.length > 0) {
+      getAmenitySearch();
+      navigate(
+        `/search/strf?keyword=${keyword}&category=${category}&orderType=${searchRecoil.orderType}&filter=selected`,
+      );
+    } else {
+      navigate(
+        `/search/strf?keyword=${keyword}&category=${category}&orderType=${searchRecoil.orderType}&filter=none`,
+      );
+    }
   };
 
   return (

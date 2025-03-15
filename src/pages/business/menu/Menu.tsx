@@ -12,7 +12,7 @@ const Menu = (): JSX.Element => {
   //useNavigate
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const strfId = searchParams.get("strfId");
+  // const strfId = searchParams.get("strfId");
   const category = searchParams.get("category");
   const location = useLocation();
   const pathname = location.pathname;
@@ -22,13 +22,13 @@ const Menu = (): JSX.Element => {
         navigate("/business");
         break;
       case "/business/menu/create":
-        navigate(`/business/menu?strfId=${strfId}&category=${category}`);
+        navigate(-1);
         break;
       case "/business/menu/edit":
-        navigate(`/business/menu?strfId=${strfId}&category=${category}`);
+        navigate(-1);
         break;
       case "/business/menu/detail":
-        navigate(`/business/menu?strfId=${strfId}&category=${category}`);
+        navigate(-1);
         break;
     }
   };
@@ -37,6 +37,7 @@ const Menu = (): JSX.Element => {
       <TitleHeaderTs
         title={`${matchName(category)} 관리`}
         onClick={() => navigateToBack(pathname)}
+        icon={pathname === "/business/menu" ? "close" : "back"}
       />
       <StrfInfo />
       <Outlet />

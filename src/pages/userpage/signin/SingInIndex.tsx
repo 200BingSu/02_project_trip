@@ -109,6 +109,9 @@ const SingInIndex = () => {
           message.error("잘못된 비밀번호입니다");
         }
         if (error.response?.status === 403) {
+          message.error("개인회원 계정입니다. 사업자 로그인을 부탁드립니다.");
+        }
+        if (error.response?.status === 405) {
           message.error(
             loginType === "personal"
               ? "사업자 계정입니다. 개인회원 로그인을 부탁드립니다."
