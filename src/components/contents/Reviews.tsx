@@ -1,12 +1,13 @@
 import { Rate } from "antd";
+import axios from "axios";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { LiaComment } from "react-icons/lia";
 import jwtAxios from "../../apis/jwt";
 import { ProfilePic } from "../../constants/pic";
-import { IReview } from "../../types/interface";
-import ReviewImage from "./ReviewImage";
-import { StrInfoProps } from "./StrInfo";
 import "../../styles/antd-styles.css";
+import { IReview } from "../../types/interface";
+import DynamicGrid from "../basic/DynamicGrid";
+import { StrInfoProps } from "./StrInfo";
 
 const Reviews = ({ strfId, contentData }: StrInfoProps) =>
   // {
@@ -20,19 +21,21 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
     // 쿠키
 
     //useState
-    const [selectedReview, setSelectedReview] = useState<number | null>(null);
+
     const [reviewsData, setReviewsData] = useState<IReview[]>([]);
     const [reviewIndex, setReviewIndex] = useState(0);
-    const [reviewText, setReviewText] = useState(false);
-    const reviewRef = useRef<HTMLParagraphElement | null>(null);
+    const [selectedReview, setSelectedReview] = useState<number | null>(null);
+    const [isLongText, setIsLongText] = useState<{
+      [key: number]: boolean;
+    }>({});
+    const textRef = useRef<{ [key: number]: HTMLParagraphElement | null }>({});
+
+    const [reviewCount, setReviewCount] = useState<number>(0);
+
     //쿼리스트링
 
-    useEffect(() => {
-      console.log("리뷰 목록:", reviewsData);
-    }, [reviewsData]);
-    useEffect(() => {
-      console.log("reviewIndex:", reviewIndex);
-    }, [reviewIndex]);
+    console.log("리뷰 목록:", reviewsData);
+    console.log("reviewIndex:", reviewIndex);
 
     //getReviews
     const getReview = useCallback(async () => {
@@ -48,29 +51,55 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
       }
     }, [reviewIndex, reviewsData, strfId]);
 
+    const getReviewCount = async () => {
+      try {
+        const res = await axios.get(`/api/detail/count?strf_id=${strfId}`);
+        setReviewCount(res.data.data);
+        console.log("리뷰 수:", res);
+      } catch (error) {
+        console.error("리뷰 수 불러오기 실패:", error);
+      }
+    };
+
     useEffect(() => {
       getReview();
     }, [reviewIndex]);
 
     useEffect(() => {
-      if (reviewRef.current) {
-        const el = reviewRef.current;
-        const lineHeight = parseInt(window.getComputedStyle(el).lineHeight, 4);
-        setReviewText(el.scrollHeight > lineHeight * 4);
-      }
-    }, []);
+      getReviewCount();
+    }, [strfId]);
+
+    // 리뷰 높이 체크 후 상태 업데이트
+    useEffect(() => {
+      const newIsLongText: { [key: number]: boolean } = {};
+
+      reviewsData.forEach((_, index) => {
+        const element = textRef.current[index];
+        if (element) {
+          const lineHeight = parseInt(
+            window.getComputedStyle(element).lineHeight,
+          );
+          const height = element.scrollHeight;
+          newIsLongText[index] = height > lineHeight * 3;
+        }
+      });
+
+      setIsLongText(newIsLongText);
+    }, [reviewsData]);
 
     return (
       <div>
         {/* 총 리뷰 수 */}
-        <p>
-          {/* <span>{(contentData?.ratingTotalCnt || 1000).toLocaleString()}</span> */}
+        <p className="text-base text-slate-700 px-4">
+          <span className="font-semibold text-primary">{reviewCount}</span>
           개의 리뷰
         </p>
         {/* 리뷰 리스트 */}
         {reviewsData ? (
           <ul>
             {reviewsData?.map((item, index) => {
+              const isMoreText = isLongText[index];
+
               return (
                 <li
                   key={index}
@@ -124,30 +153,29 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
                   {/* 리뷰 내용 */}
                   <div>
                     <p
-                      className={`text-sm tracking-tight ${index === selectedReview ? `` : `line-clamp-3`}`}
-                      ref={reviewRef}
+                      ref={el => (textRef.current[index] = el)}
+                      className={`text-sm tracking-tight ${
+                        selectedReview === index ? "" : "line-clamp-3"
+                      }`}
                     >
                       {item.content}
                     </p>
-                    {reviewText && (
+                    {isMoreText && selectedReview !== index && (
                       <button
                         type="button"
-                        className="text-primary p-0 text-base font-semibold"
-                        onClick={() =>
-                          setSelectedReview(
-                            index === selectedReview ? null : index,
-                          )
-                        }
+                        className="text-primary text-sm font-semibold mt-[6px]"
+                        onClick={() => setSelectedReview(index)}
                       >
-                        {index === selectedReview ? "접기" : "더보기"}
+                        더보기
                       </button>
                     )}
                   </div>
                   {/* 사진 */}
-                  <ReviewImage
+                  <DynamicGrid reviewPics={item} type="review" />
+                  {/* <ReviewImage
                     imgArr={item.reviewPic}
                     reviewId={item.reviewId}
-                  />
+                  /> */}
                 </li>
               );
             })}

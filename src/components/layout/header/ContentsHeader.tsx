@@ -7,6 +7,7 @@ import "../../../styles/antd-styles.css";
 
 import { FaLink } from "react-icons/fa6";
 import jwtAxios from "../../../apis/jwt";
+import { useNavigate } from "react-router-dom";
 
 interface ContentsHeaderProps extends StrInfoProps {
   scrollEvent?: boolean; // 기본값을 true로 설정
@@ -20,6 +21,7 @@ const ContentsHeader = ({
   getDetailMember,
 }: ContentsHeaderProps): JSX.Element => {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const postWishList = async () => {
     const sendData = {
@@ -74,7 +76,10 @@ const ContentsHeader = ({
     >
       <div className="flex justify-between items-center h-[60px]">
         <div className="flex items-center gap-3">
-          <IoIosArrowRoundBack className="text-3xl " />
+          <IoIosArrowRoundBack
+            className="text-3xl "
+            onClick={() => navigate(-1)}
+          />
           <h2 className="font-semibold text-xl">{contentData?.strfTitle}</h2>
         </div>
         <div className="flex items-center gap-3">

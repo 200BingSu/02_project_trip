@@ -18,6 +18,7 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
         <img
           src={`${ProductPic}/${strfId}/${contentData?.strfPics[0].strfPic}`}
           alt={contentData?.strfTitle || ""}
+          className="w-full"
         />
       </div>
       <div className="px-4 py-3 flex flex-col gap-2">
