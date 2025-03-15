@@ -10,7 +10,7 @@ const Store = (): JSX.Element => {
   };
   return (
     <div className="min-h-screen">
-      <TitleHeaderTs title="업체 관리" onClick={navigateToHome} />
+      <TitleHeaderTs title="업체 관리" onClick={navigateToHome} icon="close" />
       <StrfInfo />
       <Outlet />
     </div>

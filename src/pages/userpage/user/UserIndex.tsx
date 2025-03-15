@@ -17,6 +17,7 @@ import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import { resetUserData } from "../../../selectors/userSelector";
 import { ProviderType, ROLE } from "../../../types/enum";
+import { IAPI } from "../../../types/interface";
 
 //interface
 interface ITripList {
@@ -67,7 +68,28 @@ const UserIndex = () => {
       return null;
     }
   };
-
+  // API 관리자 채팅방 생성
+  const createChatToAdmine = async (): Promise<IAPI<
+    string | number
+  > | null> => {
+    const url = "/api/chat-room/admin";
+    try {
+      const res = await axios.post<IAPI<string | number>>(url, null, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("관리자 채팅방 생성", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        navigateToChatRoom(resultData.data);
+      }
+      return resultData;
+    } catch (error) {
+      console.log("관리자 채팅방 생성", error);
+      return null;
+    }
+  };
   useEffect(() => {
     if (accessToken) {
       getUserInfo();
@@ -75,7 +97,9 @@ const UserIndex = () => {
   }, []);
 
   const navigate = useNavigate();
-
+  const navigateToChatRoom = (roomId: string | number) => {
+    navigate(`/chatroom?roomId=${roomId}`);
+  };
   const handleLogout = () => {
     resetUserInfo();
     removeCookie("accessToken");
@@ -99,8 +123,6 @@ const UserIndex = () => {
   // const handleUserEdit = () => {
   //   navigate("/user/useredit", { state: useProfile });
   // };
-
-
 
   return (
     <div className={` w-full flex justify-end`}>
@@ -256,9 +278,12 @@ const UserIndex = () => {
           <Link to="" className="flex   text-slate-500 py-5 text-sm">
             고객센터
           </Link>
-          <Link to="" className="flex text-slate-500 py-5 text-sm">
+          <div
+            className="flex text-slate-500 py-5 text-sm cursor-pointer"
+            onClick={createChatToAdmine}
+          >
             1:1 문의하기
-          </Link>
+          </div>
           <Link
             to="/user/changepw"
             className="flex text-slate-500 py-5 text-sm"

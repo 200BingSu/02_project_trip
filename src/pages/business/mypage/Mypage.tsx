@@ -17,11 +17,18 @@ import {
   matchName,
 } from "../../../utils/match";
 import { salesAtom } from "../../../atoms/salesAtom";
+import axios from "axios";
+import { IAPI } from "../../../types/interface";
 
 const Mypage = (): JSX.Element => {
+  // useNavigate
   const navigate = useNavigate();
+  const navigateToChatRoom = (roomId: string | number) => {
+    navigate(`/chatroom?roomId=${roomId}`);
+  };
   // 쿠키
   const userInfo = getCookie("user");
+  const accessToken = getCookie("accessToken");
   console.log("쿠키", userInfo);
   const strfId = userInfo?.strfDtos[0].strfId;
   const category =
@@ -38,6 +45,29 @@ const Mypage = (): JSX.Element => {
   const [openOption, setOpenOption] = useState<number>(0);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const [isOpenOption, setIsOpenOption] = useState<boolean>(false);
+
+  // API 관리자 채팅방 생성
+  const createChatToAdmine = async (): Promise<IAPI<
+    string | number
+  > | null> => {
+    const url = "/api/chat-room/admin";
+    try {
+      const res = await axios.post<IAPI<string | number>>(url, null, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("관리자 채팅방 생성", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        navigateToChatRoom(resultData.data);
+      }
+      return resultData;
+    } catch (error) {
+      console.log("관리자 채팅방 생성", error);
+      return null;
+    }
+  };
 
   // 메뉴
   const mainMenuArr = [
@@ -102,9 +132,15 @@ const Mypage = (): JSX.Element => {
   ];
   // 관리 메뉴
   const manageMenuArr = [
-    { name: "공지사항", path: "" },
-    { name: "자주 묻는 질문", path: "" },
-    { name: "고객센터", path: "" },
+    {
+      name: "공지사항",
+      onClick: () => navigate("/announcement?type=business"),
+    },
+    {
+      name: "자주 묻는 질문",
+      onClick: () => navigate("/qna"),
+    },
+    { name: "관리자에게 문의하기", onClick: () => createChatToAdmine() },
   ];
   // 메뉴 열기
   const handleOpenMenu = (index: number) => {
@@ -316,8 +352,8 @@ const Mypage = (): JSX.Element => {
             return (
               <li
                 key={index}
-                className="cursor-pointer text-slate-500 py-3 text-lg"
-                onClick={() => navigate(item.path)}
+                className="cursor-pointer text-slate-500 py-3 text-lg select-none"
+                onClick={item.onClick}
               >
                 {item.name}
               </li>

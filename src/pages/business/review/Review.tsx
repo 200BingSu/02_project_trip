@@ -17,7 +17,7 @@ const Review = (): JSX.Element => {
     navigate("/business");
   };
   const navigateToEdit = () => {
-    navigate(`/business/review?strfId=${strfId}`);
+    navigate(-1);
   };
   // useLocation
   const location = useLocation();
@@ -29,6 +29,7 @@ const Review = (): JSX.Element => {
         onClick={
           pathname === "/business/review/edit" ? navigateToEdit : navigateToHome
         }
+        icon={pathname === "/business/review" ? "close" : "back"}
       />
       <Outlet />
     </div>

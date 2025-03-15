@@ -8,15 +8,14 @@ import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 
 const Coupon = (): JSX.Element => {
   // 쿼리
-  const [searchParams] = useSearchParams();
-  const strfId = Number(searchParams.get("strfId"));
+
   // useNavigate
   const navigate = useNavigate();
   const navigateToHome = () => {
     navigate("/business");
   };
   const navigateToCoupon = () => {
-    navigate(`/business/coupon?strfId=${strfId}`);
+    navigate(-1);
   };
 
   // useLocation
@@ -30,6 +29,7 @@ const Coupon = (): JSX.Element => {
         onClick={
           pathname === "/business/coupon" ? navigateToHome : navigateToCoupon
         }
+        icon={pathname === "/business/coupon" ? "close" : "back"}
       />
       <Outlet />
     </div>

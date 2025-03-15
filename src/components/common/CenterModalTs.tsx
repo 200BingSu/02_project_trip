@@ -72,7 +72,7 @@ const CenterModal = ({
         </div>
         {/* 버튼 목록 */}
 
-        <div className="flex gap-[20px] justify-end w-full">
+        <div className="flex gap-[20px] justify-center w-full">
           {(type === "info" ||
             type === "success" ||
             type === "delete" ||
