@@ -1,4 +1,4 @@
-import { ConfigProvider } from "antd";
+import { ConfigProvider, message } from "antd";
 import locale from "antd/es/locale/ko_KR";
 import axios from "axios";
 import { useEffect, useRef } from "react";
@@ -17,12 +17,10 @@ interface IgetUserInfo {
 
 const App = () => {
   const accessToken = getCookie("accessToken");
-  // console.log(userInfo);
-  //useRef
-  const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   //recoil
   const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
 
+  // API 유저 정보 호출
   const getUserInfo = async (): Promise<IgetUserInfo | null> => {
     try {
       const res = await axios.get<IgetUserInfo>(`/api/user/userInfo`, {
@@ -47,6 +45,8 @@ const App = () => {
   };
   // console.log("tsUserInfo", tsUserInfo);
 
+  // SSE
+  const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   useEffect(() => {
     if (!accessToken) {
       return;
@@ -55,7 +55,6 @@ const App = () => {
       console.log("기존 SSE 연결 닫기");
       eventSourceRef.current.close();
     }
-
     const eventSource = new EventSourcePolyfill("/api/notice", {
       headers: { Authorization: `Bearer ${accessToken}` },
       heartbeatTimeout: 3600000,
@@ -102,8 +101,6 @@ const App = () => {
             starColor: "#0DD1FD",
           },
           Steps: {
-            colorPrimary: "#6B4AD6",
-            controlItemBgActive: "#AF9DE9",
             colorTextDescription: "#666666",
             colorSplit: "#E2E8F0",
             dotSize: 8,
@@ -112,6 +109,11 @@ const App = () => {
           },
           Input: {
             colorTextPlaceholder: "#94A3B8",
+          },
+          Notification: {
+            width: 200,
+            padding: 4,
+            fontSize: 12,
           },
         },
       }}

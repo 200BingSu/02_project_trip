@@ -34,7 +34,7 @@ const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
       )}
       <ListItem title="입실/퇴실 시간" type="checkTime" />
       <ListItem title="휴무일" type="restDate" />
-      <ListItem title="임시 휴무일 등록" type="tempRest" />
+      {/* <ListItem title="임시 휴무일 등록" type="tempRest" /> */}
     </>
   );
 };

@@ -1,6 +1,6 @@
 // 카테고리 배열 (전체=null)
 export const categoryArr = [
-  { type: null, name: "전체" },
+  { type: "ALL", name: "전체" },
   { type: "TOUR", name: "관광지" },
   { type: "STAY", name: "숙소" },
   { type: "RESTAUR", name: "맛집" },

@@ -12,7 +12,10 @@ const searchRouter = () => {
     () => import("../../pages/userpage/search/SearchTrip.jsx"),
   );
   const LazySearchStrf = lazy(
-    () => import("../../pages/userpage/search/SearchStrf.jsx"),
+    () => import("../../pages/userpage/search/SearchAfter.jsx"),
+  );
+  const LazySearchBefore = lazy(
+    () => import("../../pages/userpage/search/SearchBefore.jsx"),
   );
   return [
     {
@@ -36,6 +39,14 @@ const searchRouter = () => {
       element: (
         <Suspense fallback={<Loading />}>
           <LazySearchTrip />
+        </Suspense>
+      ),
+    },
+    {
+      path: "before",
+      element: (
+        <Suspense fallback={<Loading />}>
+          <LazySearchBefore />
         </Suspense>
       ),
     },

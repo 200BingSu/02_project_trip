@@ -71,12 +71,12 @@ const ScheduleDetail = () => {
   };
   // api 여행기 추천
   const postTripReviewLike = async () => {
+    const url = "/api/trip-review/like";
     const sendData = {
-      userId: userId,
       tripReviewId: tripReviewId,
     };
     try {
-      const res = await jwtAxios.post(`/api/trip-review/like`, sendData);
+      const res = await jwtAxios.post(url, sendData);
       console.log("여행기 추천", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
@@ -89,7 +89,6 @@ const ScheduleDetail = () => {
   // api 여행기 추천 취소
   const deleteTripReviewLike = async () => {
     const sendData = {
-      userId: userId,
       tripReviewId: tripReviewId,
     };
     try {
@@ -189,26 +188,30 @@ const ScheduleDetail = () => {
               <p>{tripReviewData[0]?.content}</p>
             </div>
             {/* 좋아요 버튼 */}
-            <div className="flex justify-center">
-              <button
-                type="button"
-                className={`w-[50px] h-[50px] flex items-center justify-center
-                   bg-slate-100 rounded-full 
-                   text-slate-300 text-[20px]
+            {accessToken && (
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  className={`w-[50px] h-[50px] flex items-center justify-center
+                    rounded-full text-[20px]
                    transition-all duration-300
-                   hover:bg-slate-200
-                   ${tripReviewData.likeUser === 0 ? "text-secondary3" : "text-slate-500"}`}
-                onClick={() => {
-                  if (tripReviewData.likeUser === 0) {
-                    postTripReviewLike();
-                  } else {
-                    deleteTripReviewLike();
-                  }
-                }}
-              >
-                <GoThumbsup />
-              </button>
-            </div>
+                   ${
+                     tripReviewData[0]?.likeUser === 1
+                       ? "text-secondary3 bg-secondary3/10"
+                       : "text-slate-500 bg-slate-100"
+                   }`}
+                  onClick={() => {
+                    if (tripReviewData[0]?.likeUser === 0) {
+                      postTripReviewLike();
+                    } else {
+                      deleteTripReviewLike();
+                    }
+                  }}
+                >
+                  <GoThumbsup />
+                </button>
+              </div>
+            )}
           </div>
           {/* 일정 */}
           <div>

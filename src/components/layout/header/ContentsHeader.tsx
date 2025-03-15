@@ -8,6 +8,8 @@ import "../../../styles/antd-styles.css";
 import { FaLink } from "react-icons/fa6";
 import jwtAxios from "../../../apis/jwt";
 import { useNavigate } from "react-router-dom";
+import { searchAtom } from "../../../atoms/searchAtom";
+import { useRecoilState } from "recoil";
 
 interface ContentsHeaderProps extends StrInfoProps {
   scrollEvent?: boolean; // 기본값을 true로 설정
@@ -20,7 +22,11 @@ const ContentsHeader = ({
   contentData,
   getDetailMember,
 }: ContentsHeaderProps): JSX.Element => {
+  //recoil
+  const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
+  //useState
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  //useNavigate
   const navigate = useNavigate();
 
   const postWishList = async () => {
@@ -78,7 +84,13 @@ const ContentsHeader = ({
         <div className="flex items-center gap-3">
           <IoIosArrowRoundBack
             className="text-3xl "
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              navigate(-1);
+              setSearchRecoil(prev => ({
+                ...prev,
+                fromContent: true,
+              }));
+            }}
           />
           <h2 className="font-semibold text-xl">{contentData?.strfTitle}</h2>
         </div>

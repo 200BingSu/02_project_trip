@@ -1,7 +1,7 @@
 import { Button, message, Rate } from "antd";
 import { Dispatch, useEffect, useRef, useState } from "react";
 import { CgMoreVerticalAlt } from "react-icons/cg";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { editReviewAtom } from "../../../atoms/editReviewAtom";
 import { ProfilePic } from "../../../constants/pic";
@@ -24,6 +24,9 @@ interface IReviewItemProps {
 const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
   // 쿠키
   const accessToken = getCookie("accessToken");
+  // 쿼리
+  const [searchParam] = useSearchParams();
+  const type = searchParam.get("type");
   // useNavigate
   const navigate = useNavigate();
   const navigateToWriteReply = () => {
@@ -173,7 +176,7 @@ const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
         <ReviewImage imgArr={item.reviewPicList} reviewId={item.reviewId} />
       </section>
       {/* 사장님 리뷰 */}
-      {item.reviewReply && (
+      {item.reviewReply && type !== "edit" && (
         <section className="p-4 bg-slate-100 rounded-lg flex flex-col gap-3">
           {/* 사업자 */}
           <div className="flex items-center justify-between">
