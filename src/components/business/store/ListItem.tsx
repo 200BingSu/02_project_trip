@@ -9,10 +9,11 @@ import { useRecoilState } from "recoil";
 import { strfAtom } from "../../../atoms/strfAtom";
 import { amenities } from "../../../constants/dataArr";
 import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
-import { Iamenity, IAPI, IStrf } from "../../../types/interface";
+import { IAPI, IStrf } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
 import {
   categoryKor,
+  matchAmenityIcon,
   matchRestDataToKor,
   matchState,
 } from "../../../utils/match";
@@ -403,14 +404,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     { value: 1, label: "휴업" },
     { value: 2, label: "폐업" },
   ];
-  // 편의시설
-  const filterAmenities = (amenities: Iamenity[], selectedIds: number[]) => {
-    return amenities.filter(amenity => {
-      if (typeof amenity.amenity_id === "number") {
-        selectedIds.includes(amenity.amenity_id);
-      }
-    });
-  };
+
   // 전화번호
   const selectBefore = (
     <Select
@@ -499,12 +493,14 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
                 : `${strfData.tell}`)}
             {type === "detail" && strfData.detail}
             {type === "amenity" && (
-              <ul>
-                {filterAmenities(amenities, strfData.amenity).map(amenity => (
-                  <li key={amenity.amenityId}>
-                    {amenity.icon} {amenity.amenityTitle}
-                  </li>
-                ))}
+              <ul className="flex flex-wrap items-center gap-3 ">
+                {strfData.amenity.map((item, index) => {
+                  if (index < strfData.amenity.length - 1) {
+                    return <li key={index}>{matchAmenityIcon(item)},</li>;
+                  } else {
+                    return <li key={index}>{matchAmenityIcon(item)}</li>;
+                  }
+                })}
               </ul>
             )}
             {type === "duration" && `${strfData.startAt}~${strfData.endAt}`}

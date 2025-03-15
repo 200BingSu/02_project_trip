@@ -119,6 +119,7 @@ const ScheduleDetail = () => {
           <TitleHeader
             icon="back"
             onClick={handleNavigateBack}
+            title="여행기"
             rightContent={<RightContent />}
           />
           {/* 여행기 */}

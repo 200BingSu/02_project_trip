@@ -108,6 +108,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
   // 폼 제출
   const onFinish = (values: any) => {
     const { recomCapacity, maxCapacity, surcharge, rooms } = values;
+    const numberRooms = rooms.map((item: any) => Number(item));
     const sendData: CreateRoomDataType = {
       strfId: strfId,
       busiNum: busiNum,
@@ -122,7 +123,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
           surcharge: surcharge,
         },
       ],
-      rooms: rooms,
+      rooms: numberRooms,
     };
     console.log(sendData);
     createRoom(sendData);

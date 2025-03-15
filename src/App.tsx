@@ -1,13 +1,14 @@
 import { ConfigProvider } from "antd";
 import locale from "antd/es/locale/ko_KR";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { RouterProvider } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { tsUserAtom } from "./atoms/tsuserAtom";
 import router from "./router/root";
 import { Iuser } from "./types/interface";
 import { getCookie } from "./utils/cookie";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
 interface IgetUserInfo {
   code: string;
@@ -17,7 +18,8 @@ interface IgetUserInfo {
 const App = () => {
   const accessToken = getCookie("accessToken");
   // console.log(userInfo);
-
+  //useRef
+  const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   //recoil
   const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
 
@@ -44,11 +46,47 @@ const App = () => {
     }
   };
   // console.log("tsUserInfo", tsUserInfo);
+
+  useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+    if (eventSourceRef.current) {
+      console.log("기존 SSE 연결 닫기");
+      eventSourceRef.current.close();
+    }
+
+    const eventSource = new EventSourcePolyfill("/api/notice", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      heartbeatTimeout: 3600000,
+    });
+
+    eventSourceRef.current = eventSource; // 여기서 SSE 인스턴스 저장!
+
+    eventSource.onopen = () => console.log("SSE 연결 성공!");
+    eventSource.onmessage = event => console.log("새 알림:", event.data);
+    eventSource.onerror = error => {
+      console.error("SSE 연결 오류:", error);
+      setTimeout(() => {
+        eventSourceRef.current = new EventSourcePolyfill("/api/notice", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          heartbeatTimeout: 3600000,
+        });
+      }, 5000);
+    };
+
+    return () => {
+      console.log("언마운트: SSE 연결 닫기");
+      eventSourceRef.current?.close(); // 언마운트될 때 연결 닫기
+    };
+  }, [accessToken]);
+
   useEffect(() => {
     if (accessToken) {
       getUserInfo();
     }
   }, [accessToken]);
+
   return (
     <ConfigProvider
       locale={locale}

@@ -1,11 +1,9 @@
-import { useRecoilValue } from "recoil";
 import { getCookie } from "../../utils/cookie";
 import { formatId } from "../../utils/format";
-import { strfAtom } from "../../atoms/strfAtom";
 
 const StrfInfo = (): JSX.Element => {
   const userInfo = getCookie("user");
-  const strfData = useRecoilValue(strfAtom);
+
   const strfId = userInfo?.strfDtos[0].strfId;
   const title = userInfo?.strfDtos[0].title;
 

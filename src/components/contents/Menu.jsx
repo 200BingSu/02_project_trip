@@ -4,13 +4,13 @@ import { BiTime } from "react-icons/bi";
 import Partnership from "../common/Partnership";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import styled from "@emotion/styled";
 import { MenuPic, ProductPic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../atoms/userAtom";
 import "dayjs/locale/ko";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 dayjs.locale("ko");
 dayjs.extend(customParseFormat);

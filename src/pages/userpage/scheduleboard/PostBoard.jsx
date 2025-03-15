@@ -4,7 +4,7 @@ import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 import { useEffect, useState } from "react";
 import ScheduleDay from "../../../components/scheduleboard/ScheduleDay";
 import TextArea from "antd/es/input/TextArea";
-import { Button, Form, Input, Upload } from "antd";
+import { Button, Form, Input, message, Upload } from "antd";
 import axios from "axios";
 import { getCookie } from "../../../utils/cookie";
 import jwtAxios from "../../../apis/jwt";
@@ -86,6 +86,10 @@ const PostBoard = () => {
     console.log("보낸 데이터", [...formData]);
     try {
       const response = await jwtAxios.post(`/api/trip-review`, formData);
+      const resultData = response.data;
+      if (resultData.code === "200 성공") {
+        message.success("여행기 등록에 성공했습니다");
+      }
       console.log(response.data);
     } catch (error) {
       console.error(error);
@@ -109,7 +113,20 @@ const PostBoard = () => {
     textarea.style.height = `${textarea.scrollHeight}px`;
     setText(e.target.value);
   };
-
+  const onPreview = async file => {
+    let src = file.url;
+    if (!src) {
+      src = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
   return (
     <div>
       <TitleHeader icon="back" onClick={navigateBack} title="여행기 공유" />
@@ -123,7 +140,12 @@ const PostBoard = () => {
             className="flex flex-col gap-[48px]"
           >
             {/* 업로드 */}
-            <Form.Item name="file">
+            <Form.Item
+              name="file"
+              rules={[
+                { required: true, message: "여행기를 위한 사진을 올려주세요." },
+              ]}
+            >
               <Upload
                 id="file"
                 listType="picture-card"
@@ -131,23 +153,10 @@ const PostBoard = () => {
                 fileList={fileList}
                 onChange={handleChange}
                 // showUploadList={false}
+                accept="image/*"
                 multiple
               >
-                <div
-                  htmlFor="fileUpload"
-                  className="
-            w-[160px] h-[160px] 
-            flex items-center justify-center
-            bg-slate-100 rounded-lg
-            hover:bg-[#e9eef3]
-            transition duration-300
-            cursor-pointer shrink-0"
-                >
-                  <MdOutlineAddPhotoAlternate
-                    size={60}
-                    className="text-slate-400"
-                  />
-                </div>
+                {fileList.length < 5 && "+ Upload"}
               </Upload>
             </Form.Item>
             {/* 제목 */}
@@ -198,7 +207,6 @@ const PostBoard = () => {
                 htmlType="submit"
                 className="w-full h-[80px] 
                     text-slate-50 text-[24px] font-semibold"
-                onClick={navigateToScheduleBoard}
               >
                 완료
               </Button>

@@ -18,8 +18,6 @@ import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import { resetUserData } from "../../../selectors/userSelector";
 import { ProviderType, ROLE } from "../../../types/enum";
 
-import { EventSourcePolyfill } from "event-source-polyfill";
-
 //interface
 interface ITripList {
   tripId: number;
@@ -103,30 +101,6 @@ const UserIndex = () => {
   // };
 
 
-  const eventSource = new EventSourcePolyfill("/api/notice", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-
-    heartbeatTimeout: 3600000,
-
-  });
-
-
-  // console.log("eventSource 간격", eventSource);
-
-  // eventSource.onopen = function () {
-  //   console.log("SSE 연결 성공!");
-  // };
-  // eventSource.onmessage = function (event) {
-  //   console.log("새 알림:", event.data);
-  // };
-  // eventSource.onerror = function (error) {
-  //   console.error("SSE 연결 오류:", error);
-  //   setTimeout(() => {
-  //     eventSource;
-  //   }, 60000);
-  // };
 
   return (
     <div className={` w-full flex justify-end`}>
