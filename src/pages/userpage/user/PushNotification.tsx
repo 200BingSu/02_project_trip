@@ -3,7 +3,7 @@ import { FcPlanner, FcPlus } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../../apis/jwt";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { IAPI } from "../../../types/interface";
+import Notification from "../../../components/user/Notification";
 
 interface NoticaProps {
   noticeId: string;
@@ -13,32 +13,27 @@ interface NoticaProps {
   noticedAt: string;
 }
 
+export interface NotiDetailProps {
+  noticeId: string;
+  title: string;
+  content: string;
+  category: string;
+  noticedAt: string;
+  foreignNum: string;
+}
+
 const NotnicoArr = (category: string): ReactNode => {
   const iconMap: Record<string, ReactNode> = {
-    TRIP: (
-      <img
-        src={`/public/images/notification/luggage_1f9f3.png`}
-        alt="luggage"
-      />
-    ),
+    TRIP: <img src={`/images/notification/luggage_1f9f3.png`} alt="luggage" />,
     CHAT: (
       <img
-        src={`/public/images/notification/speech-balloon_1f4ac.png`}
+        src={`/images/notification/speech-balloon_1f4ac.png`}
         alt="speech-balloon"
       />
     ),
-    AD: (
-      <img
-        src={`/public/images/notification/pushpin_1f4cc.png`}
-        alt="pushpin"
-      />
-    ),
-    COUPON: (
-      <img src={`/public/images/notification/ticket_1f3ab.png`} alt="ticket" />
-    ),
-    SERVICE: (
-      <img src={`/public/images/notification/bell_1f514.png`} alt="bell" />
-    ),
+    AD: <img src={`/images/notification/pushpin_1f4cc.png`} alt="pushpin" />,
+    COUPON: <img src={`/images/notification/ticket_1f3ab.png`} alt="ticket" />,
+    SERVICE: <img src={`/images/notification/bell_1f514.png`} alt="bell" />,
     BOOKING: <FcPlanner className="text-3xl" />,
     POINT: <FcPlus className="text-3xl" />,
   };
@@ -56,16 +51,19 @@ const cateArr: Record<string, string> = {
 };
 
 const PushNotification = (): JSX.Element => {
-  const [notica, setNotica] = useState<IAPI<NoticaProps[]>>();
+  const [notica, setNotica] = useState<NoticaProps[]>([]);
+  const [notiDetail, setNotiDetail] = useState<NotiDetailProps | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedNT, setSelectedNT] = useState<NoticaProps | null>(null);
+
   const navigate = useNavigate();
 
-  const getNotica = async (): Promise<IAPI<NoticaProps[]> | void> => {
+  const getNotica = async (): Promise<void> => {
     try {
-      const res = await jwtAxios.get<IAPI<NoticaProps[]>>(
-        "/api/notice/check?start_idx=0",
-      );
-      setNotica(res.data);
-      console.log(res.data);
+      const res = await jwtAxios.get("/api/notice/check?start_idx=0");
+      const notifications = res.data.data.noticeLines;
+      setNotica(notifications);
+      console.log(res.data.data.noticeLines);
     } catch (error) {
       console.log(error);
     }
@@ -76,10 +74,15 @@ const PushNotification = (): JSX.Element => {
       const res = await jwtAxios.get(
         `/api/notice/check-one?notice_id=${noticeId}`,
       );
-      console.log(res.data);
-      getNotica();
+      setNotiDetail(res.data.data);
+      const notice = notica.find(item => item.noticeId === noticeId);
+      if (notice) {
+        setSelectedNT(notice);
+        setIsVisible(true);
+        getNotica();
+      }
     } catch (error) {
-      console.log(error);
+      console.log("알림 상세 정보 불러오기 실패:", error);
     }
   };
 
@@ -89,9 +92,11 @@ const PushNotification = (): JSX.Element => {
 
   return (
     <div>
-      <TitleHeaderTs title="알림" icon="back" onClick={() => navigate("/")} />
+      <div className="relative">
+        <TitleHeaderTs title="알림" icon="back" onClick={() => navigate("/")} />
+      </div>
       <ul>
-        {notica?.data.map(item => (
+        {notica?.map(item => (
           <li
             key={item.noticeId}
             onClick={() => handleClick(item.noticeId)}
@@ -112,6 +117,17 @@ const PushNotification = (): JSX.Element => {
           </li>
         ))}
       </ul>
+      {selectedNT && notiDetail && (
+        <Notification
+          notiDetail={notiDetail}
+          isVisible={isVisible}
+          onClose={() => {
+            setIsVisible(false);
+            setSelectedNT(null);
+            setNotiDetail(null);
+          }}
+        />
+      )}
     </div>
   );
 };

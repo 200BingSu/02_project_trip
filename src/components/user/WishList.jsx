@@ -10,6 +10,7 @@ import { ProductPic } from "../../constants/pic";
 const WishList = ({ category }) => {
   const [startIndex, setStartIndex] = useState(0);
   const [wishListData, setWishListData] = useState([]);
+  const [count, setCount] = useState(0);
   const [isMore, setIsMore] = useState(true);
   const [showFilter, setShowFilter] = useState(false);
   const [orderType, setOrderType] = useState("ratingAvg");
@@ -30,14 +31,15 @@ const WishList = ({ category }) => {
   };
 
   // 찜하기 가져오기
-  const getWishList = async (index = startIndex) => {
+  const getWishList = async (isLoadMore = false) => {
+    const index = isLoadMore ? startIndex : 0;
     try {
       const res = await jwtAxios.get(
         `/api/wish-list?start_idx=${index}&orderType=${orderType}&category=${category}`,
       );
 
       setWishListData(prev => {
-        if (index === 0) {
+        if (!isLoadMore) {
           return res.data.data; // 데이터 초기화
         } else {
           return [...prev, ...res.data.data]; // 데이터 추가
@@ -52,15 +54,27 @@ const WishList = ({ category }) => {
     }
   };
 
+  const wishCount = async () => {
+    try {
+      const res = await jwtAxios.get(`/api/wish-list/count`);
+      setCount(res.data);
+    } catch (error) {
+      console.log("찜목록 개수 불러오기 실패", error);
+    }
+  };
+
   // 🔹 category, orderType 변경 시 데이터 초기화 후 새로 불러오기
   useEffect(() => {
-    setStartIndex(0); // category나 orderType이 변경될 때마다 startIndex 초기화
     getWishList(); // 데이터 초기화 후 새로 불러오기
   }, [category, orderType]);
 
+  useEffect(() => {
+    wishCount();
+  }, []);
+
   // 🔹 더보기 버튼 클릭 시 데이터 추가
   const handleLoadMore = () => {
-    getWishList(startIndex); // 현재 startIndex 값을 명시적으로 전달
+    getWishList(true); // 더보기 시에만 true로 전달
     console.log("Current startIndex:", startIndex);
   };
 
@@ -86,9 +100,7 @@ const WishList = ({ category }) => {
         />
       )}
       <div className="flex justify-between py-[14px] px-4 border-b-[1px] border-slate-100 ">
-        <p className="text-sm font-semibold text-slate-700">
-          총 {wishListData.length}개
-        </p>
+        <p className="text-sm font-semibold text-slate-700">총 {count}개</p>
         <button
           className="flex items-center gap-1 text-slate-500"
           onClick={() => setShowFilter(true)}
@@ -119,8 +131,6 @@ const WishList = ({ category }) => {
                     onClick={e => {
                       e.stopPropagation();
                       postWishItem(item);
-                      setStartIndex(0); // startIndex 초기화
-                      setWishListData([]); // 데이터 초기화
                     }}
                   />
                 </div>

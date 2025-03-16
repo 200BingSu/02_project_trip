@@ -34,7 +34,7 @@ const UserPoint = (): JSX.Element => {
               onClick={() => setIsOpen(true)}
             >
               <img
-                src="/public/images/icon/IoQrCode.svg"
+                src="/images/icon/IoQrCode.svg"
                 alt="IoQrCode"
                 className="w-6 aspect-square"
               />
@@ -45,7 +45,7 @@ const UserPoint = (): JSX.Element => {
               className="flex flex-col flex-1 items-center gap-[6px] cursor-pointer"
             >
               <img
-                src="/public/images/icon/AiOutlinePlusCircle.svg"
+                src="/images/icon/AiOutlinePlusCircle.svg"
                 alt="AiOutlinePlusCircle"
                 className="w-6 aspect-square"
               />

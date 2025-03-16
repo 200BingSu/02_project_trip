@@ -112,7 +112,7 @@ const PointPayment = (): JSX.Element => {
           <Radio className="custom-payment-radio text-base text-slate-700">
             <div className="flex items-center gap-3">
               <img
-                src="/public/images/payment/payment_icon_yellow_small.png"
+                src="/images/payment/payment_icon_yellow_small.png"
                 alt="payment_icon_yellow_small"
                 className="w-[60px]"
               />

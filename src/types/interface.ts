@@ -258,3 +258,12 @@ export interface IBooking {
   checkInTime: string;
   checkOutTime: string;
 }
+
+export interface IAddSchedule {
+  tripId: number;
+  title: string;
+  startAt: string;
+  endAt: string;
+  locationPic: string;
+  scheduleCnt: number;
+}
