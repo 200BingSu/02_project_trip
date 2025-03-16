@@ -10,6 +10,7 @@ const Review = (): JSX.Element => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const strfId = Number(searchParams.get("strfId"));
+  console.log("strfId", strfId);
 
   // useNavigate
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Review = (): JSX.Element => {
     navigate("/business");
   };
   const navigateToEdit = () => {
-    navigate(`/business/review?strfId=${strfId}`);
+    navigate(-1);
   };
   // useLocation
   const location = useLocation();
@@ -29,6 +30,7 @@ const Review = (): JSX.Element => {
         onClick={
           pathname === "/business/review/edit" ? navigateToEdit : navigateToHome
         }
+        icon={pathname === "/business/review" ? "close" : "back"}
       />
       <Outlet />
     </div>

@@ -66,7 +66,7 @@ const RegisterIndex = (): JSX.Element => {
   // 쿠키
   const accessToken = getCookie("accessToken");
   const userInfo = getCookie("user");
-  const busiNum = userInfo.busiNum[0];
+  const busiNum = userInfo?.busiNum ?? "";
   //recoil
   const resetRegister = useResetRecoilState(registerAtom);
   const registerData = useRecoilValue(registerAtom);
@@ -134,9 +134,13 @@ const RegisterIndex = (): JSX.Element => {
           ? dayjs(registerData.duration?.endAt, "HH:mm").format("HH:mm")
           : "",
       openCheckIn:
-        dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm") ?? "",
+        registerData.category === CategoryType.STAY
+          ? dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm")
+          : "",
       closeCheckOut:
-        dayjs(registerData.checkTime?.checkOut, "HH:mm").format("HH:mm") ?? "",
+        registerData.category === CategoryType.STAY
+          ? dayjs(registerData.checkTime?.checkOut, "HH:mm").format("HH:mm")
+          : "",
       detail: registerData.bio ?? "",
       busiNum: busiNum,
       state: 0,
@@ -230,12 +234,16 @@ const RegisterIndex = (): JSX.Element => {
           return { message: "영업시간을 입력해주세요.", ref: businessHoursRef };
         }
       }
-
-      if (!registerData.checkTime?.checkIn) {
-        return { message: "체크인 시간을 입력해주세요.", ref: checkTimeRef };
-      }
-      if (!registerData.checkTime?.checkOut) {
-        return { message: "체크아웃 시간을 입력해주세요.", ref: checkTimeRef };
+      if (registerData.category === CategoryType.STAY) {
+        if (!registerData.checkTime?.checkIn) {
+          return { message: "체크인 시간을 입력해주세요.", ref: checkTimeRef };
+        }
+        if (!registerData.checkTime?.checkOut) {
+          return {
+            message: "체크아웃 시간을 입력해주세요.",
+            ref: checkTimeRef,
+          };
+        }
       }
       if (
         registerData.holiday?.frequency !== "" &&

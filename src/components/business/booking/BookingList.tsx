@@ -1,10 +1,12 @@
 import { Button } from "antd";
-import { IoIosArrowRoundForward } from "react-icons/io";
-import { IBooking } from "../../../types/interface";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useState } from "react";
+import { IoIosArrowRoundForward } from "react-icons/io";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ProductPic } from "../../../constants/pic";
-import { useSearchParams } from "react-router-dom";
+import { IBooking } from "../../../types/interface";
+import CenterModalTs from "../../common/CenterModalTs";
 
 dayjs.extend(customParseFormat);
 
@@ -17,19 +19,18 @@ const BookingList = ({ item }: BookingListProps) => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const strfId = searchParams.get("strfId");
-  // const today = dayjs().format("YYYY.MM.DD");
-  //오늘 날짜 기준으로 버튼 상태 변경하기
-  // const categorizeDate = (inputDate: string) => {
-  //   const today = dayjs().startOf("day");
-  //   const targetDate = dayjs(inputDate).startOf("day");
-  //   const sevenDaysLater = today.add(7, "day");
 
-  //   return targetDate.isBefore(today)
-  //     ? "문의하기"
-  //     : targetDate.isBefore(sevenDaysLater)
-  //       ? "리뷰작성"
-  //       : "리뷰 만료";
-  // };
+  // navigate
+  const navigate = useNavigate();
+  const navigateToBookingDetail = () => {
+    navigate(
+      `/business/booking/detail?strfId=${strfId}&bookingId=${item.bookingId}&state=${item.state}`,
+    );
+  };
+  // useState
+  const [isOkModalOpen, setIsOkModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+
   const matchState = (state: string) => {
     switch (state) {
       case "0":
@@ -54,7 +55,12 @@ const BookingList = ({ item }: BookingListProps) => {
         return "bg-[rgba(253,180,161,0.3)] text-secondary3";
     }
   };
-  const matchButton = (state: string) => {
+
+  const duration = (start: Dayjs, end: Dayjs) => {
+    const duration = end.diff(start, "day");
+    return duration;
+  };
+  const matchBusiBookingButton = (state: string) => {
     switch (state) {
       case "0":
       case "1":
@@ -64,12 +70,14 @@ const BookingList = ({ item }: BookingListProps) => {
               color="primary"
               variant="filled"
               className="w-full h-auto py-3 rounded-lg text-base font-semibold text-primary3 "
+              onClick={() => setIsCancelModalOpen(true)}
             >
               예약 취소
             </Button>
             <Button
               type="primary"
               className="w-full h-auto py-3 rounded-lg text-base font-semibold "
+              onClick={() => setIsOkModalOpen(true)}
             >
               예약 승인
             </Button>
@@ -78,7 +86,10 @@ const BookingList = ({ item }: BookingListProps) => {
       case "2":
         return (
           <>
-            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold bg-primary2 text-slate-700">
+            <Button
+              className="w-full h-auto py-3 rounded-lg text-base font-semibold bg-primary2 text-slate-700"
+              onClick={() => setIsCancelModalOpen(true)}
+            >
               예약 취소
             </Button>
           </>
@@ -96,20 +107,17 @@ const BookingList = ({ item }: BookingListProps) => {
         );
     }
   };
-  // const duration = (start: string, end: string) => {
-  //   const startDate = dayjs(start, "YYYY-MM-DD dd").format("YYYY-MM-dd");
-  //   const endDate = dayjs(end, "YYYY-MM-DD dd");
-  // };
 
   return (
     <div className="flex flex-col gap-3">
       <div className="px-4 py-3 flex flex-col gap-2">
         {/* 날짜 */}
         <div className="flex items-start justify-between h-[10vw] max-h-[60px] border-b border-slate-200 ">
-          <p>날짜</p>
+          <p>생성 날짜</p>
           <button
             type="button"
             className="flex gap-1 items-center text-primary"
+            onClick={navigateToBookingDetail}
           >
             <p>상세보기</p>
             <i>
@@ -117,6 +125,7 @@ const BookingList = ({ item }: BookingListProps) => {
             </i>
           </button>
         </div>
+        {/* 예약 내용 */}
         <section className="flex flex-col gap-5">
           {/* 예약 정보 */}
           <div className="flex flex-col gap-3">
@@ -142,14 +151,25 @@ const BookingList = ({ item }: BookingListProps) => {
               <div className="flex flex-col gap-2">
                 <p className="text-base text-slate-700">{`${item.checkInDate} ~ ${item.checkOutDate}`}</p>
                 <p className="text-slate-500 text-sm">
-                  4박 5일, 체크인 시간, 체크아웃 시간
+                  {duration(
+                    dayjs(item.checkInDate, "YYYY-MM-DD dd"),
+                    dayjs(item.checkOutDate, "YYYY-MM-DD dd"),
+                  )}
+                  박{" "}
+                  {duration(
+                    dayjs(item.checkInDate, "YYYY-MM-DD dd"),
+                    dayjs(item.checkOutDate, "YYYY-MM-DD dd"),
+                  ) + 1}
+                  일, 체크인 {item.checkInTime}, 체크아웃 {item.checkOutTime}
                 </p>
-                <p className="text-slate-500 text-sm">결제 금액</p>
+                <p className="text-slate-500 text-sm">
+                  {item.totalPayment.toLocaleString()}원
+                </p>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-3 w-full">
-            {matchButton(item.state)}
+            {matchBusiBookingButton(item.state)}
             {/* <Button className="w-full h-[16vw] max-h-[50px]">예약 취소</Button>
             <Button type="primary" className="w-full h-[16vw] max-h-[50px]">
               예약 승인
@@ -157,6 +177,23 @@ const BookingList = ({ item }: BookingListProps) => {
           </div>
         </section>
       </div>
+      {/* 모달 */}
+      {isOkModalOpen && (
+        <CenterModalTs
+          title="예약 승인"
+          content="해당 예약을 승인하시겠습니까?"
+          handleClickSubmit={() => {}}
+          handleClickCancle={() => setIsOkModalOpen(false)}
+        />
+      )}
+      {isCancelModalOpen && (
+        <CenterModalTs
+          title="예약 취소"
+          content="해당 예약을 취소하시겠습니까?"
+          handleClickSubmit={() => {}}
+          handleClickCancle={() => setIsCancelModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

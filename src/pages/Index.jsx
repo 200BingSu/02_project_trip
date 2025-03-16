@@ -88,7 +88,7 @@ const Index = () => {
   }, [userInfo]);
 
   const HandleSearchPage = () => {
-    navigate(`/search/strf`);
+    navigate(`/search/before`);
   };
 
   return (

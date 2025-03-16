@@ -238,7 +238,7 @@ const ScheduleIndex = () => {
   }, [dragInfo]);
   // 날짜 계산
   const duration = dayjs(tripData.endAt).diff(dayjs(tripData.startAt), "day");
-
+  const today = dayjs().format("YYYY-MM-DD");
   return (
     <div>
       {isLoading ? (
@@ -252,7 +252,7 @@ const ScheduleIndex = () => {
                 icon1={false}
                 icon2={false}
                 icon3Click={navigatePostBoard}
-                icon3={true}
+                icon3={today > tripData.endAt ? true : false}
                 icon4={false}
               />
             }

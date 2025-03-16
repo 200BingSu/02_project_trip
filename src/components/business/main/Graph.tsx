@@ -1,96 +1,77 @@
-import { ResponsiveLine } from "@nivo/line";
-import { IGraphData } from "../../../pages/business/BusinessIndex";
+import { ResponsiveBar } from "@nivo/bar";
+import { ISales } from "../../../atoms/salesAtom";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
+dayjs.extend(customParseFormat);
 interface GraphProps {
-  data: {
-    id: string;
-    data: IGraphData[];
-  }[];
+  data: ISales[];
 }
 
 const Graph = ({ data }: GraphProps) => {
+  const formattedData = data.map(item => ({
+    month: dayjs(item.month).format("YY-MM"),
+    totalSales: item.totalSales,
+  }));
   return (
-    <div className="w-full h-[500px] relative">
-      <ResponsiveLine
-        data={data}
-        margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
-        xScale={{
-          type: "point",
+    <div className="w-full h-[80vw] max-h-[450px] relative">
+      <ResponsiveBar
+        data={formattedData}
+        keys={["totalSales"]}
+        indexBy="month"
+        margin={{ top: 20, right: 30, bottom: 50, left: 50 }}
+        padding={0.35}
+        minValue={0}
+        valueScale={{ type: "linear" }}
+        indexScale={{ type: "band", round: true }}
+        borderColor={{
+          from: "color",
+          modifiers: [["darker", 1.6]],
         }}
-        yScale={{
-          type: "linear",
-          min: 0,
-          max: "auto",
-          stacked: false,
-          reverse: false,
-        }}
-        enableGridX={true}
-        enableGridY={true}
         axisTop={null}
         axisRight={null}
         axisBottom={{
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          legend: "매출 기간 (월 단위)",
-          legendOffset: 40,
           legendPosition: "middle",
+          legendOffset: 32,
           truncateTickAt: 0,
         }}
         axisLeft={{
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          legend: "매출 금액 (단위: 10,000원)",
-          legendOffset: -50,
           legendPosition: "middle",
+          legendOffset: -40,
           truncateTickAt: 0,
-          format: value =>
-            value > 0 ? `${(value / 10000).toLocaleString()}만` : "0",
         }}
-        pointSize={4}
-        pointColor={{ from: "color", modifiers: [] }}
-        pointBorderWidth={2}
-        pointBorderColor={{ from: "serieColor", modifiers: [] }}
-        pointLabel="data.yFormatted"
-        pointLabelYOffset={-12}
-        enableTouchCrosshair={true}
-        useMesh={true}
-        colors={["#0DD1FD"]}
+        enableGridX={true}
+        enableLabel={false}
+        totalsOffset={14}
+        labelSkipWidth={12}
+        labelSkipHeight={12}
+        labelTextColor={{
+          from: "color",
+          modifiers: [["darker", 1.6]],
+        }}
         legends={[]}
-        tooltip={({ point }) => {
-          return (
-            <div className="bg-white p-2 rounded-md border border-slate-200">
-              <div style={{ color: point.serieColor }}>
-                <strong>{point.serieId}</strong>
-              </div>
-              <div className="text-sm text-slate-600">
-                <span className="font-medium">기간:</span>{" "}
-                {String(point.data.x)}
-              </div>
-              <div className="text-sm text-slate-600">
-                <span className="font-medium">매출:</span>{" "}
-                {Number(point.data.y).toLocaleString()}만원
-              </div>
+        role="application"
+        ariaLabel="Nivo bar chart demo"
+        colors="#0DD1FD"
+        tooltip={({ value, indexValue }) => (
+          <div className="bg-white p-3 shadow-lg rounded-lg border border-slate-100">
+            <div className="text-lg font-medium text-slate-700">
+              {dayjs(indexValue, "YY-MM").format("YYYY년 MM월")}
             </div>
-          );
-        }}
-        theme={{
-          axis: {
-            ticks: {
-              text: {
-                fontSize: 12,
-              },
-            },
-            legend: {
-              text: {
-                fontSize: 12,
-                fontWeight: "bold",
-              },
-            },
-          },
-        }}
-        animate={false}
+            <div className="flex items-center gap-1 text-slate-600">
+              <span>매출액</span>
+              <span className="font-semibold text-primary">
+                {value.toLocaleString()}만원
+              </span>
+            </div>
+          </div>
+        )}
       />
     </div>
   );

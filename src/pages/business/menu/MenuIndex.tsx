@@ -1,11 +1,12 @@
-import { Button } from "antd";
+import { Button, Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MenuItem from "../../../components/business/menu/MenuItem";
+import NoData from "../../../components/common/NoData";
 import { MenuType } from "../../../types/interface";
-import { LiaComment } from "react-icons/lia";
+import { matchMenuIcon } from "../../../utils/match";
 
 interface IGetMenuListRes {
   code: string;
@@ -23,20 +24,23 @@ const MenuIndex = (): JSX.Element => {
   const category = searchParams.get("category");
   // useState
   const [menuList, setMenuList] = useState<MenuType[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // API 메뉴 목록
   const getMenuList = async (): Promise<IGetMenuListRes | null> => {
     const url = "/api/detail/menu";
+    setIsLoading(true);
     try {
       const res = await axios.get<IGetMenuListRes>(`${url}?strf_id=${strfId}`);
       const resultData = res.data;
       if (resultData.data[0] !== null) {
         setMenuList(resultData.data);
       }
-
+      setIsLoading(false);
       return resultData;
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
       return null;
     }
   };
@@ -58,23 +62,27 @@ const MenuIndex = (): JSX.Element => {
       </section>
       {/* 메뉴 목록 */}
       <section>
-        <ul className="flex flex-col gap-3">
-          {menuList.length > 0 &&
-            menuList?.map((item, index) => (
-              <MenuItem
-                item={item}
-                key={index}
-                strfId={strfId}
-                category={category as string}
+        <Spin spinning={isLoading}>
+          {isLoading && <div className="h-96"></div>}
+          <div className="flex flex-col gap-3">
+            {!isLoading &&
+              menuList.length > 0 &&
+              menuList?.map((item, index) => (
+                <MenuItem
+                  item={item}
+                  key={index}
+                  strfId={strfId}
+                  category={category as string}
+                />
+              ))}
+            {!isLoading && menuList.length === 0 && (
+              <NoData
+                icon={matchMenuIcon(category as string)}
+                content="등록된 메뉴가 없습니다"
               />
-            ))}
-          {menuList.length === 0 && (
-            <li className="flex flex-col gap-5 items-center justify-center text-slate-300 py-12">
-              <LiaComment className="text-7xl" />
-              <p className="text-2xl">메뉴를 등록해주세요</p>
-            </li>
-          )}
-        </ul>
+            )}
+          </div>
+        </Spin>
       </section>
     </div>
   );

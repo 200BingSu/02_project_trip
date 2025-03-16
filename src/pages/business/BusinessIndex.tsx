@@ -1,25 +1,32 @@
-import { Button, Checkbox, Popover, Select } from "antd";
+import {
+  Button,
+  DatePicker,
+  Popover,
+  Spin,
+  Table,
+  TablePaginationConfig,
+} from "antd";
+import { FilterValue, SorterResult } from "antd/es/table/interface";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import type { PanelMode } from "rc-picker/lib/interface";
+import { useEffect, useState } from "react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
-import { FaFilter } from "react-icons/fa";
-import { RiArrowGoBackFill } from "react-icons/ri";
-import { TbTriangleFilled, TbTriangleInvertedFilled } from "react-icons/tb";
+import { IoIosArrowForward } from "react-icons/io";
+import { TbPigMoney } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { ISalesAtom, salesAtom } from "../../atoms/salesAtom";
+import { useRecoilValue } from "recoil";
+import { ISales } from "../../atoms/salesAtom";
 import { tsUserAtom } from "../../atoms/tsuserAtom";
 import Graph from "../../components/business/main/Graph";
+import NoData from "../../components/common/NoData";
 import MainHeader from "../../components/layout/header/MainHeader";
-import {
-  salesSelector,
-  SortSalesData,
-  SortSalesDataBySales,
-} from "../../selectors/salesSelector";
-import { ORDER_TYPE, ROLE } from "../../types/enum";
+import { CategoryType, ROLE } from "../../types/enum";
 import { getCookie } from "../../utils/cookie";
+import { categoryKor } from "../../utils/match";
 import Footer from "../Footer";
-import { IoIosArrowForward } from "react-icons/io";
+
+const { RangePicker } = DatePicker;
 
 // interface
 export interface IGraphData {
@@ -42,129 +49,130 @@ const BusinessIndex = (): JSX.Element => {
   };
   //쿠키
   const userInfo = getCookie("user");
-  const strfId = userInfo.strfDtos[0].strfId;
-  // console.log("userInfo", userInfo);
+  const strfId = userInfo.strfDtos[0]?.strfId;
+  const strfName = userInfo.strfDtos[0]?.title;
   const accessToken = getCookie("accessToken");
   // recoil
-  const [, setSalesData] = useRecoilState(salesAtom);
-  const recoilUserData = useRecoilValue(tsUserAtom);
-  const filteredSalesData = useRecoilValue(salesSelector);
-  const ascSalesData = useRecoilValue(SortSalesData("asc"));
-  const descSalesData = useRecoilValue(SortSalesData("desc"));
-  const ascSalesDataBySales = useRecoilValue(SortSalesDataBySales("asc"));
-  const descSalesDataBySales = useRecoilValue(SortSalesDataBySales("desc"));
+  const userData = useRecoilValue(tsUserAtom);
+  const userName = userData.name;
+  const category = userInfo.strfDtos[0]?.category;
 
+  const todayMonth = dayjs().format("YYYY-MM");
+  const last12Months = dayjs().subtract(11, "month").format("YYYY-MM");
+  const defaultPeriod: [Dayjs, Dayjs] = [
+    dayjs(last12Months),
+    dayjs(todayMonth),
+  ];
   // useState
-  const [filter, setFilter] = useState<(number | string)[]>([]);
-  const [sortingType, setSortingType] = useState<"period" | "sales">("period");
-  const [period, setPeriod] = useState<number>(ORDER_TYPE.Y1);
-  const [sort, setSort] = useState<string>("desc");
-  const [, setCheckboxValues] = useState<(string | number)[]>(
-    descSalesData.map(item => item.x),
-  );
+  const [salesData, setSalesData] = useState<ISales[]>([]);
+  const [period, setPeriod] = useState<Dayjs[]>(defaultPeriod);
+  const [_, setFilteredInfo] = useState({});
+  const [sortedInfo, setSortedInfo] = useState<SorterResult<ISales>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  // 초기 filter 설정을 위한 useEffect
-  useEffect(() => {
-    if (sortingType === "period") {
-      if (sort === "asc") {
-        setFilter(ascSalesData.map(item => item.x));
-      } else {
-        setFilter(descSalesData.map(item => item.x));
-      }
-    } else {
-      if (sort === "asc") {
-        setFilter(ascSalesDataBySales.map(item => item.x));
-      } else {
-        setFilter(descSalesDataBySales.map(item => item.x));
-      }
-    }
-  }, [descSalesData, ascSalesData, ascSalesDataBySales, descSalesDataBySales]);
-
-  // 정렬 변경 시 filter 업데이트
-  useEffect(() => {
-    if (sortingType === "period") {
-      if (sort === "asc") {
-        setFilter(ascSalesData.map(item => item.x));
-      } else {
-        setFilter(descSalesData.map(item => item.x));
-      }
-    } else {
-      if (sort === "asc") {
-        setFilter(ascSalesDataBySales.map(item => item.x));
-      } else {
-        setFilter(descSalesDataBySales.map(item => item.x));
-      }
-    }
-  }, [sort, sortingType]);
+  // 총 매출
+  const totalSales = salesData?.reduce((acc, curr) => acc + curr.totalSales, 0);
 
   // API 매출 현황
-  const getSales = async (): Promise<ISalesAtom | null> => {
+  const getSales = async (): Promise<ISales[] | null> => {
     const url = "/api/business/my-page/sales";
+    setIsLoading(true);
     try {
-      const res = await axios.get<ISalesAtom>(`${url}?orderType=${period}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      const res = await axios.get<ISales[]>(
+        `${url}?startMonth=${dayjs(period[0]).format("YYYY-MM")}&endMonth=${dayjs(period[1]).format("YYYY-MM")}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
-      console.log("매출 현황", res.data);
-      setSalesData(res.data);
-      return res.data;
+      );
+      const resultData = res.data;
+      setSalesData(resultData);
+      setIsLoading(false);
+      return resultData;
     } catch (error) {
       console.log("매출 현황", error);
+      setIsLoading(false);
       return null;
     }
   };
-
-  // 기간 포멧
-  const formatPeriod = (period: number): string | undefined => {
-    switch (period) {
-      case ORDER_TYPE.M1:
-        return "1개월";
-      case ORDER_TYPE.M3:
-        return "3개월";
-      case ORDER_TYPE.M6:
-        return "6개월";
-      case ORDER_TYPE.Y1:
-        return "1년";
+  //antD
+  const getYearMonth = (date: Dayjs) => date.year() * 12 + date.month();
+  const disabled12MonthsDate = (
+    current: Dayjs,
+    info?: { type?: PanelMode; from?: Dayjs },
+  ) => {
+    if (info?.from) {
+      const minDate = info.from.subtract(11, "months");
+      const maxDate = info.from.add(11, "months");
+      switch (info.type) {
+        case "year":
+          return (
+            current.year() < minDate.year() || current.year() > maxDate.year()
+          );
+        default:
+          return (
+            getYearMonth(current) < getYearMonth(minDate) ||
+            getYearMonth(current) > getYearMonth(maxDate)
+          );
+      }
     }
+    return false;
   };
-
-  // 기간 선택 옵션
-  const PeriodArr = [
+  const columns = [
     {
-      label: formatPeriod(ORDER_TYPE.M1),
-      value: ORDER_TYPE.M1,
+      title: <p className="text-center text-sm text-slate-700">기간</p>,
+      dataIndex: "month",
+      key: "month",
+      width: "30%",
+      render: (value: string) => (
+        <div className="text-center text-xs text-slate-700">{value}</div>
+      ),
     },
     {
-      label: formatPeriod(ORDER_TYPE.M3),
-      value: ORDER_TYPE.M3,
-    },
-    {
-      label: formatPeriod(ORDER_TYPE.M6),
-      value: ORDER_TYPE.M6,
-    },
-    {
-      label: formatPeriod(ORDER_TYPE.Y1),
-      value: ORDER_TYPE.Y1,
+      title: <p className="text-center text-sm text-slate-700">매출</p>,
+      dataIndex: "totalSales",
+      key: "totalSales",
+      width: "70%",
+      sorter: (a: ISales, b: ISales) => a.totalSales - b.totalSales,
+      sortOrder:
+        sortedInfo.columnKey === "totalSales" ? sortedInfo.order : null,
+      render: (value: number) => (
+        <div className="pr-4 text-right text-xs text-slate-700">
+          {value.toLocaleString()}원
+        </div>
+      ),
+      ellipsis: true,
     },
   ];
-
-  //기간 변경
-  const handleChangePeriod = (e: any) => {
-    setPeriod(Number(e));
+  const handleChange = (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter:
+      | SorterResult<{ key: string; month: string; totalSales: number }>
+      | SorterResult<{ key: string; month: string; totalSales: number }>[],
+  ) => {
+    console.log("Various parameters", pagination, filters, sorter);
+    setFilteredInfo(filters);
+    setSortedInfo(sorter as SorterResult<ISales>);
   };
 
-  // 총 매출액
-  const totalSales = filteredSalesData[0].data.reduce<number>(
-    (acc, curr) => acc + curr.y,
-    0,
-  );
+  // 필터 적용
+  const handleClickFilterBtn = () => {
+    getSales();
+  };
 
   useEffect(() => {
-    if (strfId) {
-      getSales();
-    }
-  }, [period]);
+    getSales();
+  }, []);
+
+  const formatSalesData = (data: ISales[]) => {
+    return data.map(item => ({
+      key: item.month,
+      month: item.month,
+      totalSales: item.totalSales,
+    }));
+  };
 
   return (
     <div className="">
@@ -182,41 +190,11 @@ const BusinessIndex = (): JSX.Element => {
                 * 해당 서비스 이용을 위해서는 업체 등록이 필요합니다
               </span>
             </div>
-            {/* <div className="flex flex-col gap-4 select-none">
-              <div
-                className="p-6 rounded-2xl
-                flex justify-center items-center 
-              text-slate-50 text-xl font-semibold bg-secondary2"
-              >
-                가게 관리 / 메뉴 관리
-              </div>
-              <div
-                className="p-6 rounded-2xl flex justify-center items-center 
-              text-slate-50 text-xl font-semibold  bg-secondary3"
-              >
-                매출 현황
-              </div>
-              <div
-                className="p-6 rounded-2xl flex justify-center items-center 
-              text-slate-50 text-xl font-semibold  bg-primary"
-              >
-                리뷰 관리
-              </div>
-              <ul className="flex gap-6">
-                <li className="w-16">
-                  <img src="/images/emoji/store.png" alt="업체" />
-                </li>
-                <li className="w-16">
-                  <img src="/images/emoji/money.png" alt="업체" />
-                </li>
-                <li className="w-16">
-                  <img src="/images/emoji/star.png" alt="업체" />
-                </li>
-              </ul>
-            </div> */}
           </div>
           <div
-            className="flex items-center px-10 bg-primary h-28 rounded-3xl relative cursor-pointer select-none"
+            className="flex items-center px-10 bg-primary h-28 rounded-3xl relative cursor-pointer select-none
+            hover:bg-primary/95 transition-all duration-300 hover:
+            group"
             onClick={navigateToRegister}
           >
             <div className="flex flex-col gap-1 text-slate-50 text-2xl font-semibold">
@@ -228,7 +206,7 @@ const BusinessIndex = (): JSX.Element => {
                 </i>
               </p>
             </div>
-            <div className="aspect-square w-24 absolute -top-1 right-8">
+            <div className="aspect-square w-24 absolute -top-1 right-8 letter transition-all duration-300 group-hover:-rotate-2">
               <img
                 src="/images/emoji/mail.png"
                 alt="아이콘"
@@ -241,233 +219,84 @@ const BusinessIndex = (): JSX.Element => {
       {/* 업체가 있을 경우 */}
       {strfId && (
         <section className="px-4 py-5 flex flex-col gap-3">
-          {/* 입금 예정 금액 */}
-          <div className="py-3">
-            <h3 className="text-lg font-medium text-slate-700 select-none">
-              <span className="text-slate-700 text-xl ">
-                {recoilUserData.name}
-              </span>{" "}
-              사장님네{" "}
-              <span className="text-slate-700 text-xl ">{userInfo.title}</span>
-              의 {formatPeriod(period)} 동안 입금 예정 금액
-            </h3>
-            <div className="flex items-center gap-3 select-none">
-              <p className="text-2xl text-primary font-semibold">
-                {totalSales.toLocaleString()}원
-              </p>
-              <Popover
-                placement="right"
-                content={"* 매출로 분류된 금액을 기준으로 산정됩니다."}
-                trigger="hover"
-              >
-                <span>
-                  <AiOutlineQuestionCircle className="text-lg text-slate-300 cursor-help" />
-                </span>
-              </Popover>
-            </div>
-          </div>
           {/* 그래프 */}
-          <div className="select-none pb-4">
-            <div className="flex items-end justify-between">
-              <h2 className="text-3xl font-semibold text-slate-600 ">
-                매출 현황
-              </h2>
-              <Select
-                placeholder="기간 선택"
-                onChange={e => {
-                  console.log(e);
-                  handleChangePeriod(e);
-                }}
-                className="flex items-center w-28"
-                defaultValue={"1년"}
-                options={PeriodArr.map(item => ({
-                  label: item.label || "",
-                  value: item.value.toString(),
-                }))}
-              />
-            </div>
-            <Graph
-              data={
-                filteredSalesData ?? [
-                  { id: "매출액", data: [{ x: "0", y: 0 }] },
-                ]
-              }
-            />
+          <div className="select-none">
+            <Spin spinning={isLoading}>
+              {isLoading && <div></div>}
+
+              {!isLoading && salesData?.length === 0 && (
+                <NoData
+                  icon={<TbPigMoney />}
+                  content="매출 데이터가 없습니다."
+                />
+              )}
+
+              {!isLoading && salesData && salesData?.length > 0 && (
+                <Graph data={salesData ?? []} />
+              )}
+            </Spin>
           </div>
           {/* 매출 표 */}
-          <div className="select-none">
-            <h3 className="text-lg font-medium text-slate-700 py-3">매출 표</h3>
-            <div className="grid grid-cols-[1fr_2fr] border border-slate-200 rounded-lg overflow-hidden">
-              {/* 헤더 */}
-              <div className="relative flex items-center justify-center gap-5 bg-slate-50 text-slate-600 text-base p-3 font-medium border-b  text-center border-r border-slate-200">
-                <p className="text-base">기간</p>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSort(sort === "asc" ? "desc" : "asc");
-                      setSortingType("period");
-                    }}
-                    className="text-xs "
-                  >
-                    <TbTriangleFilled
-                      className={`transition-all duration-300 ${sort === "asc" && sortingType === "period" ? "text-primary" : "text-slate-400"}`}
-                    />
-                    <TbTriangleInvertedFilled
-                      className={`transition-all duration-300 ${sort === "desc" && sortingType === "period" ? "text-primary" : "text-slate-400"}`}
-                    />
-                  </button>
-                  <Popover
-                    title="필터"
-                    placement="bottom"
-                    trigger="hover"
-                    content={
-                      <div>
-                        <Checkbox.Group
-                          className="flex flex-col gap-2"
-                          value={filter}
-                          onChange={checkedValues => {
-                            setCheckboxValues(checkedValues as string[]);
-                            setFilter(checkedValues as string[]);
-                          }}
-                        >
-                          {descSalesData.map(item => (
-                            <Checkbox
-                              key={item.x}
-                              value={item.x}
-                              style={{
-                                lineHeight: "32px",
-                              }}
-                            >
-                              {item.x}
-                            </Checkbox>
-                          ))}
-                        </Checkbox.Group>
-                        <div className="flex items-center gap-2 mt-4">
-                          <Button
-                            type="default"
-                            onClick={() => {
-                              setFilter(descSalesData.map(item => item.x));
-                              setCheckboxValues(
-                                descSalesData.map(item => item.x),
-                              );
-                            }}
-                          >
-                            전체 선택
-                          </Button>
-                          <Button
-                            type="default"
-                            onClick={() => {
-                              setFilter([]);
-                              setCheckboxValues([]);
-                            }}
-                          >
-                            <RiArrowGoBackFill className="text-slate-300" />
-                            초기화
-                          </Button>
-                        </div>
-                      </div>
+          <div className="select-none flex flex-col gap-2">
+            {/* 입금 예정 금액 */}
+            <div>
+              <h3 className="text-xl font-semibold text-slate-700 select-none">
+                {userName} 사장님의 {strfName ?? ""} 매출
+              </h3>
+            </div>
+            <div className="flex flex-col-reverse  gap-2 items-start sm:flex-row justify-between sm:gap-2 whitespace-nowrap">
+              <div className="flex items-center gap-2">
+                <RangePicker
+                  onChange={e => {
+                    if (e && e[0] && e[1]) {
+                      setPeriod([e[0], e[1]]);
                     }
-                  >
-                    <button type="button" className="text-sm text-slate-400">
-                      <FaFilter />
-                    </button>
-                  </Popover>
-                </div>
+                  }}
+                  size="large"
+                  picker="month"
+                  format="YYYY-MM"
+                  disabledDate={disabled12MonthsDate}
+                  className="w-fit"
+                  defaultValue={defaultPeriod}
+                />
+                <Button
+                  size="large"
+                  className="text-slate-700"
+                  onClick={handleClickFilterBtn}
+                >
+                  적용
+                </Button>
+                {category === categoryKor(CategoryType.RESTAURANT) && (
+                  <Button type="dashed" size="large">
+                    매출 입력
+                  </Button>
+                )}
               </div>
-              <div className="relative bg-slate-50 text-slate-600 text-base p-3 font-medium border-b border-slate-200">
-                매출
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSort(sort === "asc" ? "desc" : "asc");
-                      setSortingType("sales");
-                    }}
-                    className="text-xs "
-                  >
-                    <TbTriangleFilled
-                      className={`transition-all duration-300 ${sort === "asc" && sortingType === "sales" ? "text-primary" : "text-slate-400"}`}
-                    />
-                    <TbTriangleInvertedFilled
-                      className={`transition-all duration-300 ${sort === "desc" && sortingType === "sales" ? "text-primary" : "text-slate-400"}`}
-                    />
-                  </button>
-                </div>
+              <div className="flex items-center gap-3 select-none">
+                <p className="text-2xl text-primary font-semibold">
+                  {totalSales?.toLocaleString()}원
+                </p>
+                <Popover
+                  placement="right"
+                  content={"적용된 기간 동안의 매출 합계입니다."}
+                  trigger="hover"
+                >
+                  <span>
+                    <AiOutlineQuestionCircle className="text-lg text-slate-300 cursor-help" />
+                  </span>
+                </Popover>
               </div>
-              {/* 데이터 행 */}
-              {sort === "asc" &&
-                sortingType === "period" &&
-                ascSalesData.map(item => (
-                  <React.Fragment key={item.x}>
-                    <div
-                      className={`p-3 text-sm text-slate-600 border-b last:border-b-0 text-center border-r border-slate-200
-                      ${filter.includes(item.x) ? "" : "hidden"}`}
-                    >
-                      {item.x}
-                    </div>
-                    <div
-                      className={`p-3 text-sm text-slate-600 border-b border-slate-200 last:border-b-0
-                      ${filter.includes(item.x) ? "" : "hidden"}`}
-                    >
-                      {item.y.toLocaleString()}원
-                    </div>
-                  </React.Fragment>
-                ))}
-              {sort === "desc" &&
-                sortingType === "period" &&
-                descSalesData.map(item => (
-                  <React.Fragment key={item.x}>
-                    <div
-                      className={`p-3 text-sm text-slate-600 border-b last:border-b-0 text-center border-r border-slate-200
-                      ${filter.includes(item.x) ? "" : "hidden"}`}
-                    >
-                      {item.x}
-                    </div>
-                    <div
-                      className={`p-3 text-sm text-slate-600 border-b border-slate-200 last:border-b-0
-                      ${filter.includes(item.x) ? "" : "hidden"}`}
-                    >
-                      {item.y.toLocaleString()}원
-                    </div>
-                  </React.Fragment>
-                ))}
-              {sort === "asc" &&
-                sortingType === "sales" &&
-                ascSalesDataBySales.map(item => (
-                  <React.Fragment key={item.x}>
-                    <div
-                      className={`p-3 text-sm text-slate-600 border-b last:border-b-0 text-center border-r border-slate-200
-                      ${filter.includes(item.x) ? "" : "hidden"}`}
-                    >
-                      {item.x}
-                    </div>
-                    <div
-                      className={`p-3 text-sm text-slate-600 border-b border-slate-200 last:border-b-0
-                      ${filter.includes(item.x) ? "" : "hidden"}`}
-                    >
-                      {item.y.toLocaleString()}원
-                    </div>
-                  </React.Fragment>
-                ))}
-              {sort === "desc" &&
-                sortingType === "sales" &&
-                descSalesDataBySales.map(item => (
-                  <React.Fragment key={item.x}>
-                    <div
-                      className={`p-3 text-sm text-slate-600 border-b last:border-b-0 text-center border-r border-slate-200
-                      ${filter.includes(item.x) ? "" : "hidden"}`}
-                    >
-                      {item.x}
-                    </div>
-                    <div
-                      className={`p-3 text-sm text-slate-600 border-b border-slate-200 last:border-b-0
-                      ${filter.includes(item.x) ? "" : "hidden"}`}
-                    >
-                      {item.y.toLocaleString()}원
-                    </div>
-                  </React.Fragment>
-                ))}
+            </div>
+
+            <div className="border border-slate-200 rounded-lg overflow-hidden">
+              <Table
+                columns={columns}
+                dataSource={formatSalesData(salesData) ?? []}
+                onChange={handleChange}
+                showSorterTooltip={{
+                  target: "sorter-icon",
+                }}
+              />
             </div>
           </div>
         </section>

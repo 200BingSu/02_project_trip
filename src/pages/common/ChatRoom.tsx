@@ -6,11 +6,12 @@ import { BsFillPatchPlusFill } from "react-icons/bs";
 import { IoIosArrowUp } from "react-icons/io";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { chatDataAtom, IChatData } from "../atoms/chatAtom";
-import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
-import { ProfilePic } from "../constants/pic";
-import { chatDataSelector } from "../selectors/chatSelector";
-import { getCookie } from "../utils/cookie";
+import { chatDataAtom, IChatData } from "../../atoms/chatAtom";
+import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
+import { ProfilePic } from "../../constants/pic";
+import { chatDataSelector } from "../../selectors/chatSelector";
+import { getCookie } from "../../utils/cookie";
+import { moveTo } from "../../utils/moveTo";
 
 interface ISendMessage {
   message: string;
@@ -29,10 +30,11 @@ interface IGetChatHistoryRes {
 const ChatRoom = (): JSX.Element => {
   // 쿠키
   const accessToken = getCookie("accessToken");
+  // console.log("채팅방 토큰", accessToken);
   // useNavigate
   const navigate = useNavigate();
-  const navigateToBack = () => {
-    navigate(-1);
+  const navigateToChatIndex = () => {
+    navigate("/chat");
   };
   // 쿼리
   const [searchParams] = useSearchParams();
@@ -50,19 +52,23 @@ const ChatRoom = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isMore, _] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRIES = 1;
+  const RETRY_DELAY = 5000; // 5초
+
+  // 연결 상태 관리를 위한 상태 추가
+  const [isReconnecting, setIsReconnecting] = useState(false);
 
   //useRef
   const clientRef = useRef<Client | null>(null);
-  const connectionRef = useRef<boolean>(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLUListElement>(null);
+  // const retryCountRef = useRef<number>(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log("connectionRef", connectionRef.current);
-  }, [connectionRef]);
-  useEffect(() => {
-    console.log("messages", messages);
-  }, [messages]);
+    // console.log("clientRef 현재 상황", clientRef.current);
+  }, [clientRef.current]);
 
   //쿠키
   const userInfo = getCookie("user");
@@ -89,20 +95,26 @@ const ChatRoom = (): JSX.Element => {
           },
         );
         const resultData = res.data;
-        console.log("채팅내역", resultData);
-        setChatHistory(resultData.data);
+        // console.log("채팅내역", resultData);
+        setChatHistory([...resultData.data, ...chatHistory]);
         setIsLoading(false);
+        if (resultData) {
+          setTimeout(() => {
+            moveTo(scrollRef);
+          }, 100);
+        }
         return resultData;
       } catch (error) {
         console.log("채팅내역 조회 실패", error);
         setIsLoading(false);
         return null;
       }
-    }, []);
+    }, [messages]);
 
   useEffect(() => {
     getChatHistory();
-  }, [messages]);
+    console.log("page", page);
+  }, [page, getChatHistory]);
 
   // 커넥션
   // const url = `ws://localhost:8080/chat`;
@@ -110,127 +122,130 @@ const ChatRoom = (): JSX.Element => {
   // 구독 경로
   const topic = `/sub/chat/${roomId}`;
   useEffect(() => {
-    if (!accessToken) {
+    if (!accessToken || clientRef.current || isReconnecting) {
       return;
     }
+
     const stompClient = new Client({
       brokerURL: url,
       connectHeaders: {
         Authorization: `Bearer ${accessToken}`,
       },
-      reconnectDelay: 5000,
+      reconnectDelay: RETRY_DELAY,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       // 연결 성공
-      onConnect: async frame => {
-        console.log("Connected: ", frame);
-        stompClient.subscribe(
-          topic,
-          message => {
-            console.log("받은 메세지:", message);
-            try {
-              const receivedMessage = JSON.parse(message.body);
-              console.log("파싱된 메세지:", receivedMessage);
-              setMessages(prev => [...prev, receivedMessage]);
-            } catch (error) {
-              console.log("일반 텍스트 메시지:", message.body);
-              setMessages(prev => [...prev, message.body]);
-            }
-          },
-          {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        );
-        setConnected(true);
-        connectionRef.current = true;
-        //바로 방 입장
+      onConnect: async () => {
+        // console.log("Connected: ", frame);
+        setRetryCount(0);
+        setIsReconnecting(false);
+        clientRef.current = stompClient;
         try {
-          await stompClient.publish({
-            destination: "/pub/chat.join",
-            body: JSON.stringify({
-              roomId: roomId,
-              sender: userId,
-            }),
-            headers: {
+          stompClient.subscribe(
+            topic,
+            message => {
+              // console.log("받은 메세지:", message);
+              try {
+                const receivedMessage = JSON.parse(message.body);
+                // console.log("파싱된 메세지:", receivedMessage);
+                setMessages(prev => [...prev, receivedMessage]);
+              } catch (error) {
+                // console.log("일반 텍스트 메시지:", message.body);
+                setMessages(prev => [...prev, message.body]);
+              }
+            },
+            {
               Authorization: `Bearer ${accessToken}`,
             },
-          });
-          console.log("채팅방 입장 성공");
+          );
+          setConnected(true);
+
+          if (stompClient.connected) {
+            await stompClient.publish({
+              destination: "/pub/chat.join",
+              body: JSON.stringify({
+                roomId: roomId,
+                sender: userId,
+              }),
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+            // console.log("채팅방 입장 성공");
+          }
         } catch (error) {
-          console.error("Error joining room:", error);
+          console.error("Error in connection setup:", error);
+          handleDisconnect();
         }
       },
-      // 연결 해제
       onDisconnect: () => {
-        console.log("Disconnected");
-        connectionRef.current = false;
-        setConnected(false);
-        // message.error("채팅연결에 실패했습니다");
+        handleDisconnect();
       },
       onWebSocketError: error => {
         console.error("WebSocket error: ", error);
-        connectionRef.current = false;
-        setConnected(false);
-        message.error("채팅연결에 실패했습니다");
+        handleDisconnect();
       },
       onStompError: frame => {
-        console.error("STOMP error: ", frame.headers["message"], frame.body);
-        connectionRef.current = false;
-        setConnected(false);
-        message.error("스톰프 에러");
+        console.error("STOMP 에러: ", frame.headers["message"], frame.body);
+        handleDisconnect();
       },
     });
 
     clientRef.current = stompClient;
+    stompClient.activate();
 
     return () => {
-      if (clientRef.current && clientRef.current.connected) {
-        console.log(
-          "Component unmounting - Connection status:",
-          clientRef.current.connected,
-        );
+      if (clientRef.current?.connected) {
+        console.log("Component unmounting - Cleaning up connection");
         clientRef.current.unsubscribe(topic);
         clientRef.current.deactivate();
+        setConnected(false);
+        setIsReconnecting(false);
+        clientRef.current = null;
       }
     };
-  }, []);
+  }, [accessToken, isReconnecting]);
 
-  // connect 함수 수정
-  const connect = (): void => {
+  const handleDisconnect = useCallback(() => {
+    setConnected(false);
     if (clientRef.current) {
-      clientRef.current.activate();
-      connectionRef.current = true;
-    }
-  };
-
-  // disconnect 함수 수정
-  const disconnect = (): void => {
-    console.log("연결 해제");
-    if (clientRef.current) {
-      clientRef.current.unsubscribe(topic);
       clientRef.current.deactivate();
-      setConnected(false);
-      setMessages([]);
-      connectionRef.current = false;
+      clientRef.current = null;
     }
-  };
+
+    if (retryCount < MAX_RETRIES && !isReconnecting) {
+      setRetryCount(prev => prev + 1);
+      setIsReconnecting(true);
+      console.log(`재연결 시도 ${retryCount + 1}/${MAX_RETRIES}`);
+
+      setTimeout(() => {
+        setIsReconnecting(false);
+      }, RETRY_DELAY);
+    } else if (retryCount >= MAX_RETRIES) {
+      console.log("최대 재연결 시도 횟수 도달");
+      message.error("채팅 연결에 실패했습니다. 페이지를 새로고침해주세요.");
+    }
+  }, [retryCount, isReconnecting]);
 
   // 채팅 메시지 전송 함수
   const sendMessage = (): void => {
     if (clientRef.current && inputMessage.trim() && connected) {
       try {
         console.log("Sending message:", inputMessage);
-        clientRef.current.publish({
-          destination: "/pub/chat.sendMessage",
-          body: JSON.stringify({
-            roomId: roomId,
-            sender: name,
-            message: inputMessage,
-          }),
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        if (clientRef.current.connected) {
+          clientRef.current.publish({
+            destination: "/pub/chat.sendMessage",
+            body: JSON.stringify({
+              roomId: roomId,
+              sender: name,
+              message: inputMessage,
+            }),
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+        }
+
         setInputMessage("");
       } catch (error) {
         console.error("Error sending message:", error);
@@ -241,8 +256,7 @@ const ChatRoom = (): JSX.Element => {
   };
   // 나가기
   const handleClickToBack = () => {
-    navigateToBack();
-    disconnect();
+    navigateToChatIndex();
     resetChatHistory();
   };
   // 관찰
@@ -266,14 +280,11 @@ const ChatRoom = (): JSX.Element => {
   }, [isLoading]);
 
   useEffect(() => {
-    getChatHistory();
+    // getChatHistory();
     console.log("page", page);
   }, [page, getChatHistory]);
 
-  useEffect(() => {
-    connect();
-  }, []);
-  // 스크롤 이벤트
+  // 스크롤 이벤트(버튼)
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollButton(window.scrollY > 100);
@@ -289,52 +300,6 @@ const ChatRoom = (): JSX.Element => {
     });
   };
 
-  // 초기 채팅 내역을 불러온 후 스크롤 조정
-  useEffect(() => {
-    if (chatContainerRef.current && chatHistory.length > 0) {
-      const container = chatContainerRef.current;
-      const scrollHeight = container.scrollHeight;
-      const clientHeight = container.clientHeight;
-      const maxScroll = scrollHeight - clientHeight;
-
-      container.scrollTo({
-        top: maxScroll,
-        behavior: "auto", // 초기 로딩시에는 즉시 스크롤
-      });
-    }
-  }, [chatHistory.length]); // chatHistory가 처음 로드될 때 실행
-
-  // 새로운 메시지에 대한 기존 스크롤 효과는 유지
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      const container = chatContainerRef.current;
-      const scrollHeight = container.scrollHeight;
-      const clientHeight = container.clientHeight;
-      const maxScroll = scrollHeight - clientHeight;
-
-      container.scrollTo({
-        top: maxScroll,
-        behavior: "smooth",
-      });
-    }
-  }, [filteredChatHistory]);
-
-  // 새로운 메시지가 추가될 때 스크롤 조정
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      const container = chatContainerRef.current;
-      const scrollHeight = container.scrollHeight;
-      const clientHeight = container.clientHeight;
-      const maxScroll = scrollHeight - clientHeight;
-
-      // 부드러운 스크롤 효과로 이동
-      container.scrollTo({
-        top: maxScroll,
-        behavior: "smooth",
-      });
-    }
-  }, [filteredChatHistory]);
-
   return (
     <div className="max-w-[768px] min-w-xs mx-auto relative min-h-screen ">
       <TitleHeaderTs
@@ -348,19 +313,11 @@ const ChatRoom = (): JSX.Element => {
         <ul
           ref={chatContainerRef}
           className="h-full overflow-y-auto
-        flex flex-col gap-[16px] pb-20"
+          flex flex-col gap-[16px]"
         >
-          {/* {messages?.map((item: ISendMessage | string, index) => {
-            return (
-              <li key={index}>
-                {typeof item === "string"
-                  ? item
-                  : item.userName
-                    ? `${item?.userName}가 입장합니다.`
-                    : `${item?.sender}: ${item?.message}`}
-              </li>
-            );
-          })} */}
+          <li className="flex items-center justify-center text-slate-400 gap-[12px] px-[16px]">
+            {typeof messages[0] !== "string" && `채팅방에 입장하였습니다.`}
+          </li>
           {filteredChatHistory?.map((item, index) => {
             return item.signedUser === true ? (
               <li
@@ -409,6 +366,9 @@ const ChatRoom = (): JSX.Element => {
               </li>
             );
           })}
+          <div ref={scrollRef} className="pb-[80px]">
+            {/* 스크롤 이벤트 처리 */}
+          </div>
           <div id="observer" ref={observerTarget}>
             {/* 페이징 처리 관찰 대상 */}
           </div>

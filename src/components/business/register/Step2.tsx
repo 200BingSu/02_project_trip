@@ -85,60 +85,62 @@ const Step2 = ({
             )}
 
             {/* 체크인, 체크아웃 시간 */}
-            <li className="flex flex-col gap-1" ref={checkTimeRef}>
-              <h3 className="text-slate-700 text-lg font-semibold">
-                <i className="text-secondary3_3">*</i> 입실/퇴실 시간
-              </h3>
-              <p className="text-base text-slate-500">
-                숙소의 입실 및 퇴실 시간을 입력해주세요.
-              </p>
-              <label className="text-sm text-slate-700 flex items-center gap-3 whitespace-nowrap w-full">
-                입실
-                <TimePicker
-                  placeholder="입실 시간을 지정해주세요"
-                  size="large"
-                  className="w-full"
-                  onChange={value => {
-                    setRegister(prev => ({
-                      ...prev,
-                      checkTime: {
-                        ...prev.checkTime,
-                        checkIn: value?.format("HH:mm") || "",
-                      },
-                    }));
-                  }}
-                  format="HH:mm"
-                  value={
-                    register.checkTime?.checkIn
-                      ? dayjs(register.checkTime?.checkIn, "HH:mm")
-                      : null
-                  }
-                />
-              </label>
-              <label className="text-sm text-slate-700 flex items-center gap-3 whitespace-nowrap w-full">
-                퇴실
-                <TimePicker
-                  placeholder="퇴실 시간을 지정해주세요"
-                  size="large"
-                  className="w-full"
-                  onChange={value => {
-                    setRegister(prev => ({
-                      ...prev,
-                      checkTime: {
-                        ...prev.checkTime,
-                        checkOut: value?.format("HH:mm") || "",
-                      },
-                    }));
-                  }}
-                  format="HH:mm"
-                  value={
-                    register.checkTime?.checkOut
-                      ? dayjs(register.checkTime?.checkOut, "HH:mm")
-                      : null
-                  }
-                />
-              </label>
-            </li>
+            {register.category === CategoryType.STAY && (
+              <li className="flex flex-col gap-1" ref={checkTimeRef}>
+                <h3 className="text-slate-700 text-lg font-semibold">
+                  <i className="text-secondary3_3">*</i> 입실/퇴실 시간
+                </h3>
+                <p className="text-base text-slate-500">
+                  숙소의 입실 및 퇴실 시간을 입력해주세요.
+                </p>
+                <label className="text-sm text-slate-700 flex items-center gap-3 whitespace-nowrap w-full">
+                  입실
+                  <TimePicker
+                    placeholder="입실 시간을 지정해주세요"
+                    size="large"
+                    className="w-full"
+                    onChange={value => {
+                      setRegister(prev => ({
+                        ...prev,
+                        checkTime: {
+                          ...prev.checkTime,
+                          checkIn: value?.format("HH:mm") || "",
+                        },
+                      }));
+                    }}
+                    format="HH:mm"
+                    value={
+                      register.checkTime?.checkIn
+                        ? dayjs(register.checkTime?.checkIn, "HH:mm")
+                        : null
+                    }
+                  />
+                </label>
+                <label className="text-sm text-slate-700 flex items-center gap-3 whitespace-nowrap w-full">
+                  퇴실
+                  <TimePicker
+                    placeholder="퇴실 시간을 지정해주세요"
+                    size="large"
+                    className="w-full"
+                    onChange={value => {
+                      setRegister(prev => ({
+                        ...prev,
+                        checkTime: {
+                          ...prev.checkTime,
+                          checkOut: value?.format("HH:mm") || "",
+                        },
+                      }));
+                    }}
+                    format="HH:mm"
+                    value={
+                      register.checkTime?.checkOut
+                        ? dayjs(register.checkTime?.checkOut, "HH:mm")
+                        : null
+                    }
+                  />
+                </label>
+              </li>
+            )}
             {/* 휴일 */}
             <li className="flex flex-col gap-1" ref={holidayRef}>
               <h3 className="text-slate-700 text-lg font-semibold">휴무일</h3>

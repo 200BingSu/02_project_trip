@@ -22,3 +22,9 @@ export enum ORDER_TYPE {
   M6 = 6,
   Y1 = 12,
 }
+
+export enum ReportType {
+  REVIEW = "REVIEW",
+  STRF = "STRF",
+  TRIPREVIEW = "TRIPREVIEW",
+}

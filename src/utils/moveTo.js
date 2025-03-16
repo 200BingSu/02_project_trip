@@ -5,5 +5,8 @@ export const moveTo = ref => {
 };
 
 export const moveTop = () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 10, behavior: "smooth" });
+};
+export const moveDown = () => {
+  window.scrollTo({ bottom: 10, behavior: "smooth" });
 };

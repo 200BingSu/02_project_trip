@@ -193,7 +193,11 @@ const CouponForm = ({
             </div>
             <Form.Item className="px-4 py-3 flex justify-end">
               <div className="flex gap-3">
-                <Button type="default" size="large">
+                <Button
+                  type="default"
+                  size="large"
+                  onClick={navigateToCouponList}
+                >
                   취소
                 </Button>
                 <Button type="primary" htmlType="submit" size="large">

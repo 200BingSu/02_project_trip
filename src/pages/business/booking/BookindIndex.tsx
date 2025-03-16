@@ -51,6 +51,7 @@ const BookindIndex = (): JSX.Element => {
 
   useEffect(() => {
     getBookingList();
+    // setBookingData({ ...bookingData, bookingList: bookingMock });
   }, []);
 
   return (
