@@ -102,7 +102,7 @@ const ContentIndex = () => {
   const locationState = location.state;
   //useState
   const [contentData, setContentData] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [isDetailOpen, setIsDetailOpen] = useState(true);
   const [isRegistModalOpen, setIsRegistModalOpen] = useState(false);
   const [openBusinessTime, setOpenBusinessTime] = useState(false);
@@ -509,10 +509,6 @@ const ContentIndex = () => {
           {/* 일정 추가 모달창 */}
           {isRegistModalOpen ? (
             <ScheduleModal handleRegistCancel={handleRegistCancel} />
-          ) : null}
-          {/* 편의 시설 모달창 */}
-          {isModalOpen ? (
-            <AmenityModal handleCancel={handleCancel} amenities={amenities} />
           ) : null}
 
           {openPathModal ? (

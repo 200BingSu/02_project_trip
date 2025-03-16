@@ -8,6 +8,7 @@ import jwtAxios from "../../apis/jwt";
 import { tripAtom } from "../../atoms/tripAtom";
 import { ISchedule, ISelectPath } from "../../types/interface";
 import { StrInfoProps } from "./StrInfo";
+import AddSchedule from "./AddSchedule";
 
 // API 응답 타입 정의
 interface ApiRes {
@@ -25,7 +26,7 @@ interface ScheduleParams {
 }
 
 const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
-  const [modals, setModals] = useState({
+  const [, setModals] = useState({
     isRegistModalOpen: false,
     openPathModal: false,
     isReviewModalOpen: false,
@@ -33,6 +34,7 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
   const [selectPath] = useState<ISelectPath>({});
   const [trip] = useRecoilState(tripAtom);
   const [messageApi] = message.useMessage();
+  const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -99,26 +101,26 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
   return (
     <div className="sticky bottom-0 left-0 z-50 w-full px-4 py-5 flex gap-3 bg-white border-t-[1px] border-slate-100">
       <Button
-        onClick={showRegistModal}
-        className="flex items-center justify-center gap-[6px] border-slate-200 rounded-lg w-full h-auto py-[14px] text-lg text-slate-700"
+        onClick={() => setIsOpen(!isOpen)}
+        icon={<FaLocationDot className="!text-sm opacity-50 mb-[2px]" />}
+        className="flex items-center justify-center gap-[6px] border-slate-200 rounded-lg w-full h-auto py-[14px] text-lg text-slate-700 "
       >
-        <FaLocationDot className="text-sm text-slate-400" />
         일정 추가
       </Button>
       <Button
         onClick={() => {
           showReviewModal();
         }}
-        className="flex items-center justify-center gap-[6px]  border-slate-200 rounded-lg w-full  h-auto py-[14px] text-lg text-slate-700"
+        icon={<BiSolidEditAlt className="text-sm opacity-50 mb-[2px]" />}
+        className="flex items-center justify-center gap-[6px]  border-slate-200 rounded-lg w-full  h-auto py-[14px] text-lg text-slate-700 "
       >
-        <BiSolidEditAlt className="text-sm text-slate-400" />
         리뷰쓰기
       </Button>
 
       {/* 일정 추가 모달창 */}
 
       {/* 일정 추가 모달창 */}
-      <Modal
+      {/* <Modal
         title="일정추가"
         open={modals.isRegistModalOpen}
         onOk={() => navigate("/search/location")}
@@ -147,7 +149,8 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
         <p className="text-sm text-slate-500 text-center mb-6">
           일정 추가는 일정 등록 후 추가하실 수 있습니다.
         </p>
-      </Modal>
+      </Modal> */}
+      {isOpen && <AddSchedule open={isOpen} onClose={() => setIsOpen(false)} />}
     </div>
   );
 };

@@ -15,7 +15,18 @@ const RecommendList = ({ recommend }) => {
       <h1 className="px-4 text-2xl font-bold text-slate-700">
         회원님에게 추천하는 여행지
       </h1>
-      <Swiper slidesPerView={2.3} className="mySwiper mt-5">
+      <Swiper
+        slidesPerView={2.3} // 기본값
+        breakpoints={{
+          420: {
+            slidesPerView: 2.3, // 480px 이상일 때 2.3개 보이기
+          },
+          0: {
+            slidesPerView: 1, // 480px 미만일 때 1개 보이기
+          },
+        }}
+        className="mySwiper mt-5"
+      >
         {recommend.map(item => (
           <SwiperSlide
             key={item.strfId}
@@ -25,7 +36,7 @@ const RecommendList = ({ recommend }) => {
             <img
               src={`${ProductPic}/${item.strfId}/${item.strfPic}`}
               alt={item.strfTitle}
-              className="w-full aspect-[6/4] rounded-tr-[36px] rounded-bl-[36px]"
+              className="w-full aspect-[6/4] rounded-tr-[32px] rounded-bl-[32px]"
             />
             <div className=" gap-[6px] mt-3 ml-3 w-full">
               <span className="bg-slate-800 text-white py-1 px-2 rounded-2xl font-light text-xs inline">

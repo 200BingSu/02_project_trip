@@ -7,6 +7,7 @@ import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../atoms/userAtom";
+import { hasUnreadNotificationAtom } from "../atoms/notificationAtom";
 import DockBar from "../components/layout/DockBar/DockBar";
 import FestivalList from "../components/main/FestivalList";
 import LocationList from "../components/main/LocationList";
@@ -17,6 +18,10 @@ import Footer from "./Footer";
 import UserIndex from "./userpage/user/UserIndex";
 import jwtAxios from "../apis/jwt";
 
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
 const Index = () => {
   // 쿠키
   const accessToken = getCookie("accessToken");
@@ -26,6 +31,7 @@ const Index = () => {
   const [recommend, setRecommend] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [hasUnreadNotification] = useRecoilState(hasUnreadNotificationAtom);
 
   const getMainList = async () => {
     try {
@@ -101,10 +107,15 @@ const Index = () => {
           />
         </h1>
         <nav className=" flex gap-5">
-          <BiBell
-            onClick={() => navigate("/user/notification")}
-            className="text-2xl text-slate-400 cursor-pointer"
-          />
+          <div className="relative">
+            <BiBell
+              onClick={() => navigate("/user/notification")}
+              className="text-2xl text-slate-400 cursor-pointer"
+            />
+            {hasUnreadNotification && (
+              <div className="absolute top-0 right-0 w-2 h-2 bg-secondary3 rounded-full border-2 border-white" />
+            )}
+          </div>
           <CgMenuGridO
             className="text-2xl text-slate-400 cursor-pointer"
             onClick={() => {
@@ -148,17 +159,19 @@ const Index = () => {
             className="w-36 xs:w-40 md:w-42 absolute right-6 -top-5 md:!-top-7"
           />
         </section>
-        <section className="px-4 mt-10">
-          <RecentList
-            recent={recent}
-            getMainList={getMainList}
-            setFestivities={setFestivities}
-            setLocations={setLocations}
-            setRecent={setRecent}
-            setRecommend={setRecommend}
-          />
-        </section>
-        <section className="mt-10 w-full pt-16">
+        {recent && (
+          <section className="px-4 mt-10">
+            <RecentList
+              recent={recent}
+              getMainList={getMainList}
+              setFestivities={setFestivities}
+              setLocations={setLocations}
+              setRecent={setRecent}
+              setRecommend={setRecommend}
+            />
+          </section>
+        )}
+        <section className="mt-10 w-full">
           <RecommendList recommend={recommend} />
         </section>
       </main>
