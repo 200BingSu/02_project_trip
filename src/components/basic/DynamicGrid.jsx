@@ -8,34 +8,22 @@ const DynamicGrid = ({ reviewPics, type = "review" }) => {
     type === "myReview" ? reviewPics?.myReviewPic : reviewPics?.reviewPic;
 
   const imageCount = pics?.length;
+  const displayPics = imageCount > 5 ? pics.slice(0, 5) : pics;
+  const remainingCount = imageCount > 5 ? imageCount - 5 : 0;
 
-  const gridClass =
-    {
-      1: "grid-cols-1 grid-rows-1",
-      2: "grid-cols-2 grid-rows-1",
-      3: "grid-cols-2 grid-rows-2",
-      4: "grid-cols-2 grid-rows-2",
-      5: "grid-cols-4 grid-rows-2",
-    }[imageCount] || "grid-cols-3 grid-rows-2"; // 기본값 (5개 이상)
+  // 모든 이미지의 URL 생성
+  const allImageUrls = pics?.map(pic =>
+    type === "myReview"
+      ? `${ReviewPic}/${reviewPics.reviewId}/${pic.pic}`
+      : `${ReviewPic}/${reviewPics.strfId}/${pic.pic}`,
+  );
 
   return (
     <div
-      className={`custom-image grid gap-1 ${gridClass} w-full aspect-[3/2] rounded-lg overflow-hidden`}
+      className={`custom-image grid-${Math.min(imageCount, 5)} w-full aspect-[3/2] rounded-lg overflow-hidden`}
     >
-      <Image.PreviewGroup
-        preview={{
-          onChange: (current, prev) =>
-            console.log(`current index: ${current}, prev index: ${prev}`),
-        }}
-      >
-        {pics?.map((pic, index) => {
-          let extraClass = "";
-          if (imageCount === 3 && index === 0) extraClass = "row-span-2";
-          if (imageCount === 5) {
-            if (index === 0) extraClass = "row-span-2 col-span-2"; // 첫 번째 이미지 (2행 1열)
-          }
-
-          // 이미지 경로 생성 로직
+      <Image.PreviewGroup items={allImageUrls}>
+        {displayPics?.map((pic, index) => {
           const imagePath =
             type === "myReview"
               ? `${ReviewPic}/${reviewPics.reviewId}/${pic.pic}`
@@ -46,7 +34,10 @@ const DynamicGrid = ({ reviewPics, type = "review" }) => {
               key={index}
               src={imagePath}
               alt={`review-image-${index}`}
-              className={`w-full h-full overflow-hidden object-cover ${extraClass}`}
+              className="!w-full !h-full !object-cover"
+              {...(index === 4 && remainingCount > 0
+                ? { "data-remaining": remainingCount }
+                : {})}
             />
           );
         })}
@@ -54,4 +45,5 @@ const DynamicGrid = ({ reviewPics, type = "review" }) => {
     </div>
   );
 };
+
 export default DynamicGrid;

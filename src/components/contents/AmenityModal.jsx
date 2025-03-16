@@ -1,28 +1,29 @@
 import { IoIosClose } from "react-icons/io";
+import { matchAmenitiesIcon } from "../../utils/match";
+import TitleHeaderTs from "../layout/header/TitleHeaderTs";
 
 const AmenityModal = ({ handleCancel, amenities }) => {
+  console.log(amenities);
+
   return (
-    <div
-      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white
-w-[768px] shadow-lg rounded-lg
-"
-    >
-      <div className="custom-modal-header flex gap-[40px] px-[32px] items-center mb-[20px]">
-        <div className="custom-close-icon" onClick={handleCancel}>
-          <IoIosClose className="text-[35px]" />
-        </div>
-        <div className="custom-title font-bold text-[24px] text-slate-700 pt-[15px]">
-          편의시설 및 서비스
-        </div>
+    <div className="fixed top-0 left-1/2  -translate-x-1/2 z-[999] bg-white w-full max-w-[768px] h-screen">
+      <div className="">
+        <TitleHeaderTs
+          icon="close"
+          title="편의시설 및 서비스"
+          onClick={handleCancel}
+        />
       </div>
-      <ul className="flex flex-wrap gap-[30px] vertical-gap-[20px]">
+      <ul className="flex flex-wrap mt-6 px-4 gap-5">
         {amenities.map(item => (
           <li
-            key={item.key}
-            className="flex flex-col gap-[10px] items-center justify-center w-[100px] h-[100px]"
+            key={item.amenityId}
+            className="min-w-14 flex flex-col items-center justify-center gap-[6px] text-slate-700"
           >
-            <div className="text-slate-700">{item.icon}</div>
-            <p className="text-slate-700">{item.key}</p>
+            <i className="text-2xl ">
+              {matchAmenitiesIcon(item.amenityId ?? 0)}
+            </i>
+            <p>{item.amenityTitle}</p>
           </li>
         ))}
       </ul>
