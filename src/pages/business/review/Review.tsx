@@ -10,6 +10,7 @@ const Review = (): JSX.Element => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const strfId = Number(searchParams.get("strfId"));
+  console.log("strfId", strfId);
 
   // useNavigate
   const navigate = useNavigate();

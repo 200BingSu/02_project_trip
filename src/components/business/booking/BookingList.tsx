@@ -28,7 +28,6 @@ const BookingList = ({ item }: BookingListProps) => {
     );
   };
   // useState
-  const [isLoading, setIsLoading] = useState(false);
   const [isOkModalOpen, setIsOkModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 

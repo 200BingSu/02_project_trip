@@ -62,24 +62,28 @@ const CouponItem = ({
 
   return (
     <div className="px-2 pt-2 pb-5 flex flex-col gap-3 border-b border-slate-200">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 relative">
         {/* 쿠폰 내용 */}
         <ul className="flex flex-col gap-1 w-full ">
-          <li className="flex justify-between items-center">
-            <h4 className="text-lg text-slate-700 font-semibold">쿠폰 ID</h4>
-            <p className="text-base text-slate-500 font-semibold">
+          <li className="grid grid-cols-4 items-center">
+            <h4 className="text-lg text-slate-700 font-semibold col-span-1">
+              쿠폰 ID
+            </h4>
+            <p className="text-base text-slate-500 font-semibold col-span-3">
               {formatId(couponId ?? 0)}
             </p>
           </li>
-          <li className="flex justify-between items-center">
-            <h4 className="text-lg text-slate-700 font-semibold">
+          <li className="grid grid-cols-4 items-center">
+            <h4 className="text-lg text-slate-700 font-semibold col-span-1">
               쿠폰 관리명
             </h4>
-            <p className="text-base text-slate-500 font-semibold">{title}</p>
+            <p className="text-base text-slate-500 font-semibold col-span-3">
+              {title}
+            </p>
           </li>
         </ul>
         {/* 버튼 */}
-        <div className="flex justify-end gap-3">
+        <div className="flex justify-end gap-3 absolute bottom-1 right-0">
           <button
             type="button"
             className="flex items-center gap-2 text-base text-slate-500"
