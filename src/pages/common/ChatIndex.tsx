@@ -2,10 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { LiaComment } from "react-icons/lia";
 import { useNavigate } from "react-router-dom";
-import ChatList from "../components/chat/ChatList";
-import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
-import { IChatList } from "../types/interface";
-import { getCookie } from "../utils/cookie";
+import ChatList from "../../components/chat/ChatList";
+import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
+import { IChatList } from "../../types/interface";
+import { getCookie } from "../../utils/cookie";
 
 // interface IChatCategory {
 //   key: string;
@@ -21,7 +21,7 @@ const ChatIndex = () => {
   // 쿠키
   const accessToken = getCookie("accessToken");
   const userInfo = getCookie("user");
-  const role = userInfo.role[0];
+  const role = userInfo?.role[0];
   // useNavigate
   const navigate = useNavigate();
   const navigateToBack = () => {

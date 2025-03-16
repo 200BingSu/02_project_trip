@@ -1,12 +1,12 @@
 // bookingRouter 수정
 import { lazy, Suspense } from "react";
-import Loading from "../components/loading/Loading";
+import Loading from "../../components/loading/Loading";
 
 const LazyAnnouncement = lazy(
-  () => import("../pages/common/announcement/Index"),
+  () => import("../../pages/common/announcement/Index"),
 );
 const LazyAnnouncementDetail = lazy(
-  () => import("../pages/common/announcement/Detail"),
+  () => import("../../pages/common/announcement/Detail"),
 );
 
 const announcementRouter = () => {

@@ -16,6 +16,7 @@ import {
   matchAmenityIcon,
   matchRestDataToKor,
   matchState,
+  transperRestValue,
 } from "../../../utils/match";
 import { ProductPic } from "../../../constants/pic";
 
@@ -48,20 +49,20 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState<any>(null);
 
-  const [, setAreaCode] = useState<string>("");
+  const [areaCode, setAreaCode] = useState<string>("");
 
   // 편의 시설 클릭
   const handleAmenityClick = (amenityId: number) => {
     if (strfData.amenity?.includes(amenityId) === true) {
-      setStrfData({
-        ...strfData,
-        amenity: strfData.amenity.filter(item => item !== amenityId),
-      });
+      setStrfData(prev => ({
+        ...prev,
+        amenity: prev.amenity.filter(item => item !== amenityId),
+      }));
     } else {
-      setStrfData({
-        ...strfData,
+      setStrfData(prev => ({
+        ...prev,
         amenity: [...strfData.amenity, amenityId],
-      });
+      }));
     }
   };
   // API 상품 조회
@@ -88,7 +89,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     }
   };
 
-  // API 이름 변경
+  // API 이름 변경 v-s
   const updateTitle = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/title";
     const payload = {
@@ -124,19 +125,19 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return null;
     }
   };
-  // API 영업 상태 변경
+  // API 영업 상태 변경 v-s
   const updateState = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/state";
     const payload = {
       strfId,
       busiNum,
-      state: strfData.state,
+      state: value,
     };
     console.log("payload", payload);
     setIsLoading(true);
     try {
       const res = await axios.put(
-        `${url}?strfId=${strfId}&state=${strfData.state}&busiNum=${busiNum}`,
+        `${url}?strfId=${strfId}&state=${value}&busiNum=${busiNum}`,
         payload,
         {
           headers: {
@@ -149,6 +150,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       if (resultData.code === "200 성공") {
         setIsLoading(false);
         getStrfInfo();
+        setStrfData(prev => ({ ...prev, state: value }));
         message.success("영업 상태 변경에 성공했습니다.");
       }
 
@@ -160,18 +162,18 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return null;
     }
   };
-  // API 전화번호 변경
+  // API 전화번호 변경 v-s
   const updateTell = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/tell";
     setIsLoading(true);
     const payload = {
       strfId: strfId,
-      tell: `${strfData.areaCode}-${strfData.tell}`,
+      tell: `${areaCode}-${value}`,
       busiNum: busiNum,
     };
     try {
       const res = await axios.put(
-        `${url}?strfId=${strfId}&tell=${strfData.areaCode}-${strfData.tell}&busiNum=${busiNum}`,
+        `${url}?strfId=${strfId}&tell=${areaCode}-${value}&busiNum=${busiNum}`,
         payload,
         {
           headers: {
@@ -183,6 +185,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       if (resultData.code) {
         setIsLoading(false);
         getStrfInfo();
+        setStrfData({ ...strfData, areaCode: areaCode, tell: value });
         message.success("전화번호 변경이 완료되었습니다");
       }
       console.log("전화번호 변경", resultData);
@@ -194,18 +197,18 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return null;
     }
   };
-  // API 업체 소개 변경
+  // API 업체 소개 변경 v-s
   const updateDetail = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/detail";
     setIsLoading(true);
     const payload = {
       strfId: strfId,
-      detail: strfData.detail,
+      detail: value,
       busiNum: busiNum,
     };
     try {
       const res = await axios.put(
-        `${url}?strfId=${strfId}&detail=${strfData.detail}&busiNum=${busiNum}`,
+        `${url}?strfId=${strfId}&detail=${value}&busiNum=${busiNum}`,
         payload,
         {
           headers: {
@@ -217,6 +220,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       if (resultData.code) {
         setIsLoading(false);
         getStrfInfo();
+        setStrfData(prev => ({ ...prev, detail: value }));
         message.success("업체 소개 변경이 완료되었습니다");
       }
       console.log("업체소개 변경", resultData);
@@ -267,20 +271,20 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return null;
     }
   };
-  // API 체크인/체크아웃 변경
+  // API 체크인/체크아웃 변경 v-s
   const updateCheckTime = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/time";
     const payload = {
       strfId: strfId,
       busiNum: busiNum,
-      openCheckIn: strfData.openCheck,
-      closeCheckOut: strfData.closeCheck,
+      openCheckIn: value[0],
+      closeCheckOut: value[1],
     };
     console.log("payload", payload);
     setIsLoading(true);
     try {
       const res = await axios.put<IAPI<string>>(
-        `${url}?strfId=${strfId}&busiNum=${busiNum}&openCheckIn=${strfData.openCheck}&closeCheckOut=${strfData.closeCheck}`,
+        `${url}?strfId=${strfId}&busiNum=${busiNum}&openCheckIn=${value[0]}&closeCheckOut=${value[1]}`,
         payload,
         {
           headers: {
@@ -293,7 +297,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       if (resultData) {
         getStrfInfo();
         setIsLoading(false);
-        setStrfData({ ...strfData, strfTitle: value });
+        setStrfData({ ...strfData, strfTitle: value[0], closeCheck: value[1] });
         message.success("체크시간 변경이 변경되었습니다");
       }
       return resultData;
@@ -341,18 +345,18 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return null;
     }
   };
-  // API 휴무일 변경
+  // API 휴무일 변경 v-s
   const updateRestDate = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/rest";
     const payload = {
       strfId: strfId,
       busiNum: busiNum,
-      restDates: strfData.restDate,
+      restDates: value,
     };
     console.log("payload", payload);
     setIsLoading(true);
-    const restDatesPara = strfData.restDate
-      .map(item => `restDates=${item}`)
+    const restDatesPara = value
+      .map((item: string) => `restDates=${item}`)
       .join("&");
     console.log("restDatesPara", restDatesPara);
     try {
@@ -370,7 +374,10 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       if (resultData) {
         getStrfInfo();
         setIsLoading(false);
-        setStrfData({ ...strfData, strfTitle: value });
+        setStrfData(prev => ({
+          ...prev,
+          restDate: transperRestValue(value),
+        }));
         message.success("휴무일이 변경되었습니다");
       }
       return resultData;
@@ -389,10 +396,22 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return;
     }
     setIsEdit(!isEdit);
+    if (isEdit === false) {
+      type === "title" && setValue(strfData.strfTitle);
+      type === "tell" && setValue(strfData.tell);
+      type === "tell" && setAreaCode(strfData.areaCode ?? "");
+      type === "detail" && setValue(strfData.detail);
+      type === "amenity" && setValue(strfData.amenity);
+      type === "state" && setValue(strfData.state);
+      type === "duration" && setValue(`${strfData.startAt}~${strfData.endAt}`);
+      type === "checkTime" &&
+        setValue([strfData.openCheck, strfData.closeCheck]);
+      type === "restDate" && setValue(strfData.restDate);
+    }
     if (isEdit === true) {
-      type === "title" && updateTitle();
+      type === "title" && value?.trim() !== "" && updateTitle();
       type === "state" && updateState();
-      type === "tell" && updateTell();
+      type === "tell" && areaCode !== "" && value !== "" && updateTell();
       type === "detail" && updateDetail();
       type === "amenity" && updateAmenity();
       type === "duration" && updateDuration();
@@ -411,7 +430,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     <Select
       defaultValue={strfData.areaCode}
       onChange={e => {
-        setStrfData({ ...strfData, areaCode: e });
+        setAreaCode(e);
       }}
     >
       {koreaAreaCodes.map(item => {
@@ -442,13 +461,13 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       // { label: "격주", value: "biweekly" },
     ],
     day: [
-      { label: "월", value: "mon" },
-      { label: "화", value: "tue" },
-      { label: "수", value: "wed" },
-      { label: "목", value: "thu" },
-      { label: "금", value: "fri" },
-      { label: "토", value: "sat" },
-      { label: "일", value: "sun" },
+      { label: "월", value: "월" },
+      { label: "화", value: "화" },
+      { label: "수", value: "수" },
+      { label: "목", value: "목" },
+      { label: "금", value: "금" },
+      { label: "토", value: "토" },
+      { label: "일", value: "일" },
     ],
   };
   useEffect(() => {
@@ -539,12 +558,11 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
           <Input
             size="large"
             defaultValue={strfData.strfTitle as string}
-            placeholder="업체 이름을 입력해주세요"
+            placeholder="업체 이름을 입력해주세요(공백 입력시 이전 이름이 유지됩니다)"
             onChange={e => {
-              if (e.target.value.length > 0) {
-                setValue(e.target.value);
-              }
+              setValue(e.target.value);
             }}
+            status={value?.trim() === "" ? "error" : undefined}
           />
         )}
         {isEdit && type === "state" && (
@@ -553,7 +571,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
             options={selectOptions}
             size="large"
             className="w-1/3 "
-            onChange={e => setStrfData({ ...strfData, state: e })}
+            onChange={e => setValue(e)}
           />
         )}
         {isEdit && type === "tell" && (
@@ -562,9 +580,10 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
             size="large"
             defaultValue={strfData.tell}
             placeholder="전화번호를 입력해주세요."
-            onChange={e => setStrfData({ ...strfData, tell: e.target.value })}
-            value={formatPhoneNumber(strfData.tell ?? "0")}
+            onChange={e => setValue(e.target.value)}
+            value={formatPhoneNumber(value ?? "0")}
             maxLength={8}
+            status={!areaCode || !value ? "error" : undefined}
           />
         )}
         {isEdit && type === "detail" && (
@@ -572,10 +591,11 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
             placeholder="업체 소개를 작성해주세요"
             maxLength={300}
             onChange={e => {
-              setStrfData({ ...strfData, detail: e.target.value });
+              setValue(e.target.value);
             }}
             style={{ resize: "none", height: "27.73vw", padding: "20px" }}
-            value={strfData.detail}
+            value={value}
+            status={value?.trim() === "" ? "error" : undefined}
           />
         )}
         {isEdit && type === "amenity" && (
@@ -624,11 +644,10 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
               format={"HH:mm"}
               onChange={e => {
                 if (e) {
-                  setStrfData({
-                    ...strfData,
-                    openCheck: e[0] ? e[0].format("HH:mm") : "",
-                    closeCheck: e[1] ? e[1].format("HH:mm") : "",
-                  });
+                  setValue([
+                    e[0] ? e[0].format("HH:mm") : "",
+                    e[1] ? e[1].format("HH:mm") : "",
+                  ]);
                 }
               }}
             />
@@ -654,11 +673,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
                 matchRestDataToKor(item),
               )}
               onChange={value => {
-                console.log(value);
-                setStrfData({
-                  ...strfData,
-                  restDate: value,
-                });
+                setValue(value);
               }}
             />
           </div>

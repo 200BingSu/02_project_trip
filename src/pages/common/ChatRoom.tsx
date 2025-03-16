@@ -6,12 +6,12 @@ import { BsFillPatchPlusFill } from "react-icons/bs";
 import { IoIosArrowUp } from "react-icons/io";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { chatDataAtom, IChatData } from "../atoms/chatAtom";
-import TitleHeaderTs from "../components/layout/header/TitleHeaderTs";
-import { ProfilePic } from "../constants/pic";
-import { chatDataSelector } from "../selectors/chatSelector";
-import { getCookie } from "../utils/cookie";
-import { moveTo } from "../utils/moveTo";
+import { chatDataAtom, IChatData } from "../../atoms/chatAtom";
+import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
+import { ProfilePic } from "../../constants/pic";
+import { chatDataSelector } from "../../selectors/chatSelector";
+import { getCookie } from "../../utils/cookie";
+import { moveTo } from "../../utils/moveTo";
 
 interface ISendMessage {
   message: string;
@@ -135,7 +135,7 @@ const ChatRoom = (): JSX.Element => {
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       // 연결 성공
-      onConnect: async frame => {
+      onConnect: async () => {
         // console.log("Connected: ", frame);
         setRetryCount(0);
         setIsReconnecting(false);

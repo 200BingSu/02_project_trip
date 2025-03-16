@@ -11,24 +11,25 @@ const QnA = () => {
     console.log(key);
   };
   return (
-    <div>
+    <div className="max-w-[768px] mx-auto">
       <TitleHeaderTs
         title="자주 묻는 질문"
         icon="close"
         onClick={() => navigate("/business")}
       />
-      <section className="px-4 py-4 flex flex-col gap-4">
+      <section className="w-full  px-4">
         <Collapse
           defaultActiveKey={["1"]}
           onChange={onChange}
-          expandIconPosition="right"
+          expandIconPosition="end"
           items={qnaData}
           bordered={false}
           style={{
             background: "white",
             borderRadius: 0,
+            width: "100%",
           }}
-          className="[&_.ant-collapse-content-box]:bg-slate-100"
+          className="w-full [&_.ant-collapse-content-box]:bg-slate-100"
         />
       </section>
     </div>

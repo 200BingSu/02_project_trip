@@ -21,8 +21,10 @@ import menuRouter from "./business/menurouter";
 import reviewRouter from "./business/reviewrouter";
 import storeRouter from "./business/storerouter";
 import BusinessLayout from "../components/layout/BusinessLayout";
-import ChatRoom from "../pages/ChatRoom";
-import announcementRouter from "./announcementrouter";
+import ChatRoom from "../pages/common/ChatRoom";
+import announcementRouter from "./common/announcementrouter";
+import pointRouter from "./business/pointRouter";
+import reportRouter from "./common/reportrouter";
 // 사용자 lazys
 const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/userpage/bookings/Booking"));
@@ -43,7 +45,7 @@ const LazySignIn = lazy(() => import("../pages/userpage/signin/SingInIndex"));
 const LazySignUp = lazy(() => import("../pages/userpage/signup/SignUp"));
 const LazyUser = lazy(() => import("../pages/userpage/user/User"));
 const LazyContent = lazy(() => import("../pages/userpage/contents/Contents"));
-const LazyChat = lazy(() => import("../pages/ChatIndex"));
+const LazyChat = lazy(() => import("../pages/common/ChatIndex"));
 
 // 사업자
 const LazyBusiness = lazy(() => import("../pages/business/BusinessIndex"));
@@ -64,12 +66,14 @@ const LazyBusinessCoupon = lazy(
 const LazyBusinessBooking = lazy(
   () => import("../pages/business/booking/Booking"),
 );
+const LazyPoint = lazy(() => import("../pages/business/point/Point"));
 
 // 공용
 const LazyAnnouncement = lazy(
   () => import("../pages/common/announcement/Announcement"),
 );
 const LazyQnA = lazy(() => import("../pages/common/qna/QnA"));
+const LazyReport = lazy(() => import("../pages/common/report/Report"));
 const router = createBrowserRouter([
   // 사용자
   {
@@ -197,8 +201,6 @@ const router = createBrowserRouter([
         ),
         children: usertrouter(),
       },
-      { path: "/test", element: <Test /> },
-      { path: "*", element: <NotFound /> },
     ],
   },
   // 사업자
@@ -249,8 +251,14 @@ const router = createBrowserRouter([
         element: <LazyBusinessStore />,
         children: storeRouter(),
       },
+      {
+        path: "point",
+        element: <LazyPoint />,
+        children: pointRouter(),
+      },
     ],
   },
+  // 공용
   {
     path: "/chat",
     element: (
@@ -272,6 +280,13 @@ const router = createBrowserRouter([
     path: "/qna",
     element: <LazyQnA />,
   },
+  {
+    path: "/report",
+    element: <LazyReport />,
+    children: reportRouter(),
+  },
+  { path: "/test", element: <Test /> },
+  { path: "*", element: <NotFound /> },
 ]);
 
 export default router;

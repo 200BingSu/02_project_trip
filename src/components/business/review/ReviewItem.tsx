@@ -12,6 +12,8 @@ import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 import CenterModalTs from "../../common/CenterModalTs";
 import axios from "axios";
 import { getCookie } from "../../../utils/cookie";
+import { RiAlarmWarningLine } from "react-icons/ri";
+import { ReportType } from "../../../types/enum";
 
 interface IReviewItemProps {
   strfId: number;
@@ -38,6 +40,9 @@ const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
     navigate(
       `/business/review/edit?type=edit&strfId=${strfId}&reviewId=${item.reviewId}&replayId=${item.reviewReplyId}`,
     );
+  };
+  const navigateToReport = () => {
+    navigate(`/report?type=${ReportType.REVIEW}&reportTarget=${item.reviewId}`);
   };
   // useLocation
   const location = useLocation();
@@ -131,26 +136,33 @@ const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
       {/* 유저 리뷰 */}
       <section className="flex flex-col gap-3">
         {/* 유저 정보 */}
-        <div className="flex items-center gap-4">
-          <div className="bg-slate-200 rounded-full w-10 h-10 overflow-hidden">
-            <img
-              src={`${ProfilePic}/${item.userId}/${item.writerUserProfilePic}`}
-              alt="프로필 사진"
-            />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="bg-slate-200 rounded-full w-10 h-10 overflow-hidden">
+              <img
+                src={`${ProfilePic}/${item.userId}/${item.writerUserProfilePic}`}
+                alt="프로필 사진"
+              />
+            </div>
+            <p className="text-lg font-semibold text-slate-700">
+              {item.userName}
+            </p>
           </div>
-          <p className="text-lg font-semibold text-slate-700">
-            {item.userName}
-          </p>
+          <button type="button" className="px-2" onClick={navigateToReport}>
+            <RiAlarmWarningLine className="text-slate-400 text-xl" />
+          </button>
         </div>
         {/* 별점, 작성일 */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <Rate value={item.ratingAvg} disabled />
             <p className="text-sm font-semibold text-slate-700">
               {item.ratingAvg}
             </p>
           </div>
-          <p className="text-sm text-slate-500">{item.createdAt}</p>
+          <div className="flex items-end gap-2">
+            <p className="text-sm text-slate-500">{item.createdAt}</p>
+          </div>
         </div>
         {/* 리뷰 내용 */}
         <div>
