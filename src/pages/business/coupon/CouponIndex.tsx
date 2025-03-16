@@ -7,6 +7,8 @@ import CouponItem from "../../../components/business/coupon/CouponItem";
 import StrfInfo from "../../../components/business/StrfInfo";
 import { ICoupon } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
+import NoData from "../../../components/common/NoData";
+import { BiSolidCoupon } from "react-icons/bi";
 
 const CouponIndex = (): JSX.Element => {
   // 쿼리
@@ -28,17 +30,11 @@ const CouponIndex = (): JSX.Element => {
 
   // 쿠폰 자세히 보기 선택
   const handleClickCoupon = (index: number): void => {
-    if (isOpenCouponDetail === false) {
-      if (selectedCoupon === index) {
-        setIsOpenCouponDetail(true);
-      }
-      if (selectedCoupon !== index) {
-        setSelectedCoupon(index);
-        setIsOpenCouponDetail(true);
-      }
-    }
-    if (isOpenCouponDetail === true) {
-      setIsOpenCouponDetail(false);
+    if (selectedCoupon === index) {
+      setIsOpenCouponDetail(!isOpenCouponDetail);
+    } else {
+      setSelectedCoupon(index);
+      setIsOpenCouponDetail(true);
     }
   };
 
@@ -74,32 +70,41 @@ const CouponIndex = (): JSX.Element => {
   return (
     <div>
       <StrfInfo />
-      <Spin spinning={isLoading}>
-        <section className="px-4 py-3 flex flex-col gap-5">
-          {/* 안내문 */}
-          <div className="px-4 py-4 bg-[rgba(165,238,254,0.31)] rounded-lg">
-            <p className="text-base font-semibold text-slate-700">
-              쿠폰의 발급을 신청해보세요!
-            </p>
-            <p className="text-sm font-medium text-slate-500">
-              신청이 승인되어을 때, 쿠폰을 발급 받을 수 있어요.
-            </p>
-          </div>
-          {/* 쿠폰 발급 버튼 */}
-          <div>
-            <Button
-              type="primary"
-              className="w-full py-2 max-h-[60px] h-[13.33vw] text-xl font-medium"
-              onClick={navigateToCreateCoupon}
-            >
-              <AiOutlinePlus />
-              혜택 등록
-            </Button>
-          </div>
-          {/* 쿠폰 목록 */}
-          <div>
-            <ul className="flex flex-col gap-5">
-              {couponData?.map((item, index) => {
+      <section className="px-4 py-3 flex flex-col gap-5">
+        {/* 안내문 */}
+        <div className="px-4 py-4 bg-[rgba(165,238,254,0.31)] rounded-lg">
+          <p className="text-base font-semibold text-slate-700">
+            쿠폰의 발급을 신청해보세요!
+          </p>
+          <p className="text-sm font-medium text-slate-500">
+            신청이 승인되어을 때, 쿠폰을 발급 받을 수 있어요.
+          </p>
+        </div>
+        {/* 쿠폰 발급 버튼 */}
+        <div>
+          <Button
+            type="primary"
+            className="w-full py-2 max-h-[60px] h-[13.33vw] text-xl font-medium"
+            onClick={navigateToCreateCoupon}
+          >
+            <AiOutlinePlus />
+            혜택 등록
+          </Button>
+        </div>
+      </section>
+      {/* 쿠폰 목록 */}
+      <section className="px-4 py-3 flex flex-col gap-5">
+        <Spin spinning={isLoading}>
+          <ul className="flex flex-col gap-5">
+            {isLoading && <></>}
+            {!isLoading && couponData?.length === 0 && (
+              <NoData
+                icon={<BiSolidCoupon />}
+                content="쿠폰 목록이 없습니다."
+              />
+            )}
+            {!isLoading &&
+              couponData?.map((item, index) => {
                 return (
                   <li key={index}>
                     <CouponItem
@@ -115,10 +120,9 @@ const CouponIndex = (): JSX.Element => {
                   </li>
                 );
               })}
-            </ul>
-          </div>
-        </section>
-      </Spin>
+          </ul>
+        </Spin>
+      </section>
     </div>
   );
 };

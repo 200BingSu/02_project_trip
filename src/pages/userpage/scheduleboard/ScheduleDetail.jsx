@@ -18,6 +18,9 @@ import SelectTrip from "../../../components/scheduleboard/SelectTrip";
 import Loading from "../../../components/loading/Loading";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
+import { RiAlarmWarningLine } from "react-icons/ri";
+import { FiThumbsUp } from "react-icons/fi";
+import { ReportType } from "../../../types/enum";
 
 const ScheduleDetail = () => {
   const accessToken = getCookie("accessToken");
@@ -31,6 +34,11 @@ const ScheduleDetail = () => {
   const navigate = useNavigate();
   const handleNavigateBack = () => {
     navigate(-1);
+  };
+  const navigateToReport = () => {
+    navigate(
+      `/report?category=${ReportType.TRIPREVIEW}&reportTarget=${tripReviewId}`,
+    );
   };
   //useState
   const [tripReviewData, setTripReviewData] = useState({});
@@ -71,12 +79,12 @@ const ScheduleDetail = () => {
   };
   // api 여행기 추천
   const postTripReviewLike = async () => {
+    const url = "/api/trip-review/like";
     const sendData = {
-      userId: userId,
       tripReviewId: tripReviewId,
     };
     try {
-      const res = await jwtAxios.post(`/api/trip-review/like`, sendData);
+      const res = await jwtAxios.post(url, sendData);
       console.log("여행기 추천", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
@@ -89,7 +97,6 @@ const ScheduleDetail = () => {
   // api 여행기 추천 취소
   const deleteTripReviewLike = async () => {
     const sendData = {
-      userId: userId,
       tripReviewId: tripReviewId,
     };
     try {
@@ -152,62 +159,80 @@ const ScheduleDetail = () => {
             {/* info */}
             <div className="flex flex-col gap-[10px]">
               {/* <p className="text-[18px] text-slate-700">작성일자</p> */}
-              <div>
-                <h2 className="font-bold text-[36px] text-slate-700">
-                  {tripReviewData[0]?.title}
-                </h2>
-                <ul className="flex gap-[10px] items-center">
-                  <li className="flex gap-[5px] items-center">
-                    <BiShow className="text-slate-300 text-[18px]" />
-                    <p className="text-slate-500 font-bold text-[14px]">
-                      {tripReviewData[0]?.recentCount}
-                    </p>
-                  </li>
-                  <li className="flex gap-[5px] items-center cursor-pointer">
-                    <GoThumbsup
-                      className={`text-slate-300 text-[18px] focus:text-secondary3 transition-all duration-300`}
-                    />
-                    <button
-                      type="button"
-                      className="text-slate-500 font-bold text-[14px]"
-                    >
-                      {tripReviewData[0]?.likeCount}
-                    </button>
-                  </li>
-                  <li className="flex gap-[5px] items-center">
-                    <IoReaderOutline className="text-slate-300 text-[18px]" />
-                    <p className="text-slate-500 font-bold text-[14px]">
-                      {" "}
-                      {tripReviewData[0]?.scrapCount}
-                    </p>
-                  </li>
-                </ul>
+              <div className="flex justify-between items-center">
+                <div>
+                  <h2 className="font-bold text-[36px] text-slate-700">
+                    {tripReviewData[0]?.title}
+                  </h2>
+                  <ul className="flex gap-[10px] items-center">
+                    <li className="flex gap-[5px] items-center">
+                      <BiShow className="text-slate-300 text-[18px]" />
+                      <p className="text-slate-500 font-bold text-[14px]">
+                        {tripReviewData[0]?.recentCount}
+                      </p>
+                    </li>
+                    <li className="flex gap-[5px] items-center cursor-pointer">
+                      <GoThumbsup
+                        className={`text-slate-300 text-[18px] focus:text-secondary3 transition-all duration-300`}
+                      />
+                      <button
+                        type="button"
+                        className="text-slate-500 font-bold text-[14px]"
+                      >
+                        {tripReviewData[0]?.likeCount}
+                      </button>
+                    </li>
+                    <li className="flex gap-[5px] items-center">
+                      <IoReaderOutline className="text-slate-300 text-[18px]" />
+                      <p className="text-slate-500 font-bold text-[14px]">
+                        {" "}
+                        {tripReviewData[0]?.scrapCount}
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+                <div className="flex gap-[10px]">
+                  {/* 좋아요 버튼 */}
+                  {accessToken && (
+                    <div className="flex justify-center">
+                      <button
+                        type="button"
+                        className={`w-[50px] h-[50px] flex items-center justify-center
+                    rounded-full text-[20px]
+                   transition-all duration-300
+                   ${
+                     tripReviewData[0]?.likeUser === 1
+                       ? "text-secondary3 bg-secondary3/10 hover:bg-secondary3/20"
+                       : "text-slate-500 bg-slate-200 hover:bg-slate-200/85"
+                   }`}
+                        onClick={() => {
+                          if (tripReviewData[0]?.likeUser === 0) {
+                            postTripReviewLike();
+                          } else {
+                            deleteTripReviewLike();
+                          }
+                        }}
+                      >
+                        <FiThumbsUp />
+                      </button>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    className={`w-[50px] h-[50px] flex items-center justify-center
+                    rounded-full text-[20px] bg-slate-200 text-slate-500
+                   transition-all duration-300
+                   hover:bg-slate-200/85`}
+                    onClick={navigateToReport}
+                  >
+                    <RiAlarmWarningLine />
+                  </button>
+                </div>
               </div>
             </div>
             {/* 소개 */}
             <div>
               <p>{tripReviewData[0]?.content}</p>
-            </div>
-            {/* 좋아요 버튼 */}
-            <div className="flex justify-center">
-              <button
-                type="button"
-                className={`w-[50px] h-[50px] flex items-center justify-center
-                   bg-slate-100 rounded-full 
-                   text-slate-300 text-[20px]
-                   transition-all duration-300
-                   hover:bg-slate-200
-                   ${tripReviewData.likeUser === 0 ? "text-secondary3" : "text-slate-500"}`}
-                onClick={() => {
-                  if (tripReviewData.likeUser === 0) {
-                    postTripReviewLike();
-                  } else {
-                    deleteTripReviewLike();
-                  }
-                }}
-              >
-                <GoThumbsup />
-              </button>
             </div>
           </div>
           {/* 일정 */}
@@ -226,7 +251,7 @@ const ScheduleDetail = () => {
             </div>
           </div>
           {/* 버튼 */}
-          <div className="px-[32px] mb-[30px]">
+          <div className="px-8 pb-5 mb-[30px]">
             <Button
               type="primary"
               variant="filled"

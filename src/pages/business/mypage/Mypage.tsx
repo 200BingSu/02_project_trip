@@ -1,14 +1,17 @@
+import axios from "axios";
 import { useState } from "react";
-import { AiFillSetting, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
-import { BiBell, BiSolidCoupon } from "react-icons/bi";
+import { AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
+import { BiBell, BiCoin, BiSolidCoupon } from "react-icons/bi";
 import { GoDiscussionOutdated } from "react-icons/go";
 import { IoIosArrowForward } from "react-icons/io";
 import { RxExit } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useResetRecoilState } from "recoil";
+import { salesAtom } from "../../../atoms/salesAtom";
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { CategoryType, ROLE } from "../../../types/enum";
+import { IAPI } from "../../../types/interface";
 import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 import {
   categoryToEnum,
@@ -16,16 +19,20 @@ import {
   matchMenuIcon,
   matchName,
 } from "../../../utils/match";
-import { salesAtom } from "../../../atoms/salesAtom";
 
 const Mypage = (): JSX.Element => {
+  // useNavigate
   const navigate = useNavigate();
+  const navigateToChatRoom = (roomId: string | number) => {
+    navigate(`/chatroom?roomId=${roomId}`);
+  };
   // 쿠키
   const userInfo = getCookie("user");
+  const accessToken = getCookie("accessToken");
   console.log("쿠키", userInfo);
-  const strfId = userInfo?.strfDtos[0].strfId;
+  const strfId = userInfo?.strfDtos[0]?.strfId;
   const category =
-    categoryToEnum(userInfo?.strfDtos[0].category) || CategoryType.STAY;
+    categoryToEnum(userInfo?.strfDtos[0]?.category) || CategoryType.STAY;
   // recoil
   const resetUserData = useResetRecoilState(tsUserAtom);
   const resetSalesData = useResetRecoilState(salesAtom);
@@ -38,6 +45,29 @@ const Mypage = (): JSX.Element => {
   const [openOption, setOpenOption] = useState<number>(0);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const [isOpenOption, setIsOpenOption] = useState<boolean>(false);
+
+  // API 관리자 채팅방 생성
+  const createChatToAdmine = async (): Promise<IAPI<
+    string | number
+  > | null> => {
+    const url = "/api/chat-room/admin";
+    try {
+      const res = await axios.post<IAPI<string | number>>(url, null, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("관리자 채팅방 생성", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        navigateToChatRoom(resultData.data);
+      }
+      return resultData;
+    } catch (error) {
+      console.log("관리자 채팅방 생성", error);
+      return null;
+    }
+  };
 
   // 메뉴
   const mainMenuArr = [
@@ -57,9 +87,8 @@ const Mypage = (): JSX.Element => {
       ],
     },
     {
-      // 메뉴 관리
       icon: matchMenuIcon(category),
-      name: `${matchName(category)} 관리`,
+      name: `${matchName(category)} 관리`, // 메뉴 관리
       path: "/business/menu",
       subMenu: [
         {
@@ -76,6 +105,11 @@ const Mypage = (): JSX.Element => {
       icon: <AiOutlineStar />,
       name: "리뷰 관리",
       path: `/business/review?strfId=${strfId}`,
+    },
+    {
+      icon: <BiCoin />,
+      name: "포인트 관리",
+      path: `/business/point?strfId=${strfId}`,
     },
   ];
   // 상품 카테고리 별 메뉴
@@ -102,9 +136,15 @@ const Mypage = (): JSX.Element => {
   ];
   // 관리 메뉴
   const manageMenuArr = [
-    { name: "공지사항", path: "" },
-    { name: "자주 묻는 질문", path: "" },
-    { name: "고객센터", path: "" },
+    {
+      name: "공지사항",
+      onClick: () => navigate("/announcement?type=business"),
+    },
+    {
+      name: "자주 묻는 질문",
+      onClick: () => navigate("/qna"),
+    },
+    { name: "관리자에게 문의하기", onClick: () => createChatToAdmine() },
   ];
   // 메뉴 열기
   const handleOpenMenu = (index: number) => {
@@ -168,9 +208,9 @@ const Mypage = (): JSX.Element => {
             <button type="button">
               <BiBell />
             </button>
-            <button type="button">
+            {/* <button type="button">
               <AiFillSetting />
-            </button>
+            </button> */}
           </div>
         }
       />
@@ -255,9 +295,7 @@ const Mypage = (): JSX.Element => {
                     className={`flex items-center gap-4 text-2xl font-medium text-slate-700
                       ${category === CategoryType.STAY ? "" : "hidden"}`}
                   >
-                    <i className="text-2xl text-slate-400">
-                      <GoDiscussionOutdated />
-                    </i>
+                    <i className="text-2xl text-slate-400">{item.icon}</i>
                     {item.name}
                     {item.subMenu && (
                       <i
@@ -316,8 +354,8 @@ const Mypage = (): JSX.Element => {
             return (
               <li
                 key={index}
-                className="cursor-pointer text-slate-500 py-3 text-lg"
-                onClick={() => navigate(item.path)}
+                className="cursor-pointer text-slate-500 py-3 text-lg select-none"
+                onClick={item.onClick}
               >
                 {item.name}
               </li>

@@ -16,6 +16,7 @@ import {
 import { RiHotelLine } from "react-icons/ri";
 import { amenities } from "../constants/dataArr";
 import { CategoryType } from "../types/enum";
+import { Button } from "antd";
 
 // day 색깔
 export const dayTextColor = (dayNum: number): string => {
@@ -223,6 +224,30 @@ export const matchRestDateEnToKo = (string: string) => {
       return "토";
   }
 };
+
+export const transperRestValue = (value: string[]) => {
+  return value.map(item => {
+    switch (item) {
+      case "일":
+        return 0;
+      case "월":
+        return 1;
+      case "화":
+        return 2;
+      case "수":
+        return 3;
+      case "목":
+        return 4;
+      case "금":
+        return 5;
+      case "토":
+        return 6;
+      default:
+        return 0;
+    }
+  });
+};
+
 export const matchState = (state: number) => {
   switch (state) {
     case 0:
@@ -239,4 +264,47 @@ export const matchState = (state: number) => {
 export const matchAmenityIcon = (amenityId: number) => {
   const finedamenity = amenities.find(item => item.amenity_id === amenityId);
   return finedamenity?.key;
+};
+
+export const matchBusiBookingButton = (state: string) => {
+  switch (state) {
+    case "0":
+    case "1":
+      return (
+        <>
+          <Button
+            color="primary"
+            variant="filled"
+            className="w-full h-auto py-3 rounded-lg text-base font-semibold text-primary3 "
+          >
+            예약 취소
+          </Button>
+          <Button
+            type="primary"
+            className="w-full h-auto py-3 rounded-lg text-base font-semibold "
+          >
+            예약 승인
+          </Button>
+        </>
+      );
+    case "2":
+      return (
+        <>
+          <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold bg-primary2 text-slate-700">
+            예약 취소
+          </Button>
+        </>
+      );
+    case "3":
+      return (
+        <>
+          <Button
+            className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
+            disabled
+          >
+            예약 취소 완료
+          </Button>
+        </>
+      );
+  }
 };

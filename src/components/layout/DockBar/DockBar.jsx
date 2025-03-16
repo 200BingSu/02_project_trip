@@ -1,5 +1,5 @@
 import { message, Modal } from "antd";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BsFillPatchPlusFill } from "react-icons/bs";
 import { FiSearch } from "react-icons/fi";
 import { IoLogoWechat, IoReaderOutline } from "react-icons/io5";
@@ -12,6 +12,8 @@ import { getCookie } from "../../../utils/cookie";
 import { searchAtom } from "../../../atoms/searchAtom";
 import { IoIosArrowUp } from "react-icons/io";
 import { resetSearchData } from "../../../selectors/searchSelector";
+import axios from "axios";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
 const DockBar = React.memo(() => {
   //useLocation
@@ -27,6 +29,41 @@ const DockBar = React.memo(() => {
   const resetSearch = useResetRecoilState(resetSearchData);
   //useNavigate
   const navigate = useNavigate();
+
+  // 채팅 알림
+  // const chatEventRef = useRef(null);
+  const [chatAlert, setChatAlert] = useState(false);
+  // useEffect(() => {
+  //   if (!accessToken) {
+  //     return;
+  //   }
+  //   if (chatEventRef.current) {
+  //     console.log("기존 SSE 닫기");
+  //     chatEventRef.current.close();
+  //   }
+  //   const eventSource = new EventSource(`/api/chat-notice`, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   });
+  //   chatEventRef.current = eventSource;
+
+  //   eventSource.onopen = () => console.log("SSE 연결 성공!");
+  //   eventSource.onmessage = event => console.log("새 알림:", event.data);
+  //   eventSource.onerror = error => {
+  //     console.error("SSE 연결 오류:", error);
+  //     setTimeout(() => {
+  //       chatEventRef.current = new EventSourcePolyfill("/api/chat-notice", {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       });
+  //     }, 5000);
+  //   };
+  //   return () => {
+  //     console.log("언마운트: SSE 연결 닫기");
+  //     chatEventRef.current?.close(); // 언마운트될 때 연결 닫기
+  //   };
+  // }, [accessToken]);
+
   //antD
   const [messageApi, contextHolder] = message.useMessage();
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -61,11 +98,12 @@ const DockBar = React.memo(() => {
       behavior: "smooth",
     });
   };
+
   return (
     <div>
       <div className="flex max-w-[768px] w-full h-auto fixed bottom-0 left-1/2 -translate-x-1/2 bg-white z-50 shadow-[0px_-4px_8px_0px_rgba(99,99,99,0.05)]">
         <Link
-          to="/search/strf"
+          to="/search/before"
           className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5"
         >
           <FiSearch className="text-2xl" />
@@ -102,15 +140,24 @@ const DockBar = React.memo(() => {
           <IoReaderOutline className="text-2xl" />
           여행기
         </Link>
-        <Link
-          to="/chat"
-          className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5 text-sm"
-          // onClick={showModal}
+        <button
+          type="button"
+          className="relative text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5 text-sm"
+          onClick={() => {
+            if (!accessToken) {
+              info();
+              message.error("로그인 후 이용 가능한 서비스 입니다");
+            } else {
+              navigate("/chat");
+            }
+          }}
         >
           <IoLogoWechat className="text-2xl" />
           채팅
-          <div>채팅 있음/없음</div>
-        </Link>
+          {chatAlert && (
+            <div className="absolute top-3 right-1/3 w-2 h-2 bg-primary rounded-full"></div>
+          )}
+        </button>
         {nowLocation === "/search/strf" && (
           <div
             className={`absolute bottom-[120px] right-0 -translate-x-1/2 transition-all duration-300 ${

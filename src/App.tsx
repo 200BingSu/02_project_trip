@@ -1,6 +1,7 @@
 import { ConfigProvider } from "antd";
 import locale from "antd/es/locale/ko_KR";
 import axios from "axios";
+
 import { useEffect, useRef, useCallback } from "react";
 import { RouterProvider } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -12,6 +13,7 @@ import { getCookie } from "./utils/cookie";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import jwtAxios from "./apis/jwt";
 
+
 interface IgetUserInfo {
   code: string;
   data: Iuser;
@@ -20,16 +22,20 @@ interface IgetUserInfo {
 const App = () => {
   const accessToken = getCookie("accessToken");
 
+
   // SSE 연결을 위한 useRef
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
 
   // Recoil 상태 관리
+
   const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
   const [hasUnreadNotification, setHasUnreadNotification] = useRecoilState(
     hasUnreadNotificationAtom,
   );
 
-  // 유저 정보 가져오기
+
+  // API 유저 정보 호출
+
   const getUserInfo = async (): Promise<IgetUserInfo | null> => {
     try {
       const res = await axios.get<IgetUserInfo>(`/api/user/userInfo`, {
@@ -70,6 +76,8 @@ const App = () => {
     }
   }, [accessToken, setHasUnreadNotification]);
 
+  // SSE
+  const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   useEffect(() => {
     if (!accessToken) {
       return;
@@ -79,7 +87,6 @@ const App = () => {
       console.log("기존 SSE 연결 닫기");
       eventSourceRef.current.close();
     }
-
     const eventSource = new EventSourcePolyfill("/api/notice", {
       headers: { Authorization: `Bearer ${accessToken}` },
       heartbeatTimeout: 3600000,
@@ -174,8 +181,6 @@ const App = () => {
             starColor: "#0DD1FD",
           },
           Steps: {
-            colorPrimary: "#6B4AD6",
-            controlItemBgActive: "#AF9DE9",
             colorTextDescription: "#666666",
             colorSplit: "#E2E8F0",
             dotSize: 8,
@@ -184,6 +189,11 @@ const App = () => {
           },
           Input: {
             colorTextPlaceholder: "#94A3B8",
+          },
+          Notification: {
+            width: 200,
+            padding: 4,
+            fontSize: 12,
           },
         },
       }}

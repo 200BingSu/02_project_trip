@@ -176,13 +176,13 @@ const Bookings = data => {
         {/* 예약 정보 */}
 
         {/* 썸네일 */}
-        {/* <div className="w-[85px] h-[85px] rounded-2xl overflow-hidden bg-slate-100">
+        <div className="w-[85px] h-[85px] rounded-2xl overflow-hidden bg-slate-100">
           <img
-            src={strfPic ? `${ProductPic}${strfId}/${strfPic}` : ""}
+            src={strfPic ? `${ProductPic}/${strfId}/${strfPic}` : ""}
             alt={strfTitle || ""}
             className="w-full h-full object-cover"
           />
-        </div> */}
+        </div>
         {/* 정보 */}
         <div className="flex flex-col gap-[10px]">
           {/* 날짜 */}
@@ -191,15 +191,19 @@ const Bookings = data => {
               이용일시
             </h4>
             <p className="text-base text-slate-700">
-              <span>{dayjs(checkInDate).format("YYYY.MM.DD ddd")}</span>
+              <span>
+                {dayjs(checkInDate, "YYYY-MM-DD").format("YYYY.MM.DD ddd")}
+              </span>
               <span>~</span>
-              <span>{dayjs(checkOutDate).format("YYYY.MM.DD ddd")}</span>
+              <span>
+                {dayjs(checkOutDate, "YYYY-MM-DD").format("YYYY.MM.DD ddd")}
+              </span>
             </p>
           </div>
           <div className="flex items-center gap-3 text-[16px] text-slate-700">
             <h4 className="text-slate-400 font-semibold text-base">예약일시</h4>
             <p className="text-base text-slate-700 tracking-tight">
-              {dayjs(createdAt).format("YYYY.MM.DD ddd")}
+              {dayjs(createdAt, "YYYY-MM-DD").format("YYYY.MM.DD ddd")}
             </p>
           </div>
           <div className="flex items-center gap-3 text-[16px] text-slate-700">
@@ -207,7 +211,7 @@ const Bookings = data => {
               인원
             </h4>
             <p className="text-base text-slate-700">
-              {dayjs(createdAt).format("YYYY.MM.DD ddd")}
+              {dayjs(createdAt, "YYYY-MM-DD").format("YYYY.MM.DD ddd")}
             </p>
           </div>
         </div>

@@ -55,7 +55,8 @@ const EditReview = (): JSX.Element => {
         setIsLoading(false);
         navigateToReview();
         resetReviewData();
-        message.success("리뷰 작성 완료");
+
+        message.success("리뷰가 작성되었습니다");
       }
       console.log("대댓글 생성", resultData);
       return resultData;
@@ -66,6 +67,7 @@ const EditReview = (): JSX.Element => {
         console.error("Error message:", error.message);
       }
       console.log("대댓글 생성", error);
+      message.success("리뷰 작성에 실패했습니다");
       setIsLoading(false);
       return null;
     }
@@ -87,11 +89,13 @@ const EditReview = (): JSX.Element => {
       if (resultData) {
         resetReviewData();
         navigateToReview();
+        message.success("리뷰 수정을 성공했습니다.");
       }
       console.log("대댓글 생성", resultData);
       return resultData;
     } catch (error) {
       console.log("대댓글 생성", error);
+      message.success("리뷰 수정에 실패했습니다.");
       return null;
     }
   };

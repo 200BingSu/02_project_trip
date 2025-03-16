@@ -8,9 +8,8 @@ import BasicInfo from "../../../components/business/store/BasicInfo";
 import OperationInfo from "../../../components/business/store/OperationInfo";
 import Tab from "../../../components/common/Tab";
 import { CategoryType } from "../../../types/enum";
-import { Iamenity, IAPI, IRoom, IStrf } from "../../../types/interface";
+import { Iamenity, IAPI, IStrf } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
-import { categoryKor } from "../../../utils/match";
 
 const StoreIndex = (): JSX.Element => {
   // 쿠키
@@ -26,7 +25,7 @@ const StoreIndex = (): JSX.Element => {
   //useState
   const [cateIndex, setCateIndex] = useState<number>(tab);
   const [isLoading, setIsLoading] = useState(false);
-  const [_, setRoomData] = useState<IRoom[]>([]);
+  // const [_, setRoomData] = useState<IRoom[]>([]);
 
   // API 상품 조회
   const getStrfInfo = async (): Promise<IAPI<IStrf> | null> => {
@@ -38,27 +37,18 @@ const StoreIndex = (): JSX.Element => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      // console.log("상품 조회",res.data);
+      // console.log("상품 조회", res.data);
       const resultData = res.data;
       if (resultData) {
-        const splitTell = resultData.data.tell.split("-", 1);
+        const splitTell = resultData.data.tell.split("-");
+        // console.log("splitTell", splitTell);
 
-        if (splitTell[2] !== undefined) {
-          setStrfData({
-            ...strfData,
-            ...resultData.data,
-            tell: splitTell[1],
-            areaCode: splitTell[0],
-            restDate: resultData.data.restDate,
-          });
-        } else {
-          setStrfData({
-            ...strfData,
-            ...resultData.data,
-            tell: resultData.data.tell,
-            restDate: resultData.data.restDate,
-          });
-        }
+        setStrfData(prevData => ({
+          ...prevData,
+          ...resultData.data,
+          areaCode: splitTell[0],
+          tell: `${splitTell[1]}-${splitTell[2]}`,
+        }));
 
         setIsLoading(false);
       }
@@ -69,26 +59,7 @@ const StoreIndex = (): JSX.Element => {
       return null;
     }
   };
-  // API 객실 조회
-  const getRoomData = async (): Promise<IAPI<IRoom[]> | null> => {
-    const url = "/api/detail/parlor";
-    setIsLoading(true);
-    try {
-      const res = await axios.get<IAPI<IRoom[]>>(
-        `${url}?strf_id=${strfId}&category=${categoryKor(category)}`,
-      );
-      const resultData = res.data;
-      if (resultData) {
-        setIsLoading(false);
-        setRoomData(resultData.data);
-      }
-      // console.log("객실 조회", resultData);
-      return resultData;
-    } catch (error) {
-      console.log("객실 조회", error);
-      return null;
-    }
-  };
+
   // API 상품 편의 조회
   const getAmenity = async (): Promise<IAPI<Iamenity[]> | null> => {
     const url = "/api/detail/amenity";
@@ -102,11 +73,11 @@ const StoreIndex = (): JSX.Element => {
         },
       );
       const resultData = res.data;
-      console.log("상품 편의 조회", resultData);
-      setStrfData({
-        ...strfData,
+      // console.log("상품 편의 조회", resultData);
+      setStrfData(prevData => ({
+        ...prevData,
         amenity: resultData.data.map(item => item.amenityId as number),
-      });
+      }));
       return resultData;
     } catch (error) {
       return null;
@@ -130,7 +101,6 @@ const StoreIndex = (): JSX.Element => {
   useEffect(() => {
     getStrfInfo();
     if (category === CategoryType.STAY) {
-      getRoomData();
       getAmenity();
     }
   }, []);
