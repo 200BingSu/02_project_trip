@@ -32,6 +32,7 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
   const navigateToDetail = () => {
     navigate(
       `/business/menu/detail?strfId=${strfId}&category=${category}&menuId=${item.menuId}`,
+      { state: item },
     );
   };
   // recoil

@@ -1,9 +1,13 @@
+import { FaQuestionCircle } from "react-icons/fa";
+
 export const qnaData = [
   {
     key: "1",
     label: (
-      <p className="text-lg font-semibold flex items-end gap-2">
-        <span className="text-primary text-2xl">Q</span>
+      <p className="text-lg font-semibold flex items-center gap-2 text-slate-700">
+        <span className="text-primary text-2xl">
+          <FaQuestionCircle />
+        </span>
         예약 취소 및 변경 방법
       </p>
     ),
@@ -19,8 +23,10 @@ export const qnaData = [
   {
     key: "2",
     label: (
-      <p className="text-lg font-semibold flex items-end gap-2">
-        <span className="text-primary text-2xl">Q</span>
+      <p className="text-lg font-semibold flex items-center gap-2 text-slate-700">
+        <span className="text-primary text-2xl">
+          <FaQuestionCircle />
+        </span>
         예약 취소 및 변경 방법
       </p>
     ),
@@ -36,8 +42,10 @@ export const qnaData = [
   {
     key: "3",
     label: (
-      <p className="text-lg font-semibold flex items-end gap-2">
-        <span className="text-primary text-2xl">Q</span>
+      <p className="text-lg font-semibold flex items-center gap-2 text-slate-700">
+        <span className="text-primary text-2xl">
+          <FaQuestionCircle />
+        </span>
         예약 취소 및 변경 방법
       </p>
     ),

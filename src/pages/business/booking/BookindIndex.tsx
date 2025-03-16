@@ -8,7 +8,6 @@ import FilterDate from "../../../components/business/booking/FilterDate";
 import NoData from "../../../components/common/NoData";
 import { IAPI } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
-import { bookingMock } from "../../../mock/booking";
 
 const BookindIndex = (): JSX.Element => {
   // 쿠키
@@ -51,8 +50,8 @@ const BookindIndex = (): JSX.Element => {
   };
 
   useEffect(() => {
-    // getBookingList();
-    setBookingData({ ...bookingData, bookingList: bookingMock });
+    getBookingList();
+    // setBookingData({ ...bookingData, bookingList: bookingMock });
   }, []);
 
   return (

@@ -32,6 +32,7 @@ const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
       {category === CategoryType.FEST && (
         <ListItem title="영업 시간" type="duration" />
       )}
+      <ListItem title="업체 상태" type="state" />
       <ListItem title="입실/퇴실 시간" type="checkTime" />
       <ListItem title="휴무일" type="restDate" />
       {/* <ListItem title="임시 휴무일 등록" type="tempRest" /> */}

@@ -1,14 +1,17 @@
+import axios from "axios";
 import { useState } from "react";
-import { AiFillSetting, AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
-import { BiBell, BiSolidCoupon } from "react-icons/bi";
+import { AiOutlinePlus, AiOutlineStar } from "react-icons/ai";
+import { BiBell, BiCoin, BiSolidCoupon } from "react-icons/bi";
 import { GoDiscussionOutdated } from "react-icons/go";
 import { IoIosArrowForward } from "react-icons/io";
 import { RxExit } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useResetRecoilState } from "recoil";
+import { salesAtom } from "../../../atoms/salesAtom";
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { CategoryType, ROLE } from "../../../types/enum";
+import { IAPI } from "../../../types/interface";
 import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 import {
   categoryToEnum,
@@ -16,9 +19,6 @@ import {
   matchMenuIcon,
   matchName,
 } from "../../../utils/match";
-import { salesAtom } from "../../../atoms/salesAtom";
-import axios from "axios";
-import { IAPI } from "../../../types/interface";
 
 const Mypage = (): JSX.Element => {
   // useNavigate
@@ -30,9 +30,9 @@ const Mypage = (): JSX.Element => {
   const userInfo = getCookie("user");
   const accessToken = getCookie("accessToken");
   console.log("쿠키", userInfo);
-  const strfId = userInfo?.strfDtos[0].strfId;
+  const strfId = userInfo?.strfDtos[0]?.strfId;
   const category =
-    categoryToEnum(userInfo?.strfDtos[0].category) || CategoryType.STAY;
+    categoryToEnum(userInfo?.strfDtos[0]?.category) || CategoryType.STAY;
   // recoil
   const resetUserData = useResetRecoilState(tsUserAtom);
   const resetSalesData = useResetRecoilState(salesAtom);
@@ -87,9 +87,8 @@ const Mypage = (): JSX.Element => {
       ],
     },
     {
-      // 메뉴 관리
       icon: matchMenuIcon(category),
-      name: `${matchName(category)} 관리`,
+      name: `${matchName(category)} 관리`, // 메뉴 관리
       path: "/business/menu",
       subMenu: [
         {
@@ -106,6 +105,11 @@ const Mypage = (): JSX.Element => {
       icon: <AiOutlineStar />,
       name: "리뷰 관리",
       path: `/business/review?strfId=${strfId}`,
+    },
+    {
+      icon: <BiCoin />,
+      name: "포인트 관리",
+      path: `/business/point?strfId=${strfId}`,
     },
   ];
   // 상품 카테고리 별 메뉴
@@ -204,9 +208,9 @@ const Mypage = (): JSX.Element => {
             <button type="button">
               <BiBell />
             </button>
-            <button type="button">
+            {/* <button type="button">
               <AiFillSetting />
-            </button>
+            </button> */}
           </div>
         }
       />
@@ -291,9 +295,7 @@ const Mypage = (): JSX.Element => {
                     className={`flex items-center gap-4 text-2xl font-medium text-slate-700
                       ${category === CategoryType.STAY ? "" : "hidden"}`}
                   >
-                    <i className="text-2xl text-slate-400">
-                      <GoDiscussionOutdated />
-                    </i>
+                    <i className="text-2xl text-slate-400">{item.icon}</i>
                     {item.name}
                     {item.subMenu && (
                       <i

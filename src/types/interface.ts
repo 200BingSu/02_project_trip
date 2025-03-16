@@ -1,7 +1,7 @@
 import { UploadFile } from "antd";
+import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
 import { ProviderType } from "./enum";
-import { Dayjs } from "dayjs";
 
 // children
 export interface Ichildren {
@@ -257,4 +257,13 @@ export interface IBooking {
   checkOutDate: string;
   checkInTime: string;
   checkOutTime: string;
+}
+
+export interface IPoint {
+  strfId: number;
+  menuId: number;
+  title: string;
+  amount: number;
+  usedAt: string | Dayjs;
+  refund: boolean;
 }

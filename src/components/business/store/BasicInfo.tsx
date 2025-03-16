@@ -12,7 +12,6 @@ const BasicInfo = (): JSX.Element => {
   return (
     <>
       <ListItem title="업체 이름" type="title" />
-      <ListItem title="업체 상태" type="state" />
       <ListItem title="업체 전화번호" type="tell" />
       <ListItem title="업체 소개" type="detail" />
       {category === CategoryType.STAY && (

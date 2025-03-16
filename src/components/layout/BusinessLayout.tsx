@@ -43,8 +43,10 @@ const BusinessLayout = () => {
   }, []);
 
   return (
-    <div className="max-w-[768px] min-w-xs mx-auto relative h-screen ">
-      <Outlet />
+    <div className="max-w-[768px] min-w-xs mx-auto relative min-h-screen flex flex-col">
+      <div className="flex-1">
+        <Outlet />
+      </div>
       {isOpenModal && (
         <CenterModalTs
           type="warning"
@@ -54,10 +56,10 @@ const BusinessLayout = () => {
       )}
       {/* 채팅 여부 버튼 */}
       {pathName !== "/business/register" && (
-        <div className="sticky bottom-0 right-0 flex justify-end p-5 pointer-events-none">
+        <div className="sticky bottom-5 right-5 flex justify-end pointer-events-none">
           <button
             className="aspect-square w-12 flex items-center justify-center
-                            bg-primary text-white rounded-full shadow-lg py-2 text-2xl pointer-events-auto"
+                            bg-primary text-white rounded-full shadow-lg py-2 m-2 text-2xl pointer-events-auto"
             onClick={navigateToChat}
           >
             <AiFillWechat />

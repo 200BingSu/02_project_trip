@@ -1,12 +1,13 @@
 import { Button, Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { AiOutlineStar } from "react-icons/ai";
 import { useSearchParams } from "react-router-dom";
 import ReviewItem from "../../../components/business/review/ReviewItem";
 import StrfInfo from "../../../components/business/StrfInfo";
+import NoData from "../../../components/common/NoData";
 import { IReview } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
-import { LiaComment } from "react-icons/lia";
 
 export interface IReviewItem extends IReview {
   reviewReply?: string | null;
@@ -73,7 +74,7 @@ const ReviewIndex = (): JSX.Element => {
       {/* 리뷰 목록 */}
       <Spin spinning={isLoading}>
         <section className="flex flex-col gap-10 pb-10">
-          {reviewList.length > 0 ? (
+          {reviewList[0]?.reviewId !== null ? (
             reviewList?.map((item, index) => (
               <ReviewItem
                 key={index}
@@ -84,10 +85,7 @@ const ReviewIndex = (): JSX.Element => {
               />
             ))
           ) : (
-            <div className="flex flex-col gap-5 items-center justify-center text-slate-300 py-12">
-              <LiaComment className="text-7xl" />
-              <p className="text-2xl">리뷰가 없습니다</p>
-            </div>
+            <NoData icon={<AiOutlineStar />} content="리뷰가 없습니다." />
           )}
         </section>
         {isMore && (
