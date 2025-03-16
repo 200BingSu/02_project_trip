@@ -23,7 +23,7 @@ const ContentsHeader = ({
   getDetailMember,
 }: ContentsHeaderProps): JSX.Element => {
   //recoil
-  const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
+  const [, setSearchRecoil] = useRecoilState(searchAtom);
   //useState
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   //useNavigate

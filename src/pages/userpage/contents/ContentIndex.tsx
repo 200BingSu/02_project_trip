@@ -1,18 +1,18 @@
 import { Tabs } from "antd";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import jwtAxios from "../../../apis/jwt";
 import Amenities from "../../../components/contents/Amenities";
+import DishBoard from "../../../components/contents/DishBoard";
+import EntryTicket from "../../../components/contents/EntryTicket";
 import Parlor from "../../../components/contents/Parlor";
 import Reviews from "../../../components/contents/Reviews";
+import StickyActionBar from "../../../components/contents/StickyActionBar";
 import StrDetail from "../../../components/contents/StrDetail";
 import StrInfo from "../../../components/contents/StrInfo";
 import ContentsHeader from "../../../components/layout/header/ContentsHeader";
 import "../../../styles/antd-styles.css";
-import { useEffect, useState } from "react";
 import { IStrf, MenuType } from "../../../types/interface";
-import jwtAxios from "../../../apis/jwt";
-import StickyActionBar from "../../../components/contents/StickyActionBar";
-import DishBoard from "../../../components/contents/DishBoard";
-import EntryTicket from "../../../components/contents/EntryTicket";
 
 const ContentIndex = (): JSX.Element => {
   const [contentData, setContentData] = useState<IStrf | null>(null);

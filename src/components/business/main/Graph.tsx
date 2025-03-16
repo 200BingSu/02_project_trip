@@ -1,19 +1,20 @@
 import { ResponsiveBar } from "@nivo/bar";
 import { ISales } from "../../../atoms/salesAtom";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
+dayjs.extend(customParseFormat);
 interface GraphProps {
   data: ISales[];
 }
 
 const Graph = ({ data }: GraphProps) => {
-  console.log("data", data);
   const formattedData = data.map(item => ({
     month: dayjs(item.month).format("YY-MM"),
     totalSales: item.totalSales,
   }));
   return (
-    <div className="w-full h-[500px] relative">
+    <div className="w-full h-[80vw] max-h-[450px] relative">
       <ResponsiveBar
         data={formattedData}
         keys={["totalSales"]}
@@ -61,7 +62,7 @@ const Graph = ({ data }: GraphProps) => {
         tooltip={({ value, indexValue }) => (
           <div className="bg-white p-3 shadow-lg rounded-lg border border-slate-100">
             <div className="text-lg font-medium text-slate-700">
-              {dayjs(indexValue).format("YYYY년 MM월")}
+              {dayjs(indexValue, "YY-MM").format("YYYY년 MM월")}
             </div>
             <div className="flex items-center gap-1 text-slate-600">
               <span>매출액</span>

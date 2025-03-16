@@ -1,6 +1,7 @@
-import { ConfigProvider, message } from "antd";
+import { ConfigProvider } from "antd";
 import locale from "antd/es/locale/ko_KR";
 import axios from "axios";
+import { EventSourcePolyfill } from "event-source-polyfill";
 import { useEffect, useRef } from "react";
 import { RouterProvider } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -8,7 +9,6 @@ import { tsUserAtom } from "./atoms/tsuserAtom";
 import router from "./router/root";
 import { Iuser } from "./types/interface";
 import { getCookie } from "./utils/cookie";
-import { EventSourcePolyfill } from "event-source-polyfill";
 
 interface IgetUserInfo {
   code: string;

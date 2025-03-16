@@ -140,17 +140,24 @@ const DockBar = React.memo(() => {
           <IoReaderOutline className="text-2xl" />
           여행기
         </Link>
-        <Link
-          to="/chat"
+        <button
+          type="button"
           className="relative text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5 text-sm"
-          // onClick={showModal}
+          onClick={() => {
+            if (!accessToken) {
+              info();
+              message.error("로그인 후 이용 가능한 서비스 입니다");
+            } else {
+              navigate("/chat");
+            }
+          }}
         >
           <IoLogoWechat className="text-2xl" />
           채팅
           {chatAlert && (
             <div className="absolute top-3 right-1/3 w-2 h-2 bg-primary rounded-full"></div>
           )}
-        </Link>
+        </button>
         {nowLocation === "/search/strf" && (
           <div
             className={`absolute bottom-[120px] right-0 -translate-x-1/2 transition-all duration-300 ${
