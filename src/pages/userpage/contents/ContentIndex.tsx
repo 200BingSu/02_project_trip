@@ -59,7 +59,7 @@ const ContentIndex = (): JSX.Element => {
         {contentData && <StrInfo strfId={strfId} contentData={contentData} />}
       </section>
       {/* 카테고리별 컨텐츠 표시 */}
-      {menuData.length > 0 && (
+      {menuData && (
         <>
           <section className="w-full h-[10px] bg-slate-100" />
           <section>

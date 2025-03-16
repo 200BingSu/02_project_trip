@@ -3,9 +3,11 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import jwtAxios from "../../apis/jwt";
 import { Iamenity } from "../../types/interface";
 import { matchAmenitiesIcon } from "../../utils/match";
+import AmenityModal from "./AmenityModal";
 
 const Amenities = ({ strfId }: { strfId: number }) => {
   const [amens, setAmens] = useState<Iamenity[]>();
+  const [isMore, setIsMore] = useState(false);
 
   const getAmenities = async () => {
     try {
@@ -29,7 +31,10 @@ const Amenities = ({ strfId }: { strfId: number }) => {
         <h3 className="font-semibold text-slate-700 text-xl">
           편의시설 및 서비스
         </h3>
-        <button className="flex items-center gap-[6px] text-sm text-slate-400">
+        <button
+          onClick={() => setIsMore(true)}
+          className="flex items-center gap-[6px] text-sm text-slate-400"
+        >
           더보기 <IoIosArrowRoundForward className="text-xl" />
         </button>
       </div>
@@ -46,6 +51,14 @@ const Amenities = ({ strfId }: { strfId: number }) => {
           </li>
         ))}
       </ul>
+
+      {/* 편의 시설 모달창 */}
+      {isMore ? (
+        <AmenityModal
+          handleCancel={() => setIsMore(!isMore)}
+          amenities={amens}
+        />
+      ) : null}
     </div>
   );
 };

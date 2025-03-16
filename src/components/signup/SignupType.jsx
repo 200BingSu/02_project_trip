@@ -18,13 +18,13 @@ const SignupType = ({ type = "", btcolor = "" }) => {
       <div>
         {type === "user" ? (
           <img
-            src="../../../public/images/signup/user_signup_img.png"
+            src="/images/signup/user_signup_img.png"
             alt="user_signup_img"
             className="w-36"
           />
         ) : (
           <img
-            src="../../../public/images/signup/business_signup_img.png"
+            src="/images/signup/business_signup_img.png"
             alt="business_signup_img"
             className="w-36"
           />

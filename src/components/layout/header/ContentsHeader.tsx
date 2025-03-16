@@ -83,7 +83,8 @@ const ContentsHeader = ({
       <div className="flex justify-between items-center h-[60px]">
         <div className="flex items-center gap-3">
           <IoIosArrowRoundBack
-            className="text-3xl "
+
+            className="text-3xl min-w-7 cursor-pointer"
             onClick={() => {
               navigate(-1);
               setSearchRecoil(prev => ({
@@ -91,18 +92,21 @@ const ContentsHeader = ({
                 fromContent: true,
               }));
             }}
+
           />
-          <h2 className="font-semibold text-xl">{contentData?.strfTitle}</h2>
+          <h2 className="font-semibold text-lg line-clamp-1">
+            {contentData?.strfTitle}
+          </h2>
         </div>
         <div className="flex items-center gap-3">
           {contentData?.wishIn ? (
             <AiFillHeart
-              className={`text-2xl ${scrollY > 0 ? "text-secondary3" : "text-white"}`}
+              className={`text-2xl cursor-pointer ${scrollY > 0 ? "text-secondary3" : "text-white"}`}
               onClick={postWishList}
             />
           ) : (
             <AiOutlineHeart
-              className={`text-2xl ${scrollY > 0 ? "text-slate-700" : "text-white"}`}
+              className={`text-2xl cursor-pointer ${scrollY > 0 ? "text-slate-700" : "text-white"}`}
               onClick={postWishList}
             />
           )}
@@ -123,7 +127,7 @@ const ContentsHeader = ({
             }
             trigger="click"
           >
-            <AiOutlineImport className=" text-2xl" />
+            <AiOutlineImport className=" text-2xl cursor-pointer" />
           </Popover>
         </div>
       </div>
