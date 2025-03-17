@@ -3,6 +3,8 @@ import { TRIP_REVIEW_ORDER } from "../../../types/enum";
 import { useEffect, useState } from "react";
 import { IAPI, ITripReview } from "../../../types/interface";
 import axios from "axios";
+import { tripReviewMockData } from "../../../mock/tripReview";
+import TripReviewItem from "../../../components/scheduleboard/TripReviewItem";
 
 interface TripReviewData {
   reviews: ITripReview[];
@@ -67,6 +69,7 @@ const Index = () => {
   }, [orderType, page]);
   useEffect(() => {
     getTripReviewCount();
+    setReviewList(tripReviewMockData.data.reviews);
   }, []);
 
   return (
@@ -85,8 +88,12 @@ const Index = () => {
         />
       </section>
       {/* 여행기 */}
-      <section>
-        <Spin spinning={isLoading}></Spin>
+      <section className="px-4">
+        <Spin spinning={isLoading}>
+          {reviewList.map((item, index) => {
+            return <TripReviewItem key={index} item={item} />;
+          })}
+        </Spin>
         <div className="flex items-center justify-center">
           {isMore && (
             <Button
