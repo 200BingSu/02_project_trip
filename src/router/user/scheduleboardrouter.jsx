@@ -3,7 +3,7 @@ import Loading from "../../components/loading/Loading";
 
 const scheduleBoardRouter = () => {
   const LazyScheduleBoardIndex = lazy(
-    () => import("../../pages/userpage/scheduleboard/ScheduleBoardIndex"),
+    () => import("../../pages/userpage/scheduleboard/Index"),
   );
   const LazyScheduleDetail = lazy(
     () => import("../../pages/userpage/scheduleboard/ScheduleDetail"),
@@ -13,7 +13,7 @@ const scheduleBoardRouter = () => {
   );
   return [
     {
-      path: "index",
+      index: true,
       element: (
         <Suspense fallback={<Loading />}>
           <LazyScheduleBoardIndex />

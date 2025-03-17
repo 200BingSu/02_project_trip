@@ -4,8 +4,59 @@ import locale from "antd/es/locale/ko_KR";
 import { RouterProvider } from "react-router-dom";
 import router from "./router/root";
 
+
+import { Iuser } from "./types/interface";
+import { getCookie } from "./utils/cookie";
+import { EventSourcePolyfill } from "event-source-polyfill";
+import jwtAxios from "./apis/jwt";
+
+interface IgetUserInfo {
+  code: string;
+  data: Iuser;
+}
+
 const App = () => {
-  // const accessToken = getCookie("accessToken");
+  const accessToken = getCookie("accessToken");
+
+  // Recoil 상태 관리
+
+  const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
+  const [hasUnreadNotification, setHasUnreadNotification] = useRecoilState(
+    hasUnreadNotificationAtom,
+  );
+
+  // API 유저 정보 호출
+
+  const getUserInfo = async (): Promise<IgetUserInfo | null> => {
+    try {
+      const res = await axios.get<IgetUserInfo>(`/api/user/userInfo`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        setTsUserInfo({
+          ...tsUserInfo,
+          ...resultData.data,
+          role: resultData.data.role,
+        });
+      }
+      return resultData;
+    } catch (error) {
+      console.log("유저 정보 조회 실패:", error);
+      return null;
+    }
+  };
+
+  
+
+  useEffect(() => {
+    if (accessToken) {
+      getUserInfo();
+    }
+  }, [accessToken]);
+
 
   return (
     <ConfigProvider

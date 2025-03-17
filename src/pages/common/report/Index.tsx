@@ -150,7 +150,7 @@ const Index = () => {
             style={{ resize: "none", height: "180px" }}
           />
         </section>
-        <section className="p-4">
+        <section className="px-4 py-8">
           <Button
             type="primary"
             className="w-full h-[16vw] max-h-[60px] text-lg font-semibold"
