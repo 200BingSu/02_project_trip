@@ -120,9 +120,9 @@ const UserIndex = () => {
     navigate("/signin");
   };
 
-  // const handleUserEdit = () => {
-  //   navigate("/user/useredit", { state: useProfile });
-  // };
+  const handleUserEdit = () => {
+    navigate("/user/useredit", { state: useProfile });
+  };
 
   return (
     <div className={` w-full flex justify-end`}>
@@ -144,7 +144,7 @@ const UserIndex = () => {
               />
               <AiFillSetting
                 className="text-3xl text-slate-700 cursor-pointer"
-                // onClick={() => handleUserEdit()}
+                onClick={() => handleUserEdit()}
               />
             </h1>
           </div>

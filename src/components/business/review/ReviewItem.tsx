@@ -1,19 +1,19 @@
 import { Button, message, Rate } from "antd";
+import axios from "axios";
 import { Dispatch, useEffect, useRef, useState } from "react";
+import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
 import { CgMoreVerticalAlt } from "react-icons/cg";
+import { RiFlag2Fill } from "react-icons/ri";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { editReviewAtom } from "../../../atoms/editReviewAtom";
 import { ProfilePic } from "../../../constants/pic";
 import { IReviewItem } from "../../../pages/business/review/ReviewIndex";
-import BottomSheet from "../../basic/BottomSheet";
-import ReviewImage from "../../contents/ReviewImage";
-import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
-import CenterModalTs from "../../common/CenterModalTs";
-import axios from "axios";
-import { getCookie } from "../../../utils/cookie";
-import { RiAlarmWarningLine } from "react-icons/ri";
 import { ReportType } from "../../../types/enum";
+import { getCookie } from "../../../utils/cookie";
+import BottomSheet from "../../basic/BottomSheet";
+import CenterModalTs from "../../common/CenterModalTs";
+import ReviewImage from "../../contents/ReviewImage";
 
 interface IReviewItemProps {
   strfId: number;
@@ -54,6 +54,7 @@ const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOverflow, setIsOverflow] = useState<boolean>(false);
   const [isOpenBottom, setIsOpenBottom] = useState<boolean>(false);
+  const [isReviewBottom, setIsReviewBottom] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const contentRef = useRef<HTMLParagraphElement>(null);
 
@@ -102,7 +103,17 @@ const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
       onClick: () => handleClickDelete(),
     },
   ];
-
+  const reivewActions = [
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <RiFlag2Fill />
+          신고하기
+        </div>
+      ),
+      onClick: () => navigateToReport(),
+    },
+  ];
   // 바텀시트
   const handleBottomSheet = () => {
     setIsOpenBottom(!isOpenBottom);
@@ -148,8 +159,14 @@ const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
               {item.userName}
             </p>
           </div>
-          <button type="button" className="px-2" onClick={navigateToReport}>
-            <RiAlarmWarningLine className="text-slate-400 text-xl" />
+          <button
+            type="button"
+            className="text-slate-500 text-2xl font-semibold"
+            onClick={() => {
+              setIsReviewBottom(true);
+            }}
+          >
+            <CgMoreVerticalAlt />
           </button>
         </div>
         {/* 별점, 작성일 */}
@@ -160,7 +177,7 @@ const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
               {item.ratingAvg}
             </p>
           </div>
-          <div className="flex items-end gap-2">
+          <div className="flex items-cneter gap-2">
             <p className="text-sm text-slate-500">{item.createdAt}</p>
           </div>
         </div>
@@ -232,6 +249,12 @@ const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
         onClose={handleBottomSheet}
         actions={actions}
       />
+      <BottomSheet
+        open={isReviewBottom}
+        onClose={() => setIsReviewBottom(false)}
+        actions={reivewActions}
+      />
+
       {isOpenModal && (
         <CenterModalTs
           handleClickCancle={() => setIsOpenModal(false)}
