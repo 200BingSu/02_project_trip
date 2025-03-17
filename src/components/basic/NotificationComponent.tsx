@@ -33,7 +33,7 @@ const NotificationComponent = ({ token }: { token: string }) => {
       eventSource.current.onerror = async () => {
         eventSource.current?.close();
         // 재연결
-        setTimeout(fetchSSE, 3000);
+        setTimeout(fetchSSE, 3600000);
       };
 
       eventSource.current.onopen = () => {};

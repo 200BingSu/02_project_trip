@@ -259,14 +259,14 @@ export interface IBooking {
   checkOutTime: string;
 }
 
-
 export interface IAddSchedule {
   tripId: number;
   title: string;
   startAt: string;
   endAt: string;
   locationPic: string;
-  scheduleCnt: number;}
+  scheduleCnt: number;
+}
 
 export interface IPoint {
   strfId: number;
@@ -275,5 +275,19 @@ export interface IPoint {
   amount: number;
   usedAt: string | Dayjs;
   refund: boolean;
+}
 
+export interface IPoint {
+  userName: string;
+  remainPoint: number;
+  pointList: IPointHistory[];
+}
+
+export interface IPointHistory {
+  pointHistoryId: number;
+  usedAt: string;
+  category: number;
+  addedAt: string;
+  amount: number;
+  remainPoint: number;
 }
