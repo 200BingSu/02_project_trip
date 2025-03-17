@@ -1,18 +1,57 @@
 import { IoIosArrowDown } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Point from "../../../components/point/Point";
+import jwtAxios from "../../../apis/jwt";
+import { IPoint } from "../../../types/interface";
+import Footer from "../../Footer";
+import SortSelection from "../../../components/basic/SortSelection";
+import dayjs from "dayjs";
 
 const UserPoint = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [point, setPoint] = useState<IPoint>();
   const navigate = useNavigate();
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
 
   const handleClose = () => {
     if (isOpen === true) {
       setIsOpen(false);
     }
   };
+
+  const pointHis = async () => {
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      const res = await jwtAxios.get(
+        `/api/point/history?start_at=${startDate}&end_at=${endDate}&is_desc=true`,
+      );
+      setPoint(res.data.data);
+      console.log("✅  pointHis  res:", res.data.data);
+    } catch (error) {
+      console.log("✅  pointHis  error:", error);
+    }
+  };
+
+  // 🔹 버튼 클릭 시 날짜 변경 함수
+  const handleDateChange = (months: number | null) => {
+    if (months) {
+      setStartDate(dayjs().subtract(months, "month").format("YYYY-MM-DD"));
+    } else {
+      // 직접 입력 버튼 클릭 시 처리 (현재는 기본값 유지)
+      console.log("직접 입력 기능 구현 필요");
+    }
+  };
+
+  // 🔹 날짜가 변경될 때 자동 호출
+  useEffect(() => {
+    if (startDate) {
+      pointHis();
+    }
+  }, [startDate, endDate]);
 
   return (
     <div>
@@ -21,10 +60,11 @@ const UserPoint = (): JSX.Element => {
         <div className="mx-4 my-6">
           <div>
             <h3 className="text-base text-slate-500 mb-[6px]">
-              닉네임님의 보유 <span className="text-primary">포인트</span>
+              {point?.userName}님의
+              <span className="text-primary">보유 포인트</span>
             </h3>
-            <h1 className="text-4xl font-semibold text-slate-700">
-              2,351
+            <h1 className="text-4xl font-bold text-slate-700">
+              {point?.remainPoint.toLocaleString()}
               <span className="font-light text-slate-500 ml-3">P</span>
             </h1>
           </div>
@@ -58,26 +98,52 @@ const UserPoint = (): JSX.Element => {
             <p className="text-base text-slate-700 font-semibold">
               적립/사용내역
             </p>
-            <button className="flex items-center gap-[6px] text-base text-slate-500">
+            <button
+              onClick={() => setIsSortOpen(!isSortOpen)}
+              className="flex items-center gap-[6px] text-sm text-slate-500"
+            >
               전체
               <IoIosArrowDown className="text-slate-400 text-sm" />
             </button>
           </li>
-          <li className="flex justify-between py-4">
-            <div>
-              <p className="text-slate-700 text-base mb-[2px]">스톤크릭 카페</p>
-              <p className="text-slate-400 text-sm">2025-10-24 15:27:40</p>
-            </div>
-            <div>
-              <p className="text-slate-700 text-lg font-semibold mb-[2px]">
-                -6,500P
-              </p>
-              <p className="text-slate-400 text-sm">2,351P</p>
-            </div>
-          </li>
+          {point?.pointList.map(item => {
+            return (
+              <li
+                className="flex justify-between py-4"
+                key={item.pointHistoryId}
+              >
+                <div>
+                  <p className="text-slate-700 text-base mb-[2px]">
+                    {item.usedAt}
+                  </p>
+                  <p className="text-slate-400 text-sm tracking-tight">
+                    {item.addedAt}
+                  </p>
+                </div>
+                <div>
+                  <p
+                    className={`text-lg font-semibold mb-[2px] ${
+                      item.category === 1 ? "text-primary" : "text-slate-700"
+                    }`}
+                  >
+                    {item.amount.toLocaleString()}P
+                  </p>
+                  <p className="text-slate-400 text-sm text-right">
+                    {item.remainPoint.toLocaleString()}P
+                  </p>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
       {isOpen && <Point handleClose={handleClose} />}
+      <SortSelection
+        open={isSortOpen}
+        onClose={() => setIsSortOpen(!isSortOpen)}
+        date={handleDateChange}
+      />
+      <Footer />
     </div>
   );
 };
