@@ -26,7 +26,7 @@ const MakeQr = () => {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-        responseType: "blob", // ✅ responseType을 headers가 아니라 여기에 설정
+        responseType: "blob",
       });
 
       if (res.data) {
