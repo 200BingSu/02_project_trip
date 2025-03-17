@@ -15,7 +15,7 @@ const AddSchedule = ({
 }) => {
   const [addTrip, setAddTrip] = useState<IAddSchedule[]>([]);
   const navigate = useNavigate();
-
+  console.log(open); // build용 콘솔
   const getAddTrip = async () => {
     try {
       const res = await jwtAxios.get(`/api/trip-list`);

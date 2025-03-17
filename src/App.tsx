@@ -4,11 +4,12 @@ import locale from "antd/es/locale/ko_KR";
 import { RouterProvider } from "react-router-dom";
 import router from "./router/root";
 
-
+import { useRecoilState } from "recoil";
+import { tsUserAtom } from "./atoms/tsuserAtom";
 import { Iuser } from "./types/interface";
 import { getCookie } from "./utils/cookie";
-import { EventSourcePolyfill } from "event-source-polyfill";
-import jwtAxios from "./apis/jwt";
+import axios from "axios";
+import { useEffect } from "react";
 
 interface IgetUserInfo {
   code: string;
@@ -21,9 +22,6 @@ const App = () => {
   // Recoil 상태 관리
 
   const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
-  const [hasUnreadNotification, setHasUnreadNotification] = useRecoilState(
-    hasUnreadNotificationAtom,
-  );
 
   // API 유저 정보 호출
 
@@ -49,14 +47,11 @@ const App = () => {
     }
   };
 
-  
-
   useEffect(() => {
     if (accessToken) {
       getUserInfo();
     }
   }, [accessToken]);
-
 
   return (
     <ConfigProvider
