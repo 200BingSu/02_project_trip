@@ -284,9 +284,9 @@ export interface ITripReview {
   content: string;
   likeCount: number;
   recentCount: number;
-  scrapCount: 0;
-  likeUser: 0;
-  tripReviewId: 4;
+  scrapCount: number;
+  likeUser: number;
+  tripReviewId: number;
   name: string;
   profilePic: string;
   tripReviewPics: string[];

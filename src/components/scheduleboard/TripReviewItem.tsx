@@ -1,19 +1,34 @@
-const TripReviewItem = () => {
+import { ProfilePic } from "../../constants/pic";
+import { ITripReview } from "../../types/interface";
+import { getCookie } from "../../utils/cookie";
+
+interface TripReviewItemProps {
+  item: ITripReview;
+}
+
+const TripReviewItem = ({ item }: TripReviewItemProps) => {
+  // 쿠키
+  const userInfo = getCookie("user");
+  // const userId = userInfo.userId;
+  const userId = 116; // 네트워크 복구되면 지우기
   return (
-    <>
+    <div className="flex flex-col gap-4 ">
       {/* 유저 정보 */}
-      <section className="flex items-center">
+      <section className="flex items-center gap-4 py-6">
         {/* 사진 */}
-        <div>
-          <img src="" alt="" />
+        <div className="w-8 aspect-square rounded-full overflow-hidden bg-slate-200">
+          <img
+            src={`${ProfilePic}/${userId}/${item.profilePic}`}
+            alt={item.profilePic}
+          />
         </div>
         {/* 이름 */}
-        <p>닉네임</p>
+        <p className="text-base text-slate-700 font-semibold">닉네임</p>
       </section>
       {/* 리뷰 */}
       <section>
         {/* 사진 */}
-        <div>
+        <div className="w-full">
           <img src="" alt="" />
         </div>
         {/* 글 */}
@@ -29,7 +44,7 @@ const TripReviewItem = () => {
           <ul></ul>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 
