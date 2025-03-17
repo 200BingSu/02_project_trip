@@ -15,10 +15,11 @@ import { LocationPic, ProfilePic } from "../../../constants/pic";
 import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
-import NotificationComponent from "../../../components/basic/NotificationComponent";
+// import NotificationComponent from "../../../components/basic/NotificationComponent";
 import { resetUserData } from "../../../selectors/userSelector";
 import { ProviderType, ROLE } from "../../../types/enum";
 import { IAPI } from "../../../types/interface";
+import NotificationComponent from "../../../components/basic/NotificationComponent";
 
 //interface
 interface ITripList {

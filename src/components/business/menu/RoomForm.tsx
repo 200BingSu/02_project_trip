@@ -107,8 +107,9 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
   };
   // 폼 제출
   const onFinish = (values: any) => {
+    console.log(values);
     const { recomCapacity, maxCapacity, surcharge, rooms } = values;
-    const numberRooms = rooms.map((item: any) => Number(item));
+    // const numberRooms = rooms.map((item: any) => Number(item));
     const sendData: CreateRoomDataType = {
       strfId: strfId,
       busiNum: busiNum,
@@ -123,7 +124,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
           surcharge: surcharge,
         },
       ],
-      rooms: numberRooms,
+      rooms: rooms,
     };
     console.log(sendData);
     createRoom(sendData);
@@ -133,9 +134,9 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
       <Spin spinning={isLoading}>
         <Form form={form} onFinish={onFinish} name="room/parlors/amenities">
           <div className="py-2 flex flex-col gap-1">
-            <h3 className="text-slate-700 text-lg font-semibold">객실 번호</h3>
+            <h3 className="text-slate-700 text-lg font-semibold">객실 수량</h3>
             <p className="text-sm text-slate-500">
-              해당 객실 종류에 해당하는 객실 번호를 입력해주세요.
+              해당 객실 종류의 수량을 선택해주세요.
             </p>
           </div>
           <Form.Item
@@ -146,10 +147,10 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
                 message: "객실 번호를 입력해주세요.",
               },
             ]}
-            help="객실 번호를 추가하신 뒤, 해당되는 객실 번호를 선택해주세요."
             className="w-full pb-5"
           >
-            <Select
+            <Input placeholder="객실 수량을 선택해주세요" size="large" />
+            {/* <Select
               size="large"
               placeholder="객실 번호를 입력해주세요"
               mode="multiple"
@@ -189,7 +190,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
                 label: item,
                 value: item,
               }))}
-            />
+            /> */}
           </Form.Item>
           <div className="py-2 flex flex-col gap-1">
             <h3 className="text-slate-700 text-lg font-semibold">객실 인원</h3>

@@ -1,10 +1,10 @@
 import { Button, Select, Spin } from "antd";
-import { TRIP_REVIEW_ORDER } from "../../../types/enum";
-import { useEffect, useState } from "react";
-import { IAPI, ITripReview } from "../../../types/interface";
 import axios from "axios";
-import { tripReviewMockData } from "../../../mock/tripReview";
+import { useEffect, useState } from "react";
 import TripReviewItem from "../../../components/scheduleboard/TripReviewItem";
+import { TRIP_REVIEW_ORDER } from "../../../types/enum";
+import { IAPI, ITripReview } from "../../../types/interface";
+import { getCookie } from "../../../utils/cookie";
 
 interface TripReviewData {
   reviews: ITripReview[];
@@ -12,6 +12,8 @@ interface TripReviewData {
 }
 
 const Index = () => {
+  // 쿠키
+  const accessToken = getCookie("accessToken");
   const selectOption = [
     { label: "최신순", value: TRIP_REVIEW_ORDER.LATEST },
     { label: "추천순", value: TRIP_REVIEW_ORDER.POPULAR },
@@ -25,25 +27,49 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   console.log(reviewList);
   // API 여행기 리스트
-  const getTripReviewList = async (): Promise<IAPI<TripReviewData> | null> => {
+  const getTripReviewList = async (): Promise<IAPI<TripReviewData> | void> => {
     const url = "/api/trip-review/allTripReview";
     setIsLoading(true);
-    try {
-      const res = await axios.get<IAPI<TripReviewData>>(
-        `${url}?orderType=${orderType}&pageNumber=${page}`,
-      );
-      const resultData = res.data;
-      console.log("여행기 리스트 조회", resultData);
-      if (resultData.code === "200 성공") {
-        setIsMore(resultData.data.hasMore);
-        setReviewList(prev => [...prev, ...resultData.data.reviews]);
+    if (!accessToken) {
+      try {
+        const res = await axios.get<IAPI<TripReviewData>>(
+          `${url}?orderType=${orderType}&pageNumber=${page}`,
+        );
+        const resultData = res.data;
+        console.log("여행기 리스트 조회", resultData);
+        if (resultData.code === "200 성공") {
+          setIsMore(resultData.data.hasMore);
+          setReviewList(prev => [...prev, ...resultData.data.reviews]);
+        }
+        return resultData;
+      } catch (error) {
+        console.log("여행기 리스트 조회", error);
+      } finally {
+        setIsLoading(false);
       }
-      return resultData;
-    } catch (error) {
-      console.log("여행기 리스트 조회", error);
-      return null;
-    } finally {
-      setIsLoading(false);
+    }
+    if (accessToken) {
+      try {
+        const res = await axios.get<IAPI<TripReviewData>>(
+          `${url}?orderType=${orderType}&pageNumber=${page}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        const resultData = res.data;
+        console.log("여행기 리스트 조회", resultData);
+        if (resultData.code === "200 성공") {
+          setIsMore(resultData.data.hasMore);
+          setReviewList(prev => [...prev, ...resultData.data.reviews]);
+        }
+        return resultData;
+      } catch (error) {
+        console.log("여행기 리스트 조회", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
   //   API 여행기 수
@@ -69,7 +95,7 @@ const Index = () => {
   }, [orderType, page]);
   useEffect(() => {
     getTripReviewCount();
-    setReviewList(tripReviewMockData.data.reviews);
+    // setReviewList(tripReviewMockData.data.reviews);
   }, []);
 
   return (
@@ -88,7 +114,7 @@ const Index = () => {
         />
       </section>
       {/* 여행기 */}
-      <section className="px-4">
+      <section>
         <Spin spinning={isLoading}>
           {reviewList.map((item, index) => {
             return <TripReviewItem key={index} item={item} />;

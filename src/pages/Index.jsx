@@ -22,6 +22,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import NotificationComponent from "../components/basic/NotificationComponent";
+// import NotificationComponent from "../components/basic/NotificationComponent";
 
 const Index = () => {
   // 쿠키
