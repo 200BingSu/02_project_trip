@@ -13,7 +13,6 @@ import { getCookie } from "./utils/cookie";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import jwtAxios from "./apis/jwt";
 
-
 interface IgetUserInfo {
   code: string;
   data: Iuser;
@@ -22,17 +21,12 @@ interface IgetUserInfo {
 const App = () => {
   const accessToken = getCookie("accessToken");
 
-
-  // SSE 연결을 위한 useRef
-  const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
-
   // Recoil 상태 관리
 
   const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
   const [hasUnreadNotification, setHasUnreadNotification] = useRecoilState(
     hasUnreadNotificationAtom,
   );
-
 
   // API 유저 정보 호출
 
