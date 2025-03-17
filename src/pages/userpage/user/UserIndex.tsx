@@ -15,6 +15,7 @@ import { LocationPic, ProfilePic } from "../../../constants/pic";
 import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
+import NotificationComponent from "../../../components/basic/NotificationComponent";
 import { resetUserData } from "../../../selectors/userSelector";
 import { ProviderType, ROLE } from "../../../types/enum";
 import { IAPI } from "../../../types/interface";
@@ -124,6 +125,7 @@ const UserIndex = () => {
     navigate("/user/useredit", { state: useProfile });
   };
 
+  console.log(" useProfile", useProfile);
   return (
     <div className={` w-full flex justify-end`}>
       {/* 모바일 메뉴 컨테이너 */}
@@ -138,10 +140,13 @@ const UserIndex = () => {
               className="text-3xl cursor-pointer text-slate-700"
             />
             <h1 className="flex gap-5">
-              <BiBell
-                onClick={() => navigate("/user/notification")}
-                className="text-3xl text-slate-700 cursor-pointer"
-              />
+              <div className="relative">
+                <BiBell
+                  onClick={() => navigate("/user/notification")}
+                  className="text-3xl text-slate-700 cursor-pointer"
+                />
+                <NotificationComponent token={accessToken} />
+              </div>
               <AiFillSetting
                 className="text-3xl text-slate-700 cursor-pointer"
                 onClick={() => handleUserEdit()}
@@ -154,11 +159,11 @@ const UserIndex = () => {
                 <img
                   src={
                     userInfo.providerType === ProviderType.LOCAL
-                      ? userInfo.profilePic
-                        ? `${ProfilePic}/${userLogin?.userId}/${userInfo?.profilePic}`
+                      ? useProfile.profilePic
+                        ? `${ProfilePic}/${userLogin?.userId}/${useProfile?.profilePic}`
                         : `/images/user.png`
-                      : userInfo.profilePic
-                        ? `${userInfo.profilePic}`
+                      : useProfile.profilePic
+                        ? `${useProfile.profilePic}`
                         : `/images/user.png`
                   }
                   alt="User-Profile"
@@ -167,7 +172,7 @@ const UserIndex = () => {
               </div>
 
               <h1 className="text-2xl font-bold text-slate-700 mt-[14px] text-center">
-                {userInfo.name}
+                {useProfile.name}
               </h1>
               <Swiper slidesPerView={1} className="mySwiper">
                 {useProfile.tripList?.map(content => (
