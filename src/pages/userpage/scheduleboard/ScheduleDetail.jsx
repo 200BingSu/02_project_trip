@@ -53,7 +53,11 @@ const ScheduleDetail = () => {
     setIsTripReviewLoading(true);
     if (accessToken) {
       try {
-        const res = await axios.get(`${url}?tripReviewId=${tripReviewId}`);
+        const res = await axios.get(`${url}?tripReviewId=${tripReviewId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         console.log("다른 사람 여행기 조회", res.data);
         const resultData = res.data;
         setIsTripReviewLoading(false);
@@ -136,12 +140,6 @@ const ScheduleDetail = () => {
 
   return (
     <div>
-      <TitleHeader
-        icon="back"
-        onClick={handleNavigateBack}
-        title="여행기"
-        rightContent={<RightContent />}
-      />
       {/* 여행기 */}
       <section className="flex flex-col px-[32px] py-[30px] gap-[30px]">
         <Spin spinning={isTripReviewLoading}>
@@ -174,7 +172,7 @@ const ScheduleDetail = () => {
           <div className="flex flex-col gap-[10px]">
             {/* <p className="text-[18px] text-slate-700">작성일자</p> */}
             <div className="flex justify-between items-center">
-              <div>
+              <div className="flex flex-col gap-3">
                 <h2 className="font-bold text-[36px] text-slate-700">
                   {tripReviewData[0]?.title}
                 </h2>
@@ -247,7 +245,7 @@ const ScheduleDetail = () => {
             </div>
           </div>
           {/* 소개 */}
-          <div>
+          <div className="py-3">
             <p>{tripReviewData[0]?.content}</p>
           </div>
         </Spin>
