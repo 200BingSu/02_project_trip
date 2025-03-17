@@ -42,7 +42,7 @@ const UserEdit = () => {
       setPreview(res.data.data.profilePic);
       // 처음에 화면에 보일때 API 호출 후 최초 오리지널 이미지를 경로로 담는다.
       setOriginImg(
-        `${ProfilePic}${userLogin.userId}/${res.data.data.profilePic}`,
+        `${ProfilePic}/${userLogin.userId}/${res.data.data.profilePic}`,
       );
       console.log("res.data", res.data.data.profilePic);
       // console.log("setPreview", setPreview);

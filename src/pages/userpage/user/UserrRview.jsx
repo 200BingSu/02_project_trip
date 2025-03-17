@@ -29,8 +29,8 @@ const UserrRview = () => {
     try {
       const res = await jwtAxios.get(`/api/review/my?start_idx=${startIndex}`);
 
-      setReviewInfo(prev => [...prev, ...res.data]); // 기존 리뷰에 새 리뷰 추가
-      if (res.data) {
+      setReviewInfo(prev => [...prev, ...res.data.data]); // 기존 리뷰에 새 리뷰 추가
+      if (res.data.data) {
         setStartIndex(prev => prev + 10);
       }
       // if (res.data[0].more === false) {
