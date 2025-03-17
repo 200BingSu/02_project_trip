@@ -109,7 +109,17 @@ const Mypage = (): JSX.Element => {
     {
       icon: <BiCoin />,
       name: "포인트 관리",
-      path: `/business/point?strfId=${strfId}`,
+      path: `/business/point`,
+      subMenu: [
+        {
+          name: `포인트 입금 내역`,
+          path: `/business/point?strfId=${strfId}`,
+        },
+        {
+          name: `포인트 QR 생성`,
+          path: `/business/point/qr?strfId=${strfId}`,
+        },
+      ],
     },
   ];
   // 상품 카테고리 별 메뉴
