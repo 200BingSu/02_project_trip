@@ -1,15 +1,7 @@
-import {
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  InputRef,
-  message,
-  Spin,
-} from "antd";
+import { Button, Form, Input, InputNumber, message, Spin } from "antd";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
-import { ChangeEvent, useRef, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { amenities } from "../../../constants/dataArr";
 import { IAPI } from "../../../types/interface";
