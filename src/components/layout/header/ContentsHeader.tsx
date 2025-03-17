@@ -83,7 +83,6 @@ const ContentsHeader = ({
       <div className="flex justify-between items-center h-[60px]">
         <div className="flex items-center gap-3">
           <IoIosArrowRoundBack
-
             className="text-3xl min-w-7 cursor-pointer"
             onClick={() => {
               navigate(-1);
@@ -92,7 +91,6 @@ const ContentsHeader = ({
                 fromContent: true,
               }));
             }}
-
           />
           <h2 className="font-semibold text-lg line-clamp-1">
             {contentData?.strfTitle}
@@ -126,6 +124,9 @@ const ContentsHeader = ({
               </div>
             }
             trigger="click"
+            getPopupContainer={triggerNode =>
+              triggerNode.parentElement || document.body
+            }
           >
             <AiOutlineImport className=" text-2xl cursor-pointer" />
           </Popover>
