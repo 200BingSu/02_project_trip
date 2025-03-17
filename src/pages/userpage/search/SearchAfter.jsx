@@ -33,7 +33,7 @@ const SearchAfter = () => {
   };
   // recoil
   const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
-  console.log("searchRecoil", searchRecoil);
+
   const resetSearch = useResetRecoilState(searchAtom);
   const searchValue = useRecoilValue(searchAtom);
   //useRef
@@ -198,14 +198,7 @@ const SearchAfter = () => {
     }));
     getCategorySearch();
   };
-  // 검색 아이템 클릭
-  const handleClickItem = item => {
-    setSearchRecoil(prev => ({
-      ...prev,
-      fromContent: true,
-    }));
-    navigate(`/contents/index?strfId=${item.strfId}`);
-  };
+
   // 편의시설 필터 모달
   const showAmenityFilter = () => {
     setIsAmenityOpen(true);
@@ -337,13 +330,7 @@ const SearchAfter = () => {
           {searchValue.searchData.length > 0 && category !== 0 && (
             <ul className="flex flex-col gap-[20px]">
               {searchValue.searchData.map((item, index) => {
-                return (
-                  <SearchItem
-                    key={index}
-                    item={item}
-                    onClick={() => handleClickItem(item)}
-                  />
-                );
+                return <SearchItem key={index} item={item} />;
               })}
             </ul>
           )}

@@ -148,32 +148,24 @@ const Mypage = (): JSX.Element => {
   ];
   // 메뉴 열기
   const handleOpenMenu = (index: number) => {
-    if (isOpenMenu === false) {
-      if (openMenu === index) {
-        setIsOpenMenu(true);
+    if (openMenu === index) {
+      if (isOpenOption) {
+        setIsOpenOption(false);
       }
-      if (openMenu !== index) {
-        setOpenMenu(index);
-        setIsOpenMenu(true);
-      }
-    }
-    if (isOpenMenu === true) {
-      setIsOpenMenu(false);
+      setIsOpenMenu(!isOpenMenu);
+    } else {
+      setOpenMenu(index);
     }
   };
   // 옵션 메뉴 열기
   const handleOpenOption = (index: number) => {
-    if (isOpenOption === false) {
-      if (openOption === index) {
-        setIsOpenOption(true);
+    if (openOption === index) {
+      if (isOpenMenu) {
+        setIsOpenMenu(false);
       }
-      if (openOption !== index) {
-        setOpenOption(index);
-        setIsOpenOption(true);
-      }
-    }
-    if (isOpenOption === true) {
-      setIsOpenOption(false);
+      setIsOpenOption(!isOpenOption);
+    } else {
+      setOpenOption(index);
     }
   };
   // 로그아웃
