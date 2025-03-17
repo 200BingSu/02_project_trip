@@ -1,13 +1,18 @@
 import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 import { useEffect, useRef, useState } from "react";
+import { getCookie } from "../../utils/cookie";
 
 const NotificationComponent = ({ token }: { token: string }) => {
+  const accessToken = getCookie("accessToken");
   const [redCoin, setRedCoin] = useState(false);
 
   const EventSource = EventSourcePolyfill || NativeEventSource;
   const eventSource = useRef<null | EventSource>(null);
 
   useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
     const fetchSSE = () => {
       eventSource.current = new EventSource(`/api/notice`, {
         headers: {

@@ -35,51 +35,51 @@ const DockBar = React.memo(() => {
   const EventSource = EventSourcePolyfill || NativeEventSource;
   const [chatAlert, setChatAlert] = useState(false);
   // 채팅 알림 받기
-  const getChatAlarm = () => {
-    const url = "/api/chat-notice";
-    chatEventRef.current = new EventSource(url, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        Connetction: "keep-alive",
-        Accept: "text/event-stream",
-        "Cache-Control": "no-cache",
-      },
-      withCredentials: true,
-    });
+  // const getChatAlarm = () => {
+  //   const url = "/api/chat-notice";
+  //   chatEventRef.current = new EventSource(url, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //       Connetction: "keep-alive",
+  //       Accept: "text/event-stream",
+  //       "Cache-Control": "no-cache",
+  //     },
+  //     withCredentials: true,
+  //   });
 
-    // 기본 메세지 이벤트
-    chatEventRef.current.onmessage = event => {
-      console.log("새로운 알림:", event.data);
-    };
+  //   // 기본 메세지 이벤트
+  //   chatEventRef.current.onmessage = event => {
+  //     console.log("새로운 알림:", event.data);
+  //   };
 
-    // "exist unread notice" 이벤트 수신 (백엔드 이벤트 이름 따라 변경 필수)
-    chatEventRef.current.addEventListener("exist unread notice", event => {
-      console.log("안 읽은 알림 존재:", event.data);
-      setChatAlert(true); // 새로운 알림이 있을 경우 UI 업데이트
-    });
+  //   // "exist unread notice" 이벤트 수신 (백엔드 이벤트 이름 따라 변경 필수)
+  //   chatEventRef.current.addEventListener("exist unread notice", event => {
+  //     console.log("안 읽은 알림 존재:", event.data);
+  //     setChatAlert(true); // 새로운 알림이 있을 경우 UI 업데이트
+  //   });
 
-    chatEventRef.current.onerror = async () => {
-      // e: Event
-      chatEventRef.current?.close();
-      // 재연결
-      setTimeout(fetchSSE, 3000);
-    };
+  //   chatEventRef.current.onerror = async () => {
+  //     // e: Event
+  //     chatEventRef.current?.close();
+  //     // 재연결
+  //     setTimeout(fetchSSE, 3000);
+  //   };
 
-    chatEventRef.current.onopen = () => {};
-  };
-  useEffect(() => {
-    if (!accessToken) {
-      return;
-    }
-    if (chatEventRef.current) {
-      console.log("기존 SSE 연결 닫기");
-      eventSourceRef.current.close();
-    }
-    getChatAlarm();
-    return () => {
-      chatEventRef.current?.close();
-    };
-  }, [chatEventRef]);
+  //   chatEventRef.current.onopen = () => {};
+  // };
+  // useEffect(() => {
+  //   if (!accessToken) {
+  //     return;
+  //   }
+  //   if (chatEventRef.current) {
+  //     console.log("기존 SSE 연결 닫기");
+  //     eventSourceRef.current.close();
+  //   }
+  //   getChatAlarm();
+  //   return () => {
+  //     chatEventRef.current?.close();
+  //   };
+  // }, [chatEventRef]);
 
   //antD
   const [messageApi, contextHolder] = message.useMessage();
