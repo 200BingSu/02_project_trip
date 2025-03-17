@@ -331,6 +331,7 @@ const UserTrips = () => {
                   만들어주세요
                 </span>
               }
+              destroyTooltipOnHide={{ keepParent: false }}
             >
               <AiOutlineQuestionCircle className="text-sm text-slate-400" />
             </Tooltip>

@@ -20,7 +20,7 @@ const PostBoard = () => {
     navigate(-1);
   };
   const navigateToScheduleBoard = () => {
-    navigate(`/scheduleboard/index`);
+    navigate(`/scheduleboard`);
   };
   // useState
   const [preview, setPreview] = useState("");
