@@ -1,4 +1,4 @@
-import { Button, message, Modal } from "antd";
+import { Button, message } from "antd";
 import { useCallback, useState } from "react";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { FaLocationDot } from "react-icons/fa6";
@@ -7,8 +7,8 @@ import { useRecoilState } from "recoil";
 import jwtAxios from "../../apis/jwt";
 import { tripAtom } from "../../atoms/tripAtom";
 import { ISchedule, ISelectPath } from "../../types/interface";
-import { StrInfoProps } from "./StrInfo";
 import AddSchedule from "./AddSchedule";
+import { StrInfoProps } from "./StrInfo";
 
 // API 응답 타입 정의
 interface ApiRes {
@@ -74,23 +74,23 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
   }, [messageApi]);
 
   // 일정 추가 클릭
-  const showRegistModal = () => {
-    if (trip.nowTripId === 0) {
-      setModals(prev => ({ ...prev, isRegistModalOpen: true }));
-    } else if (trip.lastSeq > 0) {
-      setModals(prev => ({ ...prev, openPathModal: true }));
-    } else {
-      // 변환된 strfId를 postSchedule에 전달
-      postSchedule({
-        trip,
-        selectPath,
-        contentData: {
-          strfId: contentData?.strfId ?? 0, // undefined일 경우 기본값 0 사용
-        },
-      });
-      navigate(`/schedule/index?tripId=${trip.nowTripId}`);
-    }
-  };
+  // const showRegistModal = () => {
+  //   if (trip.nowTripId === 0) {
+  //     setModals(prev => ({ ...prev, isRegistModalOpen: true }));
+  //   } else if (trip.lastSeq > 0) {
+  //     setModals(prev => ({ ...prev, openPathModal: true }));
+  //   } else {
+  //     // 변환된 strfId를 postSchedule에 전달
+  //     postSchedule({
+  //       trip,
+  //       selectPath,
+  //       contentData: {
+  //         strfId: contentData?.strfId ?? 0, // undefined일 경우 기본값 0 사용
+  //       },
+  //     });
+  //     navigate(`/schedule/index?tripId=${trip.nowTripId}`);
+  //   }
+  // };
 
   // 리뷰 등록 모달
   const showReviewModal = () => {
