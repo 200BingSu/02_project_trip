@@ -28,7 +28,7 @@ const Notification = ({
           initial={{ x: "100%", opacity: 0 }}
           animate={{ x: "50%", opacity: 1 }}
           exit={{ x: "100%", opacity: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
           className="fixed top-0 right-1/2  max-w-[768px] w-full h-screen bg-white z-[999]"
         >
           <div className="">

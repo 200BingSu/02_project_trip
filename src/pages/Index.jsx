@@ -7,7 +7,7 @@ import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../atoms/userAtom";
-import { hasUnreadNotificationAtom } from "../atoms/notificationAtom";
+
 import DockBar from "../components/layout/DockBar/DockBar";
 import FestivalList from "../components/main/FestivalList";
 import LocationList from "../components/main/LocationList";
@@ -21,6 +21,7 @@ import jwtAxios from "../apis/jwt";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import NotificationComponent from "../components/basic/NotificationComponent";
 
 const Index = () => {
   // 쿠키
@@ -31,7 +32,6 @@ const Index = () => {
   const [recommend, setRecommend] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
-  const [hasUnreadNotification] = useRecoilState(hasUnreadNotificationAtom);
 
   const getMainList = async () => {
     try {
@@ -112,9 +112,10 @@ const Index = () => {
               onClick={() => navigate("/user/notification")}
               className="text-2xl text-slate-400 cursor-pointer"
             />
-            {hasUnreadNotification && (
+            {/* {hasUnreadNotification && (
               <div className="absolute top-0 right-0 w-2 h-2 bg-secondary3 rounded-full border-2 border-white" />
-            )}
+            )} */}
+            <NotificationComponent token={accessToken} />
           </div>
           <CgMenuGridO
             className="text-2xl text-slate-400 cursor-pointer"

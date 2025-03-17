@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../../apis/jwt";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import Notification from "../../../components/user/Notification";
+import { Button } from "antd";
 
 interface NoticaProps {
   noticeId: string;
@@ -20,6 +21,11 @@ export interface NotiDetailProps {
   category: string;
   noticedAt: string;
   foreignNum: string;
+}
+
+interface NoticeResponse {
+  noticeLines: NoticaProps[];
+  more: boolean;
 }
 
 const NotnicoArr = (category: string): ReactNode => {
@@ -55,15 +61,20 @@ const PushNotification = (): JSX.Element => {
   const [notiDetail, setNotiDetail] = useState<NotiDetailProps | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [selectedNT, setSelectedNT] = useState<NoticaProps | null>(null);
+  const [startIdx, setStartIdx] = useState(0);
+  const [isMore, setIsMore] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
-  const getNotica = async (): Promise<void> => {
+  const getNotica = async () => {
     try {
-      const res = await jwtAxios.get("/api/notice/check?start_idx=0");
-      const notifications = res.data.data.noticeLines;
-      setNotica(notifications);
-      console.log(res.data.data.noticeLines);
+      const res = await jwtAxios.get(`/api/notice/check?start_idx=${startIdx}`);
+      if (startIdx === 0) {
+        setNotica(res.data.data.noticeLines); // 첫 로드시 새로운 데이터로 설정
+      } else {
+        setNotica(prev => [...prev, ...res.data.data.noticeLines]); // 기존 데이터에 새 데이터 추가
+      }
+      setIsMore(res.data.data.more);
     } catch (error) {
       console.log(error);
     }
@@ -86,21 +97,53 @@ const PushNotification = (): JSX.Element => {
     }
   };
 
+  const allCheck = async () => {
+    try {
+      const res = await jwtAxios.put("/api/notice/readAll");
+      console.log(res);
+      getNotica();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (startIdx > 0) {
+      getNotica(); // startIdx가 0보다 클 때만 호출
+    }
+  }, [startIdx]); // startIdx 값이 변경될 때 getNotica 호출
+
+  const handleMoreClick = () => {
+    setStartIdx(prevIdx => prevIdx + 10);
+    // getNotica는 useEffect를 통해 자동으로 호출됨
+  };
+
   useEffect(() => {
     getNotica();
   }, []);
 
   return (
     <div>
-      <div className="relative">
-        <TitleHeaderTs title="알림" icon="back" onClick={() => navigate("/")} />
+      <TitleHeaderTs title="알림" icon="back" onClick={() => navigate("/")} />
+
+      <div className="flex justify-between py-[14px] px-4 border-b-[1px] border-slate-100 ">
+        <p className="text-sm font-semibold text-slate-700">
+          전체 알림 {notica.length}
+        </p>
+        <p
+          className="text-xs text-slate-500 underline underline-offset-[3px] cursor-pointer"
+          onClick={allCheck}
+        >
+          모두 읽음으로 표시
+        </p>
       </div>
+
       <ul>
         {notica?.map(item => (
           <li
             key={item.noticeId}
             onClick={() => handleClick(item.noticeId)}
-            className={`flex gap-3 px-4 py-5 border-b border-slate-100 ${item.opened === false ? "bg-slate-100" : "bg-white"}`}
+            className={`cursor-pointer flex gap-3 px-4 py-5 border-b border-slate-100 last:border-0 ${item.opened === false ? "bg-slate-100" : "bg-white"}`}
           >
             <i className="inline-block min-w-[30px] w-8 aspect-square">
               {NotnicoArr(item.category)}
@@ -117,6 +160,16 @@ const PushNotification = (): JSX.Element => {
           </li>
         ))}
       </ul>
+      {isMore && (
+        <div className="flex justify-center">
+          <Button
+            onClick={handleMoreClick}
+            className="h-auto py-2 px-5 rounded-full text-sm mb-6"
+          >
+            더보기
+          </Button>
+        </div>
+      )}
       {selectedNT && notiDetail && (
         <Notification
           notiDetail={notiDetail}
