@@ -224,6 +224,24 @@ export const matchRestDateEnToKo = (string: string) => {
       return "토";
   }
 };
+export const matchRestDateKoToEn = (string: string) => {
+  switch (string) {
+    case "일":
+      return "sun";
+    case "월":
+      return "mon";
+    case "화":
+      return "tue";
+    case "수":
+      return "wed";
+    case "목":
+      return "thu";
+    case "금":
+      return "fri";
+    case "토":
+      return "sat";
+  }
+};
 
 export const transperRestValue = (value: string[]) => {
   return value.map(item => {
