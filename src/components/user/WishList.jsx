@@ -162,12 +162,12 @@ const WishList = ({ category }) => {
                     </p>
                   </div>
                   {/* 찜하기 */}
-                  <div className="flex gap-1 items-center text-sm">
-                    <AiOutlineHeart className="text-slate-400 text-lg" />
+                  {/* <div className="flex gap-1 items-center text-sm">
+                    <AiFillHeart className="text-secondary3 text-lg" />
                     <p className="text-slate-500">
                       {item.wishCnt.toLocaleString()}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </li>
             );
