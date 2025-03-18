@@ -187,6 +187,20 @@ export interface IReviewData {
   reviewPicList?: { title: string }[];
 }
 
+export interface IMyReview {
+  reviewId: string;
+  strfId: string;
+  content: string;
+  rating: number;
+  writerUserName: string;
+  userWriteReviewCnt: number;
+  writerUserId: string;
+  writerUserPic: string;
+  reviewWriteDate: string;
+  strfTitle: string;
+  myReviewPic: { pic: string }[];
+}
+
 export interface IBusinessReview {
   reviewReply: string | null;
 }
@@ -301,7 +315,6 @@ export interface IPointHistory {
   remainPoint: number;
 }
 
-
 export interface IRemainPoint {
   remainPoints: number;
   pointCards: IPointCard[];
@@ -310,7 +323,8 @@ export interface IPointCard {
   pointCardId: string;
   available: number;
   discountPer: number;
-  finalPayment: number;}
+  finalPayment: number;
+}
 
 export interface ITripReview {
   tripId: number;
@@ -325,5 +339,4 @@ export interface ITripReview {
   name: string;
   profilePic: string;
   tripReviewPics: string[];
-
 }

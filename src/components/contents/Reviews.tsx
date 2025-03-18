@@ -105,7 +105,7 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
               return (
                 <li
                   key={index}
-                  className="flex flex-col gap-3 py-8 border-b border-slate-200 px-4"
+                  className="flex flex-col gap-3 py-8 border-b border-slate-200 px-4 last:border-none"
                 >
                   {/* info */}
                   <div className="flex flex-col gap-[6px]">
@@ -172,8 +172,12 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
                       </button>
                     )}
                   </div>
+
                   {/* 사진 */}
-                  <DynamicGrid reviewPics={item} type="review" />
+                  {item.reviewPic && item.reviewPic.length > 0 && (
+                    <DynamicGrid reviewPics={item} type="review" />
+                  )}
+
                   {/* <ReviewImage
                     imgArr={item.reviewPic}
                     reviewId={item.reviewId}
