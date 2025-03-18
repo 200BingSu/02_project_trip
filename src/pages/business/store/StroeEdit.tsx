@@ -88,7 +88,7 @@ const StroeEdit = (): JSX.Element => {
     const url = "/api/detail/strf/pic";
     setIsLoading(true);
     try {
-      const res = await axios.put<IAPI<string>>(
+      const res = await axios.patch<IAPI<string>>(
         `${url}?strfId=${strfId}&busiNum=${busiNum}`,
         formData,
         {
