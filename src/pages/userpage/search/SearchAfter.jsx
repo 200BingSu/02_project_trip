@@ -217,7 +217,7 @@ const SearchAfter = () => {
   }, [keyword, category, orderType]);
 
   return (
-    <div className="w-full flex flex-col  mb-[100px]">
+    <div className="w-full flex flex-col mb-[100px]">
       {/* 상단 */}
       <section
         className="w-full px-4 py-4 flex items-center gap-3 relative"

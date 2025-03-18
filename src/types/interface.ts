@@ -291,3 +291,18 @@ export interface IPointHistory {
   amount: number;
   remainPoint: number;
 }
+
+export interface ITripReview {
+  tripId: number;
+  userId: number;
+  title: string;
+  content: string;
+  likeCount: number;
+  recentCount: number;
+  scrapCount: number;
+  likeUser: number;
+  tripReviewId: number;
+  name: string;
+  profilePic: string;
+  tripReviewPics: string[];
+}

@@ -50,7 +50,7 @@ const ReviewIndex = (): JSX.Element => {
         setStartIdx(0);
         setReviewList(resultData);
       }
-      if (resultData[0].isMore === false) {
+      if (resultData[resultData.length - 1].isMore === false) {
         setIsMore(false);
       }
       setIsLoading(false);

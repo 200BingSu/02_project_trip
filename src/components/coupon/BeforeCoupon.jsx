@@ -47,10 +47,7 @@ const BeforeCoupon = () => {
                 <p className="text-sm text-slate-700">
                   {item.daysLeft}일 뒤 만료{" "}
                   <span className="text-slate-400">
-                    (
-                    {item.expiredAt.split(" ")[0].replaceAll("-", ".") +
-                      " " +
-                      item.expiredAt.split(" ")[1].slice(0, 5)}
+                    ({item.expiredAt.replaceAll("-", ".")}
                     까지)
                   </span>
                 </p>

@@ -85,6 +85,11 @@ const Index = () => {
     }
   };
 
+  // 정렬 버튼
+  const handleSelect = (e: TRIP_REVIEW_ORDER) => {
+    setOrderType(e);
+    setReviewList([]);
+  };
   // 더보기
   const handleClickMoreBtn = () => {
     setPage(prev => prev + 1);
@@ -110,7 +115,7 @@ const Index = () => {
           defaultValue={TRIP_REVIEW_ORDER.LATEST}
           variant="borderless"
           className="text-sm text-slate-700"
-          onChange={e => setOrderType(e)}
+          onChange={e => handleSelect(e)}
         />
       </section>
       {/* 여행기 */}
@@ -120,7 +125,7 @@ const Index = () => {
             return <TripReviewItem key={index} item={item} />;
           })}
         </Spin>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center py-5">
           {isMore && (
             <Button
               className="px-5 py-4 border border-slate-300 

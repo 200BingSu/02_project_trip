@@ -52,7 +52,7 @@ const MakeQr = () => {
         </p>
       </section>
       {/* QR코드 */}
-      <section className="border border-slate-200 rounded-lg flex flex-col items-center gap-8 w-fit overflow-hidden">
+      <section className="shadow-sm shadow-slate-200 border border-slate-200 rounded-lg flex flex-col items-center gap-8 w-fit overflow-hidden">
         <div className="bg-primary2 h-12 w-full mb-5"></div>
         <div
           className={`aspect-square w-56 bg-slate-50 rounded-lg border border-slate-200 overflow-hidden mb-5`}
