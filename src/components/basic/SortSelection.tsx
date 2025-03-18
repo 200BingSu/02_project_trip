@@ -47,6 +47,7 @@ const SortSelection = ({ open, onClose, onSelect }: SortSelectionProps) => {
     setSelectedMonth(months);
   };
 
+
   const handleSearch = () => {
     let startDate: string;
     let endDate: string;
@@ -66,6 +67,7 @@ const SortSelection = ({ open, onClose, onSelect }: SortSelectionProps) => {
     onSelect(startDate, endDate, isDesc, periodText);
     onClose();
   };
+
 
   return (
     <div>

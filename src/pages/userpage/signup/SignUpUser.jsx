@@ -165,8 +165,8 @@ const SignUpUser = () => {
     }
 
     const sendData = { ...filterData, birth: formatBirth };
-
-    if (requiredArr.length === 4 && validateStatus === "success") {
+    console.log(requiredArr);
+    if (requiredArr.length === 4) {
       postSignUpUser(sendData);
     } else {
       setErrorMessage(true);
@@ -293,7 +293,6 @@ const SignUpUser = () => {
                 style={{ height: "60px" }}
               />
             </Form.Item>
-
             {/* 비밀번호 */}
             <Form.Item
               name="pw"

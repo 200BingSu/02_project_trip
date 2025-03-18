@@ -15,6 +15,7 @@ const UserPoint = (): JSX.Element => {
   const [point, setPoint] = useState<IPoint>();
   const navigate = useNavigate();
 
+
   const [startDate, setStartDate] = useState(
     dayjs().subtract(1, "month").format("YYYY-MM-DD"),
   );
@@ -22,6 +23,7 @@ const UserPoint = (): JSX.Element => {
   const [isDesc, setIsDesc] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState("1개월");
   const [sortText, setSortText] = useState("최신순");
+
 
   const handleClose = () => {
     if (isOpen === true) {
@@ -31,6 +33,7 @@ const UserPoint = (): JSX.Element => {
 
   const pointHis = async () => {
     try {
+
       const res = await jwtAxios.get(
         `/api/point/history?start_at=${startDate}&end_at=${endDate}&is_desc=${isDesc}`,
       );

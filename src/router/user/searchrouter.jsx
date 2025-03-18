@@ -9,7 +9,7 @@ const searchRouter = () => {
     () => import("../../pages/userpage/search/SearchContents.jsx"),
   );
   const LazySearchTrip = lazy(
-    () => import("../../pages/userpage/search/SearchTrip.jsx"),
+    () => import("../../pages/userpage/search/SearchInTrip.tsx"),
   );
   const LazySearchStrf = lazy(
     () => import("../../pages/userpage/search/SearchAfter.jsx"),

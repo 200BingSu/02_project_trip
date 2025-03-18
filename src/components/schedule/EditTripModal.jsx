@@ -14,7 +14,7 @@ const StyledCheckbox = styled(Checkbox)`
   && {
     .ant-checkbox {
       order: 2;
-      transform: scale(2);
+      transform: scale(1.5);
       margin-left: 8px;
       margin-right: 0;
 
@@ -45,6 +45,7 @@ const StyledCheckbox = styled(Checkbox)`
 `;
 
 const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
+  console.log("tripData", tripData);
   const [form] = Form.useForm();
   //쿼리스트링
   const [searchParams] = useSearchParams();
@@ -173,6 +174,7 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
       },
     });
   };
+
   return (
     <div
       className="fixed top-0 left-[50%] translate-x-[-50%] z-10
@@ -187,22 +189,27 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
       {/* 모달창 */}
       <div
         className="bg-white 
-                rounded-2xl px-[60px] pt-[30px] pb-[10px]
+                rounded-2xl px-10 py-7
                 flex flex-col items-center justify-center
-                gap-[20px]
+                gap-2
                 "
         onClick={handleModalClick}
       >
+        <h3>여행 수정</h3>
         {/* 지역 선택 */}
-        <div className="flex gap-[20px]">
-          <button type="button" onClick={handleLocationSelect}>
-            지역 선택
-          </button>
-          <ul>
+        <div className="flex gap-3 justify-start w-full items-center">
+          <h4 className="text-base text-slate-700 py-2">지역 선택</h4>
+          <button
+            type="button"
+            onClick={handleLocationSelect}
+            className="hover:bg-slate-100/90 hover:text-slate-700 px-2 py-1 rounded-lg"
+          >
             {tripData?.tripLocationList?.map((item, index) => (
-              <li key={index}>{item}</li>
+              <p key={index} className="text-base text-slate-600">
+                {item}
+              </p>
             ))}
-          </ul>
+          </button>
         </div>
         {/* 모달 내용 */}
         <Form
@@ -210,18 +217,19 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
           onFinish={handleFinish}
           requiredMark={false}
           style={{ width: "100%" }}
+          className="flex flex-col"
         >
           <Form.Item
             name="title"
-            label="제목"
             rules={[{ required: true, message: "제목을 입력해주세요." }]}
             initialValue={tripData.title}
           >
-            <Input />
+            <h4 className="text-base text-slate-700 py-2">제목</h4>
+            <Input placeholder="여행 제목을 입력해주세요" />
           </Form.Item>
+
           <Form.Item
             name="rangePicker"
-            label="여행일자"
             rules={[{ required: true, message: "여행일자를 입력해주세요." }]}
             initialValue={
               tripData?.startAt && tripData?.endAt
@@ -229,20 +237,22 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
                 : undefined
             }
           >
+            <h4 className="text-base text-slate-700 py-2">여행 일자</h4>
             <RangePicker
               placeholder={["시작일 ", "종료일"]}
               disabledDate={disabledDate}
               variant="borderless"
               onChange={handleDateChange}
               separator={"~"}
+              className="w-full"
             />
           </Form.Item>
           <Form.Item
             name="nowUser"
-            label="참여자"
             initialValue={tripData?.tripUserIdList || []}
           >
-            <Checkbox.Group>
+            <h4 className="text-base text-slate-700 py-2">참여자</h4>
+            <Checkbox.Group className="flex flex-col gap-3">
               {tripData?.tripUserIdList?.map((item, index) => (
                 <StyledCheckbox key={index} value={item} size="large">
                   {item}
@@ -255,17 +265,21 @@ const EditTripModal = ({ tripData, handleClickCancle, getTrip }) => {
               width: "100%",
             }}
           >
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div className="flex gap-3">
               <Button
                 color="default"
                 variant="filled"
                 htmlType="button"
                 onClick={handleClickCancle}
-                style={{ width: "50%" }}
+                className="w-full text-base"
               >
                 취소
               </Button>
-              <Button type="primary" htmlType="submit" style={{ width: "50%" }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="w-full text-base"
+              >
                 수정
               </Button>
             </div>

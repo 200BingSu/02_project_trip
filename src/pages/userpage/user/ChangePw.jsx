@@ -85,6 +85,7 @@ const ChangePw = () => {
                 },
               ]}
               help="비밀번호는 반드시 8-20자 이내 숫자, 특수문자(), 영문자 중 2가지 이상을 조합하셔야 합니다"
+              dependencies={["pw"]}
             >
               <Input.Password
                 placeholder="새로운 비밀번호를 입력해주세요."
