@@ -35,6 +35,7 @@ const SearchTrip = () => {
   // 쿼리스트링
   const [searchParams] = useSearchParams();
   const tripId = parseInt(searchParams.get("tripId"));
+  const tempCategory = searchParams.get("category");
 
   useEffect(() => {
     setSearchState(true);
@@ -165,7 +166,6 @@ const SearchTrip = () => {
             />
           </div>
           {/* 카테고리 */}
-
           <ul className="flex gap-[10px] px-[32px] justify-between items-center">
             {strfArr.map((item, index) => {
               return (

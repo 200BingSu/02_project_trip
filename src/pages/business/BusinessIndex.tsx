@@ -49,14 +49,14 @@ const BusinessIndex = (): JSX.Element => {
   };
   //쿠키
   const userInfo = getCookie("user");
-  const strfId = userInfo.strfDtos[0]?.strfId;
-  const strfName = userInfo.strfDtos[0]?.title;
+  const strfId = userInfo?.strfDtos?.[0].strfId;
+  const strfName = userInfo?.strfDtos?.[0].title;
   const accessToken = getCookie("accessToken");
   // recoil
   const userData = useRecoilValue(tsUserAtom);
   const userName = userData.name;
   console.log(userName);
-  const category = userInfo.strfDtos[0]?.category;
+  const category = userInfo.strfDtos?.[0]?.category;
 
   const todayMonth = dayjs().format("YYYY-MM");
   const last12Months = dayjs().subtract(11, "month").format("YYYY-MM");
@@ -72,7 +72,9 @@ const BusinessIndex = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
 
   // 총 매출
-  const totalSales = salesData?.reduce((acc, curr) => acc + curr.totalSales, 0);
+  const totalSales =
+    Array.isArray(salesData) &&
+    salesData.reduce((acc, curr) => acc + curr.totalSales, 0);
 
   // API 매출 현황
   const getSales = async (): Promise<ISales[] | null> => {

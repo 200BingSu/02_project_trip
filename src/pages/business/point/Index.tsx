@@ -79,8 +79,7 @@ const Index = () => {
         </div>
         <div>
           <p className="bg-slate-100 rounded-lg p-5 text-sm text-slate-500">
-            포인트 결제가 잘 못 되었을 경우,
-            <br /> 포인트 결제일부터{" "}
+            포인트 결제가 잘못되었을 경우, 포인트 결제일부터{" "}
             <span className="text-primary">1일 이내</span> 환불, 변경
             가능합니다.
           </p>

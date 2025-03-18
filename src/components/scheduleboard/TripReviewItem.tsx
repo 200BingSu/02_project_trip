@@ -1,9 +1,9 @@
 import { BiShow } from "react-icons/bi";
-import { ProfilePic, TripReviewPic } from "../../constants/pic";
-import { ITripReview } from "../../types/interface";
 import { GoThumbsup } from "react-icons/go";
 import { MdOutlineContentCopy } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { ProfilePic, TripReviewPic } from "../../constants/pic";
+import { ITripReview } from "../../types/interface";
 
 interface TripReviewItemProps {
   item: ITripReview;

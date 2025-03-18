@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ProductPic } from "../../constants/pic";
+import { ProductPic, ProfilePic } from "../../constants/pic";
 import { IChatList } from "../../types/interface";
 
 interface ChatListProps {
@@ -29,7 +29,10 @@ const ChatList = ({ chatList }: ChatListProps): JSX.Element => {
               <div className="flex items-center gap-3">
                 {/* 사진 */}
                 <div className="w-14 h-14 bg-slate-200 flex items-center justify-center rounded-2xl overflow-hidden">
-                  <img src={`${ProductPic}/${item.pic}`} alt="채팅방 사진" />
+                  <img
+                    src={`${ProfilePic}/${item.userId}/${item.pic}`}
+                    alt="채팅방 사진"
+                  />
                 </div>
                 {/* 이름, 마지막 채팅 */}
                 <div className="flex flex-col gap-[5px]">
