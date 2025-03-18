@@ -17,7 +17,7 @@ const ScheduleBoardIndex = () => {
     navigate(-1);
   };
   const navigateSearchLocation = () => {
-    navigate(`/search/location`, { state: { from: "/scheduleboard/index" } });
+    navigate(`/search/location`, { state: { from: "/scheduleboard" } });
   };
   const navigateDetail = item => {
     navigate(
@@ -112,222 +112,206 @@ const ScheduleBoardIndex = () => {
   }, []);
 
   return (
-    <div>
-      <TitleHeader onClick={navigateBack} title="여행기" icon="back" />
-      <div className="flex flex-col px-[32px]">
-        {/* 지역 검색바 */}
-        {/* <div className="relative" onClick={navigateSearchLocation}>
-          <input
-            placeholder={"어느 곳으로 가실건가요?"}
-            className="
-          flex gap-[10px] px-[46px] py-[8px] w-full
-          bg-slate-100 hover:bg-[#eef3f7] 
-          rounded-3xl h-[80px] outline-none text-slate-500"
-            value={`${locationState?.length ? locationState.map(item => item.title).join(", ") : "어느곳으로 가실건가요?"}`}
-            readOnly
-          />
-          <FiSearch className="absolute left-[12px] top-1/2 -translate-y-1/2 text-[24px] text-slate-400" />
-        </div> */}
-        {/* 순서, 총 건수 */}
-        <div className="flex justify-between items-center py-[30px]">
-          {/* 정렬 방식 */}
-          <ul className="flex gap-[20px] items-center">
-            <li>
-              <button
-                type="button"
-                value={0}
-                className={`${filter === 0 ? "text-primary" : "text-slate-300"}`}
-                onClick={() => {
-                  setFilter(0);
-                  setLatestPageNum(1);
-                  setPopularPageNumber(1);
-                  setAllTripReview([]); // 배열 초기화
-                  getAllTripReview("popular"); // 데이터 새로 로딩
-                }}
-              >
-                • 추천순
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                value={1}
-                className={`${filter === 1 ? "text-primary" : "text-slate-300"}`}
-                onClick={() => {
-                  setFilter(1);
-                  setLatestPageNum(1);
-                  setPopularPageNumber(1);
-                  setAllTripReview([]); // 배열 초기화
-                  getAllTripReview("latest"); // 데이터 새로 로딩
-                }}
-              >
-                • 최신순
-              </button>
-            </li>
-          </ul>
-          <p>총 {allCount?.toLocaleString()}건</p>
-        </div>
-        {/* 여행기 목록 */}
-        <ul className="flex flex-col gap-[30px]">
-          {filter === 0 &&
-            popularTripReview.map((item, index) => {
-              return (
-                <li
-                  className="flex flex-col gap-[20px] px-[30px] py-[30px] rounded-3xl
-                        shadow-[0_0_10px_0_rgba(0,0,0,0.1)] cursor-pointer"
-                  key={index}
-                  onClick={() => navigateDetail(item)}
-                >
-                  {/* info */}
-                  <div className="flex justify-between items-center">
-                    {/* 유저 */}
-                    <div className="flex items-center gap-[10px]">
-                      {/* 프로필 */}
-                      <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-slate-100">
-                        <img
-                          src={`${ProfilePic}/${item.userId}/${item.profilePic}`}
-                          alt="유저 프로필"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      {/* 닉네임 */}
-                      <p className="font-semibold text-[18px] text-slate-700">
-                        {item.name}
-                      </p>
-                    </div>
-                    {/* 조회수, 좋아요, 여행기 작성수 */}
-                    <ul className="flex gap-[10px] items-center">
-                      <li className="flex gap-[5px] items-center">
-                        <BiShow className="text-slate-300 text-[18px]" />
-                        <p className="text-slate-500 font-bold text-[14px]">
-                          {item.recentCount}
-                        </p>
-                      </li>
-                      <li className="flex gap-[5px] items-center">
-                        <GoThumbsup className="text-slate-300 text-[18px]" />
-                        <p className="text-slate-500 font-bold text-[14px]">
-                          {item.likeCount}
-                        </p>
-                      </li>
-                      <li className="flex gap-[5px] items-center">
-                        <IoReaderOutline className="text-slate-300 text-[18px]" />
-                        <p className="text-slate-500 font-bold text-[14px]">
-                          {item.scrapCount?.toLocaleString()}
-                        </p>
-                      </li>
-                    </ul>
-                  </div>
-                  {/* content */}
-                  <div className="flex flex-col gap-[20px]">
-                    {/* 이미지 */}
-                    <div className="w-full h-[322px] bg-slate-200 rounded-2xl overflow-hidden">
-                      <img
-                        src={
-                          item.tripReviewPics !== null
-                            ? `${TripReviewPic}/${item.tripReviewId}/${item.tripReviewPics[0]}`
-                            : ``
-                        }
-                        alt="여행기 사진"
-                        className="w-full h-full object-cover"
-                        ref={imgRef}
-                      />
-                    </div>
-                    <h3 className="font-semibold text-[24px] text-slate-700">
-                      {item.title}
-                    </h3>
-                    <p className="text-[18px] text-slate-500 line-clamp-3">
-                      {item.content}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-          {filter === 1 &&
-            latestTripReview.map((item, index) => {
-              return (
-                <li
-                  className="flex flex-col gap-[20px] px-[30px] py-[30px] rounded-3xl
-                        shadow-[0_0_10px_0_rgba(0,0,0,0.1)] cursor-pointer"
-                  key={index}
-                  onClick={() => navigateDetail(item)}
-                >
-                  {/* info */}
-                  <div className="flex justify-between items-center">
-                    {/* 유저 */}
-                    <div className="flex items-center gap-[10px]">
-                      {/* 프로필 */}
-                      <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-slate-100">
-                        <img
-                          src={`${ProfilePic}/${item.userId}/${item.profilePic}`}
-                          alt="유저 프로필"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      {/* 닉네임 */}
-                      <p className="font-semibold text-[18px] text-slate-700">
-                        {item.name}
-                      </p>
-                    </div>
-                    {/* 조회수, 좋아요, 여행기 작성수 */}
-                    <ul className="flex gap-[10px] items-center">
-                      <li className="flex gap-[5px] items-center">
-                        <BiShow className="text-slate-300 text-[18px]" />
-                        <p className="text-slate-500 font-bold text-[14px]">
-                          {item.recentCount}
-                        </p>
-                      </li>
-                      <li className="flex gap-[5px] items-center">
-                        <GoThumbsup className="text-slate-300 text-[18px]" />
-                        <p className="text-slate-500 font-bold text-[14px]">
-                          {item.likeCount}
-                        </p>
-                      </li>
-                      <li className="flex gap-[5px] items-center">
-                        <IoReaderOutline className="text-slate-300 text-[18px]" />
-                        <p className="text-slate-500 font-bold text-[14px]">
-                          {item.scrapCount?.toLocaleString()}
-                        </p>
-                      </li>
-                    </ul>
-                  </div>
-                  {/* content */}
-                  <div className="flex flex-col gap-[20px]">
-                    {/* 이미지 */}
-                    <div className="w-full h-[322px] bg-slate-200 rounded-2xl overflow-hidden">
-                      <img
-                        src={
-                          item.tripReviewPics !== null
-                            ? `${TripReviewPic}/${item.tripReviewId}/${item.tripReviewPics[0]}`
-                            : ``
-                        }
-                        alt="여행기 사진"
-                        className="w-full h-full object-cover"
-                        ref={imgRef}
-                      />
-                    </div>
-                    <h3 className="font-semibold text-[24px] text-slate-700">
-                      {item.title}
-                    </h3>
-                    <p className="text-[18px] text-slate-500 line-clamp-3">
-                      {item.content}
-                    </p>
-                  </div>
-                </li>
-              );
-            })}
-        </ul>
-        {/* 버튼 */}
-        <div className="py-[20px]  flex justify-center items-center">
-          {isMore && (
-            <Button
-              variant="outlined"
-              className="w-[100px] h-[40px] rounded-3xl"
-              onClick={() => getAllTripReview(filterArr[filter])}
+    <div className="flex flex-col px-[32px]">
+      {/* 순서, 총 건수 */}
+      <div className="flex justify-between items-center py-[30px]">
+        {/* 정렬 방식 */}
+        <ul className="flex gap-[20px] items-center">
+          <li>
+            <button
+              type="button"
+              value={0}
+              className={`${filter === 0 ? "text-primary" : "text-slate-300"}`}
+              onClick={() => {
+                setFilter(0);
+                setLatestPageNum(1);
+                setPopularPageNumber(1);
+                setAllTripReview([]); // 배열 초기화
+                getAllTripReview("popular"); // 데이터 새로 로딩
+              }}
             >
-              더보기
-            </Button>
-          )}
-        </div>
+              • 추천순
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              value={1}
+              className={`${filter === 1 ? "text-primary" : "text-slate-300"}`}
+              onClick={() => {
+                setFilter(1);
+                setLatestPageNum(1);
+                setPopularPageNumber(1);
+                setAllTripReview([]); // 배열 초기화
+                getAllTripReview("latest"); // 데이터 새로 로딩
+              }}
+            >
+              • 최신순
+            </button>
+          </li>
+        </ul>
+        <p>총 {allCount?.toLocaleString()}건</p>
+      </div>
+      {/* 여행기 목록 */}
+      <ul className="flex flex-col gap-[30px]">
+        {filter === 0 &&
+          popularTripReview.map((item, index) => {
+            return (
+              <li
+                className="flex flex-col gap-[20px] px-[30px] py-[30px] rounded-3xl
+                        shadow-[0_0_10px_0_rgba(0,0,0,0.1)] cursor-pointer"
+                key={index}
+                onClick={() => navigateDetail(item)}
+              >
+                {/* info */}
+                <div className="flex justify-between items-center">
+                  {/* 유저 */}
+                  <div className="flex items-center gap-[10px]">
+                    {/* 프로필 */}
+                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-slate-100">
+                      <img
+                        src={`${ProfilePic}/${item.userId}/${item.profilePic}`}
+                        alt="유저 프로필"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {/* 닉네임 */}
+                    <p className="font-semibold text-[18px] text-slate-700">
+                      {item.name}
+                    </p>
+                  </div>
+                  {/* 조회수, 좋아요, 여행기 작성수 */}
+                  <ul className="flex gap-[10px] items-center">
+                    <li className="flex gap-[5px] items-center">
+                      <BiShow className="text-slate-300 text-[18px]" />
+                      <p className="text-slate-500 font-bold text-[14px]">
+                        {item.recentCount}
+                      </p>
+                    </li>
+                    <li className="flex gap-[5px] items-center">
+                      <GoThumbsup className="text-slate-300 text-[18px]" />
+                      <p className="text-slate-500 font-bold text-[14px]">
+                        {item.likeCount}
+                      </p>
+                    </li>
+                    <li className="flex gap-[5px] items-center">
+                      <IoReaderOutline className="text-slate-300 text-[18px]" />
+                      <p className="text-slate-500 font-bold text-[14px]">
+                        {item.scrapCount?.toLocaleString()}
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+                {/* content */}
+                <div className="flex flex-col gap-[20px]">
+                  {/* 이미지 */}
+                  <div className="w-full h-[322px] bg-slate-200 rounded-2xl overflow-hidden">
+                    <img
+                      src={
+                        item.tripReviewPics !== null
+                          ? `${TripReviewPic}/${item.tripReviewId}/${item.tripReviewPics[0]}`
+                          : ``
+                      }
+                      alt="여행기 사진"
+                      className="w-full h-full object-cover"
+                      ref={imgRef}
+                    />
+                  </div>
+                  <h3 className="font-semibold text-[24px] text-slate-700">
+                    {item.title}
+                  </h3>
+                  <p className="text-[18px] text-slate-500 line-clamp-3">
+                    {item.content}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        {filter === 1 &&
+          latestTripReview.map((item, index) => {
+            return (
+              <li
+                className="flex flex-col gap-[20px] px-[30px] py-[30px] rounded-3xl
+                        shadow-[0_0_10px_0_rgba(0,0,0,0.1)] cursor-pointer"
+                key={index}
+                onClick={() => navigateDetail(item)}
+              >
+                {/* info */}
+                <div className="flex justify-between items-center">
+                  {/* 유저 */}
+                  <div className="flex items-center gap-[10px]">
+                    {/* 프로필 */}
+                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden bg-slate-100">
+                      <img
+                        src={`${ProfilePic}/${item.userId}/${item.profilePic}`}
+                        alt="유저 프로필"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {/* 닉네임 */}
+                    <p className="font-semibold text-[18px] text-slate-700">
+                      {item.name}
+                    </p>
+                  </div>
+                  {/* 조회수, 좋아요, 여행기 작성수 */}
+                  <ul className="flex gap-[10px] items-center">
+                    <li className="flex gap-[5px] items-center">
+                      <BiShow className="text-slate-300 text-[18px]" />
+                      <p className="text-slate-500 font-bold text-[14px]">
+                        {item.recentCount}
+                      </p>
+                    </li>
+                    <li className="flex gap-[5px] items-center">
+                      <GoThumbsup className="text-slate-300 text-[18px]" />
+                      <p className="text-slate-500 font-bold text-[14px]">
+                        {item.likeCount}
+                      </p>
+                    </li>
+                    <li className="flex gap-[5px] items-center">
+                      <IoReaderOutline className="text-slate-300 text-[18px]" />
+                      <p className="text-slate-500 font-bold text-[14px]">
+                        {item.scrapCount?.toLocaleString()}
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+                {/* content */}
+                <div className="flex flex-col gap-[20px]">
+                  {/* 이미지 */}
+                  <div className="w-full h-[322px] bg-slate-200 rounded-2xl overflow-hidden">
+                    <img
+                      src={
+                        item.tripReviewPics !== null
+                          ? `${TripReviewPic}/${item.tripReviewId}/${item.tripReviewPics[0]}`
+                          : ``
+                      }
+                      alt="여행기 사진"
+                      className="w-full h-full object-cover"
+                      ref={imgRef}
+                    />
+                  </div>
+                  <h3 className="font-semibold text-[24px] text-slate-700">
+                    {item.title}
+                  </h3>
+                  <p className="text-[18px] text-slate-500 line-clamp-3">
+                    {item.content}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+      </ul>
+      {/* 버튼 */}
+      <div className="py-[20px]  flex justify-center items-center">
+        {isMore && (
+          <Button
+            variant="outlined"
+            className="w-[100px] h-[40px] rounded-3xl"
+            onClick={() => getAllTripReview(filterArr[filter])}
+          >
+            더보기
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -192,19 +192,19 @@ const SearchBefore = () => {
             <ul className="flex gap-3 flex-wrap">
               {isLoading ? (
                 <div className="flex justify-center items-center">
-                  <li className="text-transparent bg-slate-100 px-4 py-[6px] rounded-[20px] text-sm select-none">
+                  <li className="text-transparent bg-slate-50 px-4 py-[6px] rounded-[20px] text-sm select-none">
                     제주
                   </li>
-                  <li className="text-transparent bg-slate-100 px-4 py-[6px] rounded-[20px] text-sm select-none">
+                  <li className="text-transparent bg-slate-50 px-4 py-[6px] rounded-[20px] text-sm select-none">
                     제주
                   </li>
-                  <li className="text-transparent bg-slate-100 px-4 py-[6px] rounded-[20px] text-sm select-none">
+                  <li className="text-transparent bg-slate-50 px-4 py-[6px] rounded-[20px] text-sm select-none">
                     제주
                   </li>
-                  <li className="text-transparent bg-slate-100 px-4 py-[6px] rounded-[20px] text-sm select-none">
+                  <li className="text-transparent bg-slate-50 px-4 py-[6px] rounded-[20px] text-sm select-none">
                     제주
                   </li>
-                  <li className="text-transparent bg-slate-100 px-4 py-[6px] rounded-[20px] text-sm select-none">
+                  <li className="text-transparent bg-slate-50 px-4 py-[6px] rounded-[20px] text-sm select-none">
                     제주
                   </li>
                 </div>
@@ -235,7 +235,7 @@ const SearchBefore = () => {
             인기 검색어
           </h2>
           {/* 인기 검색어 목록 */}
-          <ul className="flex flex-col gap-[20px] flex-wrap h-[40vw] max-h-[250px]">
+          <ul className="flex flex-col gap-[20px] flex-wrap h-[40vw] max-h-[230px]">
             {popularWordList ? (
               popularWordList?.map((item, index) => {
                 return (

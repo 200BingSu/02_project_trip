@@ -55,6 +55,7 @@ const BusinessIndex = (): JSX.Element => {
   // recoil
   const userData = useRecoilValue(tsUserAtom);
   const userName = userData.name;
+  console.log(userName);
   const category = userInfo.strfDtos[0]?.category;
 
   const todayMonth = dayjs().format("YYYY-MM");
@@ -241,10 +242,10 @@ const BusinessIndex = (): JSX.Element => {
             {/* 입금 예정 금액 */}
             <div>
               <h3 className="text-xl font-semibold text-slate-700 select-none">
-                {userName} 사장님의 {strfName ?? ""} 매출
+                {strfName ?? ""} 매출
               </h3>
             </div>
-            <div className="flex flex-col-reverse  gap-2 items-start sm:flex-row justify-between sm:gap-2 whitespace-nowrap">
+            <div className="flex flex-col-reverse gap-2 items-start sm:flex-row justify-between sm:gap-2 whitespace-nowrap">
               <div className="flex items-center gap-2">
                 <RangePicker
                   onChange={e => {

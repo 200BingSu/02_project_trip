@@ -109,7 +109,17 @@ const Mypage = (): JSX.Element => {
     {
       icon: <BiCoin />,
       name: "포인트 관리",
-      path: `/business/point?strfId=${strfId}`,
+      path: `/business/point`,
+      subMenu: [
+        {
+          name: `포인트 입금 내역`,
+          path: `/business/point?strfId=${strfId}`,
+        },
+        {
+          name: `포인트 QR 생성`,
+          path: `/business/point/qr?strfId=${strfId}`,
+        },
+      ],
     },
   ];
   // 상품 카테고리 별 메뉴
@@ -148,32 +158,24 @@ const Mypage = (): JSX.Element => {
   ];
   // 메뉴 열기
   const handleOpenMenu = (index: number) => {
-    if (isOpenMenu === false) {
-      if (openMenu === index) {
-        setIsOpenMenu(true);
+    if (openMenu === index) {
+      if (isOpenOption) {
+        setIsOpenOption(false);
       }
-      if (openMenu !== index) {
-        setOpenMenu(index);
-        setIsOpenMenu(true);
-      }
-    }
-    if (isOpenMenu === true) {
-      setIsOpenMenu(false);
+      setIsOpenMenu(!isOpenMenu);
+    } else {
+      setOpenMenu(index);
     }
   };
   // 옵션 메뉴 열기
   const handleOpenOption = (index: number) => {
-    if (isOpenOption === false) {
-      if (openOption === index) {
-        setIsOpenOption(true);
+    if (openOption === index) {
+      if (isOpenMenu) {
+        setIsOpenMenu(false);
       }
-      if (openOption !== index) {
-        setOpenOption(index);
-        setIsOpenOption(true);
-      }
-    }
-    if (isOpenOption === true) {
-      setIsOpenOption(false);
+      setIsOpenOption(!isOpenOption);
+    } else {
+      setOpenOption(index);
     }
   };
   // 로그아웃

@@ -8,13 +8,27 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { searchAtom } from "../../atoms/searchAtom";
 
 const SearchItem = ({ item, onClick }) => {
+  // router
+  const navigate = useNavigate();
+  // recoil
+  const [searchRecoil, setSearchRecoil] = useRecoilState(searchAtom);
+
+  // 검색 아이템 클릭
+  const handleClickItem = item => {
+    console.log("아이템 클릭");
+    setSearchRecoil(prev => ({
+      ...prev,
+      fromContent: true,
+    }));
+    navigate(`/contents/index?strfId=${item.strfId}`);
+  };
   return (
     <div
       className="flex gap-[20px] items-center cursor-pointer"
-      onClick={onClick}
+      onClick={() => handleClickItem(item)}
     >
       {/* 썸네일 */}
-      <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px] overflow-hidden">
+      <div className="w-[130px] h-[130px] bg-slate-200 rounded-[8px] overflow-hidden select-none">
         <img
           src={`${ProductPic}/${item.strfId}/${item.strfPic}`}
           alt={item.title}
@@ -25,7 +39,7 @@ const SearchItem = ({ item, onClick }) => {
       <div className="flex flex-col gap-[5px]">
         {/* 제목, 지역 제휴 */}
         <div className="flex gap-[5px] items-center ">
-          <h3 className="text-[20px] font-semibold text-slate-700">
+          <h3 className="text-[20px] font-semibold text-slate-700 select-none">
             {item.title || item.strfTitle}
           </h3>
           {/* <div className="h-[14px] px-[5px] py-[3px] bg-[#FDB4A1] bg-opacity-50 text-secondary3_3 text-[8px] font-semibold flex items-center justify-center line-height-[100%]">
@@ -49,8 +63,8 @@ const SearchItem = ({ item, onClick }) => {
           <p className="text-[12px] text-slate-500">
             (
             {item.reviewCount
-              ? item.reviewCount.toLocaleString()
-              : item.reviewCnt.toLocaleString()}
+              ? item.reviewCount?.toLocaleString()
+              : item.reviewCnt?.toLocaleString()}
             )
           </p>
         </div>

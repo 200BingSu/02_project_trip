@@ -11,6 +11,7 @@ const CreateMenu = () => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const category = searchParams.get("category");
+  const what = searchParams.get("what");
 
   // useState
   const [current, setCurrent] = useState<number>(0);
@@ -29,7 +30,7 @@ const CreateMenu = () => {
       <div className="px-4 pt-3">
         <h2 className="text-2xl font-semibold text-slate-700">
           {matchName(category)}를 추가해주세요 (
-          {category === CategoryType.STAY && current + 1}/2)
+          {category === CategoryType.STAY && !what && current + 1}/2)
         </h2>
       </div>
       <section>

@@ -31,38 +31,55 @@ const DockBar = React.memo(() => {
   const navigate = useNavigate();
 
   // 채팅 알림
-  // const chatEventRef = useRef(null);
+  const chatEventRef = useRef(null);
+  const EventSource = EventSourcePolyfill || NativeEventSource;
   const [chatAlert, setChatAlert] = useState(false);
-  // useEffect(() => {
-  //   if (!accessToken) {
-  //     return;
-  //   }
-  //   if (chatEventRef.current) {
-  //     console.log("기존 SSE 닫기");
-  //     chatEventRef.current.close();
-  //   }
-  //   const eventSource = new EventSource(`/api/chat-notice`, {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //     },
-  //   });
-  //   chatEventRef.current = eventSource;
+  // 채팅 알림 받기
+  const getChatAlarm = () => {
+    const url = "/api/chat-notice";
+    chatEventRef.current = new EventSource(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Connetction: "keep-alive",
+        Accept: "text/event-stream",
+        "Cache-Control": "no-cache",
+      },
+      withCredentials: true,
+    });
 
-  //   eventSource.onopen = () => console.log("SSE 연결 성공!");
-  //   eventSource.onmessage = event => console.log("새 알림:", event.data);
-  //   eventSource.onerror = error => {
-  //     console.error("SSE 연결 오류:", error);
-  //     setTimeout(() => {
-  //       chatEventRef.current = new EventSourcePolyfill("/api/chat-notice", {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       });
-  //     }, 5000);
-  //   };
-  //   return () => {
-  //     console.log("언마운트: SSE 연결 닫기");
-  //     chatEventRef.current?.close(); // 언마운트될 때 연결 닫기
-  //   };
-  // }, [accessToken]);
+    // 기본 메세지 이벤트
+    chatEventRef.current.onmessage = event => {
+      console.log("새로운 알림:", event.data);
+    };
+
+    // "exist unread notice" 이벤트 수신 (백엔드 이벤트 이름 따라 변경 필수)
+    chatEventRef.current.addEventListener("exist unread notice", event => {
+      console.log("안 읽은 알림 존재:", event.data);
+      setChatAlert(true); // 새로운 알림이 있을 경우 UI 업데이트
+    });
+
+    chatEventRef.current.onerror = async () => {
+      // e: Event
+      chatEventRef.current?.close();
+      // 재연결
+      setTimeout(fetchSSE, 3000);
+    };
+
+    chatEventRef.current.onopen = () => {};
+  };
+  useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+    if (chatEventRef.current) {
+      console.log("기존 SSE 연결 닫기");
+      eventSourceRef.current.close();
+    }
+    getChatAlarm();
+    return () => {
+      chatEventRef.current?.close();
+    };
+  }, [chatEventRef]);
 
   //antD
   const [messageApi, contextHolder] = message.useMessage();
@@ -134,7 +151,7 @@ const DockBar = React.memo(() => {
           <BsFillPatchPlusFill className="text-2xl" />홈
         </Link>
         <Link
-          to="/scheduleboard/index"
+          to="/scheduleboard"
           className="text-slate-400 flex flex-1 flex-col justify-center items-center gap-1.5 text-sm"
         >
           <IoReaderOutline className="text-2xl" />
