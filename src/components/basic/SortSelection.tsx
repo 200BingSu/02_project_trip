@@ -1,4 +1,3 @@
-import { Button, Segmented } from "antd";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
@@ -31,7 +30,7 @@ const SortSelection = ({ open, onClose, date }: SortSelectionProps) => {
     const lastMonth = today.subtract(month, "month").format("YYYY-MM-DD");
     return lastMonth;
   };
-
+  console.log(today, getLastMonth(2));
   const dateArr = [
     { label: "1개월", value: date(1) },
     { label: "3개월", value: date(3) },

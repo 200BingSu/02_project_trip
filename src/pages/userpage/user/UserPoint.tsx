@@ -16,7 +16,7 @@ const UserPoint = (): JSX.Element => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
-
+  console.log(setEndDate);
   const handleClose = () => {
     if (isOpen === true) {
       setIsOpen(false);
@@ -26,6 +26,7 @@ const UserPoint = (): JSX.Element => {
   const pointHis = async () => {
     try {
       const today = new Date().toISOString().split("T")[0];
+      console.log(today);
       const res = await jwtAxios.get(
         `/api/point/history?start_at=${startDate}&end_at=${endDate}&is_desc=true`,
       );
