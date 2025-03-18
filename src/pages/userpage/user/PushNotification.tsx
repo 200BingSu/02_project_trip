@@ -23,11 +23,6 @@ export interface NotiDetailProps {
   foreignNum: string;
 }
 
-interface NoticeResponse {
-  noticeLines: NoticaProps[];
-  more: boolean;
-}
-
 const NotnicoArr = (category: string): ReactNode => {
   const iconMap: Record<string, ReactNode> = {
     TRIP: <img src={`/images/notification/luggage_1f9f3.png`} alt="luggage" />,

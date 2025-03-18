@@ -1,29 +1,25 @@
-import { Button, message, Modal } from "antd";
-import { useCallback, useState } from "react";
+import { Button } from "antd";
+import { useState } from "react";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { FaLocationDot } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import jwtAxios from "../../apis/jwt";
-import { tripAtom } from "../../atoms/tripAtom";
-import { ISchedule, ISelectPath } from "../../types/interface";
-import { StrInfoProps } from "./StrInfo";
 import AddSchedule from "./AddSchedule";
+import { StrInfoProps } from "./StrInfo";
 
 // API 응답 타입 정의
-interface ApiRes {
-  code: string;
-}
+// interface ApiRes {
+//   code: string;
+// }
 
-interface ScheduleParams {
-  trip: { lastSeq: number; day: number; nowTripId: number };
-  selectPath: {
-    totalTime?: number;
-    totalDistance?: number;
-    path_type?: string;
-  };
-  contentData: { strfId: number | string };
-}
+// interface ScheduleParams {
+//   trip: { lastSeq: number; day: number; nowTripId: number };
+//   selectPath: {
+//     totalTime?: number;
+//     totalDistance?: number;
+//     path_type?: string;
+//   };
+//   contentData: { strfId: number | string };
+// }
 
 const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
   const [, setModals] = useState({
@@ -31,66 +27,66 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
     openPathModal: false,
     isReviewModalOpen: false,
   });
-  const [selectPath] = useState<ISelectPath>({});
-  const [trip] = useRecoilState(tripAtom);
-  const [messageApi] = message.useMessage();
+  // const [selectPath] = useState<ISelectPath>({});
+  // const [trip] = useRecoilState(tripAtom);
+  // const [messageApi] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
 
   // 일정 등록
-  const postSchedule = async (data: ScheduleParams): Promise<void> => {
-    const sendData: ISchedule = {
-      seq: data.trip.lastSeq + 1,
-      day: data.trip.day || 1,
-      time: data.selectPath.totalTime || null,
-      distance: data.selectPath.totalDistance || null,
-      strf_id: Number(data.contentData.strfId),
-      trip_id: data.trip.nowTripId,
-      path_type: data.selectPath.path_type || null,
-    };
-    console.log("sendData", sendData);
-    try {
-      const res = await jwtAxios.post<ApiRes>(`/api/schedule`, {
-        ...sendData,
-      });
-      console.log("일정등록 결과", res.data);
+  // const postSchedule = async (data: ScheduleParams): Promise<void> => {
+  //   const sendData: ISchedule = {
+  //     seq: data.trip.lastSeq + 1,
+  //     day: data.trip.day || 1,
+  //     time: data.selectPath.totalTime || null,
+  //     distance: data.selectPath.totalDistance || null,
+  //     strf_id: Number(data.contentData.strfId),
+  //     trip_id: data.trip.nowTripId,
+  //     path_type: data.selectPath.path_type || null,
+  //   };
+  //   console.log("sendData", sendData);
+  //   try {
+  //     const res = await jwtAxios.post<ApiRes>(`/api/schedule`, {
+  //       ...sendData,
+  //     });
+  //     console.log("일정등록 결과", res.data);
 
-      if (res.data.code === "200 성공") {
-        success();
-      }
-    } catch (error) {
-      console.log("일정등록 결과", error);
-    }
-  };
+  //     if (res.data.code === "200 성공") {
+  //       success();
+  //     }
+  //   } catch (error) {
+  //     console.log("일정등록 결과", error);
+  //   }
+  // };
 
   // 성공 메시지 함수
-  const success = useCallback(() => {
-    messageApi.open({
-      type: "success",
-      content: "일정 추가가 완료되었습니다",
-      style: { marginTop: "20vh" },
-    });
-  }, [messageApi]);
+  // const success = useCallback(() => {
+  //   messageApi.open({
+  //     type: "success",
+  //     content: "일정 추가가 완료되었습니다",
+  //     style: { marginTop: "20vh" },
+  //   });
+  // }, [messageApi]);
 
   // 일정 추가 클릭
-  const showRegistModal = () => {
-    if (trip.nowTripId === 0) {
-      setModals(prev => ({ ...prev, isRegistModalOpen: true }));
-    } else if (trip.lastSeq > 0) {
-      setModals(prev => ({ ...prev, openPathModal: true }));
-    } else {
-      // 변환된 strfId를 postSchedule에 전달
-      postSchedule({
-        trip,
-        selectPath,
-        contentData: {
-          strfId: contentData?.strfId ?? 0, // undefined일 경우 기본값 0 사용
-        },
-      });
-      navigate(`/schedule/index?tripId=${trip.nowTripId}`);
-    }
-  };
+  // const showRegistModal = () => {
+  //   if (trip.nowTripId === 0) {
+  //     setModals(prev => ({ ...prev, isRegistModalOpen: true }));
+  //   } else if (trip.lastSeq > 0) {
+  //     setModals(prev => ({ ...prev, openPathModal: true }));
+  //   } else {
+  //     // 변환된 strfId를 postSchedule에 전달
+  //     postSchedule({
+  //       trip,
+  //       selectPath,
+  //       contentData: {
+  //         strfId: contentData?.strfId ?? 0, // undefined일 경우 기본값 0 사용
+  //       },
+  //     });
+  //     navigate(`/schedule/index?tripId=${trip.nowTripId}`);
+  //   }
+  // };
 
   // 리뷰 등록 모달
   const showReviewModal = () => {

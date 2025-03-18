@@ -28,3 +28,8 @@ export enum ReportType {
   STRF = "STRF",
   TRIPREVIEW = "TRIPREVIEW",
 }
+
+export enum TRIP_REVIEW_ORDER {
+  LATEST = "latest",
+  POPULAR = "popular",
+}

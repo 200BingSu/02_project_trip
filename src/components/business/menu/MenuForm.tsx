@@ -333,7 +333,7 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
               size="large"
               className="text-lg"
             >
-              등록하기
+              {pathName === "/business/menu/create" ? "등록하기" : "수정하기"}
             </Button>
           </Form.Item>
         </Form>

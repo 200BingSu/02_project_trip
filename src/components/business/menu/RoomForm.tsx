@@ -1,24 +1,12 @@
-import {
-  Button,
-  Divider,
-  Form,
-  Input,
-  InputNumber,
-  InputRef,
-  message,
-  Select,
-  Space,
-  Spin,
-} from "antd";
+import { Button, Form, Input, InputNumber, message, Spin } from "antd";
 import { useForm } from "antd/es/form/Form";
-import { ChangeEvent, useRef, useState } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
-import { IAPI } from "../../../types/interface";
 import axios from "axios";
-import { getCookie } from "../../../utils/cookie";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { categoryKor } from "../../../utils/match";
+import { useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { amenities } from "../../../constants/dataArr";
+import { IAPI } from "../../../types/interface";
+import { getCookie } from "../../../utils/cookie";
+import { categoryKor } from "../../../utils/match";
 
 export interface ParlorType {
   maxCapacity: number;
@@ -52,26 +40,13 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
   const category = searchParams.get("category");
   const navigate = useNavigate();
   const [form] = useForm();
-  const inputRef = useRef<InputRef>(null);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedAmenities, setSelectedAmenities] = useState<number[]>([]);
+  // router
+  const location = useLocation();
+  const pathName = location.pathname;
 
-  // antD selector
-  const [items, setItems] = useState<string[]>([]);
-  const [name, setName] = useState<string>("");
-  const onNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
-  const addItem = (
-    e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    e.preventDefault();
-    setItems([...items, name || `없음`]);
-    setName("");
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
-  };
   // API 객실 생성
   const createRoom = async (
     data: CreateRoomDataType,
@@ -107,8 +82,9 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
   };
   // 폼 제출
   const onFinish = (values: any) => {
+    console.log(values);
     const { recomCapacity, maxCapacity, surcharge, rooms } = values;
-    const numberRooms = rooms.map((item: any) => Number(item));
+    // const numberRooms = rooms.map((item: any) => Number(item));
     const sendData: CreateRoomDataType = {
       strfId: strfId,
       busiNum: busiNum,
@@ -123,7 +99,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
           surcharge: surcharge,
         },
       ],
-      rooms: numberRooms,
+      rooms: rooms,
     };
     console.log(sendData);
     createRoom(sendData);
@@ -133,9 +109,9 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
       <Spin spinning={isLoading}>
         <Form form={form} onFinish={onFinish} name="room/parlors/amenities">
           <div className="py-2 flex flex-col gap-1">
-            <h3 className="text-slate-700 text-lg font-semibold">객실 번호</h3>
+            <h3 className="text-slate-700 text-lg font-semibold">객실 수량</h3>
             <p className="text-sm text-slate-500">
-              해당 객실 종류에 해당하는 객실 번호를 입력해주세요.
+              해당 객실 종류의 수량을 선택해주세요.
             </p>
           </div>
           <Form.Item
@@ -146,50 +122,9 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
                 message: "객실 번호를 입력해주세요.",
               },
             ]}
-            help="객실 번호를 추가하신 뒤, 해당되는 객실 번호를 선택해주세요."
             className="w-full pb-5"
           >
-            <Select
-              size="large"
-              placeholder="객실 번호를 입력해주세요"
-              mode="multiple"
-              allowClear
-              dropdownRender={menu => (
-                <>
-                  {menu}
-                  <Divider
-                    style={{
-                      margin: "8px 0",
-                    }}
-                  />
-                  <Space
-                    style={{
-                      padding: "0 8px 4px",
-                    }}
-                  >
-                    <Input
-                      placeholder="객실 번호"
-                      ref={inputRef}
-                      value={name}
-                      onChange={onNameChange}
-                      onKeyDown={e => e.stopPropagation()}
-                      onPressEnter={addItem}
-                    />
-                    <Button
-                      type="text"
-                      icon={<AiOutlinePlus />}
-                      onClick={addItem}
-                    >
-                      추가
-                    </Button>
-                  </Space>
-                </>
-              )}
-              options={items.map(item => ({
-                label: item,
-                value: item,
-              }))}
-            />
+            <Input placeholder="객실 수량을 선택해주세요" size="large" />
           </Form.Item>
           <div className="py-2 flex flex-col gap-1">
             <h3 className="text-slate-700 text-lg font-semibold">객실 인원</h3>
@@ -284,7 +219,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
           </div>
           <Form.Item className="w-full flex justify-end">
             <Button type="primary" htmlType="submit" size="large">
-              등록하기
+              {pathName === "/business/menu/create" ? "등록하기" : "수정하기"}
             </Button>
           </Form.Item>
         </Form>
