@@ -18,6 +18,7 @@ import DynamicGrid from "../../../components/basic/DynamicGrid";
 
 const UserrRview = () => {
   const [reviewInfo, setReviewInfo] = useState([]);
+  const [isCount, setIsCount] = useState(0);
   const [startIndex, setStartIndex] = useState(0); // startIndex 상태 추가
   const [isShowMore, setIsShowMore] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -29,19 +30,30 @@ const UserrRview = () => {
     try {
       const res = await jwtAxios.get(`/api/review/my?start_idx=${startIndex}`);
 
-      setReviewInfo(prev => [...prev, ...res.data.data]); // 기존 리뷰에 새 리뷰 추가
-      if (res.data.data) {
+      setReviewInfo(prev => [...prev, ...res.data.data.dtoList]); // 기존 리뷰에 새 리뷰 추가
+      if (res.data.data.dtoList) {
         setStartIndex(prev => prev + 10);
       }
       // if (res.data[0].more === false) {
       //   setIsShowMore(false);
       // }
-      console.log("✅  getUserReview  res.data.data:", res.data);
+      console.log("✅  getUserReview  res.data.data:", res.data.data.dtoList);
     } catch (error) {
       console.log("✅  getUserReview  error:", error);
     }
   };
 
+  const reviewCount = async () => {
+    try {
+      const res = await jwtAxios.get(`/api/review/count`);
+      console.log("✅  reviewCount  res:", res.data); // 여기에 출력된 값은 숫자일 것입니다.
+      setIsCount(res.data); // res.data가 바로 숫자이므로 바로 사용
+    } catch (error) {
+      console.log("✅  reviewCount  error:", error);
+    }
+  };
+
+  console.log(" reviewInfo", reviewInfo);
   // 리뷰 삭제하기
   const deleteReview = async item => {
     console.log(item);
@@ -61,6 +73,10 @@ const UserrRview = () => {
       getUserReview();
     }
   }, [startIndex]);
+
+  useEffect(() => {
+    reviewCount();
+  }, []);
 
   const handleLoadMore = () => {
     getUserReview();
@@ -97,7 +113,7 @@ const UserrRview = () => {
     <div>
       <TitleHeader icon="back" title="리뷰" onClick={() => navigate(-2)} />
       <div className="flex justify-between py-[14px] px-4 border-b-[1px] border-t-[1px] border-slate-100 ">
-        <p className="text-sm font-semibold">총 {reviewInfo.length}개</p>
+        <p className="text-sm font-semibold">총 {isCount}개</p>
       </div>
       <div>
         {reviewInfo.map((item, index) => {
