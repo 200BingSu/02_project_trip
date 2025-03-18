@@ -23,10 +23,12 @@ const PostReview = () => {
   const user = getCookie("user");
   const accessToken = getCookie("accessToken");
   console.log("user", user);
-
+  //쿼리스트링
+  const [searchParmas] = useSearchParams();
+  const strfId = searchParmas.get("strfId");
   //useNavigate
   const navigate = useNavigate();
-
+  const navigateToStrf = () => navigate(`/contents/index?strfId=${strfId}`);
   const location = useLocation();
   const locationState = location.state;
   const [form] = Form.useForm();
@@ -36,10 +38,6 @@ const PostReview = () => {
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-
-  //쿼리스트링
-  const [searchParmas] = useSearchParams();
-  const strfId = searchParmas.get("strfId");
 
   useEffect(() => {
     console.log("fileList", fileList);
@@ -107,7 +105,7 @@ const PostReview = () => {
       <TitleHeader
         icon="back"
         onClick={() => {
-          navigate(-1);
+          navigateToStrf();
         }}
         title={locationState?.strfTitle}
       />

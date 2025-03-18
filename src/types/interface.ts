@@ -301,6 +301,7 @@ export interface IPointHistory {
   remainPoint: number;
 }
 
+
 export interface IRemainPoint {
   remainPoints: number;
   pointCards: IPointCard[];
@@ -309,5 +310,20 @@ export interface IPointCard {
   pointCardId: string;
   available: number;
   discountPer: number;
-  finalPayment: number;
+  finalPayment: number;}
+
+export interface ITripReview {
+  tripId: number;
+  userId: number;
+  title: string;
+  content: string;
+  likeCount: number;
+  recentCount: number;
+  scrapCount: number;
+  likeUser: number;
+  tripReviewId: number;
+  name: string;
+  profilePic: string;
+  tripReviewPics: string[];
+
 }
