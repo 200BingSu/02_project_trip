@@ -277,17 +277,17 @@ export interface IPoint {
   refund: boolean;
 }
 
-export interface ITripReview {
-  tripId: number;
-  userId: number;
-  title: string;
-  content: string;
-  likeCount: number;
-  recentCount: number;
-  scrapCount: number;
-  likeUser: number;
-  tripReviewId: number;
-  name: string;
-  profilePic: string;
-  tripReviewPics: string[];
+export interface IPoint {
+  userName: string;
+  remainPoint: number;
+  pointList: IPointHistory[];
+}
+
+export interface IPointHistory {
+  pointHistoryId: number;
+  usedAt: string;
+  category: number;
+  addedAt: string;
+  amount: number;
+  remainPoint: number;
 }
