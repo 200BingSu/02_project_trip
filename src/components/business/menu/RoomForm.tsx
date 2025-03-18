@@ -1,7 +1,7 @@
 import { Button, Form, Input, InputNumber, message, Spin } from "antd";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { amenities } from "../../../constants/dataArr";
 import { IAPI } from "../../../types/interface";
@@ -12,18 +12,21 @@ export interface ParlorType {
   maxCapacity: number;
   recomCapacity: number;
   surcharge: number;
-  menuId: number;
+  menuId?: number;
 }
 export interface CreateRoomDataType {
   strfId: number;
   busiNum: string;
   category: string;
   menuId: number;
-  ameniPoints: number[];
+  ameniPoints?: number[];
   parlors: ParlorType[];
   rooms: number[];
 }
-interface CreateRoomResponseType {}
+
+interface EditRoomDataType {
+  stayReq: CreateRoomDataType;
+}
 
 interface RoomFormProps {
   menuId: string | null;
@@ -46,7 +49,8 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
   // router
   const location = useLocation();
   const pathName = location.pathname;
-
+  const state = location.state;
+  console.log("state", state);
   // API 객실 생성
   const createRoom = async (
     data: CreateRoomDataType,
@@ -72,6 +76,34 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
       return null;
     }
   };
+  // API 객실 수정
+  const updateRoom = async (
+    data: CreateRoomDataType,
+  ): Promise<IAPI<EditRoomDataType> | null> => {
+    setIsLoading(true);
+    const url = "/api/detail/stay";
+    try {
+      const res = await axios.patch<IAPI<EditRoomDataType>>(url, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log(res.data);
+      const resultData = res.data;
+      if (resultData) {
+        setIsLoading(false);
+        message.success("객실 수정이 완료되었습니다");
+        navigate(
+          `/business/menu/detail?strfId=${strfId}&category=${category}&menuId=${menuId}`,
+        );
+      }
+      return resultData;
+    } catch (error) {
+      setIsLoading(false);
+      return null;
+    }
+  };
+
   // 편의 시설 클릭
   const handleAmenityClick = (amenityId: number) => {
     if (selectedAmenities.includes(amenityId)) {
@@ -85,7 +117,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
     console.log(values);
     const { recomCapacity, maxCapacity, surcharge, rooms } = values;
     // const numberRooms = rooms.map((item: any) => Number(item));
-    const sendData: CreateRoomDataType = {
+    const createPayload: CreateRoomDataType = {
       strfId: strfId,
       busiNum: busiNum,
       category: categoryKor(category) as string,
@@ -101,9 +133,42 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
       ],
       rooms: rooms,
     };
-    console.log(sendData);
-    createRoom(sendData);
+    const editPayload: EditRoomDataType = {
+      stayReq: {
+        strfId: strfId,
+        busiNum: busiNum,
+        category: categoryKor(category) as string,
+        menuId: Number(menuId),
+        parlors: [
+          {
+            recomCapacity: recomCapacity,
+            maxCapacity: maxCapacity,
+            surcharge: surcharge,
+          },
+        ],
+        rooms: rooms,
+      },
+    };
+    if (pathName === "/business/menu/create") {
+      console.log("생성 payload", createPayload);
+
+      createRoom(createPayload);
+    }
+    if (pathName === "/business/menu/edit") {
+      console.log("수정 payload", editPayload);
+      updateRoom(editPayload);
+    }
   };
+  useEffect(() => {
+    if (state) {
+      form.setFieldsValue({
+        rooms: state.roomNum.length,
+        recomCapacity: state.recomCapacity,
+        maxCapacity: state.maxCapacity,
+        surcharge: state.surcharge,
+      });
+    }
+  }, []);
   return (
     <div className="px-4 py-3">
       <Spin spinning={isLoading}>
@@ -195,28 +260,35 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
               }
             />
           </Form.Item>
-          <div className="py-2 flex flex-col gap-1 pb-10">
-            <h3 className="text-slate-700 text-lg font-semibold">편의 시설</h3>
-            <p className="text-sm text-slate-500 pb-2">
-              해당 객실 종류의 편의 시설을 선택해주세요.
-              <br /> * 해당 편의시설은 검색 필터에 적용됩니다.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {amenities.map((item, index) => (
-                <button
-                  type="button"
-                  key={index}
-                  className={`flex text-base items-center gap-2
+          {pathName !== "/business/menu/edit" && (
+            <div className="py-2 flex flex-col gap-1 pb-10">
+              <h3 className="text-slate-700 text-lg font-semibold">
+                편의 시설
+              </h3>
+              <p className="text-sm text-slate-500 pb-2">
+                해당 객실 종류의 편의 시설을 선택해주세요.
+                <br /> * 해당 편의시설은 검색 필터에 적용됩니다.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {amenities.map((item, index) => (
+                  <button
+                    type="button"
+                    key={index}
+                    className={`flex text-base items-center gap-2
                 border rounded-2xl w-fit px-2 py-1
                 ${selectedAmenities.includes(item.amenity_id as number) ? "border-primary text-primary" : "border-slate-300 text-slate-500"}`}
-                  onClick={() => handleAmenityClick(item.amenity_id as number)}
-                >
-                  {item.icon}
-                  {item.key}
-                </button>
-              ))}
+                    onClick={() =>
+                      handleAmenityClick(item.amenity_id as number)
+                    }
+                  >
+                    {item.icon}
+                    {item.key}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
           <Form.Item className="w-full flex justify-end">
             <Button type="primary" htmlType="submit" size="large">
               {pathName === "/business/menu/create" ? "등록하기" : "수정하기"}
