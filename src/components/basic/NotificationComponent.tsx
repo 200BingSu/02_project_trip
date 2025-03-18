@@ -39,6 +39,17 @@ const NotificationComponent = ({ token }: { token: string }) => {
         console.log("새로운 알림:", event.data); // 새로운 메시지를 콘솔에 출력
       };
 
+      // 첫 커넥션 시 알림 여부 확인
+      eventSource.current.addEventListener(
+        "first_check_unread_notice",
+        event => {
+          console.log("초기 알림 확인:", event.data);
+          if (event.data === "true") {
+            setRedCoin(true); // UI에 알림 표시 (빨간 점 활성화)
+          }
+        },
+      );
+
       // 특정 이벤트("exist unread notice") 수신 시 처리
       eventSource.current.addEventListener("exist unread notice", event => {
         console.log("안 읽은 알림 존재:", event.data);

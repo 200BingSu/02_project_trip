@@ -24,10 +24,7 @@ const DynamicGrid = ({ reviewPics, type = "review" }) => {
     >
       <Image.PreviewGroup items={allImageUrls}>
         {displayPics?.map((pic, index) => {
-          const imagePath =
-            type === "myReview"
-              ? `${ReviewPic}/${reviewPics.reviewId}/${pic.pic}`
-              : `${ReviewPic}/${reviewPics.strfId}/${pic.pic}`;
+          const imagePath = `${ReviewPic}/${reviewPics.reviewId}/${pic.pic}`;
 
           return (
             <Image
