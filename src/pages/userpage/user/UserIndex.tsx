@@ -42,6 +42,7 @@ interface IGetUsrInfo {
 const UserIndex = () => {
   //recoil
   const userInfo = useRecoilValue(tsUserAtom);
+  console.log("userInfo", userInfo);
   const resetUserInfo = useResetRecoilState(resetUserData);
 
   const [useProfile, setUseProfile] = useState<IGetUserData>({
@@ -50,12 +51,14 @@ const UserIndex = () => {
     profilePic: "",
     tripList: [],
   });
+  const [isLoading, setIsLoading] = useState(false);
   // const [coupon, setCoupon] = useState("");
 
   const accessToken = getCookie("accessToken");
   const userLogin = getCookie("user");
 
   const getUserInfo = async (): Promise<IGetUsrInfo | null> => {
+    setIsLoading(true);
     try {
       const res = await axios.get<IGetUsrInfo>(`/api/home/user`, {
         headers: {
@@ -68,6 +71,8 @@ const UserIndex = () => {
     } catch (error) {
       console.log(error);
       return null;
+    } finally {
+      setIsLoading(false);
     }
   };
   // API 관리자 채팅방 생성
@@ -126,7 +131,18 @@ const UserIndex = () => {
     navigate("/user/useredit", { state: useProfile });
   };
 
-  console.log(" useProfile", useProfile);
+  const matchUserProfilePicPath = () => {
+    if (useProfile?.profilePic === null) {
+      return `/images/user.png`;
+    }
+    if (userInfo.providerType === ProviderType.LOCAL) {
+      return `${ProfilePic}/${userLogin?.userId}/${useProfile?.profilePic}`;
+    }
+    if (userInfo.providerType === ProviderType.KAKAO) {
+      return `${useProfile.profilePic}`;
+    }
+  };
+
   return (
     <div className={` w-full flex justify-end`}>
       {/* 모바일 메뉴 컨테이너 */}
@@ -156,49 +172,62 @@ const UserIndex = () => {
           </div>
           <div>
             <div className="mt-5">
-              <div className="mx-auto w-32 h-32 rounded-full overflow-hidden">
-                <img
-                  src={
-                    userInfo.providerType === ProviderType.LOCAL
-                      ? useProfile.profilePic
-                        ? `${ProfilePic}/${userLogin?.userId}/${useProfile?.profilePic}`
-                        : `/images/user.png`
-                      : useProfile.profilePic
-                        ? `${useProfile.profilePic}`
-                        : `/images/user.png`
-                  }
-                  alt="User-Profile"
-                  className="w-full h-full object-cover"
-                />
+              <div className="mx-auto w-32 h-32 rounded-full overflow-hidden bg-slate-100">
+                {!isLoading && (
+                  <img
+                    src={matchUserProfilePicPath()}
+                    alt="User-Profile"
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </div>
 
-              <h1 className="text-2xl font-bold text-slate-700 mt-[14px] text-center">
-                {useProfile.name}
+              <h1 className="text-2xl font-bold text-slate-700 mt-[14px] text-center flex items-center justify-center">
+                {!isLoading && useProfile.name}
+                {isLoading && (
+                  <p className="bg-slate-100 text-transparent w-fit rounded-xl">
+                    닉네임
+                  </p>
+                )}
               </h1>
-              <Swiper slidesPerView={1} className="mySwiper">
-                {useProfile.tripList?.map(content => (
-                  <SwiperSlide key={content.tripId}>
-                    <div
-                      className="flex items-center justify-between bg-slate-100 mt-5 px-4 py-4 rounded-full relative
+              {!isLoading && (
+                <Swiper slidesPerView={1} className="mySwiper">
+                  {useProfile.tripList?.map(content => (
+                    <SwiperSlide key={content.tripId}>
+                      <div
+                        className="flex items-center justify-between bg-slate-100 mt-5 px-4 py-4 rounded-full relative
                     after:absolute after:border-solid after:border-transparent after:border-b-slate-100 after:border-x-[16px] after:border-b-[30px] after:-top-4 after:left-1/2 after:-translate-x-1/2"
-                    >
-                      <div className="flex items-center">
-                        <img
-                          src={`${LocationPic}/${content.locationPic}`}
-                          alt=""
-                          className="w-8 h-8 rounded-full mr-3"
-                        />
-                        <span className="text-lg text-slate-700 font-normal">
-                          {content.title}
+                      >
+                        <div className="flex items-center">
+                          <img
+                            src={`${LocationPic}/${content.locationPic}`}
+                            alt=""
+                            className="w-8 h-8 rounded-full mr-3"
+                          />
+                          <span className="text-lg text-slate-700 font-normal">
+                            {content.title}
+                          </span>
+                        </div>
+                        <span className="text-lg text-primary font-semibold">
+                          {content.dday > 0 ? `D-${content.dday}` : "여행중"}
                         </span>
                       </div>
-                      <span className="text-lg text-primary font-semibold">
-                        {content.dday > 0 ? `D-${content.dday}` : "여행중"}
-                      </span>
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              )}
+              {isLoading && (
+                <div
+                  className="flex items-center justify-between bg-slate-100 mt-5 px-4 py-4 rounded-full relative
+                    after:absolute after:border-solid after:border-transparent after:border-b-slate-100 after:border-x-[16px] after:border-b-[30px] after:-top-4 after:left-1/2 after:-translate-x-1/2"
+                >
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full mr-3 bg-slate-200"></div>
+                    <span className="text-lg text-slate-700 font-normal"></span>
+                  </div>
+                  <span className="text-lg text-primary font-semibold"></span>
+                </div>
+              )}
             </div>
 
             <div className="flex my-5">
@@ -275,15 +304,18 @@ const UserIndex = () => {
         </div>
         <p className="w-full h-[10px] bg-slate-100"></p>
         <div className="px-4 pb-[130px]">
-          <Link to="" className="flex py-5  text-slate-500 text-sm">
+          <Link
+            to="/announcement"
+            className="flex py-5  text-slate-500 text-sm"
+          >
             공지사항
           </Link>
-          <Link to="" className="flex  text-slate-500 py-5 text-sm">
+          <Link to="/qna" className="flex  text-slate-500 py-5 text-sm">
             FAQ
           </Link>
-          <Link to="" className="flex   text-slate-500 py-5 text-sm">
+          {/* <Link to="" className="flex   text-slate-500 py-5 text-sm">
             고객센터
-          </Link>
+          </Link> */}
           <div
             className="flex text-slate-500 py-5 text-sm cursor-pointer"
             onClick={createChatToAdmine}

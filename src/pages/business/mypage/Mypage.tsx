@@ -241,13 +241,16 @@ const Mypage = (): JSX.Element => {
                         ? handleOpenMenu(index)
                         : navigate(item.path);
                     }}
-                    className="flex items-center gap-4 text-2xl font-medium text-slate-700"
+                    className="w-full flex items-center justify-between gap-4 text-2xl font-medium text-slate-700 "
                   >
-                    <i className="text-2xl text-slate-400">{item.icon}</i>
-                    {item.name}
+                    <div className="flex items-center gap-3">
+                      <i className="text-2xl text-slate-400">{item.icon}</i>
+                      {item.name}
+                    </div>
+
                     {item.subMenu && (
                       <i
-                        className={`text-2xl text-slate-500 ${
+                        className={`text-2xl text-slate-300 ${
                           openMenu === index && isOpenMenu === true
                             ? "rotate-90"
                             : "rotate-0"
