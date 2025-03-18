@@ -132,7 +132,7 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
     setIsLoading(true);
     const url = "/api/detail/menu";
     try {
-      const res = await axios.put<IAPI<string> | null>(url, data, {
+      const res = await axios.patch<IAPI<string> | null>(url, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

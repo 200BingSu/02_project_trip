@@ -11,7 +11,7 @@ import { Documents, Meta } from "../../../types/kakao";
 
 const { Option } = Select;
 
-interface IGetGeoCode {
+export interface IGetGeoCode {
   meta: Meta;
   documents: Documents[];
 }

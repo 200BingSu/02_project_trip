@@ -1,19 +1,19 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
+import { CgMoreVerticalAlt } from "react-icons/cg";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import BottomSheet from "../../../components/basic/BottomSheet";
+import CenterModalTs from "../../../components/common/CenterModalTs";
 import { MenuPic } from "../../../constants/pic";
 import { IAPI, IRoom, MenuType } from "../../../types/interface";
-import { CgMoreVerticalAlt } from "react-icons/cg";
-import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
-import BottomSheet from "../../../components/basic/BottomSheet";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { categoryKor } from "../../../utils/match";
-import CenterModalTs from "../../../components/common/CenterModalTs";
 
 const MenuDetail = (): JSX.Element => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const strfId = searchParams.get("strfId");
-  const category = categoryKor(searchParams.get("category"));
+  const category = searchParams.get("category");
   const menuId = searchParams.get("menuId");
 
   //router
@@ -30,7 +30,7 @@ const MenuDetail = (): JSX.Element => {
     const url = "/api/detail/parlor";
     try {
       const res = await axios.get<IAPI<IRoom[]>>(
-        `${url}?strf_id=${strfId}&category=${category}`,
+        `${url}?strf_id=${strfId}&category=${categoryKor(category)}`,
       );
       const resultData = res.data;
       console.log("객실/호실 조회", resultData);
@@ -92,6 +92,7 @@ const MenuDetail = (): JSX.Element => {
       onClick: () => {
         navigate(
           `/business/menu/edit?strfId=${strfId}&category=${category}&menuId=${menuId}&what=room`,
+          { state: parlor },
         );
       },
     },

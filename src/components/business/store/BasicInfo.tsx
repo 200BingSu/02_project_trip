@@ -33,6 +33,7 @@ const BasicInfo = (): JSX.Element => {
           type="amenity"
         />
       )}
+      <ListItem title="업체 주소" type="address" />
       <ListItem title="업체 사진" type="strfPic" />
     </>
   );
