@@ -154,6 +154,11 @@ export interface Iamenity {
 }
 
 export interface IReview {
+  more: boolean;
+  dtoList: IReviewData[];
+}
+
+export interface IReviewData {
   reviewId?: number;
   review_id?: number;
   strfId?: number;
@@ -180,7 +185,6 @@ export interface IReview {
   reviewWriteDate: string;
   reviewPic?: { pic: string }[];
   reviewPicList?: { title: string }[];
-  more: boolean;
 }
 
 export interface IBusinessReview {
@@ -277,6 +281,11 @@ export interface IPoint {
   refund: boolean;
 }
 
+export interface IPointHistory {
+  code: "200 성공";
+  data: {};
+}
+
 export interface IPoint {
   userName: string;
   remainPoint: number;
@@ -292,6 +301,17 @@ export interface IPointHistory {
   remainPoint: number;
 }
 
+
+export interface IRemainPoint {
+  remainPoints: number;
+  pointCards: IPointCard[];
+}
+export interface IPointCard {
+  pointCardId: string;
+  available: number;
+  discountPer: number;
+  finalPayment: number;}
+
 export interface ITripReview {
   tripId: number;
   userId: number;
@@ -305,4 +325,5 @@ export interface ITripReview {
   name: string;
   profilePic: string;
   tripReviewPics: string[];
+
 }

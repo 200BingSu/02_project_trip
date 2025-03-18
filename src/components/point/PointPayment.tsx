@@ -1,13 +1,63 @@
-import { Button, Checkbox, Flex, Radio } from "antd";
+import { Button, Checkbox, Radio } from "antd";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import jwtAxios from "../../apis/jwt";
 import "../../styles/antd-styles.css";
+import { IAPI, IRemainPoint } from "../../types/interface";
 import TitleHeaderTs from "../layout/header/TitleHeaderTs";
 
+interface Payment {
+  pointCardId: number;
+  amount: number;
+}
+
 const PointPayment = (): JSX.Element => {
+  const [selectedPoint, setSelectedPoint] = useState<IRemainPoint>();
+  const [selectedCardId, setSelectedCardId] = useState<string>();
+  const [isChecked, setIsChecked] = useState(false);
+
+  const PointPayment = async () => {
+    try {
+      const res = await jwtAxios.get<IAPI<IRemainPoint>>("/api/point/card");
+      setSelectedPoint(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePayment = async (): Promise<void> => {
+    try {
+      const res = await jwtAxios.post<IAPI<string>>("/api/point/card/buy", {
+        pointCardId: selectedCardId,
+        amount: selectedPrice,
+      });
+
+      if (res.data.data) {
+        window.open(res.data.data, "_blank");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    PointPayment();
+  }, []);
+
   const navigate = useNavigate();
   const navPoint = () => {
     navigate("/user/point");
   };
+
+  const selectedPrice = selectedPoint?.pointCards.find(
+    card => card.pointCardId === selectedCardId,
+  )?.finalPayment;
+
+  const isAllSelected = selectedCardId && isChecked;
+
+  console.log(selectedCardId);
+  console.log(selectedPrice);
+
   return (
     <div>
       <TitleHeaderTs icon="" title="포인트 충전" onClick={navPoint} />
@@ -18,82 +68,23 @@ const PointPayment = (): JSX.Element => {
           </h2>
           <div className="px-3 py-4 border-[1px] border-slate-200 rounded-lg flex items-center justify-between mb-3">
             <p className="text-base text-slate-700">현재 포인트</p>
-            <p className="text-base text-primary font-semibold">6,700P</p>
+            <p className="text-base text-primary font-semibold">
+              {selectedPoint?.remainPoints.toLocaleString()}P
+            </p>
           </div>
           <Radio.Group
             className="custom-radio"
-            options={[
-              {
-                value: 1,
-                label: (
-                  <Flex
-                    gap="small"
-                    align="center"
-                    vertical
-                    className="text-base text-slate-700 py-4 "
-                  >
-                    <p>10,000P</p>
-                    <p>10,000원</p>
-                  </Flex>
-                ),
-              },
-              {
-                value: 2,
-                label: (
-                  <Flex
-                    gap="small"
-                    align="center"
-                    vertical
-                    className="text-base text-slate-700 py-4"
-                  >
-                    <p>30,000P</p>
-                    <p>30,000P</p>
-                  </Flex>
-                ),
-              },
-              {
-                value: 3,
-                label: (
-                  <Flex
-                    gap="small"
-                    align="center"
-                    vertical
-                    className="text-base text-slate-700 py-4"
-                  >
-                    <p>50,000P</p>
-                    <p>50,000P</p>
-                  </Flex>
-                ),
-              },
-              {
-                value: 4,
-                label: (
-                  <Flex
-                    gap="small"
-                    align="center"
-                    vertical
-                    className="text-base text-slate-700 py-4 "
-                  >
-                    <p>70,000P</p>
-                    <p>70,000P</p>
-                  </Flex>
-                ),
-              },
-              {
-                value: 5,
-                label: (
-                  <Flex
-                    gap="small"
-                    align="center"
-                    vertical
-                    className="text-base text-slate-700 py-4 "
-                  >
-                    <p>100,000P</p>
-                    <p>100,000P</p>
-                  </Flex>
-                ),
-              },
-            ]}
+            value={selectedCardId}
+            onChange={e => setSelectedCardId(e.target.value)}
+            options={selectedPoint?.pointCards.map(point => ({
+              value: point.pointCardId,
+              label: (
+                <div className="flex items-center justify-between text-base text-slate-700 py-4">
+                  <p>{point.available.toLocaleString()}P</p>
+                  <p>{point.finalPayment.toLocaleString()}원</p>
+                </div>
+              ),
+            }))}
           />
         </div>
       </div>
@@ -101,7 +92,9 @@ const PointPayment = (): JSX.Element => {
         <h2 className="text-lg font-semibold text-slate-700 mb-3">결제정보</h2>
         <div className="py-4 flex items-center justify-between mb-3">
           <p className="text-base text-slate-700 font-semibold">결제 금액</p>
-          <p className="text-base text-primary font-semibold">10,000원</p>
+          <p className="text-base text-primary font-semibold">
+            {selectedPrice ? `${selectedPrice.toLocaleString()}원` : "0원"}
+          </p>
         </div>
       </div>
       <div className="py-3 px-4 border-b-[10px] border-slate-100">
@@ -109,7 +102,10 @@ const PointPayment = (): JSX.Element => {
           결제수단
         </h2>
         <div className="px-3 py-4 border-[1px] border-slate-200 rounded-lg flex items-center justify-between mb-3">
-          <Radio className="custom-payment-radio text-base text-slate-700">
+          <Radio
+            defaultChecked
+            className="custom-payment-radio text-base text-slate-700"
+          >
             <div className="flex items-center gap-3">
               <img
                 src="/images/payment/payment_icon_yellow_small.png"
@@ -122,7 +118,7 @@ const PointPayment = (): JSX.Element => {
         </div>
         <div className="bg-slate-50 p-5 rounded-lg">
           <p className="text-lg text-slate-700 mb-[6px]">결제혜택</p>
-          <p className="text-base text-slate-500 tracking-tight">
+          <p className="text-sm text-slate-500 tracking-tight">
             본 프로모션은 카카오페이 계정 기준 "기간 내 1회, 카카오페이머니
             결제"에 한해 페이포인트 적립 가능합니다. - 포인트 적립은 장바구니
             합산 기준으로 최종 결제 금액 4만원 이상 시 자동 적립되며, 카카오페이
@@ -139,10 +135,19 @@ const PointPayment = (): JSX.Element => {
         <h2 className="text-lg font-semibold text-slate-700 ml-1 mb-3">
           취소정책 및 이용 동의
         </h2>
-        <Checkbox className="custom-payment-checkbox w-full text-base rounded-lg my-4 text-slate-700">
+        <Checkbox
+          className="custom-payment-checkbox w-full text-base rounded-lg my-4 text-slate-700"
+          checked={isChecked}
+          onChange={e => setIsChecked(e.target.checked)}
+        >
           주문 내용과 아래 유의 사항을 확인하였으며 결제 진행에 동의합니다.
         </Checkbox>
-        <Button type="primary" className="w-full text-base py-3 !h-auto">
+        <Button
+          type="primary"
+          disabled={!isAllSelected}
+          onClick={handlePayment}
+          className="w-full text-base py-3 !h-auto"
+        >
           결제하기
         </Button>
         <p className="mt-3 text-sm text-slate-500">

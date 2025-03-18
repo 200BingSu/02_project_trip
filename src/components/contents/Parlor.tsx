@@ -1,8 +1,11 @@
-import { Button } from "antd";
 import { BiTime } from "react-icons/bi";
 import { FiUsers } from "react-icons/fi";
 import { MenuPic } from "../../constants/pic";
 import { MenuType } from "../../types/interface";
+import { Button, DatePicker } from "antd";
+import "../../styles/antd-styles.css";
+
+const { RangePicker } = DatePicker;
 
 const Parlor = ({
   strfId,
@@ -15,7 +18,16 @@ const Parlor = ({
     <div className="mt-3 ">
       <div className="px-4">
         <button className="w-full border border-slate-300 rounded-lg py-3 text-base text-slate-700 mb-3">
-          01.22(수)~01.23(목)
+          <RangePicker
+            value={dateRange}
+            onChange={dates => {
+              if (dates) {
+                setDateRange([dates[0]!, dates[1]!]);
+              }
+            }}
+            format={dateFormat}
+            className="custom-date-picker w-full py-3 rounded-none"
+          />
         </button>
         <button className="w-full border border-slate-300 rounded-lg py-3 text-base text-slate-700 mb-3">
           성인 2
