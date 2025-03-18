@@ -33,7 +33,8 @@ const DockBar = React.memo(() => {
   // 채팅 알림
   const chatEventRef = useRef(null);
   const EventSource = EventSourcePolyfill || NativeEventSource;
-  const [chatAlert, setChatAlert] = useState(false);
+  const [chatAlert, setChatAlert] = useState(null);
+  //
   // 채팅 알림 받기
   const getChatAlarm = () => {
     const url = "/api/chat-notice";
@@ -53,16 +54,20 @@ const DockBar = React.memo(() => {
     };
 
     // "exist unread notice" 이벤트 수신 (백엔드 이벤트 이름 따라 변경 필수)
-    chatEventRef.current.addEventListener("exist unread notice", event => {
-      console.log("안 읽은 알림 존재:", event.data);
-      setChatAlert(true); // 새로운 알림이 있을 경우 UI 업데이트
+    chatEventRef.current.addEventListener("connect", event => {
+      console.log("안 읽은 알림 존재:", typeof event.data);
+      if (event.data === "false") {
+        setChatAlert(false);
+      } else {
+        setChatAlert(true);
+      }
     });
 
     chatEventRef.current.onerror = async () => {
       // e: Event
       chatEventRef.current?.close();
       // 재연결
-      setTimeout(fetchSSE, 3000);
+      setTimeout(getChatAlarm, 3000);
     };
 
     chatEventRef.current.onopen = () => {};
@@ -73,7 +78,7 @@ const DockBar = React.memo(() => {
     }
     if (chatEventRef.current) {
       console.log("기존 SSE 연결 닫기");
-      eventSourceRef.current.close();
+      chatEventRef.current.close();
     }
     getChatAlarm();
     return () => {
@@ -171,9 +176,10 @@ const DockBar = React.memo(() => {
         >
           <IoLogoWechat className="text-2xl" />
           채팅
-          {chatAlert && (
-            <div className="absolute top-3 right-1/3 w-2 h-2 bg-primary rounded-full"></div>
-          )}
+          <div
+            className={`absolute top-3 right-1/3 w-2 h-2 bg-primary rounded-full
+              ${chatAlert ? "visible" : "invisible"}`}
+          ></div>
         </button>
         {nowLocation === "/search/strf" && (
           <div
