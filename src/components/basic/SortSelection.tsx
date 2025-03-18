@@ -1,44 +1,71 @@
-import { Button, Segmented } from "antd";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Button, DatePicker } from "antd";
+import "../../styles/antd-styles.css";
+
+const { RangePicker } = DatePicker;
 
 type SortSelectionProps = {
   open: boolean;
   onClose: () => void;
-  date: (months: number | null) => void;
+  onSelect: (
+    startDate: string,
+    endDate: string,
+    isDesc: boolean,
+    period: string,
+  ) => void;
 };
 
-const SortSelection = ({ open, onClose, date }: SortSelectionProps) => {
+const SortSelection = ({ open, onClose, onSelect }: SortSelectionProps) => {
+  const [selectedMonth, setSelectedMonth] = useState<number | "direct">(1);
+  const [selectedSort, setSelectedSort] = useState<"latest" | "oldest">(
+    "latest",
+  );
+  const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+    dayjs().subtract(1, "month"),
+    dayjs(),
+  ]);
+
+  const dateFormat = "YYYY/MM/DD";
+
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = "hidden"; // ✅ 스크롤 막기
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto"; // ✅ 닫히면 스크롤 복구
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.overflow = "auto"; // ✅ 언마운트 시 스크롤 복구
+      document.body.style.overflow = "auto";
     };
   }, [open]);
 
-  if (!open) return <></>;
+  if (!open) return null;
 
-  const today = dayjs();
-
-  const getLastMonth = (month: number) => {
-    const today = dayjs();
-    const lastMonth = today.subtract(month, "month").format("YYYY-MM-DD");
-    return lastMonth;
+  const handleSelect = (months: number | "direct") => {
+    setSelectedMonth(months);
   };
 
-  const dateArr = [
-    { label: "1개월", value: date(1) },
-    { label: "3개월", value: date(3) },
-    { label: "6개월", value: date(6) },
-    { label: "1년", value: date(12) },
-    { label: "직접입력", value: date(0) },
-  ];
+  const handleSearch = () => {
+    let startDate: string;
+    let endDate: string;
+    let periodText: string;
+
+    if (selectedMonth === "direct") {
+      startDate = dateRange[0].format("YYYY-MM-DD");
+      endDate = dateRange[1].format("YYYY-MM-DD");
+      periodText = "직접입력";
+    } else {
+      startDate = dayjs().subtract(selectedMonth, "month").format("YYYY-MM-DD");
+      endDate = dayjs().format("YYYY-MM-DD");
+      periodText = `${selectedMonth}개월`;
+    }
+
+    const isDesc = selectedSort === "latest";
+    onSelect(startDate, endDate, isDesc, periodText);
+    onClose();
+  };
 
   return (
     <div>
@@ -72,30 +99,70 @@ const SortSelection = ({ open, onClose, date }: SortSelectionProps) => {
               조회기간
             </p>
             <div className="w-full flex justify-center px-4">
-              {dateArr.map(item => (
+              {[1, 3, 6, 12].map(months => (
                 <button
-                  onClick={() => {
-                    date(Number(item.value));
-                  }}
-                  className="w-1/5 py-3 bg-slate-50 text-slate-700 border border-slate-200 text-sm"
+                  key={months}
+                  onClick={() => handleSelect(months)}
+                  className={`w-1/5 py-3 text-slate-400 border border-slate-200 border-l-0 first:border-l las text-sm 
+                    ${selectedMonth === months ? "bg-white !border-slate-400 !border text-slate-700" : "bg-slate-50"}`}
                 >
-                  {item.label}
+                  {months}개월
                 </button>
               ))}
+
+              <button
+                onClick={() => handleSelect("direct")}
+                className={`w-1/5 py-3 text-slate-400 border border-slate-200 border-l-0 text-sm 
+                  ${selectedMonth === "direct" ? "bg-white !border-slate-400 !border text-slate-700" : "bg-slate-50"}`}
+              >
+                직접입력
+              </button>
             </div>
+            {/* 직접입력이 선택되었을 때만 RangePicker 표시 */}
+            {selectedMonth === "direct" && (
+              <div className="px-4 mt-4">
+                <RangePicker
+                  value={dateRange}
+                  onChange={dates => {
+                    if (dates) {
+                      setDateRange([dates[0]!, dates[1]!]);
+                    }
+                  }}
+                  format={dateFormat}
+                  className="custom-date-picker w-full py-3 rounded-none"
+                />
+              </div>
+            )}
           </div>
           <div>
             <p className="text-xl font-semibold text-slate-700 px-4 py-4">
               정렬선택
             </p>
             <div className="flex justify-center px-4">
-              <button className="w-1/2 py-3 bg-slate-50 text-slate-700 border border-slate-200 text-sm">
+              <button
+                onClick={() => setSelectedSort("latest")}
+                className={`w-1/2 py-3 text-slate-400 border border-slate-200 border-l-0 first:border-l text-sm
+                  ${selectedSort === "latest" ? "bg-white !border-slate-400 !border text-slate-700" : "bg-slate-50"}`}
+              >
                 최신순
               </button>
-              <button className="w-1/2 py-3 bg-slate-50 text-slate-700 border border-slate-200 text-sm">
+              <button
+                onClick={() => setSelectedSort("oldest")}
+                className={`w-1/2 py-3 text-slate-400 border border-slate-200 border-l-0 text-sm
+                  ${selectedSort === "oldest" ? "bg-white !border-slate-400 !border text-slate-700" : "bg-slate-50"}`}
+              >
                 과거순
               </button>
             </div>
+          </div>
+          <div className="px-4 mt-6">
+            <Button
+              type="primary"
+              className="text-base h-auto py-3 w-full"
+              onClick={handleSearch}
+            >
+              조회하기
+            </Button>
           </div>
         </motion.div>
       </motion.div>
