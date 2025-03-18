@@ -1,22 +1,30 @@
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { useEffect, useState } from "react";
-import Point from "../../../components/point/Point";
 import jwtAxios from "../../../apis/jwt";
+import SortSelection from "../../../components/basic/SortSelection";
+import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+import Point from "../../../components/point/Point";
 import { IPoint } from "../../../types/interface";
 import Footer from "../../Footer";
-import SortSelection from "../../../components/basic/SortSelection";
-import dayjs from "dayjs";
 
 const UserPoint = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [point, setPoint] = useState<IPoint>();
   const navigate = useNavigate();
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
-  console.log(setEndDate);
+
+
+  const [startDate, setStartDate] = useState(
+    dayjs().subtract(1, "month").format("YYYY-MM-DD"),
+  );
+  const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [isDesc, setIsDesc] = useState(true);
+  const [selectedPeriod, setSelectedPeriod] = useState("1개월");
+  const [sortText, setSortText] = useState("최신순");
+
+
   const handleClose = () => {
     if (isOpen === true) {
       setIsOpen(false);
@@ -25,10 +33,9 @@ const UserPoint = (): JSX.Element => {
 
   const pointHis = async () => {
     try {
-      const today = new Date().toISOString().split("T")[0];
-      console.log(today);
+
       const res = await jwtAxios.get(
-        `/api/point/history?start_at=${startDate}&end_at=${endDate}&is_desc=true`,
+        `/api/point/history?start_at=${startDate}&end_at=${endDate}&is_desc=${isDesc}`,
       );
       setPoint(res.data.data);
       console.log("✅  pointHis  res:", res.data.data);
@@ -37,22 +44,32 @@ const UserPoint = (): JSX.Element => {
     }
   };
 
-  // 🔹 버튼 클릭 시 날짜 변경 함수
-  const handleDateChange = (months: number | null) => {
-    if (months) {
-      setStartDate(dayjs().subtract(months, "month").format("YYYY-MM-DD"));
-    } else {
-      // 직접 입력 버튼 클릭 시 처리 (현재는 기본값 유지)
-      console.log("직접 입력 기능 구현 필요");
-    }
-  };
-
-  // 🔹 날짜가 변경될 때 자동 호출
+  // 초기 데이터 로드
   useEffect(() => {
-    if (startDate) {
+    pointHis();
+  }, []);
+
+  // 날짜나 정렬 순서가 변경될 때마다 데이터 로드
+  useEffect(() => {
+    if (startDate && endDate) {
       pointHis();
     }
-  }, [startDate, endDate]);
+  }, [startDate, endDate, isDesc]);
+
+  const handleDateSelect = (
+    start: string,
+    end: string,
+    desc: boolean,
+    period?: string,
+  ) => {
+    setStartDate(start);
+    setEndDate(end);
+    setIsDesc(desc);
+    if (period) {
+      setSelectedPeriod(period);
+    }
+    setSortText(desc ? "최신순" : "과거순");
+  };
 
   return (
     <div>
@@ -103,7 +120,7 @@ const UserPoint = (): JSX.Element => {
               onClick={() => setIsSortOpen(!isSortOpen)}
               className="flex items-center gap-[6px] text-sm text-slate-500"
             >
-              전체
+              {selectedPeriod} · {sortText}
               <IoIosArrowDown className="text-slate-400 text-sm" />
             </button>
           </li>
@@ -124,10 +141,14 @@ const UserPoint = (): JSX.Element => {
                 <div>
                   <p
                     className={`text-lg font-semibold mb-[2px] ${
-                      item.category === 1 ? "text-primary" : "text-slate-700"
+                      [1, 4].includes(item.category)
+                        ? "text-primary"
+                        : "text-slate-700"
                     }`}
                   >
-                    {item.amount.toLocaleString()}P
+                    {[1, 4].includes(item.category)
+                      ? `+${item.amount.toLocaleString()}P`
+                      : `${item.amount.toLocaleString()}P`}
                   </p>
                   <p className="text-slate-400 text-sm text-right">
                     {item.remainPoint.toLocaleString()}P
@@ -141,8 +162,8 @@ const UserPoint = (): JSX.Element => {
       {isOpen && <Point handleClose={handleClose} />}
       <SortSelection
         open={isSortOpen}
-        onClose={() => setIsSortOpen(!isSortOpen)}
-        date={handleDateChange}
+        onClose={() => setIsSortOpen(false)}
+        onSelect={handleDateSelect}
       />
       <Footer />
     </div>
