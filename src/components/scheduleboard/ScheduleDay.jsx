@@ -89,7 +89,7 @@ const ScheduleDay = ({
   };
 
   const navigateSearchContents = () => {
-    navigate(`/search/trip?tripId=${tripId}`);
+    navigate(`/search/trip?tripId=${tripId}&category=ALL&keyword=none`);
     console.log(data);
     // setTrip({ ...trip, nowTripId: tripId, lastSeq: data.schedules.length });
   };

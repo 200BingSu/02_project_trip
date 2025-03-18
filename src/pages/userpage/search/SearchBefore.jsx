@@ -18,7 +18,13 @@ const SearchBefore = () => {
   const navigateToBack = () => {
     navigate("/");
   };
+  const niviagateToAfter = () => {
+    navigate(
+      `/search/strf?keyword=${keyword}&category=0&orderType=0&filter=none`,
+    );
+  };
   //useState
+  const [keyword, setKeyword] = useState("");
   const [popularWordList, setPopularWordList] = useState([]); // 인기 검색어
   const [recentContents, setRecentContents] = useState([]); // 최근 본 목록
   const [recentText, setRecentText] = useState([]); // 최근 검색어
@@ -134,10 +140,8 @@ const SearchBefore = () => {
     setIsModalOpen(false);
   };
   // 검색 엔터
-  const handleClickEnter = e => {
-    navigate(
-      `/search/strf?keyword=${e.target.value}&category=0&orderType=0&filter=none`,
-    );
+  const handleClickEnter = () => {
+    niviagateToAfter();
   };
   //useEffect
   useEffect(() => {
@@ -168,10 +172,15 @@ const SearchBefore = () => {
             placeholder="관광지, 장소, 숙소,맛집을 검색해 보세요"
             allowClear
             onClear={handleClickClear}
-            suffix={<FiSearch className="text-slate-400 text-2xl" />}
+            suffix={
+              <button type="button" onClick={handleClickEnter}>
+                <FiSearch className="text-slate-400 text-2xl" />
+              </button>
+            }
+            onChange={e => setKeyword(e)}
             onPressEnter={e => {
               if (e.target.value.trim()) {
-                handleClickEnter(e);
+                handleClickEnter();
               }
             }}
             variant="filled"
@@ -278,58 +287,60 @@ const SearchBefore = () => {
               </button>
             </div>
             {/* 최근 본 목록 목록 */}
-            <div className="w-full select-none">
-              <Swiper
-                slidesPerView={2.5}
-                spaceBetween={12}
-                direction={"horizontal"}
-                className="w-full flex select-none"
-              >
-                {recentContents
-                  ? recentContents?.map((item, index) => {
-                      return (
-                        <SwiperSlide
-                          key={index}
-                          className="w-auto !h-auto shrink-0 select-none"
-                          onClick={() => handleClickList(item)}
-                        >
-                          <div className="flex flex-col gap-[15px] w-full select-none">
-                            <div className="aspect-square w-full rounded-2xl overflow-hidden">
-                              <img
-                                className="w-full h-full object-cover"
-                                src={
-                                  item.strfPic
-                                    ? `${ProductPic}/${item.strfId}/${item.strfPic}`
-                                    : "/images/logo_icon_4.png"
-                                }
-                                alt={item.strfName}
-                              />
-                            </div>
-                            {/* 정보 */}
-                            <div className="flex flex-col gap-[5px] justify-center">
-                              {/* 제목 */}
-                              <div className="text-[18px] text-slate-700 font-semibold">
-                                {item.strfName}
+            <div className="w-full select-none px-4">
+              {recentContents && recentContents.length > 0 && (
+                <Swiper
+                  slidesPerView={2.5}
+                  spaceBetween={12}
+                  direction={"horizontal"}
+                  className="w-full flex select-none"
+                >
+                  {recentContents
+                    ? recentContents?.map((item, index) => {
+                        return (
+                          <SwiperSlide
+                            key={index}
+                            className="w-auto !h-auto shrink-0 select-none"
+                            onClick={() => handleClickList(item)}
+                          >
+                            <div className="flex flex-col gap-[15px] w-full select-none">
+                              <div className="aspect-square w-full rounded-2xl overflow-hidden">
+                                <img
+                                  className="w-full h-full object-cover"
+                                  src={
+                                    item.strfPic
+                                      ? `${ProductPic}/${item.strfId}/${item.strfPic}`
+                                      : "/images/logo_icon_4.png"
+                                  }
+                                  alt={item.strfName}
+                                />
                               </div>
-                              {/* 카테고리, 지역 */}
-                              <div className="flex gap-[5px]">
-                                <span className="text-slate-500 text-sm">
-                                  {categoryKor(item.category)}
-                                </span>
-                                <span className="text-slate-500 text-sm">
-                                  •
-                                </span>
-                                <span className="text-slate-500 text-sm">
-                                  {item.locationTitle}
-                                </span>
+                              {/* 정보 */}
+                              <div className="flex flex-col gap-[5px] justify-center">
+                                {/* 제목 */}
+                                <div className="text-[18px] text-slate-700 font-semibold">
+                                  {item.strfName}
+                                </div>
+                                {/* 카테고리, 지역 */}
+                                <div className="flex gap-[5px]">
+                                  <span className="text-slate-500 text-sm">
+                                    {categoryKor(item.category)}
+                                  </span>
+                                  <span className="text-slate-500 text-sm">
+                                    •
+                                  </span>
+                                  <span className="text-slate-500 text-sm">
+                                    {item.locationTitle}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </SwiperSlide>
-                      );
-                    })
-                  : null}
-              </Swiper>
+                          </SwiperSlide>
+                        );
+                      })
+                    : null}
+                </Swiper>
+              )}
             </div>
           </div>
         )}
