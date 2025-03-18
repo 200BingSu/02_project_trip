@@ -10,11 +10,12 @@ import { strfAtom } from "../../../atoms/strfAtom";
 import { amenities } from "../../../constants/dataArr";
 import { koreaAreaCodes } from "../../../constants/koreaAreaCode";
 import { IAPI, IStrf } from "../../../types/interface";
-import { getCookie } from "../../../utils/cookie";
+import { getCookie, setCookie } from "../../../utils/cookie";
 import {
   categoryKor,
   matchAmenityIcon,
   matchRestDataToKor,
+  matchRestDateKoToEn,
   matchState,
   transperRestValue,
 } from "../../../utils/match";
@@ -75,10 +76,25 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log(res.data);
+      // console.log("상품 조회", res.data);
       const resultData = res.data;
       if (resultData) {
-        setStrfData({ ...strfData, ...resultData.data });
+        const splitTell = resultData.data.tell.split("-");
+        // console.log("splitTell", splitTell);
+
+        setStrfData(prevData => ({
+          ...prevData,
+          ...resultData.data,
+          areaCode: splitTell[0],
+          tell: `${splitTell[1]}-${splitTell[2]}`,
+        }));
+
+        setCookie("user", {
+          ...userInfo,
+          strfDtos: [
+            { ...userInfo.strfDtos[0], title: resultData.data.strfTitle },
+          ],
+        });
         setIsLoading(false);
       }
       return resultData;
@@ -100,7 +116,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     console.log("payload", payload);
     setIsLoading(true);
     try {
-      const res = await axios.put<IAPI<string>>(
+      const res = await axios.patch<IAPI<string>>(
         `${url}?strfId=${strfId}&title=${value}&busiNum=${busiNum}`,
         payload,
         {
@@ -136,7 +152,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     console.log("payload", payload);
     setIsLoading(true);
     try {
-      const res = await axios.put(
+      const res = await axios.patch(
         `${url}?strfId=${strfId}&state=${value}&busiNum=${busiNum}`,
         payload,
         {
@@ -172,7 +188,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       busiNum: busiNum,
     };
     try {
-      const res = await axios.put(
+      const res = await axios.patch(
         `${url}?strfId=${strfId}&tell=${areaCode}-${value}&busiNum=${busiNum}`,
         payload,
         {
@@ -185,7 +201,11 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       if (resultData.code) {
         setIsLoading(false);
         getStrfInfo();
-        setStrfData({ ...strfData, areaCode: areaCode, tell: value });
+        setStrfData({
+          ...strfData,
+          areaCode: areaCode,
+          tell: value.split("-", 1),
+        });
         message.success("전화번호 변경이 완료되었습니다");
       }
       console.log("전화번호 변경", resultData);
@@ -207,7 +227,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       busiNum: busiNum,
     };
     try {
-      const res = await axios.put(
+      const res = await axios.patch(
         `${url}?strfId=${strfId}&detail=${value}&busiNum=${busiNum}`,
         payload,
         {
@@ -247,7 +267,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     });
     console.log("보낼 파라메터", formatAmenity.join("&"));
     try {
-      const res = await axios.put(
+      const res = await axios.patch(
         `${url}?strfId=${strfId}&busiNum=${busiNum}&category=${category}&${formatAmenity.join("&")}`,
         payload,
         {
@@ -283,7 +303,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     console.log("payload", payload);
     setIsLoading(true);
     try {
-      const res = await axios.put<IAPI<string>>(
+      const res = await axios.patch<IAPI<string>>(
         `${url}?strfId=${strfId}&busiNum=${busiNum}&openCheckIn=${value[0]}&closeCheckOut=${value[1]}`,
         payload,
         {
@@ -348,19 +368,22 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
   // API 휴무일 변경 v-s
   const updateRestDate = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/rest";
+    const formatRestDates = value.map((item: string) =>
+      matchRestDateKoToEn(item),
+    );
     const payload = {
       strfId: strfId,
       busiNum: busiNum,
-      restDates: value,
+      restDates: formatRestDates,
     };
     console.log("payload", payload);
     setIsLoading(true);
-    const restDatesPara = value
+    const restDatesPara = formatRestDates
       .map((item: string) => `restDates=${item}`)
       .join("&");
     console.log("restDatesPara", restDatesPara);
     try {
-      const res = await axios.put<IAPI<string>>(
+      const res = await axios.patch<IAPI<string>>(
         `${url}?strfId=${strfId}&busiNum=${busiNum}&${restDatesPara}`,
         payload,
         {
@@ -395,6 +418,10 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       console.log("d이동");
       return;
     }
+    if (type === "address") {
+      navigateToEdit();
+      return;
+    }
     setIsEdit(!isEdit);
     if (isEdit === false) {
       type === "title" && setValue(strfData.strfTitle);
@@ -409,7 +436,14 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       type === "restDate" && setValue(strfData.restDate);
     }
     if (isEdit === true) {
-      type === "title" && value?.trim() !== "" && updateTitle();
+      if (type === "title") {
+        if (value === strfData.strfTitle) {
+          message.warning("동일한 이름으로 수정을 취소합니다");
+        } else {
+          value?.trim() !== "" && updateTitle();
+        }
+      }
+
       type === "state" && updateState();
       type === "tell" && areaCode !== "" && value !== "" && updateTell();
       type === "detail" && updateDetail();
@@ -552,6 +586,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
                 })}
               </ul>
             )}
+            {type === "address" && strfData.address}
           </div>
         )}
         {isEdit && type === "title" && (
