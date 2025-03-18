@@ -5,7 +5,7 @@ import { LiaComment } from "react-icons/lia";
 import jwtAxios from "../../apis/jwt";
 import { ProfilePic } from "../../constants/pic";
 import "../../styles/antd-styles.css";
-import { IReview } from "../../types/interface";
+import { IReview, IReviewData } from "../../types/interface";
 import DynamicGrid from "../basic/DynamicGrid";
 import { StrInfoProps } from "./StrInfo";
 
@@ -22,7 +22,8 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
 
     //useState
 
-    const [reviewsData, setReviewsData] = useState<IReview[]>([]);
+    const [reviewsData, setReviewsData] = useState<IReviewData[]>([]);
+    const [moreData, setMoreData] = useState<boolean>();
     const [reviewIndex, setReviewIndex] = useState(0);
     const [selectedReview, setSelectedReview] = useState<number | null>(null);
     const [isLongText, setIsLongText] = useState<{
@@ -38,14 +39,15 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
     console.log("reviewIndex:", reviewIndex);
 
     //getReviews
-    const getReview = useCallback(async () => {
+    const getReview = useCallback(async (): Promise<IReview | void> => {
       console.log("지금 보내는 start_idx", reviewIndex);
       try {
-        const res = await jwtAxios.get(
+        const res = await jwtAxios.get<IReview>(
           `/api/review?strf_id=${strfId}&start_idx=${reviewIndex}`,
         );
         console.log("리뷰 불러오기:", res.data);
-        setReviewsData([...reviewsData, ...res.data]);
+        setReviewsData([...reviewsData, ...res.data.dtoList]);
+        setMoreData(res.data.more);
       } catch (error) {
         console.log("리뷰 불러오기:", error);
       }
