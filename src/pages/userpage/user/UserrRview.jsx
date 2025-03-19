@@ -88,16 +88,6 @@ const UserrRview = () => {
     {
       label: (
         <div className="flex items-center gap-3 text-lg">
-          <BiSolidEditAlt className="text-slate-400" /> 수정하기
-        </div>
-      ),
-      onClick: () => {
-        console.log("인식");
-      },
-    },
-    {
-      label: (
-        <div className="flex items-center gap-3 text-lg">
           <BiTrash className="text-slate-400" />
           삭제하기
         </div>

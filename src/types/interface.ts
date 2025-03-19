@@ -341,3 +341,15 @@ export interface ITripReview {
   profilePic: string;
   tripReviewPics: string[];
 }
+
+export interface IBooking {
+  num: number;
+  point: number;
+  strf_id: number;
+  check_in: string;
+  check_out: string;
+  coupon_id: number;
+  actual_paid: number;
+  menu_id: number;
+  room_id: number;
+}
