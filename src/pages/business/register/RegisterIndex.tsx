@@ -12,9 +12,10 @@ import Step2 from "../../../components/business/register/Step2";
 import Step3 from "../../../components/business/register/Step3";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { CategoryType } from "../../../types/enum";
-import { getCookie } from "../../../utils/cookie";
+import { getCookie, setCookie } from "../../../utils/cookie";
 import { categoryKor } from "../../../utils/match";
 import { moveTo } from "../../../utils/moveTo";
+import { IAPI } from "../../../types/interface";
 
 dayjs.extend(customParseFormat);
 
@@ -49,11 +50,6 @@ interface PType {
   restdates: string[];
 }
 
-interface ICreateStrf {
-  strfPic: UploadFile[];
-  p: PType;
-}
-
 const RegisterIndex = (): JSX.Element => {
   //useNavigate
   const navigate = useNavigate();
@@ -66,7 +62,7 @@ const RegisterIndex = (): JSX.Element => {
   // 쿠키
   const accessToken = getCookie("accessToken");
   const userInfo = getCookie("user");
-  const busiNum = userInfo?.busiNum ?? "";
+  const busiNum = userInfo?.strfDtos[0].busiNum ?? "";
   //recoil
   const resetRegister = useResetRecoilState(registerAtom);
   const registerData = useRecoilValue(registerAtom);
@@ -89,23 +85,30 @@ const RegisterIndex = (): JSX.Element => {
   const bioRef = useRef<HTMLLIElement>(null);
 
   // API 상품 등록
-  const createStrf = async (data: FormData): Promise<ICreateStrf | null> => {
+  const createStrf = async (data: FormData): Promise<IAPI<string> | null> => {
     const url = "/api/detail/info";
     setIsLoading(true);
 
     try {
-      const res = await axios.post<ICreateStrf>(url, data, {
+      const res = await axios.post<IAPI<string>>(url, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       console.log("상품 등록", res.data);
       const resultData = res.data;
-      if (resultData) {
+      if (resultData.code === "200 성공") {
         message.success("상품 등록이 완료되었습니다.");
         setIsLoading(false);
         resetRegister();
         navigateToComfirm();
+        setCookie("user", {
+          ...userInfo,
+          strfDtos: [
+            { ...userInfo.strfDtos[0], strfId: resultData.data },
+            ...userInfo.strfDtos,
+          ],
+        });
       }
       return resultData;
     } catch (error) {
@@ -127,20 +130,23 @@ const RegisterIndex = (): JSX.Element => {
       tell: `${registerData.tell?.areaCode}-${registerData.tell?.number}`,
       startAt:
         registerData.category === CategoryType.FEST
-          ? dayjs(registerData.duration?.startAt, "HH:mm").format("HH:mm")
+          ? dayjs(registerData.duration?.startAt, "YYYY-MM-DD").format(
+              "YYYY-MM-DD",
+            )
           : "",
       endAt:
         registerData.category === CategoryType.FEST
-          ? dayjs(registerData.duration?.endAt, "HH:mm").format("HH:mm")
+          ? dayjs(registerData.duration?.endAt, "YYYY-MM-DD").format(
+              "YYYY-MM-DD",
+            )
           : "",
-      openCheckIn:
-        registerData.category === CategoryType.STAY
-          ? dayjs(registerData.checkTime?.checkIn, "HH:mm").format("HH:mm")
-          : "",
-      closeCheckOut:
-        registerData.category === CategoryType.STAY
-          ? dayjs(registerData.checkTime?.checkOut, "HH:mm").format("HH:mm")
-          : "",
+      openCheckIn: dayjs(registerData.checkTime?.checkIn, "HH:mm").format(
+        "HH:mm",
+      ),
+      closeCheckOut: dayjs(registerData.checkTime?.checkOut, "HH:mm").format(
+        "HH:mm",
+      ),
+
       detail: registerData.bio ?? "",
       busiNum: busiNum,
       state: 0,
@@ -245,12 +251,7 @@ const RegisterIndex = (): JSX.Element => {
           };
         }
       }
-      if (
-        registerData.holiday?.frequency !== "" &&
-        registerData.holiday?.day?.length === 0
-      ) {
-        return { message: "휴무 요일을 선택해주세요.", ref: holidayRef };
-      }
+
       if (
         (registerData.holiday?.day?.length ?? 0) > 0 &&
         registerData.holiday?.frequency === ""

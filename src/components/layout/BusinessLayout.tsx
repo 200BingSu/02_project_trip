@@ -71,7 +71,7 @@ const BusinessLayout = () => {
 
     // "exist unread notice" 이벤트 수신 (백엔드 이벤트 이름 따라 변경 필수)
     chatEventRef.current.addEventListener("connect", event => {
-      console.log("안 읽은 알림 존재:", typeof event.data);
+      // console.log("안 읽은 알림 존재:", typeof event.data);
       if (event.data === "false") {
         setChatAlert(false);
       } else {

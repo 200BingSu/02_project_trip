@@ -49,6 +49,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
   const [isEdit, setIsEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState<any>(null);
+  const [frequency, setFrequency] = useState("weekly");
 
   const [areaCode, setAreaCode] = useState<string>("");
 
@@ -490,7 +491,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
 
   const scheduleOptions = {
     frequency: [
-      { label: "없음", value: "" },
+      { label: "없음", value: "none" },
       { label: "매주", value: "weekly" },
       // { label: "격주", value: "biweekly" },
     ],
@@ -515,6 +516,9 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     }
     if (type === "detail" && typeof strfData.detail === "string") {
       setValue(strfData.detail);
+    }
+    if (type === "restDate") {
+      setValue(strfData.restDate.map(item => matchRestDataToKor(item)));
     }
   }, [strfData, type]);
 
@@ -559,7 +563,9 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
             )}
             {type === "duration" && `${strfData.startAt}~${strfData.endAt}`}
             {type === "checkTime" &&
-              `${strfData.openCheck}~${strfData.closeCheck}`}
+              strfData.openCheck &&
+              strfData.closeCheck &&
+              `${dayjs(strfData.openCheck, "HH:mm:ss").format("HH:mm")}~${dayjs(strfData.closeCheck, "HH:mm:ss").format("HH:mm")}`}
             {type === "restDate" &&
               strfData.restDate.map((item, index) => {
                 return index === strfData.restDate.length - 1 ? (
@@ -695,7 +701,12 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
               placeholder="휴무 주기"
               defaultValue={"weekly"}
               size="large"
-              disabled
+              onChange={e => {
+                if (e === "none") {
+                  setStrfData({ ...strfData, restDate: [] });
+                }
+                setFrequency(e);
+              }}
             />
             <Select
               options={scheduleOptions.day}
@@ -704,12 +715,11 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
               mode="multiple"
               allowClear
               className="w-full"
-              defaultValue={strfData.restDate.map(item =>
-                matchRestDataToKor(item),
-              )}
+              value={value}
               onChange={value => {
                 setValue(value);
               }}
+              disabled={frequency === "none" ? true : false}
             />
           </div>
         )}

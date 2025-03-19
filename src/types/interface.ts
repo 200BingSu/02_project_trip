@@ -143,6 +143,7 @@ export interface IChatList {
   lastChatTime: string;
   pic: string;
   unreadChat: number;
+  userId: string;
 }
 
 export interface Iamenity {

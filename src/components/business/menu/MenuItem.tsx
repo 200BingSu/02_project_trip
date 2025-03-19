@@ -9,6 +9,7 @@ import CenterModalTs from "../../common/CenterModalTs";
 import { useRecoilState } from "recoil";
 import { menuAtom } from "../../../atoms/menuAtom";
 import { CategoryType } from "../../../types/enum";
+import { matchName } from "../../../utils/match";
 
 interface MenuItemProps {
   item: MenuType;
@@ -19,6 +20,11 @@ interface MenuItemProps {
 const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
   // useNavigate
   const navigate = useNavigate();
+  const navigateToCreateRoom = () => {
+    navigate(
+      `/business/menu/create?strfId=${strfId}&category=${category}&what=room`,
+    );
+  };
   const navigateToEditMenu = () => {
     navigate(
       `/business/menu/edit?strfId=${strfId}&category=${category}&menuId=${item.menuId}&what=menu`,
@@ -78,7 +84,7 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
       label: (
         <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
           <BiSolidEditAlt className="text-slate-300" />
-          수정하기
+          객실 기본 정보 수정하기
         </div>
       ),
       onClick: () => handleClickToEditMenu(),
@@ -86,8 +92,17 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
     {
       label: (
         <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiSolidEditAlt className="text-slate-300" />
+          객실 상세 정보 수정하기
+        </div>
+      ),
+      onClick: () => handleClickToEditRoom(),
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
           <BiTrash className="text-slate-400" />
-          삭제하기
+          {matchName(category)} 삭제하기
         </div>
       ),
       onClick: () => handleOpenDelete(),
@@ -101,13 +116,13 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
           객실/호실 등록하기
         </div>
       ),
-      onClick: () => handleClickToEditRoom(),
+      onClick: () => navigateToCreateRoom(),
     },
     {
       label: (
         <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
           <BiSolidEditAlt className="text-slate-300" />
-          수정하기
+          {matchName(category)} 수정하기
         </div>
       ),
       onClick: () => handleClickToEditMenu(),
@@ -122,6 +137,37 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
       onClick: () => handleOpenDelete(),
     },
   ];
+  const actionsOther = [
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiSolidEditAlt className="text-slate-300" />
+          {matchName(category)} 수정하기
+        </div>
+      ),
+      onClick: () => handleClickToEditMenu(),
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiTrash className="text-slate-400" />
+          삭제하기
+        </div>
+      ),
+      onClick: () => handleOpenDelete(),
+    },
+  ];
+  const matchAtions = () => {
+    if (category === CategoryType.STAY) {
+      if (item.recomCapacity) {
+        return actionsHasRoom;
+      } else {
+        return actionsNoRoom;
+      }
+    } else {
+      return actionsOther;
+    }
+  };
   return (
     <div className="flex items-center gap-2 py-3 select-none">
       <section
@@ -163,7 +209,7 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
         <BottomSheet
           open={isBottomOpen}
           onClose={handleClickBottom}
-          actions={item.recomCapacity ? actionsHasRoom : actionsNoRoom}
+          actions={matchAtions()}
           title="더보기"
         />
       )}
