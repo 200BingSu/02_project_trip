@@ -305,3 +305,8 @@
   font-size: 18px;
   font-family: "Work Sans";
 }
+.custom-lodgment-picker .ant-picker-input > input {
+  text-align: center;
+  font-size: 1rem;
+  font-family: "Work Sans";
+}

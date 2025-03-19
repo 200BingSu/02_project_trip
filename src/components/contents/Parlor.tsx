@@ -17,18 +17,8 @@ const Parlor = ({
   return (
     <div className="mt-3 ">
       <div className="px-4">
-        <button className="w-full border border-slate-300 rounded-lg py-3 text-base text-slate-700 mb-3">
-          <RangePicker
-            value={dateRange}
-            onChange={dates => {
-              if (dates) {
-                setDateRange([dates[0]!, dates[1]!]);
-              }
-            }}
-            format={dateFormat}
-            className="custom-date-picker w-full py-3 rounded-none"
-          />
-        </button>
+        <RangePicker className="custom-lodgment-picker w-full border-slate-300 rounded-lg py-3 text-slate-700 mb-3" />
+
         <button className="w-full border border-slate-300 rounded-lg py-3 text-base text-slate-700 mb-3">
           성인 2
         </button>
