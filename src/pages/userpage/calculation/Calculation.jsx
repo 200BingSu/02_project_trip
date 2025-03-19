@@ -11,6 +11,7 @@ import { getCookie } from "../../../utils/cookie";
 import { Button, message } from "antd";
 import Bill from "../../../components/calculation/Bill";
 import "../../../styles/antd-styles.css";
+import jwtAxios from "../../../apis/jwt";
 
 const Calculation = () => {
   const [amount, setAmount] = useState([]);
@@ -26,12 +27,9 @@ const Calculation = () => {
   // 가계부 보기
   const getStatement = async () => {
     try {
-      const res = await axios.get(`/api/expense?trip_id=${tripId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const res = await jwtAxios.get(`/api/expense?trip_id=${tripId}`);
       setAmount(res.data.data);
+      console.log(" 가계부 보기", res.data.data);
     } catch (error) {
       console.log("✅  error:", error);
     }
@@ -39,11 +37,7 @@ const Calculation = () => {
 
   const deleteExpenses = async deId => {
     try {
-      const res = await axios.delete(`/api/expense`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
+      const res = await jwtAxios.delete(`/api/expense`, {
         data: {
           de_id: deId,
           trip_id: 1,
@@ -62,7 +56,7 @@ const Calculation = () => {
   }, []);
 
   return (
-    <div className="bg-slate-100 pb-4 h-screen">
+    <div className="bg-slate-100 pb-4 h-full">
       <TitleHeader
         icon={"back"}
         title={"가계부"}
@@ -115,7 +109,7 @@ const Calculation = () => {
                   {(item.totalPrice || 0).toLocaleString()}원
                 </p>
                 <div className="flex items-center gap-3 mt-5">
-                  {item.paidUserList.slice(0, 3).map((member, index) => (
+                  {item?.paidUserList?.map((member, index) => (
                     <span
                       key={member.user_id}
                       className="inline-block w-14 h-14 !border-4 border-white rounded-full overflow-hidden -ml-9 first:ml-0 "
@@ -125,13 +119,11 @@ const Calculation = () => {
                         src={`${ProfilePic}/${member?.user_id}/${member?.profile_pic}`}
                         alt={member.name}
                       />
-                      {index !== item.paidUserList.length - 1 && ", "}
+                      {index !== item.paidUserList?.length - 1 && ", "}
                     </span>
                   ))}
                   <span className="text-lg text-slate-500 font-semibold">
-                    {item.paidUserList.length === 1
-                      ? `${item.paidUserList[0]?.name}`
-                      : `${item.paidUserList[0]?.name} 외 ${item.paidUserList.length - 1}명`}
+                    {item?.paidUserList}
                   </span>
                 </div>
               </div>

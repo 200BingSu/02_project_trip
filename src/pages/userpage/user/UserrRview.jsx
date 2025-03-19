@@ -154,7 +154,9 @@ const UserrRview = () => {
                 </p>
               </div>
               <p className="text-base text-slate-700 mb-2">{item.content}</p>
-              <DynamicGrid reviewPics={item} type="myReview" />
+              {item.myReviewPic && item.myReviewPic.length > 0 && (
+                <DynamicGrid reviewPics={item} type="myReview" />
+              )}
             </div>
           );
         })}

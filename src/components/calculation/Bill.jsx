@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import { ProfilePic } from "../../constants/pic";
 import { getCookie } from "../../utils/cookie";
 import EditPayment from "./EditPayment";
+import jwtAxios from "../../apis/jwt";
 
 // 계산서 / 정산서 페이지
 const Bill = ({ isOpen, setIsOpen, deId, tripId, getStatement }) => {
@@ -16,13 +17,8 @@ const Bill = ({ isOpen, setIsOpen, deId, tripId, getStatement }) => {
 
   const getBill = async () => {
     try {
-      const res = await axios.get(
+      const res = await jwtAxios.get(
         `/api/expense/select?de_id=${deId}&trip_id=${tripId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
       );
       console.log("✅ 최신 데이터:", res.data.data);
       setIsReceipt(res.data.data);

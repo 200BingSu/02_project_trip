@@ -217,8 +217,8 @@ export interface IStrf extends Partial<IRoom> {
   areaCode?: string;
   startAt: null | string | Dayjs;
   endAt: null | string | Dayjs;
-  openCheck: string | Dayjs;
-  closeCheck: string | Dayjs;
+  openCheck: string;
+  closeCheck: string;
   detail: string;
   busiNum: string;
   locationName: string;
