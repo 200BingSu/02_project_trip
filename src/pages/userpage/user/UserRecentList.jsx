@@ -167,7 +167,6 @@ const UserRecentList = () => {
                   alt={item.title}
                   className="w-full h-full object-cover"
                 />
-                <AiFillHeart className="text-secondary3 text-xl absolute top-2 right-2" />
               </div>
               {/* 정보 */}
               <div className="flex flex-col gap-[5px] mr-auto">
@@ -198,7 +197,11 @@ const UserRecentList = () => {
                 </div>
                 {/* 찜하기 */}
                 <div className="flex gap-1 items-center text-sm">
-                  <AiOutlineHeart className="text-slate-400 text-lg" />
+                  {item.wishIn === 1 ? (
+                    <AiOutlineHeart className="text-slate-400 text-lg" />
+                  ) : (
+                    <AiFillHeart className="text-secondary3 text-lg" />
+                  )}
                   <p className="text-slate-500">
                     {item.wishCnt?.toLocaleString()}
                   </p>

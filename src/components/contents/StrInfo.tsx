@@ -3,7 +3,7 @@ import { BiTime } from "react-icons/bi";
 import { FaLocationDot } from "react-icons/fa6";
 import { RxStarFilled } from "react-icons/rx";
 import { ProductPic } from "../../constants/pic";
-import { categoryKor } from "../../utils/match";
+import { categoryKor, matchRestDataToKor } from "../../utils/match";
 import { IStrf } from "../../types/interface";
 
 export interface StrInfoProps {
@@ -55,7 +55,13 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
         <div>
           <p className="flex items-center gap-[6px] text-slate-500">
             <BiTime className="text-base" />
-            매일 00:00 ~ 24:00
+            {contentData?.restDate && contentData.restDate.length > 0
+              ? contentData.restDate.map(
+                  item => ` ${matchRestDataToKor(item)}요일 휴무 `,
+                )
+              : "매일"}
+            {contentData?.openCheck.replace(/:\d{2}$/, "")} ~
+            {contentData?.closeCheck.replace(/:\d{2}$/, "")}
           </p>
         </div>
       </div>
