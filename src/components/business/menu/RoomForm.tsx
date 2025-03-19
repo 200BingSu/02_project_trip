@@ -23,7 +23,7 @@ export interface CreateRoomDataType {
   parlors: ParlorType[];
   rooms: number[];
 }
-
+interface CreateRoomResponseType {}
 interface EditRoomDataType {
   stayReq: CreateRoomDataType;
 }
