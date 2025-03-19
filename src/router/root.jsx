@@ -25,6 +25,7 @@ import ChatRoom from "../pages/common/ChatRoom";
 import announcementRouter from "./common/announcementrouter";
 import pointRouter from "./business/pointRouter";
 import reportRouter from "./common/reportrouter";
+import myPageRouter from "./business/mypagerouter";
 // 사용자 lazys
 const LazyHome = lazy(() => import("../pages/Index"));
 const LazyBooking = lazy(() => import("../pages/userpage/bookings/Booking"));
@@ -235,7 +236,11 @@ const router = createBrowserRouter([
         element: <LazyBusinessMenu />,
         children: menuRouter(),
       },
-      { path: "mypage", element: <LazyBusinessMypage /> },
+      {
+        path: "mypage",
+        element: <LazyBusinessMypage />,
+        children: myPageRouter(),
+      },
       {
         path: "register",
         element: <LazyBusinessRegister />,
