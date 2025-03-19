@@ -11,6 +11,7 @@ import "dayjs/locale/ko";
 import { getCookie } from "../../utils/cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import jwtAxios from "../../apis/jwt";
 
 dayjs.locale("ko");
 
@@ -84,6 +85,26 @@ const Bookings = data => {
     }
   };
 
+  // API 예약 환불
+  const handleCancelBooking = async bookingId => {
+    try {
+      const res = await jwtAxios.patch("/api/booking", {
+        bookingId: bookingId,
+      });
+
+      if (res.data.code === "200") {
+        message.success("예약이 취소되었습니다.");
+        // 부모 컴포넌트의 예약 목록 새로고침
+        data.getBookings?.();
+      } else {
+        message.error("예약 취소에 실패했습니다.");
+      }
+    } catch (error) {
+      console.log("예약 취소 에러:", error);
+      message.error("예약 취소에 실패했습니다.");
+    }
+  };
+
   const today = dayjs().format("YYYY.MM.DD");
   //오늘 날짜 기준으로 버튼 상태 변경하기
   const categorizeDate = inputDate => {
@@ -130,7 +151,10 @@ const Bookings = data => {
             <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
               상세보기
             </Button>
-            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
+            <Button
+              onClick={() => handleCancelBooking(data.data.bookingId)}
+              className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
+            >
               예약 취소
             </Button>
           </>

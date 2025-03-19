@@ -123,6 +123,8 @@ const BookingIndex = () => {
   //예약하기
   const postBooking = async () => {
     const sendData = {
+      num: 1,
+      point: 5000,
       strf_id: locationState.contentData.strfId,
       check_in: locationState.dates[0],
       check_out: locationState.dates[1],

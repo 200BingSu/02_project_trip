@@ -192,7 +192,7 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
             <li className="flex flex-col gap-[20px] py-[30px] border-b border-slate-200"></li>
           </ul>
         )}
-        {reviewsData.length > 0 ? (
+        {moreData === true && (
           <button
             type="button"
             className="w-full py-[20px] rounded-lg border border-slate-300"
@@ -200,13 +200,13 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
           >
             리뷰 더보기
           </button>
-        ) : (
-          <div className="flex flex-col gap-[20px] justify-center items-center">
-            <i className="text-slate-300 text-[100px]">
-              <LiaComment />
-            </i>
-            <p className="text-slate-400 text-[20px]">리뷰가 없습니다.</p>
-          </div>
+          // ) : (
+          //   <div className="flex flex-col gap-[20px] justify-center items-center">
+          //     <i className="text-slate-300 text-[100px]">
+          //       <LiaComment />
+          //     </i>
+          //     <p className="text-slate-400 text-[20px]">리뷰가 없습니다.</p>
+          //   </div>
         )}
       </div>
     );
