@@ -40,7 +40,7 @@ const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
   return (
     <>
       {category === CategoryType.FEST && (
-        <ListItem title="영업 시간" type="duration" />
+        <ListItem title="축제 기간" type="duration" />
       )}
       <ListItem title="업체 상태" type="state" />
       <ListItem title={matchCheck(category as string)} type="checkTime" />

@@ -145,7 +145,7 @@ const BookingList = ({ item }: BookingListProps) => {
                 <img
                   src={`${ProductPic}/${strfId}/${item.picName}`}
                   alt={item.title}
-                  className="w-full h-full"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -190,7 +190,9 @@ const BookingList = ({ item }: BookingListProps) => {
         <CenterModalTs
           title="예약 취소"
           content="해당 예약을 취소하시겠습니까?"
-          handleClickSubmit={() => {}}
+          handleClickSubmit={() => {
+            console.log("예약 취소");
+          }}
           handleClickCancle={() => setIsCancelModalOpen(false)}
         />
       )}

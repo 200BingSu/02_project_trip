@@ -1,3 +1,4 @@
+import { Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
@@ -6,10 +7,9 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import BottomSheet from "../../../components/basic/BottomSheet";
 import CenterModalTs from "../../../components/common/CenterModalTs";
 import { MenuPic } from "../../../constants/pic";
+import { CategoryType } from "../../../types/enum";
 import { IAPI, IRoom, MenuType } from "../../../types/interface";
 import { categoryKor, matchName } from "../../../utils/match";
-import { Spin } from "antd";
-import { CategoryType } from "../../../types/enum";
 
 const MenuDetail = (): JSX.Element => {
   // 쿼리
@@ -51,9 +51,9 @@ const MenuDetail = (): JSX.Element => {
     }
   };
 
-  const formatRoomNum = (roomNum: number) => {
-    return `${roomNum.toString().padStart(4, "0")}호`;
-  };
+  const formatedRoomNum = parlor?.roomNum.map(item => {
+    return `${item.toString().padStart(3, "0")}호`;
+  });
 
   useEffect(() => {
     if (parlor) {
@@ -274,7 +274,7 @@ const MenuDetail = (): JSX.Element => {
                       객실 번호
                     </h4>
                     <p className="col-span-3 text-base text-slate-500">
-                      {formatRoomNum(parlor?.roomNum ?? 0)}
+                      {formatedRoomNum?.join(", ")}
                     </p>
                   </li>
 

@@ -21,7 +21,6 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
     // 쿠키
 
     //useState
-
     const [reviewsData, setReviewsData] = useState<IReviewData[]>([]);
     const [moreData, setMoreData] = useState<boolean>();
     const [reviewIndex, setReviewIndex] = useState(0);
@@ -32,6 +31,7 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
     const textRef = useRef<{ [key: number]: HTMLParagraphElement | null }>({});
 
     const [reviewCount, setReviewCount] = useState<number>(0);
+    console.log(moreData);
 
     //쿼리스트링
 

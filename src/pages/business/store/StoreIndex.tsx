@@ -10,6 +10,7 @@ import Tab from "../../../components/common/Tab";
 import { CategoryType } from "../../../types/enum";
 import { Iamenity, IAPI, IStrf } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
+import StrfInfo from "../../../components/business/StrfInfo";
 
 const StoreIndex = (): JSX.Element => {
   // 쿠키
@@ -107,6 +108,7 @@ const StoreIndex = (): JSX.Element => {
 
   return (
     <div>
+      <StrfInfo />
       <Spin spinning={isLoading}>
         <Tab
           list={categoryList}

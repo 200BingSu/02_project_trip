@@ -6,7 +6,7 @@ import "../../../styles/antd-styles.css";
 import { StrInfoProps } from "../../contents/StrInfo";
 
 import { FaLink } from "react-icons/fa6";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../../apis/jwt";
 
 interface ContentsHeaderProps extends StrInfoProps {
@@ -26,7 +26,6 @@ const ContentsHeader = ({
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   //useNavigate
   const navigate = useNavigate();
-  const location = useLocation();
 
   const postWishList = async () => {
     const sendData = {

@@ -6,10 +6,10 @@ import "../../styles/antd-styles.css";
 import { IAPI, IRemainPoint } from "../../types/interface";
 import TitleHeaderTs from "../layout/header/TitleHeaderTs";
 
-interface Payment {
-  pointCardId: number;
-  amount: number;
-}
+// interface Payment {
+//   pointCardId: number;
+//   amount: number;
+// }
 
 const PointPayment = (): JSX.Element => {
   const [selectedPoint, setSelectedPoint] = useState<IRemainPoint>();

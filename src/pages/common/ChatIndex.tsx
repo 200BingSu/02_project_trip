@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { LiaComment } from "react-icons/lia";
 import { useNavigate } from "react-router-dom";
 import ChatList from "../../components/chat/ChatList";
+import NoData from "../../components/common/NoData";
 import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 import { IChatList } from "../../types/interface";
 import { getCookie } from "../../utils/cookie";
-import NoData from "../../components/common/NoData";
+import { Spin } from "antd";
 
 // interface IChatCategory {
 //   key: string;
@@ -32,8 +32,10 @@ const ChatIndex = () => {
   const [category] = useState<string>("전체");
   const [chatList, setChatLlist] = useState<IChatList[]>([]);
   const [page, setPage] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
   // APi 채팅방 목록
   const getChatList = async (): Promise<IGetChatList | null> => {
+    setIsLoading(true);
     try {
       const url = "/api/chat-room";
       const res = await axios.get<IGetChatList>(
@@ -57,6 +59,8 @@ const ChatIndex = () => {
       console.log("채팅 목록 조회", error);
       setChatLlist([]);
       return null;
+    } finally {
+      setIsLoading(false);
     }
   };
   // 채팅 카테고리
@@ -88,17 +92,14 @@ const ChatIndex = () => {
     <div className="max-w-[768px] min-w-xs mx-auto relative min-h-screen ">
       <TitleHeaderTs title="채팅" icon="back" onClick={navigateToBack} />
       <div>
-        {/* <Tabs
-          defaultActiveKey="전체"
-          items={chatCategory}
-          onChange={onChange}
-          className="px-[16px]"
-        /> */}
-        {chatList.length > 0 ? (
-          <ChatList category={category} chatList={chatList} />
-        ) : (
-          <NoData content="채팅 목록이 없습니다" />
-        )}
+        <Spin spinning={isLoading}>
+          {isLoading && <></>}
+          {!isLoading && chatList.length > 0 ? (
+            <ChatList category={category} chatList={chatList} />
+          ) : (
+            <NoData content="채팅 목록이 없습니다" />
+          )}
+        </Spin>
       </div>
     </div>
   );

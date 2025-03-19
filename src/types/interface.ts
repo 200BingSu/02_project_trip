@@ -246,7 +246,7 @@ export interface IRoom {
   title: string;
   menuId: string;
   roomId: number;
-  roomNum: number;
+  roomNum: number[];
 }
 
 export interface ISchedule {
