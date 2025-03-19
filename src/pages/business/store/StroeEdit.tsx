@@ -23,10 +23,6 @@ interface PType {
   post: string;
 }
 
-interface AddressDataType {
-  p: PType;
-}
-
 const StroeEdit = (): JSX.Element => {
   // 쿠키
   const accessToken = getCookie("accessToken");
@@ -47,7 +43,7 @@ const StroeEdit = (): JSX.Element => {
   const [strfData, _] = useRecoilState(strfAtom);
   const initialFileList: UploadFile[] = strfData.strfPics.map(
     (item, index) => ({
-      uid: `-${index}`,
+      uid: `prev-${index}`,
       name: item.strfPic,
       status: "done" as const,
       url: `${ProductPic}/${strfId}/${item.strfPic}`,
@@ -104,6 +100,39 @@ const StroeEdit = (): JSX.Element => {
     image.src = src;
     const imgWindow = window.open(src);
     imgWindow?.document.write(image.outerHTML);
+  };
+
+  const onRemove = (file: UploadFile) => {
+    console.log("file", file);
+    if (file.uid.includes("prev")) {
+      deleteStrfPic(file.name);
+    }
+    const newFileList = fileList.filter(item => item.uid !== file.uid);
+    setFileList(newFileList);
+  };
+  // API 사진 삭제
+  const deleteStrfPic = async (
+    picName: string,
+  ): Promise<IAPI<string> | null> => {
+    const url = "/api/detail/strf/pic";
+    try {
+      const res = await axios.delete<IAPI<string>>(
+        `${url}?busiNum=${busiNum}&picName=${picName}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        console.log("사진 삭제", resultData);
+      }
+      return resultData;
+    } catch (error) {
+      console.log("사진 삭제", error);
+      return null;
+    }
   };
 
   // API 사진 변경
@@ -331,6 +360,7 @@ const StroeEdit = (): JSX.Element => {
                 fileList={fileList}
                 onChange={onChange}
                 onPreview={onPreview}
+                onRemove={onRemove}
                 beforeUpload={() => false}
                 accept="image/*"
                 maxCount={5}

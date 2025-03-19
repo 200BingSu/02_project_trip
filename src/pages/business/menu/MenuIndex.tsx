@@ -8,7 +8,7 @@ import NoData from "../../../components/common/NoData";
 import { MenuType } from "../../../types/interface";
 import { matchMenuIcon } from "../../../utils/match";
 
-interface IGetMenuListRes {
+export interface IGetMenuListRes {
   code: string;
   data: MenuType[];
 }
@@ -73,6 +73,7 @@ const MenuIndex = (): JSX.Element => {
                   key={index}
                   strfId={strfId}
                   category={category as string}
+                  getMenuList={getMenuList}
                 />
               ))}
             {!isLoading && menuList.length === 0 && (
