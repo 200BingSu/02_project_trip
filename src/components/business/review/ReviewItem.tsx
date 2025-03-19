@@ -153,6 +153,7 @@ const ReviewItem = ({ strfId, item, getReviewList }: IReviewItemProps) => {
               <img
                 src={`${ProfilePic}/${item.userId}/${item.writerUserProfilePic}`}
                 alt="프로필 사진"
+                className="w-full h-full object-cover"
               />
             </div>
             <p className="text-lg font-semibold text-slate-700">

@@ -21,9 +21,8 @@ import { tsUserAtom } from "../../atoms/tsuserAtom";
 import Graph from "../../components/business/main/Graph";
 import NoData from "../../components/common/NoData";
 import MainHeader from "../../components/layout/header/MainHeader";
-import { CategoryType, ROLE } from "../../types/enum";
+import { ROLE } from "../../types/enum";
 import { getCookie } from "../../utils/cookie";
-import { categoryKor } from "../../utils/match";
 import Footer from "../Footer";
 
 const { RangePicker } = DatePicker;
@@ -56,7 +55,7 @@ const BusinessIndex = (): JSX.Element => {
   const userData = useRecoilValue(tsUserAtom);
   const userName = userData.name;
   console.log(userName);
-  const category = userInfo.strfDtos?.[0]?.category;
+  // const category = userInfo.strfDtos?.[0]?.category;
 
   const todayMonth = dayjs().format("YYYY-MM");
   const last12Months = dayjs().subtract(11, "month").format("YYYY-MM");
@@ -269,11 +268,11 @@ const BusinessIndex = (): JSX.Element => {
                 >
                   적용
                 </Button>
-                {category === categoryKor(CategoryType.RESTAURANT) && (
+                {/* {category === categoryKor(CategoryType.RESTAURANT) && (
                   <Button type="dashed" size="large">
                     매출 입력
                   </Button>
-                )}
+                )} */}
               </div>
               <div className="flex items-center gap-3 select-none">
                 <p className="text-2xl text-primary font-semibold">

@@ -118,11 +118,17 @@ const ScheduleDetail = () => {
     const sendData = {
       tripReviewId: tripReviewId,
     };
+    const url = `/api/trip-review/like`;
     try {
-      const res = await jwtAxios.delete(`/api/trip-review/like`, sendData);
+      const res = await axios.delete(`${url}`, {
+        data: sendData,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       console.log("여행기 추천 취소", res.data);
       const resultData = res.data;
-      if (resultData.status === 200) {
+      if (resultData.code === "200 성공") {
         getOtherTripReview();
       }
     } catch (error) {
