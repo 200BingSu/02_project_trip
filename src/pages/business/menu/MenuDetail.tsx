@@ -10,8 +10,13 @@ import { MenuPic } from "../../../constants/pic";
 import { CategoryType } from "../../../types/enum";
 import { IAPI, IRoom, MenuType } from "../../../types/interface";
 import { categoryKor, matchName } from "../../../utils/match";
+import { getCookie } from "../../../utils/cookie";
 
 const MenuDetail = (): JSX.Element => {
+  // 쿠키
+  const userInfo = getCookie("user");
+  const busiNum = userInfo.strfDtos[0].busiNum;
+  const accessToken = getCookie("accessToken");
   // 쿼리
   const [searchParams] = useSearchParams();
   const strfId = searchParams.get("strfId");
@@ -26,6 +31,7 @@ const MenuDetail = (): JSX.Element => {
   // useState
   const [isBottomOpen, setIsBottomOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const [isDeleteRoomOpen, setIsDeleteRoomOpen] = useState<boolean>(false);
   const [parlor, setParlor] = useState<IRoom | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   // API 객실/호실 조회
@@ -50,7 +56,49 @@ const MenuDetail = (): JSX.Element => {
       setIsLoading(false);
     }
   };
-
+  // API 메뉴 삭제
+  const apiDeleteMenu = async () => {
+    const url = "/api/detail/menu";
+    try {
+      const res = await axios.delete(
+        `${url}?menuId=${menuId}&busiNum=${busiNum}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        setIsDeleteOpen(false);
+        navigate(`/business/menu?strfId=${strfId}&category=${category}`);
+      }
+      console.log("메뉴 삭제", resultData);
+    } catch (error) {
+      console.log("메뉴 삭제", error);
+    }
+  };
+  // API 객실 삭제
+  const deleteRoom = async () => {
+    const url = "/api/detail/parlor";
+    try {
+      const res = await axios.delete(
+        `${url}?roomId=${parlor?.roomId}&busiNum=${busiNum}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        console.log("객실 삭제", resultData);
+        setIsDeleteRoomOpen(false);
+      }
+    } catch (error) {
+      console.log("객실 삭제", error);
+    }
+  };
   const formatedRoomNum = parlor?.roomNum.map(item => {
     return `${item.toString().padStart(3, "0")}호`;
   });
@@ -105,7 +153,7 @@ const MenuDetail = (): JSX.Element => {
       label: (
         <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
           <BiTrash className="text-slate-300" />
-          삭제하기
+          {matchName(category)} 삭제하기
         </div>
       ),
       onClick: () => {
@@ -156,7 +204,19 @@ const MenuDetail = (): JSX.Element => {
       label: (
         <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
           <BiTrash className="text-slate-300" />
-          삭제하기
+          {matchName(category)} 삭제하기
+        </div>
+      ),
+      onClick: () => {
+        setIsBottomOpen(false);
+        setIsDeleteOpen(true);
+      },
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiTrash className="text-slate-300" />
+          객실 상세 정보 삭제하기
         </div>
       ),
       onClick: () => {
@@ -184,7 +244,7 @@ const MenuDetail = (): JSX.Element => {
       label: (
         <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
           <BiTrash className="text-slate-400" />
-          삭제하기
+          {matchName(category)} 삭제하기
         </div>
       ),
       onClick: () => {
@@ -330,12 +390,24 @@ const MenuDetail = (): JSX.Element => {
       {isDeleteOpen && (
         <CenterModalTs
           title="객실 삭제"
-          content="해당 메뉴를 삭제하시겠습니까?"
+          content={`${matchName(category)}를 삭제하시겠습니까?`}
           handleClickSubmit={() => {
-            console.log("삭제");
+            apiDeleteMenu();
           }}
           handleClickCancle={() => {
             setIsDeleteOpen(false);
+          }}
+        />
+      )}
+      {isDeleteRoomOpen && (
+        <CenterModalTs
+          title="객실 삭제"
+          content={`객실 상세 정보를 삭제하시겠습니까?`}
+          handleClickSubmit={() => {
+            deleteRoom();
+          }}
+          handleClickCancle={() => {
+            setIsDeleteRoomOpen(false);
           }}
         />
       )}

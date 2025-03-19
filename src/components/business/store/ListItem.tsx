@@ -181,6 +181,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return null;
     }
   };
+
   // API 전화번호 변경 v-s
   const updateTell = async (): Promise<IAPI<string> | null> => {
     const url = "/api/detail/tell";
@@ -292,6 +293,26 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       message.error("편의시설 변경에 실패하였습니다");
       console.log("편의시설 변경", error);
       return null;
+    }
+  };
+  const deleteAmenity = async () => {
+    const url = "/api/detail/amenity";
+    try {
+      const res = await axios.delete(
+        `${url}?strfId=${strfId}&busiNum=${busiNum}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      if (resultData) {
+        console.log("편의시설 삭제", resultData);
+        updateAmenity();
+      }
+    } catch (error) {
+      console.log("편의시설 삭제", error);
     }
   };
   // API 체크인/체크아웃 변경 v-s
@@ -414,6 +435,29 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return null;
     }
   };
+  // API 휴무일 삭제
+  const deleteRestDate = async (): Promise<IAPI<number> | null> => {
+    const url = "/api/detail/rest";
+    try {
+      const res = await axios.delete<IAPI<number>>(
+        `${url}?strfId=${strfId}&busiNum=${busiNum}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      const resultData = res.data;
+      if (resultData) {
+        console.log("영업 상태 삭제", resultData);
+        updateRestDate();
+      }
+      return resultData;
+    } catch (error) {
+      console.log("영업 상태 삭제", error);
+      return null;
+    }
+  };
   // 수정/완료 클릭
   const handleClickButton = () => {
     if (type === "strfPic") {
@@ -450,10 +494,10 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       type === "state" && updateState();
       type === "tell" && areaCode !== "" && value !== "" && updateTell();
       type === "detail" && updateDetail();
-      type === "amenity" && updateAmenity();
+      type === "amenity" && deleteAmenity();
       type === "duration" && updateDuration();
       type === "checkTime" && updateCheckTime();
-      type === "restDate" && updateRestDate();
+      type === "restDate" && deleteRestDate();
     }
   };
   const selectOptions = [

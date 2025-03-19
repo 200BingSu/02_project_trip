@@ -12,17 +12,19 @@ import { CategoryType } from "../../../types/enum";
 import { matchName } from "../../../utils/match";
 import axios from "axios";
 import { getCookie } from "../../../utils/cookie";
+import { IGetMenuListRes } from "../../../pages/business/menu/MenuIndex";
 
 interface MenuItemProps {
   item: MenuType;
   strfId: number;
   category: string;
+  getMenuList: () => IGetMenuListRes | null;
 }
 
-const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
+const MenuItem = ({ strfId, item, category, getMenuList }: MenuItemProps) => {
   // 쿠키
   const userInfo = getCookie("user");
-  const busiNum = userInfo.strfDtos.busiNum;
+  const busiNum = userInfo.strfDtos[0].busiNum;
   const accessToken = getCookie("accessToken");
 
   // useNavigate
@@ -60,15 +62,25 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
     try {
       const res = await axios.delete(
         `${url}?menuId=${item.menuId}&busiNum=${busiNum}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
       );
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        setIsDeleteOpen(false);
+        getMenuList();
+      }
+      console.log("메뉴 삭제", resultData);
     } catch (error) {
       console.log("메뉴 삭제", error);
     }
   };
 
   const deleteMenu = () => {
-    console.log("삭제");
-    setIsDeleteOpen(false);
+    apiDeleteMenu();
   };
   const handleClickBottom = () => {
     setIsBottomOpen(!isBottomOpen);
