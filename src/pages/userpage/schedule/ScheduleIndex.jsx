@@ -30,6 +30,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import EditTripModal from "../../../components/schedule/EditTripModal";
+import EditModal from "../../../components/schedule/EditModal";
 
 // const dummyDays = dummyData.days;
 const defaultData = {
@@ -447,7 +448,7 @@ const ScheduleIndex = () => {
       )}
       {/* 여행 수정 모달 */}
       {isEdit && (
-        <EditTripModal
+        <EditModal
           tripData={tripData}
           handleClickCancle={handleClickCancle}
           getTrip={getTrip}

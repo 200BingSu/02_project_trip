@@ -45,6 +45,7 @@ export default {
       },
       fontFamily: {
         "work-sans": ['"Work Sans"', "sans-serif"],
+        pretendard: ["Pretendard", "sans-serif"],
       },
     },
   },

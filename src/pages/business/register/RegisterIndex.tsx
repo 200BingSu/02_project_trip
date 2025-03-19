@@ -1,4 +1,4 @@
-import { Button, message, Spin, Steps, UploadFile } from "antd";
+import { Button, message, Spin, Steps } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -12,10 +12,10 @@ import Step2 from "../../../components/business/register/Step2";
 import Step3 from "../../../components/business/register/Step3";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import { CategoryType } from "../../../types/enum";
+import { IAPI } from "../../../types/interface";
 import { getCookie, setCookie } from "../../../utils/cookie";
 import { categoryKor } from "../../../utils/match";
 import { moveTo } from "../../../utils/moveTo";
-import { IAPI } from "../../../types/interface";
 
 dayjs.extend(customParseFormat);
 

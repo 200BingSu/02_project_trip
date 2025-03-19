@@ -73,8 +73,10 @@ const BusinessLayout = () => {
     chatEventRef.current.addEventListener("connect", event => {
       // console.log("안 읽은 알림 존재:", typeof event.data);
       if (event.data === "false") {
+        console.log("없다고 말해");
         setChatAlert(false);
       } else {
+        console.log("있다고 말해");
         setChatAlert(true);
       }
     });
@@ -101,7 +103,9 @@ const BusinessLayout = () => {
       chatEventRef.current?.close();
     };
   }, [chatEventRef]);
-
+  useEffect(() => {
+    console.log("chatAlert", chatAlert);
+  }, [chatAlert]);
   return (
     <div className="max-w-[768px] min-w-xs mx-auto relative min-h-screen flex flex-col">
       <div className="flex-1">
@@ -121,13 +125,17 @@ const BusinessLayout = () => {
             <button
               className="aspect-square w-12 flex items-center justify-center
                             bg-primary text-white rounded-full shadow-lg py-2 m-2 text-2xl pointer-events-auto"
-              onClick={navigateToChat}
+              onClick={() => {
+                navigateToChat();
+                setChatAlert(false);
+              }}
             >
               <AiFillWechat />
             </button>
             <div
-              className={`absolute top-3 right-1/3 w-2 h-2 bg-primary rounded-full
-              ${chatAlert ? "visible" : "invisible"}`}
+              className={`absolute top-2 right-2 w-3 h-3 bg-primary rounded-full border-2 border-white
+              ${chatAlert ? "visible" : "invisible"}
+              `}
             ></div>
           </div>
         </div>

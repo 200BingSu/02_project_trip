@@ -23,7 +23,7 @@ export interface CreateRoomDataType {
   parlors: ParlorType[];
   rooms: number[];
 }
-interface CreateRoomResponseType {}
+interface RoomResponseType {}
 interface EditRoomDataType {
   stayReq: CreateRoomDataType;
 }
@@ -54,11 +54,11 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
   // API 객실 생성
   const createRoom = async (
     data: CreateRoomDataType,
-  ): Promise<IAPI<CreateRoomResponseType> | null> => {
+  ): Promise<IAPI<string> | null> => {
     setIsLoading(true);
     const url = "/api/detail/stay";
     try {
-      const res = await axios.post<IAPI<CreateRoomResponseType>>(url, data, {
+      const res = await axios.post<IAPI<string>>(url, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -78,12 +78,12 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
   };
   // API 객실 수정
   const updateRoom = async (
-    data: CreateRoomDataType,
-  ): Promise<IAPI<EditRoomDataType> | null> => {
+    data: EditRoomDataType,
+  ): Promise<IAPI<RoomResponseType> | null> => {
     setIsLoading(true);
     const url = "/api/detail/stay";
     try {
-      const res = await axios.patch<IAPI<EditRoomDataType>>(url, data, {
+      const res = await axios.patch<IAPI<RoomResponseType>>(url, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

@@ -55,10 +55,11 @@ const DockBar = React.memo(() => {
 
     // "exist unread notice" 이벤트 수신 (백엔드 이벤트 이름 따라 변경 필수)
     chatEventRef.current.addEventListener("connect", event => {
-      console.log("안 읽은 알림 존재:", typeof event.data);
       if (event.data === "false") {
+        console.log("없어");
         setChatAlert(false);
       } else {
+        console.log("있어");
         setChatAlert(true);
       }
     });
@@ -120,7 +121,9 @@ const DockBar = React.memo(() => {
       behavior: "smooth",
     });
   };
-
+  useEffect(() => {
+    console.log("chatAlert", chatAlert);
+  }, [chatAlert]);
   return (
     <div>
       <div className="flex max-w-[768px] w-full h-auto fixed bottom-0 left-1/2 -translate-x-1/2 bg-white z-50 shadow-[0px_-4px_8px_0px_rgba(99,99,99,0.05)]">
@@ -171,13 +174,14 @@ const DockBar = React.memo(() => {
               message.error("로그인 후 이용 가능한 서비스 입니다");
             } else {
               navigate("/chat");
+              setChatAlert(false);
             }
           }}
         >
           <IoLogoWechat className="text-2xl" />
           채팅
           <div
-            className={`absolute top-3 right-1/3 w-2 h-2 bg-primary rounded-full
+            className={`absolute top-3 right-10 w-3 h-3 bg-primary rounded-full border-2 border-white
               ${chatAlert ? "visible" : "invisible"}`}
           ></div>
         </button>
