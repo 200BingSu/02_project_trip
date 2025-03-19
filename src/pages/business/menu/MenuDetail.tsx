@@ -7,7 +7,9 @@ import BottomSheet from "../../../components/basic/BottomSheet";
 import CenterModalTs from "../../../components/common/CenterModalTs";
 import { MenuPic } from "../../../constants/pic";
 import { IAPI, IRoom, MenuType } from "../../../types/interface";
-import { categoryKor } from "../../../utils/match";
+import { categoryKor, matchName } from "../../../utils/match";
+import { Spin } from "antd";
+import { CategoryType } from "../../../types/enum";
 
 const MenuDetail = (): JSX.Element => {
   // 쿼리
@@ -25,9 +27,11 @@ const MenuDetail = (): JSX.Element => {
   const [isBottomOpen, setIsBottomOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const [parlor, setParlor] = useState<IRoom | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   // API 객실/호실 조회
   const getParlor = async (): Promise<IAPI<IRoom[]> | null> => {
     const url = "/api/detail/parlor";
+    setIsLoading(true);
     try {
       const res = await axios.get<IAPI<IRoom[]>>(
         `${url}?strf_id=${strfId}&category=${categoryKor(category)}`,
@@ -36,12 +40,14 @@ const MenuDetail = (): JSX.Element => {
       console.log("객실/호실 조회", resultData);
       const tempParlor =
         resultData.data.find(item => item.menuId === menuId) ?? null;
-      console.log(tempParlor);
+      console.log("현재", tempParlor);
       setParlor(tempParlor);
       return resultData;
     } catch (error) {
       console.log("객실/호실 조회", error);
       return null;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -57,7 +63,7 @@ const MenuDetail = (): JSX.Element => {
   useEffect(() => {
     getParlor();
   }, []);
-  const actions = [
+  const actionsNoRoom = [
     {
       label: (
         <div className="flex flex-col items-start gap-1 px-4 py-[14px] text-lg text-slate-500">
@@ -81,11 +87,61 @@ const MenuDetail = (): JSX.Element => {
         <div className="flex flex-col items-start gap-1 px-4 py-[14px] text-lg text-slate-500">
           <p className="flex items-center gap-3">
             <BiSolidEditAlt className="text-slate-300" />
-            객실 추가 정보 수정하기
+            객실/호실 등록하기
           </p>
           <p className="text-slate-400 text-base px-6">
-            객실 번호, 객실 인원(권장인원, 추가인원), 추가 금액 및<br />{" "}
-            편의시설을 수정
+            * 예약을 위해 필수적으로 객실/호실 등록이 필요합니다.
+          </p>
+        </div>
+      ),
+      onClick: () => {
+        navigate(
+          `/business/menu/create?strfId=${strfId}&category=${category}&menuId=${menuId}&what=room`,
+          { state: parlor },
+        );
+      },
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiTrash className="text-slate-300" />
+          삭제하기
+        </div>
+      ),
+      onClick: () => {
+        setIsBottomOpen(false);
+        setIsDeleteOpen(true);
+      },
+    },
+  ];
+  const actionsHasRoom = [
+    {
+      label: (
+        <div className="flex flex-col items-start gap-1 px-4 py-[14px] text-lg text-slate-500">
+          <p className="flex items-center gap-3">
+            <BiSolidEditAlt className="text-slate-300" />
+            객실 기본 정보 수정하기
+          </p>
+          <p className="text-slate-400 text-base px-6">
+            사진, 이름, 가격을 수정
+          </p>
+        </div>
+      ),
+      onClick: () => {
+        navigate(
+          `/business/menu/edit?strfId=${strfId}&category=${category}&menuId=${menuId}&what=menu`,
+        );
+      },
+    },
+    {
+      label: (
+        <div className="flex flex-col items-start gap-1 px-4 py-[14px] text-lg text-slate-500">
+          <p className="flex items-center gap-3">
+            <BiSolidEditAlt className="text-slate-300" />
+            객실/호실 수정하기
+          </p>
+          <p className="text-slate-400 text-base px-6">
+            * 예약을 위해 필수적으로 객실/호실 등록이 필요합니다.
           </p>
         </div>
       ),
@@ -109,14 +165,52 @@ const MenuDetail = (): JSX.Element => {
       },
     },
   ];
-
+  const actionsOther = [
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiSolidEditAlt className="text-slate-300" />
+          {matchName(category)} 수정하기
+        </div>
+      ),
+      onClick: () => {
+        navigate(
+          `/business/menu/edit?strfId=${strfId}&category=${category}&menuId=${menuId}&what=room`,
+          { state: parlor },
+        );
+      },
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <BiTrash className="text-slate-400" />
+          삭제하기
+        </div>
+      ),
+      onClick: () => {
+        setIsBottomOpen(false);
+        setIsDeleteOpen(true);
+      },
+    },
+  ];
+  const matchAtions = () => {
+    if (category === CategoryType.STAY && parlor) {
+      if (parlor.recomCapacity) {
+        return actionsHasRoom;
+      } else {
+        return actionsNoRoom;
+      }
+    } else {
+      return actionsOther;
+    }
+  };
   return (
     <div className="flex flex-col gap-6 py-3 ">
       {/* 객실 사진 */}
       <section className="flex flex-col gap-3 px-4">
         <div className="flex flex-col">
           <h3 className="text-2xl font-semibold text-slate-700 select-none">
-            객실 사진
+            {matchName(category)} 사진
           </h3>
           <p className="text-base font-medium text-slate-500 select-none">
             현재 고객에게 보여지는 객실 사진입니다.
@@ -138,7 +232,7 @@ const MenuDetail = (): JSX.Element => {
         <div className="flex flex-col">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-semibold text-slate-700 select-none">
-              객실 사진
+              {matchName(category)} 정보
             </h3>
             <button
               type="button"
@@ -150,64 +244,86 @@ const MenuDetail = (): JSX.Element => {
           </div>
 
           <p className="text-base font-medium text-slate-500">
-            현재 등록된 객실 정보입니다.
+            현재 등록된 {matchName(category)} 정보입니다.
           </p>
         </div>
         <div>
-          <ul className="flex flex-col gap-2">
-            <li className="grid grid-cols-4 items-center">
-              <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
-                객실 이름
-              </h4>
-              <p className="col-span-3 text-base text-slate-500">
-                {state.menuTitle}
-              </p>
-            </li>
-            <li className="grid grid-cols-4 items-center">
-              <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
-                객실 번호
-              </h4>
-              <p className="col-span-3 text-base text-slate-500">
-                {formatRoomNum(parlor?.roomNum ?? 0)}
-              </p>
-            </li>
-            <li className="grid grid-cols-4 items-center">
-              <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
-                금액
-              </h4>
-              <p className="col-span-3 text-base text-slate-500">
-                {state.menuPrice.toLocaleString()}원
-              </p>
-            </li>
-            <li className="grid grid-cols-4 items-center">
-              <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
-                추가 금액
-              </h4>
-              <p className="col-span-3 text-base text-slate-500">
-                {parlor?.surcharge.toLocaleString()}원
-              </p>
-            </li>
-            <li className="grid grid-cols-4 items-center">
-              <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
-                권장 인원
-              </h4>
-              <p className="col-span-3 text-base text-slate-500">
-                {state.recomCapacity}명
-              </p>
-            </li>
-            <li className="grid grid-cols-4 items-center">
-              <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
-                최대 인원
-              </h4>
-              <p className="col-span-3 text-base text-slate-500">
-                {state.maxCapacity}명
-              </p>
-            </li>
-          </ul>
+          <Spin spinning={isLoading}>
+            <ul className="flex flex-col gap-2">
+              <li className="grid grid-cols-4 items-center">
+                <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
+                  {matchName(category)} 이름
+                </h4>
+                <p className="col-span-3 text-base text-slate-500">
+                  {state.menuTitle}
+                </p>
+              </li>
+              <li className="grid grid-cols-4 items-center">
+                <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
+                  금액
+                </h4>
+                <p className="col-span-3 text-base text-slate-500">
+                  {state.menuPrice.toLocaleString()}원
+                </p>
+              </li>
+
+              {!isLoading && parlor !== null && (
+                <>
+                  <li className="grid grid-cols-4 items-center">
+                    <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
+                      객실 번호
+                    </h4>
+                    <p className="col-span-3 text-base text-slate-500">
+                      {formatRoomNum(parlor?.roomNum ?? 0)}
+                    </p>
+                  </li>
+
+                  <li className="grid grid-cols-4 items-center">
+                    <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
+                      추가 금액
+                    </h4>
+                    <p className="col-span-3 text-base text-slate-500">
+                      {parlor?.surcharge.toLocaleString()}원
+                    </p>
+                  </li>
+                  <li className="grid grid-cols-4 items-center">
+                    <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
+                      권장 인원
+                    </h4>
+                    <p className="col-span-3 text-base text-slate-500">
+                      {state.recomCapacity}명
+                    </p>
+                  </li>
+                  <li className="grid grid-cols-4 items-center">
+                    <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
+                      최대 인원
+                    </h4>
+                    <p className="col-span-3 text-base text-slate-500">
+                      {state.maxCapacity}명
+                    </p>
+                  </li>
+                </>
+              )}
+              {!isLoading &&
+                category === CategoryType.STAY &&
+                parlor === null && (
+                  <>
+                    <li>
+                      <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
+                        객실 상세
+                      </h4>
+                      <p className="col-span-3 text-base text-secondary3">
+                        예약을 위해 객실 상세 등록이 필요합니다.
+                      </p>
+                    </li>
+                  </>
+                )}
+            </ul>
+          </Spin>
         </div>
       </section>
       <BottomSheet
-        actions={actions}
+        actions={matchAtions()}
         open={isBottomOpen}
         onClose={() => setIsBottomOpen(false)}
       />

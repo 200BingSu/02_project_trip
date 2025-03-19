@@ -30,6 +30,9 @@ const SearchBefore = () => {
   const [recentText, setRecentText] = useState([]); // 최근 검색어
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    console.log(keyword);
+  }, [keyword]);
   //useRef
   const topRef = useRef(null);
   // api 인기 검색어
@@ -177,7 +180,7 @@ const SearchBefore = () => {
                 <FiSearch className="text-slate-400 text-2xl" />
               </button>
             }
-            onChange={e => setKeyword(e)}
+            onChange={e => setKeyword(e.target.value)}
             onPressEnter={e => {
               if (e.target.value.trim()) {
                 handleClickEnter();

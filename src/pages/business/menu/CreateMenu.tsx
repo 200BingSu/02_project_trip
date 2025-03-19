@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import MenuForm from "../../../components/business/menu/MenuForm";
 import RoomForm from "../../../components/business/menu/RoomForm";
@@ -24,13 +24,19 @@ const CreateMenu = () => {
       setCurrent(value);
     }
   };
+  useEffect(() => {
+    if (what) {
+      setCurrent(1);
+    }
+  }, []);
 
   return (
     <div className="flex flex-col gap-2">
       <div className="px-4 pt-3">
         <h2 className="text-2xl font-semibold text-slate-700">
-          {matchName(category)}를 추가해주세요 (
-          {category === CategoryType.STAY && !what && current + 1}/2)
+          {matchName(category)}를 추가해주세요
+          {what && ""}
+          {!what && category === CategoryType.STAY && `${current + 1}/2`}
         </h2>
       </div>
       <section>
