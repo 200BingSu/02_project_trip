@@ -84,7 +84,7 @@ const PostReview = () => {
       });
       // console.log(response.data);
       if (response.data.code === "200 성공") {
-        navigate(`/contents/index?strfId=${strfId}`);
+        navigate(-1);
       }
     } catch (error) {
       console.error(error);
@@ -105,7 +105,7 @@ const PostReview = () => {
       <TitleHeader
         icon="back"
         onClick={() => {
-          navigateToStrf();
+          navigate(-1);
         }}
         title={locationState?.strfTitle}
       />

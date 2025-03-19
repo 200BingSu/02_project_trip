@@ -1,15 +1,13 @@
+import { Popover } from "antd";
 import { useEffect, useState } from "react";
 import { AiFillHeart, AiOutlineHeart, AiOutlineImport } from "react-icons/ai";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { StrInfoProps } from "../../contents/StrInfo";
-import { Popover } from "antd";
 import "../../../styles/antd-styles.css";
+import { StrInfoProps } from "../../contents/StrInfo";
 
 import { FaLink } from "react-icons/fa6";
+import { useLocation, useNavigate } from "react-router-dom";
 import jwtAxios from "../../../apis/jwt";
-import { useNavigate } from "react-router-dom";
-import { searchAtom } from "../../../atoms/searchAtom";
-import { useRecoilState } from "recoil";
 
 interface ContentsHeaderProps extends StrInfoProps {
   scrollEvent?: boolean; // 기본값을 true로 설정
@@ -23,11 +21,12 @@ const ContentsHeader = ({
   getDetailMember,
 }: ContentsHeaderProps): JSX.Element => {
   //recoil
-  const [, setSearchRecoil] = useRecoilState(searchAtom);
+
   //useState
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   //useNavigate
   const navigate = useNavigate();
+  const location = useLocation();
 
   const postWishList = async () => {
     const sendData = {
@@ -74,6 +73,7 @@ const ContentsHeader = ({
       console.error("복사 실패", err);
     }
   };
+
   console.log("currentUri", currentUri);
   return (
     <div
@@ -84,13 +84,7 @@ const ContentsHeader = ({
         <div className="flex items-center gap-3">
           <IoIosArrowRoundBack
             className="text-3xl min-w-7 cursor-pointer"
-            onClick={() => {
-              navigate(-1);
-              setSearchRecoil(prev => ({
-                ...prev,
-                fromContent: true,
-              }));
-            }}
+            onClick={() => navigate(-1)}
           />
           <h2 className="font-semibold text-lg line-clamp-1">
             {contentData?.strfTitle}

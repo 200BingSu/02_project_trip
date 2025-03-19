@@ -188,7 +188,7 @@ const SearchBefore = () => {
             }}
             variant="filled"
             // value={searchRecoil.searchWord}
-            className="max-h-[60px] h-[16vw] text-lg rounded-lg gap-[5px]
+            className="max-h-[60px] h-[16vw] text-base rounded-lg gap-[5px]
             bg-slate-50 hover:bg-slate-100 placeholder:text-slate-400 "
           />
         </label>
