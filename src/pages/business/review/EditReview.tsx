@@ -36,6 +36,7 @@ const EditReview = (): JSX.Element => {
   const [editReview, setEditReview] = useRecoilState(editReviewAtom);
   const resetReviewData = useResetRecoilState(editReviewAtom);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
   // API 대댓글 생성
   const createReply = async (): Promise<string | null> => {
     const url = "/api/business/review/create";
@@ -101,6 +102,10 @@ const EditReview = (): JSX.Element => {
   };
   // 등록
   const hadleClickFinish = () => {
+    if (editReview.reviewReply === "") {
+      setError(true);
+      return;
+    }
     type === "create" ? createReply() : updateReply();
   };
 
@@ -125,12 +130,19 @@ const EditReview = (): JSX.Element => {
             style={{ resize: "none", height: "27.73vw", padding: "20px" }}
             value={editReview.reviewReply}
             onChange={e => {
+              if (e.target.value.trim() !== "") {
+                setError(false);
+              }
               setEditReview({
                 ...editReview,
                 reviewReply: e.target.value,
               });
             }}
+            status={error ? "error" : undefined}
           />
+          <p className="text-xs pt-2 text-error">
+            {error && "* 내용을 입력해주세요"}
+          </p>
         </Spin>
       </div>
 
@@ -139,6 +151,7 @@ const EditReview = (): JSX.Element => {
           color="primary"
           variant="outlined"
           className="text-xl font-semibold px-3 py-1 max-h-[50px] h-[16vw]"
+          onClick={() => navigate(-1)}
         >
           취소
         </Button>

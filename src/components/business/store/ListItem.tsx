@@ -50,7 +50,9 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState<any>(null);
   const [frequency, setFrequency] = useState("weekly");
-
+  useEffect(() => {
+    console.log("value", value);
+  }, [value]);
   const [areaCode, setAreaCode] = useState<string>("");
 
   // 편의 시설 클릭
@@ -416,7 +418,6 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
   const handleClickButton = () => {
     if (type === "strfPic") {
       navigateToEdit();
-      console.log("d이동");
       return;
     }
     if (type === "address") {
@@ -434,7 +435,8 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       type === "duration" && setValue(`${strfData.startAt}~${strfData.endAt}`);
       type === "checkTime" &&
         setValue([strfData.openCheck, strfData.closeCheck]);
-      type === "restDate" && setValue(strfData.restDate);
+      type === "restDate" &&
+        setValue(strfData.restDate.map(item => matchRestDataToKor(item)));
     }
     if (isEdit === true) {
       if (type === "title") {
@@ -516,9 +518,6 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     }
     if (type === "detail" && typeof strfData.detail === "string") {
       setValue(strfData.detail);
-    }
-    if (type === "restDate") {
-      setValue(strfData.restDate.map(item => matchRestDataToKor(item)));
     }
   }, [strfData, type]);
 

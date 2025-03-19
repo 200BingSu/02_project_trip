@@ -15,6 +15,14 @@ export interface IReviewItem extends IReview {
   reviewReplyId?: string;
   reviewReplyCreatedAt?: string;
   isMore?: boolean;
+  reviewId?: number;
+  userId?: number;
+  writerUserProfilePic?: string;
+  userName?: string;
+  content?: string;
+  ratingAvg?: number;
+  createdAt?: string;
+  reviewPicList?: string[];
 }
 
 const ReviewIndex = (): JSX.Element => {

@@ -9,6 +9,7 @@ import { FiSearch } from "react-icons/fi";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ProductPic } from "../../../constants/pic";
 import { categoryKor } from "../../../utils/match";
+import "swiper/css";
 
 const SearchBefore = () => {
   //쿠키
@@ -203,7 +204,7 @@ const SearchBefore = () => {
             {/* 최근 검색어 목록 */}
             <ul className="flex gap-3 flex-wrap">
               {isLoading ? (
-                <div className="flex justify-center items-center">
+                <div className="flex justify-center items-center gap-5">
                   <li className="text-transparent bg-slate-50 px-4 py-[6px] rounded-[20px] text-sm select-none">
                     제주
                   </li>

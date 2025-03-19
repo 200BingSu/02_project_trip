@@ -101,9 +101,13 @@ const SearchInTrip = () => {
     setIsLoading(true);
     try {
       const res = await axios.get<IAPI<ISearchData>>(
-        text?.trim() === ""
-          ? `${url}?trip_id=${tripId}&start_idx=${startInx}&category=${category}`
-          : `${url}?trip_id=${tripId}&start_idx=${startInx}&category=${category}&search_word=${text}`,
+        category === "ALL"
+          ? text?.trim() === ""
+            ? `${url}?trip_id=${tripId}&start_idx=${startInx}`
+            : `${url}?trip_id=${tripId}&start_idx=${startInx}&search_word=${text}`
+          : text?.trim() === ""
+            ? `${url}?trip_id=${tripId}&start_idx=${startInx}&category=${category}`
+            : `${url}?trip_id=${tripId}&start_idx=${startInx}&category=${category}&search_word=${text}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

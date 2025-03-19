@@ -10,6 +10,8 @@ import { useRecoilState } from "recoil";
 import { menuAtom } from "../../../atoms/menuAtom";
 import { CategoryType } from "../../../types/enum";
 import { matchName } from "../../../utils/match";
+import axios from "axios";
+import { getCookie } from "../../../utils/cookie";
 
 interface MenuItemProps {
   item: MenuType;
@@ -18,6 +20,11 @@ interface MenuItemProps {
 }
 
 const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
+  // 쿠키
+  const userInfo = getCookie("user");
+  const busiNum = userInfo.strfDtos.busiNum;
+  const accessToken = getCookie("accessToken");
+
   // useNavigate
   const navigate = useNavigate();
   const navigateToCreateRoom = () => {
@@ -46,6 +53,18 @@ const MenuItem = ({ strfId, item, category }: MenuItemProps) => {
   // useState
   const [isBottomOpen, setIsBottomOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+
+  // API 메뉴 삭제
+  const apiDeleteMenu = async () => {
+    const url = "/api/detail/menu";
+    try {
+      const res = await axios.delete(
+        `${url}?menuId=${item.menuId}&busiNum=${busiNum}`,
+      );
+    } catch (error) {
+      console.log("메뉴 삭제", error);
+    }
+  };
 
   const deleteMenu = () => {
     console.log("삭제");
