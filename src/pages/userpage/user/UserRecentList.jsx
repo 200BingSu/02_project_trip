@@ -198,9 +198,9 @@ const UserRecentList = () => {
                 {/* 찜하기 */}
                 <div className="flex gap-1 items-center text-sm">
                   {item.wishIn === 1 ? (
-                    <AiOutlineHeart className="text-slate-400 text-lg" />
-                  ) : (
                     <AiFillHeart className="text-secondary3 text-lg" />
+                  ) : (
+                    <AiOutlineHeart className="text-slate-400 text-lg" />
                   )}
                   <p className="text-slate-500">
                     {item.wishCnt?.toLocaleString()}

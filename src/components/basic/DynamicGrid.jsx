@@ -12,10 +12,8 @@ const DynamicGrid = ({ reviewPics, type = "review" }) => {
   const remainingCount = imageCount > 5 ? imageCount - 5 : 0;
 
   // 모든 이미지의 URL 생성
-  const allImageUrls = pics?.map(pic =>
-    type === "myReview"
-      ? `${ReviewPic}/${reviewPics.reviewId}/${pic.pic}`
-      : `${ReviewPic}/${reviewPics.strfId}/${pic.pic}`,
+  const allImageUrls = pics?.map(
+    pic => `${ReviewPic}/${reviewPics.reviewId}/${pic.pic}`,
   );
 
   return (
