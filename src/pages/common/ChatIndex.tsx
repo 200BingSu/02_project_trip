@@ -6,6 +6,7 @@ import ChatList from "../../components/chat/ChatList";
 import TitleHeaderTs from "../../components/layout/header/TitleHeaderTs";
 import { IChatList } from "../../types/interface";
 import { getCookie } from "../../utils/cookie";
+import NoData from "../../components/common/NoData";
 
 // interface IChatCategory {
 //   key: string;
@@ -96,12 +97,7 @@ const ChatIndex = () => {
         {chatList.length > 0 ? (
           <ChatList category={category} chatList={chatList} />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full gap-[16px] pt-28">
-            <i className="text-6xl text-slate-400">
-              <LiaComment />
-            </i>
-            <p className="text-slate-400">채팅 목록이 없습니다.</p>
-          </div>
+          <NoData content="채팅 목록이 없습니다" />
         )}
       </div>
     </div>
