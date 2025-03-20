@@ -11,6 +11,7 @@ import { Button, Checkbox, Input, InputNumber, Radio } from "antd";
 import { getCookie } from "../../../utils/cookie";
 import dayjs from "dayjs";
 import "dayjs/locale/ko"; // 한국어 locale 추가
+import jwtAxios from "../../../apis/jwt";
 
 const CheckboxGroup = Checkbox.Group;
 const plainOptions = [
@@ -70,7 +71,8 @@ const BookingIndex = () => {
   const [indeterminate, setIndeterminate] = useState(false);
   //    금액
 
-  const [point, setPoint] = useState("99");
+  const [point, setPoint] = useState(0);
+  const [usePoint, setUsePoint] = useState(0);
 
   const [discount, setDiscount] = useState(0);
   const [finallPrice, setFinallPrice] = useState(
@@ -86,6 +88,17 @@ const BookingIndex = () => {
     console.log("selectCoupon", selectCoupon);
     if (selectCoupon.discountPer) {
       setDiscount(selectCoupon.discountPer);
+
+      // 쿠폰 적용 시 포인트 사용액 재조정
+      const originalPrice =
+        locationState?.item.menuPrice * locationState?.quantity || 0;
+      const newDiscountedPrice =
+        originalPrice - originalPrice * (selectCoupon.discountPer / 100);
+
+      // 현재 사용 중인 포인트가 새로운 할인가보다 크면 조정
+      if (usePoint > newDiscountedPrice) {
+        setUsePoint(newDiscountedPrice);
+      }
     } else {
       setDiscount(0);
     }
@@ -179,6 +192,18 @@ const BookingIndex = () => {
       console.log("예약하기 결과:", error);
     }
   };
+
+  // 포인트 확인
+  const getPoint = async () => {
+    try {
+      const res = await jwtAxios.get(`/api/point/remain-point`);
+      setPoint(res.data.data);
+      console.log("Point ", res.data.data);
+    } catch (error) {
+      console.log(" error", error);
+    }
+  };
+
   const onChange = list => {
     setCheckedList(list);
     setIndeterminate(list.length > 0 && list.length < plainOptions.length);
@@ -197,9 +222,57 @@ const BookingIndex = () => {
       .format("YYYY년 MM월 DD일 (ddd)");
   };
 
+  // 포인트 입력 핸들러
+  const handlePointChange = e => {
+    const value = Number(e.target.value);
+    if (isNaN(value)) return;
+
+    // 상품 가격에서 쿠폰 할인된 금액 계산
+    const originalPrice =
+      locationState?.item.menuPrice * locationState?.quantity || 0;
+    const discountedPrice = originalPrice - calculateDiscount();
+
+    // 할인된 가격을 초과하지 않는 선에서 포인트 사용
+    if (value > discountedPrice) {
+      setUsePoint(discountedPrice);
+    } else if (value > point) {
+      setUsePoint(point);
+    } else if (value < 0) {
+      setUsePoint(0);
+    } else {
+      setUsePoint(value);
+    }
+  };
+
+  // 전액사용 버튼 클릭 시
+  const handleUseAllPoints = () => {
+    const discountedPrice =
+      (locationState?.item.menuPrice * locationState?.quantity || 0) -
+      calculateDiscount();
+    // 보유 포인트와 할인된 가격 중 작은 값을 사용
+    setUsePoint(Math.min(point, discountedPrice));
+  };
+
+  const calculateDiscount = () => {
+    if (!discount || discount === 0) return 0;
+    const originalPrice = locationState?.item.menuPrice || 0;
+    return Math.floor(originalPrice * (discount / 100));
+  };
+
+  const calculateFinalPrice = () => {
+    const originalPrice =
+      locationState?.item.menuPrice * locationState?.quantity || 0;
+    const discountAmount = (discount / 100) * originalPrice;
+    const finalPrice = originalPrice - discountAmount - usePoint;
+
+    // 최종 금액이 0 미만이 되지 않도록 체크
+    return Math.max(0, finalPrice);
+  };
+
   // 화면 최초 실행
   useEffect(() => {
     getUserInfo();
+    getPoint();
     getAbleCouponList();
   }, []);
   return (
@@ -323,14 +396,15 @@ const BookingIndex = () => {
                 </p>
 
                 <Input
-                  value={point}
-                  onChange={setPoint}
+                  type="number"
+                  value={usePoint}
+                  onChange={handlePointChange}
                   className="text-xs text-right border p-3"
+                  min={0}
+                  max={point}
                 />
                 <Button
-                  onClick={() => {
-                    setPoint(99);
-                  }}
+                  onClick={handleUseAllPoints}
                   className="text-xs text-slate-500 h-auto py-3"
                 >
                   전액사용
@@ -363,13 +437,13 @@ const BookingIndex = () => {
             <li className="w-full flex items-center justify-between">
               <h4 className="text-sm text-slate-500">포인트사용</h4>
               <p className="text-base text-slate-700">
-                {discount === 0 ? "0원" : `${discount}%`}
+                {usePoint === 0 ? "0원" : `-${usePoint.toLocaleString()}원`}
               </p>
             </li>
             <li className="w-full flex items-center justify-between">
               <h4 className="text-sm text-slate-500">쿠폰 할인</h4>
               <p className="text-base text-slate-700">
-                {discount === 0 ? "0원" : `${discount}%`}
+                {calculateDiscount().toLocaleString()}원
               </p>
             </li>
           </ul>
@@ -378,19 +452,7 @@ const BookingIndex = () => {
               총 결제 금액
             </h4>
             <p className="text-lg text-primary font-semibold">
-              <span>
-                {/* {(
-                    locationState?.item.menuPrice -
-                    (selectCoupon.discountPer / 100) *
-                      locationState?.item.menuPrice
-                  ).toLocaleString()} */}
-                {(
-                  locationState?.item.menuPrice * locationState?.quantity -
-                  (discount / 100) *
-                    (locationState?.item.menuPrice * locationState?.quantity)
-                ).toLocaleString()}
-              </span>
-              원
+              <span>{calculateFinalPrice().toLocaleString()}</span>원
             </p>
           </div>
         </div>

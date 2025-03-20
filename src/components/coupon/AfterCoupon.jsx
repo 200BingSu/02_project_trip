@@ -47,7 +47,7 @@ const AfterCoupon = () => {
                     (
                     {item.expiredAt.split(" ")[0].replaceAll("-", ".") +
                       " " +
-                      item.expiredAt.split(" ")[1].slice(0, 5)}
+                      item.expiredAt}
                     까지)
                   </span>
                 </p>

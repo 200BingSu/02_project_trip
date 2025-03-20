@@ -10,8 +10,21 @@ import Footer from "../../Footer";
 import Bookings from "../../../components/user/Bookings";
 import axios from "axios";
 import { getCookie } from "../../../utils/cookie";
+import { Tabs } from "antd";
+import "../../../styles/antd-styles.css";
 
-const categoryArr = ["예약 목록", "예약 완료"];
+const items = [
+  {
+    key: "1",
+    label: "예약",
+    children: "Content of Tab Pane 1",
+  },
+  {
+    key: "2",
+    label: "예약 완료",
+    children: "Content of Tab Pane 2",
+  },
+];
 
 const UserBooking = () => {
   // 쿠키
@@ -56,35 +69,46 @@ const UserBooking = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-[30px]">
+    <div className="flex flex-col">
       <TitleHeader icon="back" title="내 예약" onClick={navigateBack} />
-      <div className="flex flex-col gap-[20px] w-full">
+      <div className="flex flex-col w-full">
         {/* 카테고리 버튼 */}
         <div>
-          <ul className="flex gap-6 w-full border-b border-slate-200 px-[32px]">
-            {categoryArr.map((item, index) => {
-              return (
-                <li
-                  key={index}
-                  onClick={() => setCategory(index)}
-                  className={`flex justify-center items-center 
-                  pt-[17px] pb-[16px]
-                  text-lg cursor-pointer
-                  border-b-[2px] transition-all duration-300 ease-in-out
-                  ${index === category ? "border-primary text-primary" : "border-transparent text-slate-500 hover:text-primary"}`}
-                >
-                  {item}
-                </li>
-              );
-            })}
-          </ul>
+          <Tabs
+            className="custom-tabs-nav custom-tabs-coupon"
+            defaultActiveKey="1"
+            items={[
+              {
+                label: "사용가능 쿠폰",
+                key: "1",
+                children: (
+                  <>
+                    {bookingList?.map((item, index) => {
+                      return <Bookings key={index} data={item} />;
+                    })}{" "}
+                  </>
+                ),
+              },
+              {
+                label: "사용 / 만료 쿠폰",
+                key: "2",
+                children: (
+                  <>
+                    {bookingList?.map((item, index) => {
+                      return <Bookings key={index} data={item} />;
+                    })}{" "}
+                  </>
+                ),
+              },
+            ]}
+          />
         </div>
 
         {/* 내용 */}
-        <div className="min-h-[500px] flex flex-col justify-center items-center">
-          {bookingList?.map((item, index) => {
+        <div className="flex flex-col justify-center items-center">
+          {/* {bookingList?.map((item, index) => {
             return <Bookings key={index} data={item} />;
-          })}
+          })} */}
           {/* {category === 0 ? (
                 beforeList.length > 0 ? (
                   <div>

@@ -1,10 +1,15 @@
 import { BiCheck } from "react-icons/bi";
 import TitleHeaderTs from "../layout/header/TitleHeaderTs";
 import { Button } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const PointComplete = (): JSX.Element => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // 쿼리 파라미터에서 값 추출
+  const amount = Number(searchParams.get("amount")).toLocaleString();
+  const remainPoint = Number(searchParams.get("remain_point")).toLocaleString();
 
   return (
     <div>
@@ -21,15 +26,15 @@ const PointComplete = (): JSX.Element => {
         <div>
           <div className="w-full flex flex-col gap-3 py-6 border-t border-b border-slate-100">
             <dl className="flex items-center justify-between">
-              <dt className="text-base text-slate-500 ">충전 금액</dt>
+              <dt className="text-base text-slate-500">충전 금액</dt>
               <dd className="text-base text-slate-700 font-semibold">
-                100,000원
+                {amount}원
               </dd>
             </dl>
             <dl className="flex items-center justify-between">
-              <dt className="text-base text-slate-500 ">포인트 잔액</dt>
+              <dt className="text-base text-slate-500">포인트 잔액</dt>
               <dd className="text-base text-slate-700 font-semibold">
-                100,000원
+                {remainPoint}원
               </dd>
             </dl>
           </div>
@@ -41,7 +46,7 @@ const PointComplete = (): JSX.Element => {
         <div className="w-full flex gap-3">
           <Button
             className="w-full h-auto py-3 text-slate-500 text-base"
-            onClick={() => navigate("/user/index")}
+            onClick={() => navigate("/")}
           >
             홈으로
           </Button>
