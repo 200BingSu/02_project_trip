@@ -67,7 +67,7 @@ const SingInIndex = () => {
       loginType === "personal" ? USER.signInUser : USER.signInBusiness;
     try {
       const res = await axios.post<IPostLogin>(`${url}`, data);
-      console.log("로그인 시도:", res.data);
+      // console.log("로그인 시도:", res.data);
       const resultData = res.data;
       if (resultData.code === "200 성공") {
         // console.log("현재 시각:", moment().format("H:mm:ss"));
@@ -89,7 +89,7 @@ const SingInIndex = () => {
           strfDtos: resultData.strfDtos,
         });
       }
-      console.log(resultData.role);
+      // console.log(resultData.role);
       // 사업자 탭 분리안되어 있어서 임시조치
       if (resultData.role.includes(ROLE.BUSI) === true) {
         navigateToBusiness();

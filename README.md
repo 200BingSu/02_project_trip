@@ -8,10 +8,22 @@
 
 QUADRUPLE은 2차, 3차 프로젝트를 바탕으로 시작되었으며, 여행을 계획하고 공유할 수 있는 다양한 기능을 제공합니다:
 
+### 👥 사용자
+
 - 🗺️ 여행지 검색
 - 📅 여행 일정 관리
 - 📌 일정 공유 및 공유된 일정 담기
 - 🏨 숙소 예약
+
+### 📝 사업자
+
+- 🏢 업체 등록, 수정 및 폐업
+- 📊 매출 현황 조회
+- 📋 예약 현황 조회
+- 🍽️ 메뉴 등록, 수정 및 삭제
+- 🎫 쿠폰 등록, 수정 및 삭제
+- 💳 포인트 조회 및 QR 생성
+- ⭐ 리뷰 등록, 수정 및 삭제
 
 ## **👥 참여 인원**
 
@@ -32,7 +44,7 @@ QUADRUPLE은 2차, 3차 프로젝트를 바탕으로 시작되었으며, 여행�
 | **HTTP 통신**              | Axios                                                            |
 | **UI 라이브러리**          | Ant Design, react-icons, swiper, @emotion/react, @emotion/styled |
 | **드래그 앤 드롭**         | @dnd-kit/core, @dnd-kit/sortable                                 |
-| **지도 API**               | react-kakao-maps-sdk                                             |
+| **지도 API**               | react-kakao-maps-sdk, kakao rest api                             |
 | **주소 검색**              | react-daum-postcode                                              |
 | **날짜 관리**              | date-fns, dayjs, moment                                          |
 | **일정 관리**              | react-datepicker                                                 |
@@ -62,7 +74,3 @@ QUADRUPLE은 2차, 3차 프로젝트를 바탕으로 시작되었으며, 여행�
 ## ⚡ 프로젝트 정보
 
 이 프로젝트는 **React + Vite** 기반으로 개발되었습니다.
-
-## 문제 해결
-
-- 폴더 구조 꼬임 문제.

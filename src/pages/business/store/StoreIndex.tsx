@@ -21,8 +21,8 @@ const StoreIndex = (): JSX.Element => {
   const category = searchParams.get("category");
   const tab = Number(searchParams.get("tab"));
   //recoil
-  const [strfData, setStrfData] = useRecoilState(strfAtom);
-  console.log("strfData", strfData);
+  const [, setStrfData] = useRecoilState(strfAtom);
+  // console.log("strfData", strfData);
   //useState
   const [cateIndex, setCateIndex] = useState<number>(tab);
   const [isLoading, setIsLoading] = useState(false);
