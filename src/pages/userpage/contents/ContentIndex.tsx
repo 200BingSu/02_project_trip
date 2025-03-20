@@ -64,7 +64,11 @@ const ContentIndex = (): JSX.Element => {
           <section className="w-full h-[10px] bg-slate-100" />
           <section>
             {contentData?.category === "STAY" && (
-              <Parlor strfId={strfId} menuData={menuData} />
+              <Parlor
+                strfId={strfId}
+                menuData={menuData}
+                contentData={contentData}
+              />
             )}
             {contentData?.category === "RESTAUR" && (
               <DishBoard strfId={strfId} menuData={menuData} />
