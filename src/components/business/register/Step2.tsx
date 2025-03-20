@@ -88,7 +88,11 @@ const Step2 = ({
 
             <li className="flex flex-col gap-1" ref={checkTimeRef}>
               <h3 className="text-slate-700 text-lg font-semibold">
-                <i className="text-secondary3_3">*</i> 입실/퇴실 시간
+                <i className="text-secondary3_3">*</i>{" "}
+                {register.category === CategoryType.STAY && "입실 및 퇴실 시간"}
+                {register.category === CategoryType.FEST && "개장 시간"}
+                {register.category === CategoryType.RESTAURANT && "영업 시간"}
+                {register.category === CategoryType.TOUR && "개장 시간"}
               </h3>
               <p className="text-base text-slate-500">
                 {register.category === CategoryType.STAY &&
@@ -96,14 +100,18 @@ const Step2 = ({
                 {register.category === CategoryType.FEST &&
                   "축제의 개장 시간을 입력해주세요."}
                 {register.category === CategoryType.RESTAURANT &&
-                  "식당의 엽업 시간을 입력해주세요."}
+                  "식당의 영업 시간을 입력해주세요."}
                 {register.category === CategoryType.TOUR &&
                   "관광지의 개장 시간을 입력해주세요."}
               </p>
               <label className="text-sm text-slate-700 flex items-center gap-3 whitespace-nowrap w-full">
-                입실
+                {register.category === CategoryType.STAY ? "입실" : "시작"}
                 <TimePicker
-                  placeholder="입실 시간을 지정해주세요"
+                  placeholder={
+                    register.category === CategoryType.STAY
+                      ? "입실 시간을 지정해주세요"
+                      : "시작 시간을 지정해주세요"
+                  }
                   size="large"
                   className="w-full"
                   onChange={value => {
@@ -125,9 +133,13 @@ const Step2 = ({
                 />
               </label>
               <label className="text-sm text-slate-700 flex items-center gap-3 whitespace-nowrap w-full">
-                퇴실
+                {register.category === CategoryType.STAY ? "퇴실" : "마감"}
                 <TimePicker
-                  placeholder="퇴실 시간을 지정해주세요"
+                  placeholder={
+                    register.category === CategoryType.STAY
+                      ? "퇴실 시간을 지정해주세요"
+                      : "마감 시간을 지정해주세요"
+                  }
                   size="large"
                   className="w-full"
                   onChange={value => {
@@ -187,6 +199,9 @@ const Step2 = ({
                       holiday: { ...prev.holiday, day: value },
                     }));
                   }}
+                  disabled={
+                    register.holiday?.frequency === "none" ? true : false
+                  }
                 />
               </div>
             </li>

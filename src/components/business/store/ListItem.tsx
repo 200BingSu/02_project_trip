@@ -50,23 +50,19 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState<any>(null);
   const [frequency, setFrequency] = useState("weekly");
-  useEffect(() => {
-    console.log("value", value);
-  }, [value]);
+  // useEffect(() => {
+  //   console.log("value", value);
+  // }, [value]);
   const [areaCode, setAreaCode] = useState<string>("");
 
   // 편의 시설 클릭
   const handleAmenityClick = (amenityId: number) => {
-    if (strfData.amenity?.includes(amenityId) === true) {
-      setStrfData(prev => ({
-        ...prev,
-        amenity: prev.amenity.filter(item => item !== amenityId),
-      }));
+    if (value?.includes(amenityId) === true) {
+      setValue((prev: any) => [
+        ...prev.filter((item: any) => item !== amenityId),
+      ]);
     } else {
-      setStrfData(prev => ({
-        ...prev,
-        amenity: [...strfData.amenity, amenityId],
-      }));
+      setValue((prev: any) => [...prev, amenityId]);
     }
   };
   // API 상품 조회
@@ -264,7 +260,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       strfId: strfId,
       busiNum: busiNum,
       category: categoryKor(category),
-      ameniPoints: strfData.amenity,
+      ameniPoints: value,
     };
     const formatAmenity = strfData.amenity.map(item => {
       return `ameniPoints=${item}`;
@@ -295,12 +291,15 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       return null;
     }
   };
+  // API 편의시설 삭제
   const deleteAmenity = async () => {
     const url = "/api/detail/amenity";
+    // const payload = strfData.amenity;
     try {
       const res = await axios.delete(
         `${url}?strfId=${strfId}&busiNum=${busiNum}`,
         {
+          // data: payload,
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -490,10 +489,28 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
           value?.trim() !== "" && updateTitle();
         }
       }
+      if (type === "state") {
+        if (value === strfData.state) {
+          message.warning("동일한 상태이기 때문에 수정을 취소합니다");
+        } else {
+          updateState();
+        }
+      }
+      if (type === "tell") {
+        if (areaCode === strfData.areaCode || value === strfData.tell) {
+          message.warning("동일한 전화번호이기 때문에 수정을 취소합니다");
+        } else {
+          areaCode !== "" && value !== "" && updateTell();
+        }
+      }
+      if (type === "detail") {
+        if (value === strfData.detail) {
+          message.warning("동일한 상품소개이기 때문에 수정을 취소합니다");
+        } else {
+          value.trim() !== "" && updateDetail();
+        }
+      }
 
-      type === "state" && updateState();
-      type === "tell" && areaCode !== "" && value !== "" && updateTell();
-      type === "detail" && updateDetail();
       type === "amenity" && deleteAmenity();
       type === "duration" && updateDuration();
       type === "checkTime" && updateCheckTime();
@@ -563,6 +580,9 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     if (type === "detail" && typeof strfData.detail === "string") {
       setValue(strfData.detail);
     }
+    if (type === "amenity") {
+      setValue([...strfData.amenity]);
+    }
   }, [strfData, type]);
 
   return (
@@ -623,7 +643,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
                   return (
                     <li
                       key={index}
-                      className="bg-slate-100 rounded-lg overflow-hidden"
+                      className="bg-slate-100 rounded-lg overflow-hidden w-full max-h-[200px] h-[53.33vw]"
                     >
                       <img
                         src={`${ProductPic}/${strfId}/${item.strfPic}`}
@@ -690,7 +710,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
                 key={index}
                 className={`flex text-base items-center gap-2
                           border rounded-2xl w-fit px-2 py-1
-                          ${strfData.amenity.includes(item.amenity_id as number) ? "border-primary text-primary" : "border-slate-300 text-slate-500"}`}
+                          ${value.includes(item.amenity_id as number) ? "border-primary text-primary" : "border-slate-300 text-slate-500"}`}
                 onClick={() => handleAmenityClick(item.amenity_id as number)}
               >
                 {item.icon}

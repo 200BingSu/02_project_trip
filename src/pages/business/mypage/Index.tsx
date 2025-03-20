@@ -10,7 +10,8 @@ import { useRecoilValue, useResetRecoilState } from "recoil";
 import { salesAtom } from "../../../atoms/salesAtom";
 import { tsUserAtom } from "../../../atoms/tsuserAtom";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
-import { CategoryType, ProviderType, ROLE } from "../../../types/enum";
+import { ProfilePic } from "../../../constants/pic";
+import { CategoryType, ROLE } from "../../../types/enum";
 import { IAPI } from "../../../types/interface";
 import { getCookie, removeCookie, setCookie } from "../../../utils/cookie";
 import {
@@ -19,7 +20,6 @@ import {
   matchMenuIcon,
   matchName,
 } from "../../../utils/match";
-import { ProfilePic } from "../../../constants/pic";
 
 const Index = (): JSX.Element => {
   // useNavigate
@@ -30,7 +30,7 @@ const Index = (): JSX.Element => {
   // 쿠키
   const userInfo = getCookie("user");
   const accessToken = getCookie("accessToken");
-  console.log("쿠키", userInfo);
+  // console.log("쿠키", userInfo);
   const strfId = userInfo?.strfDtos[0]?.strfId;
   const category =
     categoryToEnum(userInfo?.strfDtos[0]?.category) || CategoryType.STAY;
@@ -51,6 +51,7 @@ const Index = (): JSX.Element => {
   // api 유저 정보 조회
   const getUserInfo = async () => {
     const url = "/api/user/userInfo";
+    setIsLoading(true);
     try {
       const res = await axios.get(url, {
         headers: {
@@ -61,9 +62,11 @@ const Index = (): JSX.Element => {
       if (resultData) {
         setUseProfile(resultData.data);
       }
-      console.log("유저 정보", resultData);
+      // console.log("유저 정보", resultData);
     } catch (error) {
       console.log("유저 정보 조회", error);
+    } finally {
+      setIsLoading(false);
     }
   };
   // API 관리자 채팅방 생성
@@ -246,17 +249,25 @@ const Index = (): JSX.Element => {
       <div className="flex flex-col gap-5">
         {/* 사장님 프로필 */}
         <div className="flex flex-col items-center gap-5 px-5 pt-5 pb-4 ">
-          <div className="mx-auto w-32 h-32 rounded-full overflow-hidden bg-slate-100">
-            <img
-              src={`${ProfilePic}/${userInfo?.userId}/${useProfile?.profilePic}`}
-              alt="User-Profile"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {isLoading && (
+            <div className="mx-auto w-32 h-32 rounded-full overflow-hidden bg-slate-100"></div>
+          )}
+          {!isLoading && (
+            <div className="mx-auto w-32 h-32 rounded-full overflow-hidden bg-slate-100">
+              <img
+                src={`${ProfilePic}/${userInfo?.userId}/${useProfile?.profilePic}`}
+                alt="User-Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <div className="text-2xl text-slate-700 flex items-end gap-2">
-            <span className="text-3xl font-semibold line-clamp-1">
-              {recoilInfo?.name}
-            </span>{" "}
+            {isLoading && <span className="text-transparent">닉네임</span>}
+            {!isLoading && (
+              <span className="text-3xl font-semibold line-clamp-1">
+                {recoilInfo?.name}
+              </span>
+            )}
           </div>
         </div>
         {/* 라인 */}
@@ -310,7 +321,7 @@ const Index = (): JSX.Element => {
                         <li
                           key={subIndex}
                           className="px-10 py-2 text-xl text-slate-500 cursor-pointer
-                      hover:bg-slate-100 transition-all duration-300"
+                      hover:bg-slate-100 transition-all duration-300 flex items-center justify-between"
                           onClick={() => navigate(subItem.path)}
                         >
                           {subItem.name}
@@ -330,14 +341,17 @@ const Index = (): JSX.Element => {
                         ? handleOpenOption(index)
                         : navigate(item.path);
                     }}
-                    className={`flex items-center gap-4 text-2xl font-medium text-slate-700
+                    className={`w-full flex items-center justify-between gap-4 text-2xl font-medium text-slate-700
                       ${category === CategoryType.STAY ? "" : "hidden"}`}
                   >
-                    <i className="text-2xl text-slate-400">{item.icon}</i>
-                    {item.name}
+                    <div className="flex items-center gap-4">
+                      <i className="text-2xl text-slate-400">{item.icon}</i>
+                      {item.name}
+                    </div>
+
                     {item.subMenu && (
                       <i
-                        className={`text-2xl text-slate-500 ${
+                        className={`text-2xl text-slate-300 ${
                           openOption === index && isOpenOption === true
                             ? "rotate-90"
                             : "rotate-0"
@@ -363,7 +377,7 @@ const Index = (): JSX.Element => {
                       {item.subMenu.map((subItem, subIndex) => (
                         <li
                           key={subIndex}
-                          className="px-10 text-xl text-slate-500 py-1 cursor-pointer"
+                          className="px-10 text-xl text-slate-500 py-1 cursor-pointer "
                           onClick={() => navigate(subItem.path)}
                         >
                           {subItem.name}

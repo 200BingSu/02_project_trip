@@ -47,7 +47,7 @@ const ChatIndex = () => {
         },
       );
       const resultData = res.data;
-      console.log("채팅 목록 조회", resultData);
+      // console.log("채팅 목록 조회", resultData);
       if (resultData.code === "200 성공") {
         setChatLlist(resultData.data);
       }

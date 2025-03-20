@@ -50,6 +50,12 @@ interface PType {
   restdates: string[];
 }
 
+interface postDataType {
+  strfId: number;
+  title: string;
+  category: string;
+}
+
 const RegisterIndex = (): JSX.Element => {
   //useNavigate
   const navigate = useNavigate();
@@ -85,12 +91,14 @@ const RegisterIndex = (): JSX.Element => {
   const bioRef = useRef<HTMLLIElement>(null);
 
   // API 상품 등록
-  const createStrf = async (data: FormData): Promise<IAPI<string> | null> => {
+  const createStrf = async (
+    data: FormData,
+  ): Promise<IAPI<postDataType> | null> => {
     const url = "/api/detail/info";
     setIsLoading(true);
 
     try {
-      const res = await axios.post<IAPI<string>>(url, data, {
+      const res = await axios.post<IAPI<postDataType>>(url, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -105,7 +113,12 @@ const RegisterIndex = (): JSX.Element => {
         setCookie("user", {
           ...userInfo,
           strfDtos: [
-            { ...userInfo.strfDtos[0], strfId: resultData.data },
+            {
+              ...userInfo.strfDtos[0],
+              strfId: resultData.data.strfId,
+              title: resultData.data.title,
+              category: resultData.data.category,
+            },
             ...userInfo.strfDtos,
           ],
         });

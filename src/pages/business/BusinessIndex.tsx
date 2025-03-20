@@ -54,7 +54,7 @@ const BusinessIndex = (): JSX.Element => {
   // recoil
   const userData = useRecoilValue(tsUserAtom);
   const userName = userData.name;
-  console.log(userName);
+  // console.log(userName);
   // const category = userInfo.strfDtos?.[0]?.category;
 
   const todayMonth = dayjs().format("YYYY-MM");

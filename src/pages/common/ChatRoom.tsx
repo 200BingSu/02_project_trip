@@ -113,7 +113,7 @@ const ChatRoom = (): JSX.Element => {
 
   useEffect(() => {
     getChatHistory();
-    console.log("page", page);
+    // console.log("page", page);
   }, [page, getChatHistory]);
 
   // 커넥션
