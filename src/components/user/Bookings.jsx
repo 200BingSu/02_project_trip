@@ -174,13 +174,17 @@ const Bookings = data => {
         return "bg-[rgba(253,180,161,0.3)] text-secondary3";
     }
   };
+
   const matchButton = state => {
     switch (state) {
       case 0:
       case 1:
         return (
           <>
-            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
+            <Button
+              onClick={() => navigate(`/contents/index?strfId=${strfId}`)}
+              className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
+            >
               상세보기
             </Button>
             <Button
@@ -194,7 +198,10 @@ const Bookings = data => {
       case 2:
         return (
           <>
-            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
+            <Button
+              onClick={() => navigate(`/contents/index?strfId=${strfId}`)}
+              className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
+            >
               상세보기
             </Button>
             <Button
@@ -208,7 +215,10 @@ const Bookings = data => {
       case 3:
         return (
           <>
-            <Button className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700">
+            <Button
+              onClick={() => navigate(`/contents/index?strfId=${strfId}`)}
+              className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
+            >
               상세보기
             </Button>
           </>

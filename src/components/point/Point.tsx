@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import QrScanner from "qr-scanner";
 import TitleHeaderTs from "../layout/header/TitleHeaderTs";
+import { AiOutlineScan } from "react-icons/ai";
 
 interface PointProps {
   handleClose?: () => void;
@@ -17,12 +18,12 @@ const Point = ({ handleClose }: PointProps): JSX.Element => {
         result => {
           console.log("QR 코드 인식:", result.data);
           setQrResult(result.data);
-          stopCamera(); // 스캔 후 카메라 종료
         },
         { returnDetailedScanResult: true },
       );
 
       setScanner(qrScanner);
+      startCamera(); // 컴포넌트가 마운트될 때 카메라 자동 실행
     }
   }, []);
 
@@ -43,18 +44,9 @@ const Point = ({ handleClose }: PointProps): JSX.Element => {
     }
   };
 
-  // 카메라 종료
-  const stopCamera = () => {
-    if (videoRef.current?.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
-      scanner?.stop();
-    }
-  };
-
   useEffect(() => {
     if (qrResult) {
-      if (qrResult.startsWith("https://")) {
+      if (qrResult.startsWith("http://")) {
         window.location.href = qrResult; // 결제 페이지로 이동
       } else {
         alert("유효한 결제 QR 코드가 아닙니다.");
@@ -63,37 +55,30 @@ const Point = ({ handleClose }: PointProps): JSX.Element => {
   }, [qrResult]);
   return (
     <div className="max-w-[768px] w-full h-screen fixed top-0 left-1/2 -translate-x-1/2 bg-white z-50">
-      <TitleHeaderTs icon="" onClick={handleClose} />
-      <div style={{ textAlign: "center", padding: "20px" }}>
-        <h2>QR 코드 스캔</h2>
+      <TitleHeaderTs icon="close" title="포인트 결제" onClick={handleClose} />
+      <div className="relative ">
         {!qrResult ? (
           <>
-            <button
-              onClick={startCamera}
-              style={{ padding: "10px 20px", fontSize: "16px" }}
-            >
-              📷 카메라 열기
-            </button>
             <video
               ref={videoRef}
               autoPlay
               playsInline
-              style={{ width: "100%", maxWidth: "500px", marginTop: "10px" }}
+              className="w-full h-full "
             />
-            <button
-              onClick={stopCamera}
-              style={{
-                marginTop: "10px",
-                padding: "10px 20px",
-                fontSize: "16px",
-              }}
-            >
-              ❌ 카메라 종료
-            </button>
+            <div className="absolute top-20 left-10 w-10 h-10 rounded-tl-xl border-t-4 border-l-4 border-primary"></div>
+            <div className="absolute top-20 right-10 w-10 h-10 rounded-tr-xl border-t-4 border-r-4 border-primary"></div>
+            <div className="absolute bottom-40 left-10 w-10 h-10 rounded-bl-xl border-b-4 border-l-4 border-primary"></div>
+            <div className="absolute bottom-40 right-10 w-10 h-10 rounded-br-xl   border-b-4 border-r-4 border-primary"></div>
           </>
         ) : (
           <h3>📌 QR 코드 결과: {qrResult}</h3>
         )}
+        <div className="flex flex-col justify-center items-center mt-6 gap-1">
+          <AiOutlineScan className="text-2xl text-slate-400 mr-1" />
+          <p className="text-slate-700 text-base">
+            <b>QR코드</b>를 촬영해주세요
+          </p>
+        </div>
       </div>
     </div>
   );

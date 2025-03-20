@@ -13,19 +13,6 @@ import { getCookie } from "../../../utils/cookie";
 import { Tabs } from "antd";
 import "../../../styles/antd-styles.css";
 
-const items = [
-  {
-    key: "1",
-    label: "예약",
-    children: "Content of Tab Pane 1",
-  },
-  {
-    key: "2",
-    label: "예약 완료",
-    children: "Content of Tab Pane 2",
-  },
-];
-
 const UserBooking = () => {
   // 쿠키
   const accessToken = getCookie("accessToken");
@@ -79,24 +66,28 @@ const UserBooking = () => {
             defaultActiveKey="1"
             items={[
               {
-                label: "사용가능 쿠폰",
+                label: "예약 목록",
                 key: "1",
                 children: (
                   <>
-                    {bookingList?.map((item, index) => {
-                      return <Bookings key={index} data={item} />;
-                    })}{" "}
+                    {bookingList
+                      ?.filter(item => item.state === 0 || item.state === 1) // state가 0 또는 1인 경우만 필터링
+                      .map((item, index) => (
+                        <Bookings key={index} data={item} />
+                      ))}
                   </>
                 ),
               },
               {
-                label: "사용 / 만료 쿠폰",
+                label: "예약 완료",
                 key: "2",
                 children: (
                   <>
-                    {bookingList?.map((item, index) => {
-                      return <Bookings key={index} data={item} />;
-                    })}{" "}
+                    {bookingList
+                      ?.filter(item => item.state === 2 || item.state === 3) // state가 0 또는 1인 경우만 필터링
+                      .map((item, index) => (
+                        <Bookings key={index} data={item} />
+                      ))}
                   </>
                 ),
               },
