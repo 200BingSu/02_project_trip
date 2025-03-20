@@ -86,6 +86,7 @@ const MakeQr = () => {
               return "";
             }}
             parser={value => value?.replace(/,/g, "") as unknown as number}
+            onPressEnter={createQr}
           />
           <Button
             type="primary"

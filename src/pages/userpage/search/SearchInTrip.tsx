@@ -83,7 +83,7 @@ const SearchInTrip = () => {
         },
       );
       const resultData = res.data;
-      console.log("일정 기본 검색", resultData);
+      // console.log("일정 기본 검색", resultData);
       if (resultData.code === "200 성공") {
         setSearchList(resultData.data.list);
         setIsMore(resultData.data.more);
@@ -116,7 +116,7 @@ const SearchInTrip = () => {
         },
       );
       const resultData = res.data;
-      console.log("일정 추가 검색", resultData);
+      // console.log("일정 추가 검색", resultData);
       if (resultData.code === "200 성공") {
         setSearchList(resultData.data.list);
         setIsMore(resultData.data.more);

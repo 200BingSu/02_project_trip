@@ -7,7 +7,10 @@ export const tripAtom = atom({
     day: 1,
     lastSeq: 0,
     prevScheName: "",
-    prevSchelat: "",
-    prevSchelng: "",
+    prevSchelat: 0,
+    prevSchelng: 0,
+    nowName: "",
+    nowLat: 0,
+    nowLng: 0,
   },
 });

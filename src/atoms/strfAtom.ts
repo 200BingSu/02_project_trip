@@ -31,7 +31,7 @@ export const strfAtom = atom<IStrf>({
     wishIn: 0,
     recentCheck: 0,
     recentCheckStatus: 0,
-    strfPics: [{ strfId: "", strfPic: "" }],
+    strfPics: [{ strfId: "", strfPics: "" }],
     restDate: [],
     amenity: [],
   },
