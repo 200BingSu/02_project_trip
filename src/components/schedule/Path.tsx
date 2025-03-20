@@ -51,8 +51,12 @@ const Path = ({ open, onClose }: PathProps) => {
       );
       const resultData = res.data;
       // console.log("길찾기 결과", resultData);
+
       setPathList(resultData.data);
       setPathcode(resultData.code);
+      if (trip.lastSeq === 0) {
+        createSchedule();
+      }
       return resultData;
     } catch (error) {
       console.log("길찾기 결과", error);
@@ -65,11 +69,20 @@ const Path = ({ open, onClose }: PathProps) => {
     const payload = {
       seq: trip.lastSeq + 1,
       day: trip.day,
-      time: pathData?.totalTime,
-      distance: pathData?.totalDistance,
+      time:
+        trip.lastSeq !== 0 && pathcode === "200 성공"
+          ? pathData?.totalTime
+          : null,
+      distance:
+        trip.lastSeq !== 0 && pathcode === "200 성공"
+          ? pathData?.totalDistance
+          : null,
       strf_id: strfId,
       trip_id: trip.nowTripId,
-      path_type: pathData?.pathType,
+      path_type:
+        trip.lastSeq !== 0 && pathcode === "200 성공"
+          ? pathData?.pathType
+          : null,
     };
     try {
       const res = await axios.post(url, payload, {

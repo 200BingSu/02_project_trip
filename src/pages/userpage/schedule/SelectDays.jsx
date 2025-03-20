@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../../../styles/custom-datepicker.css";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -18,6 +18,7 @@ import { tripAtom } from "../../../atoms/tripAtom";
 import { getCookie } from "../../../utils/cookie";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import jwtAxios from "../../../apis/jwt";
+import { scrapAtom } from "../../../atoms/scrapAtom";
 
 // 한글 로케일 등록
 registerLocale("ko", ko);
@@ -47,6 +48,8 @@ const SelectDays = () => {
   const navigateScheduleIndex = tripId => {
     navigate(`/schedule/index?tripId=${tripId}`);
   };
+  //recoil
+  const [scrapData, setScrapData] = useRecoilState(scrapAtom);
   // useState
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -85,14 +88,23 @@ const SelectDays = () => {
     const startAt = dayjs(startDate).format("YYYY-MM-DD");
     const endAt = dayjs(endDate).format("YYYY-MM-DD");
     const sendData = {
-      tripReviewId: locationData.tripReviewId,
+      tripReviewId: scrapData.tripReviewId,
       // copyTripId: locationData.selectedLocationId,
-      copyTripId: locationData.tripId,
+      copyTripId: scrapData.copyTripId,
       newStartAt: startAt,
       newEndAt: endAt,
     };
     try {
-      const res = await jwtAxios.post(`/api/trip-review/scrap`, sendData);
+      const res = await axios.post(`/api/trip-review/scrap`, sendData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        message.success("여행 스크랩 완료");
+        navigate("/user/usertrips");
+      }
     } catch (error) {
       console.log("여행 스크랩", error);
     }

@@ -16,16 +16,18 @@ import { TripReviewPic } from "../../../constants/pic";
 import jwtAxios from "../../../apis/jwt";
 import SelectTrip from "../../../components/scheduleboard/SelectTrip";
 import Loading from "../../../components/loading/Loading";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../../../atoms/userAtom";
 import { RiAlarmWarningLine } from "react-icons/ri";
 import { FiThumbsUp } from "react-icons/fi";
 import { ReportType } from "../../../types/enum";
+import { scrapAtom } from "../../../atoms/scrapAtom";
 
 const ScheduleDetail = () => {
   const accessToken = getCookie("accessToken");
   //recoil
   const { userId } = useRecoilValue(userAtom);
+  const [scrapData, setScrapData] = useRecoilState(scrapAtom);
   // 쿼리스트링
   const [searchParams] = useSearchParams();
   const tripId = parseInt(searchParams.get("tripId"));
@@ -140,6 +142,11 @@ const ScheduleDetail = () => {
   useEffect(() => {
     getOtherTripReview();
     getTrip();
+    setScrapData({
+      ...scrapData,
+      copyTripId: tripId,
+      tripReviewId: tripReviewId,
+    });
   }, []);
 
   // console.log(tripReviewData[0]?.tripReviewPics);
@@ -279,7 +286,13 @@ const ScheduleDetail = () => {
           type="primary"
           variant="filled"
           className="flex gap-[10px] py-[10px] h-auto w-full"
-          onClick={() => setOpenSelectTripModal(true)}
+          onClick={() => {
+            navigate(`/schedule/days`, {
+              state: {
+                from: "/scheduleboard/scheduleDetail",
+              },
+            });
+          }}
           classNames={`bg-slate-100`}
         >
           <AiOutlineImport className="w-[30px] h-[30px] text-white" />
@@ -289,14 +302,14 @@ const ScheduleDetail = () => {
           </span>
         </Button>
       </div>
-      {openSelectTripModal && (
+      {/* {openSelectTripModal && (
         <SelectTrip
           openSelectTripModal={openSelectTripModal}
           setOpenSelectTripModal={setOpenSelectTripModal}
           tripLocationList={tripData?.tripLocationList}
           tripReviewId={tripReviewId}
         />
-      )}
+      )} */}
     </div>
   );
 };
