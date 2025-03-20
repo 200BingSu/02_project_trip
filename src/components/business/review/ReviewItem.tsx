@@ -14,6 +14,7 @@ import { getCookie } from "../../../utils/cookie";
 import BottomSheet from "../../basic/BottomSheet";
 import CenterModalTs from "../../common/CenterModalTs";
 import ReviewImage from "../../contents/ReviewImage";
+// import "swiper/css";
 
 interface IReviewItemProps {
   strfId: number;

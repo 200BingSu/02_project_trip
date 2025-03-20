@@ -10,7 +10,9 @@ const Booking = (): JSX.Element => {
   const pathName = location.pathname;
 
   const navigateToBack = () => {
-    pathName === "/business/booking" ? navigate("/business") : navigate(-1);
+    pathName === "/business/booking"
+      ? navigate("/business/mypage")
+      : navigate(-1);
   };
   return (
     <div>

@@ -5,6 +5,9 @@ import { FaLocationDot } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import AddSchedule from "./AddSchedule";
 import { StrInfoProps } from "./StrInfo";
+import Path from "../schedule/Path";
+import { useRecoilState } from "recoil";
+import { tripAtom } from "../../atoms/tripAtom";
 
 // API 응답 타입 정의
 // interface ApiRes {
@@ -28,10 +31,10 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
     isReviewModalOpen: false,
   });
   // const [selectPath] = useState<ISelectPath>({});
-  // const [trip] = useRecoilState(tripAtom);
+  const [trip, setTrip] = useRecoilState(tripAtom);
   // const [messageApi] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
-
+  const [isPath, setIsPath] = useState(false);
   const navigate = useNavigate();
 
   // 일정 등록
@@ -147,6 +150,9 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
         </p>
       </Modal> */}
       {isOpen && <AddSchedule open={isOpen} onClose={() => setIsOpen(false)} />}
+      {trip.nowTripId !== 0 && isPath && (
+        <Path open={isPath} onClose={() => setIsPath(false)} />
+      )}
     </div>
   );
 };

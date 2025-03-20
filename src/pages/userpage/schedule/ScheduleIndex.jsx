@@ -12,7 +12,7 @@ import { tripAtom } from "../../../atoms/tripAtom";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { userAtom } from "../../../atoms/userAtom";
 import { getCookie } from "../../../utils/cookie";
-import { Dropdown, Input } from "antd";
+import { Dropdown, Input, Popover } from "antd";
 import { MdContentCopy } from "react-icons/md";
 import dayjs from "dayjs";
 import Loading from "../../../components/loading/Loading";
@@ -31,6 +31,7 @@ import {
 } from "@dnd-kit/sortable";
 import EditTripModal from "../../../components/schedule/EditTripModal";
 import EditModal from "../../../components/schedule/EditModal";
+import Member from "../../../components/schedule/Member";
 
 // const dummyDays = dummyData.days;
 const defaultData = {
@@ -71,6 +72,7 @@ const ScheduleIndex = () => {
   const [addLink, setAddLink] = useState("");
   const [isEdit, setIsEdit] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isMember, setIsMember] = useState(false);
   // const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     getTrip();
@@ -305,12 +307,25 @@ const ScheduleIndex = () => {
             {/* 버튼 */}
             <div className="flex items-center justify-between gap-[10px] px-[32px]">
               <div className="flex items-center gap-[10px]">
-                <Dropdown
-                  menu={{
-                    items,
-                  }}
-                  trigger={["click"]}
-                  overlayStyle={{ marginTop: "10px" }}
+                <Popover
+                  trigger={"click"}
+                  title={
+                    <p className="text-slate-500 text-sm font-semibold">
+                      초대 코드
+                    </p>
+                  }
+                  content={
+                    <div className="flex items-center gap-[10px] w-full">
+                      <Input
+                        readOnly
+                        value={addLink}
+                        className="w-full"
+                        variant="outlined"
+                      />
+                    </div>
+                  }
+                  placement="bottom"
+                  style={{ width: "100%" }}
                 >
                   <button
                     type="button"
@@ -326,7 +341,7 @@ const ScheduleIndex = () => {
                     <AiOutlinePlus />
                     초대 코드
                   </button>
-                </Dropdown>
+                </Popover>
                 {/* <button
                 type="button"
                 className="flex items-center gap-[10px] 
@@ -355,6 +370,7 @@ const ScheduleIndex = () => {
                   px-[15px] py-[10px] rounded-3xl
                   text-slate-500 bg-slate-100
                   hover:bg-slate-200/80 transition-all duration-300"
+                  onClick={() => setIsMember(true)}
                 >
                   참여 인원
                 </button>
@@ -452,6 +468,12 @@ const ScheduleIndex = () => {
           tripData={tripData}
           handleClickCancle={handleClickCancle}
           getTrip={getTrip}
+        />
+      )}
+      {isMember && (
+        <Member
+          tripData={tripData}
+          handleClickCancle={() => setIsMember(false)}
         />
       )}
     </div>

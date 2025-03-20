@@ -5,7 +5,9 @@ const Point = () => {
   //router
   const navigate = useNavigate();
   const navigateToBack = () => {
-    pathname === "/business/point" ? navigate("/business") : navigate(-1);
+    pathname === "/business/point"
+      ? navigate("/business/mypage")
+      : navigate(-1);
   };
   const location = useLocation();
   const pathname = location.pathname;

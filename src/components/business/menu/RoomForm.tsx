@@ -32,7 +32,7 @@ interface RoomFormProps {
   menuId: string | null;
 }
 
-const RoomForm = ({ menuId }: RoomFormProps) => {
+const RoomForm = () => {
   // 쿠키
   const accessToken = getCookie("accessToken");
   const userInfo = getCookie("user");
@@ -41,6 +41,7 @@ const RoomForm = ({ menuId }: RoomFormProps) => {
   const [searchParams] = useSearchParams();
   const strfId = Number(searchParams.get("strfId"));
   const category = searchParams.get("category");
+  const menuId = searchParams.get("menuId");
   const navigate = useNavigate();
   const [form] = useForm();
 

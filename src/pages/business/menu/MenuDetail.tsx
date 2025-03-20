@@ -1,4 +1,4 @@
-import { Spin } from "antd";
+import { message, Spin } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BiSolidEditAlt, BiTrash } from "react-icons/bi";
@@ -80,7 +80,7 @@ const MenuDetail = (): JSX.Element => {
     const url = "/api/detail/parlor";
     try {
       const res = await axios.delete(
-        `${url}?roomId=${parlor?.roomId}&busiNum=${busiNum}`,
+        `${url}?menuId=${menuId}&busiNum=${busiNum}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -91,9 +91,13 @@ const MenuDetail = (): JSX.Element => {
       if (resultData.code === "200 성공") {
         console.log("객실 삭제", resultData);
         setIsDeleteRoomOpen(false);
+        message.success("객실 상세 정보 삭제가 완료되었습니다.");
+        getParlor();
       }
     } catch (error) {
       console.log("객실 삭제", error);
+      setIsDeleteRoomOpen(false);
+      message.error("객실 상세 정보 삭제에 실패했습니다.");
     }
   };
 
@@ -182,7 +186,7 @@ const MenuDetail = (): JSX.Element => {
             객실/호실 수정하기
           </p>
           <p className="text-slate-400 text-base px-6">
-            * 예약을 위해 필수적으로 객실/호실 등록이 필요합니다.
+            객실 수량, 추가 금액, 권장 인원, 최대 인원 수정
           </p>
         </div>
       ),
@@ -195,9 +199,14 @@ const MenuDetail = (): JSX.Element => {
     },
     {
       label: (
-        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
-          <BiTrash className="text-slate-300" />
-          {matchName(category)} 삭제하기
+        <div className="flex flex-col items-start gap-1 px-4 py-[14px] text-lg text-slate-500">
+          <p className="flex items-center gap-3">
+            <BiTrash className="text-slate-300" />
+            객실 삭제하기
+          </p>
+          <p className="text-slate-400 text-base px-6">
+            등록된 해당 객실 정보 모두 삭제
+          </p>
         </div>
       ),
       onClick: () => {
@@ -207,14 +216,19 @@ const MenuDetail = (): JSX.Element => {
     },
     {
       label: (
-        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
-          <BiTrash className="text-slate-300" />
-          객실 상세 정보 삭제하기
+        <div className="flex flex-col items-start gap-1 px-4 py-[14px] text-lg text-slate-500">
+          <p className="flex items-center gap-3">
+            <BiTrash className="text-slate-300" />
+            객실 상세 정보 삭제하기
+          </p>
+          <p className="text-slate-400 text-base px-6">
+            객실 수량, 추가 금액, 권장 인원, 최대 인원 삭제
+          </p>
         </div>
       ),
       onClick: () => {
         setIsBottomOpen(false);
-        setIsDeleteOpen(true);
+        setIsDeleteRoomOpen(true);
       },
     },
   ];
@@ -254,7 +268,11 @@ const MenuDetail = (): JSX.Element => {
         return actionsNoRoom;
       }
     } else {
-      return actionsOther;
+      if (parlor) {
+        return actionsOther;
+      } else {
+        return actionsNoRoom;
+      }
     }
   };
   return (
