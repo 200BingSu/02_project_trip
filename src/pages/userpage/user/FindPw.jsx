@@ -43,7 +43,7 @@ const FindPw = () => {
       <TitleHeader
         title="임시 비밀번호 발송"
         onClick={() => {
-          navigate("/user/signin");
+          navigate("/signin");
         }}
         icon="back"
       />

@@ -133,10 +133,16 @@ const SingInIndex = () => {
   // 로그인 상태 저장
   const handleSaveLogin = () => {
     setIsSaveLogin(!isSaveLogin);
+    if (isSaveLogin === true) {
+      setIsSaveEmail(false);
+    }
+    if (isSaveLogin === false) {
+      setIsSaveEmail(true);
+    }
   };
   // 아이디 저장
   const handleSaveEmail = () => {
-    setIsSaveEmail(!setIsSaveEmail);
+    setIsSaveEmail(!isSaveEmail);
   };
   useEffect(() => {
     const userInfo = getCookie("user");
@@ -221,14 +227,14 @@ const SingInIndex = () => {
                 <Checkbox
                   checked={isSaveLogin}
                   onChange={handleSaveLogin}
-                  className="text-slate-500 text-xs"
+                  className="text-slate-500 text-xs select-none"
                 >
                   로그인 유지
                 </Checkbox>
                 <Checkbox
                   checked={isSaveEmail}
                   onChange={handleSaveEmail}
-                  className="text-slate-500 text-xs"
+                  className="text-slate-500 text-xs select-none"
                 >
                   아이디 저장
                 </Checkbox>
@@ -247,13 +253,13 @@ const SingInIndex = () => {
             </Form>
             {/* 아이디 찾기, 비밀번호 찾기, 회원가입 */}
             <div className="w-full flex items-center justify-center gap-6">
-              <button
+              {/* <button
                 type="button"
                 className="text-slate-500 text-xs sm:text-sm "
               >
                 아이디 찾기
-              </button>
-              <span className="text-slate-200">|</span>
+              </button> */}
+              {/* <span className="text-slate-200">|</span> */}
               <button
                 type="button"
                 className="text-slate-500 text-xs sm:text-sm "

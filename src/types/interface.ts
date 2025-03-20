@@ -234,7 +234,7 @@ export interface IStrf extends Partial<IRoom> {
   wishIn: number;
   recentCheck: number;
   recentCheckStatus: number;
-  strfPics: { strfId: string; strfPic: string }[];
+  strfPics: { strfId: string; strfPics: string }[];
   restDate: (number | string)[];
   amenity: number[];
 }

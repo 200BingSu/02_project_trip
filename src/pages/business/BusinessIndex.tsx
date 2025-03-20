@@ -15,9 +15,7 @@ import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { IoIosArrowForward } from "react-icons/io";
 import { TbPigMoney } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 import { ISales } from "../../atoms/salesAtom";
-import { tsUserAtom } from "../../atoms/tsuserAtom";
 import Graph from "../../components/business/main/Graph";
 import NoData from "../../components/common/NoData";
 import MainHeader from "../../components/layout/header/MainHeader";
@@ -37,11 +35,7 @@ const BusinessIndex = (): JSX.Element => {
   //useNavigate
   const navigate = useNavigate();
   const navigateToMypage = () => {
-    if (userInfo.role.includes(ROLE.BUSI)) {
-      navigate("/business/mypage");
-    } else {
-      navigate("/user/mypage");
-    }
+    navigate("/business/mypage");
   };
   const navigateToRegister = () => {
     navigate("/business/register");
@@ -296,6 +290,9 @@ const BusinessIndex = (): JSX.Element => {
                 onChange={handleChange}
                 showSorterTooltip={{
                   target: "sorter-icon",
+                }}
+                pagination={{
+                  position: ["bottomCenter"],
                 }}
               />
             </div>
