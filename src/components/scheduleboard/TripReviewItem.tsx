@@ -23,7 +23,7 @@ const TripReviewItem = ({ item }: TripReviewItemProps) => {
       onClick={navigateToDetail}
     >
       {/* 유저 정보 */}
-      <section className="flex items-center gap-4 py-6">
+      <section className="flex items-center gap-4 pt-6">
         {/* 사진 */}
         <div className="w-8 aspect-square rounded-full overflow-hidden bg-slate-200">
           <img

@@ -22,6 +22,7 @@ const ContentIndex = (): JSX.Element => {
   const [menuData, setMenuData] = useState<MenuType[]>([]);
   const [searchParams] = useSearchParams();
   const strfId = Number(searchParams.get("strfId")) || 0;
+  const defaultTab = searchParams.get("tab") || "1";
 
   const getDetailMember = async () => {
     try {
@@ -101,7 +102,7 @@ const ContentIndex = (): JSX.Element => {
       )}
       <section>
         <Tabs
-          defaultActiveKey="1"
+          defaultActiveKey={defaultTab}
           centered
           className="custom-strf-tabs"
           items={[

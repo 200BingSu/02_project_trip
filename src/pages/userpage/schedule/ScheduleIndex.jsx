@@ -126,9 +126,9 @@ const ScheduleIndex = () => {
       label: (
         <div
           onClick={() => handleCopy()}
-          className="flex flex-col gap-[10px] items-center justify-center"
+          className="flex flex-col gap-3 items-center justify-center"
         >
-          <p className="bg-slate-100 px-[15px] py-[10px] rounded-lg text-slate-600">
+          <p className="bg-slate-100 px-4 py-3 rounded-lg text-slate-600">
             {addLink}
           </p>
           <p className="flex items-center gap-1 border-b border-slate-300">
@@ -261,11 +261,11 @@ const ScheduleIndex = () => {
             }
           />
           {/* 내용 */}
-          <div className="flex flex-col gap-[30px] py-[30px]">
+          <div className="flex flex-col gap-8 py-7">
             {/* 제목 */}
-            <div className="mt-[60px] flex flex-col gap-[10px] px-[32px]">
+            <div className="mt-16 flex flex-col gap-3 px-8">
               <div className="flex items-center justify-between">
-                <p className="text-[18px] text-slate-700 flex gap-[10px]">
+                <p className="text-lg text-slate-700 flex gap-3">
                   <span>
                     {tripData.startAt} ~ {tripData.endAt}
                   </span>
@@ -276,10 +276,10 @@ const ScheduleIndex = () => {
                   </span>
                 </p>
                 <button type="button" onClick={() => setIsEdit(true)}>
-                  <IoSettingsOutline className="text-[24px] text-slate-300 bg-white" />
+                  <IoSettingsOutline className="text-2xl text-slate-300 bg-white" />
                 </button>
               </div>
-              <h2 className="text-[36px] text-slate-700 font-bold">
+              <h2 className="text-3xl text-slate-700 font-bold">
                 {tripData.title}
               </h2>
               {/* 임시 위치, 참여 인원 정보 */}
@@ -305,52 +305,43 @@ const ScheduleIndex = () => {
               </div>
             </div>
             {/* 버튼 */}
-            <div className="flex items-center justify-between gap-[10px] px-[32px]">
-              <div className="flex items-center gap-[10px]">
-                <Popover
-                  trigger={"click"}
-                  title={
-                    <p className="text-slate-500 text-sm font-semibold">
-                      초대 코드
-                    </p>
-                  }
-                  content={
-                    <div className="flex items-center gap-[10px] w-full">
-                      <Input
-                        readOnly
-                        value={addLink}
-                        className="w-full"
-                        variant="outlined"
-                      />
-                    </div>
-                  }
-                  placement="bottom"
-                  style={{ width: "100%" }}
-                >
-                  <button
-                    type="button"
-                    className="flex items-center gap-[10px] 
+            <div className="flex items-center gap-3 px-9">
+              <Popover
+                trigger={"click"}
+                title={
+                  <p className="text-slate-500 text-sm font-semibold">
+                    초대 코드
+                  </p>
+                }
+                content={
+                  <div className="flex items-center gap-3 w-full">
+                    <Input
+                      readOnly
+                      value={addLink}
+                      className="w-full"
+                      variant="outlined"
+                    />
+                  </div>
+                }
+                placement="bottom"
+                style={{ width: "100%" }}
+              >
+                <button
+                  type="button"
+                  className="flex items-center gap-[10px] 
                   px-[15px] py-[10px] rounded-3xl
                   text-white bg-primary
                   hover:bg-primary/80 transition-all duration-300"
-                    onClick={async () => {
-                      await getAddLink();
-                      handleCopy();
-                    }}
-                  >
-                    <AiOutlinePlus />
-                    초대 코드
-                  </button>
-                </Popover>
-                {/* <button
-                type="button"
-                className="flex items-center gap-[10px] 
-                px-[15px] py-[10px] rounded-3xl
-                text-slate-500 bg-slate-100"
-              >
-                <AiOutlinePlus className="text-slate-300" />
-                숙소
-              </button> */}
+                  onClick={async () => {
+                    await getAddLink();
+                    handleCopy();
+                  }}
+                >
+                  <AiOutlinePlus />
+                  초대 코드
+                </button>
+              </Popover>
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
                   className="flex items-center gap-[10px] 
@@ -363,10 +354,10 @@ const ScheduleIndex = () => {
                   가계부
                 </button>
               </div>
-              <div className="flex items-center gap-[10px]">
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  className="flex items-center gap-[10px] 
+                  className="flex items-center gap-3 
                   px-[15px] py-[10px] rounded-3xl
                   text-slate-500 bg-slate-100
                   hover:bg-slate-200/80 transition-all duration-300"
