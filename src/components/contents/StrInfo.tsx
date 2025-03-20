@@ -54,7 +54,7 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
         </ul>
         <div>
           <p className="flex items-center gap-[6px] text-slate-500">
-            <BiTime className="text-base" />
+            <BiTime className="text-sm" />
             {contentData?.restDate && contentData.restDate.length > 0
               ? contentData.restDate.map(
                   item => ` ${matchRestDataToKor(item)}요일 휴무 `,
