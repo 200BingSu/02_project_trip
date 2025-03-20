@@ -246,7 +246,7 @@ const EditModal = ({ tripData, handleClickCancle, getTrip }) => {
                   {tripData?.tripUserIdList?.map((item, index) => (
                     <StyledCheckbox key={index} size="large" value={item}>
                       <p className="text-slate-600 font-pretendard text-base">
-                        {item}
+                        {item.name}
                       </p>
                     </StyledCheckbox>
                   )) || null}
