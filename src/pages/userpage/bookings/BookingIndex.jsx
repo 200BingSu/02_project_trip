@@ -143,16 +143,16 @@ const BookingIndex = () => {
   const postBooking = async () => {
     const sendData = {
       num: 1,
-      point: 5000,
+      point: usePoint,
       strf_id: locationState.contentData.strfId,
-      check_in: locationState.dates[0],
-      check_out: locationState.dates[1],
+      check_in: `${locationState.dates[0]} 00:00:00`,
+      check_out: `${locationState.dates[1]} 00:00:00`,
       coupon_id: isNaN(parseInt(selectCoupon.couponId))
         ? null
         : parseInt(selectCoupon.couponId),
-      actual_paid: finallPrice,
+      actual_paid: calculateFinalPrice(),
       menu_id: locationState.item.menuId,
-      room_id: 1,
+      room_id: locationState.isRoom[0].roomId,
       // order_list: [
       //   {
       //     menuId: locationState.item.menuId,
@@ -160,6 +160,7 @@ const BookingIndex = () => {
       //   },
       // ],
     };
+    console.log(" 룸넘버", locationState.isRoom[0].roomNum[0]);
     console.log("sendData", sendData);
     try {
       const res = await axios.post(
@@ -167,7 +168,7 @@ const BookingIndex = () => {
         { ...sendData },
         {
           headers: {
-            Authorization: `Bearer ${userInfo.accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
