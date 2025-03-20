@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import dayjs from "dayjs";
 
 const SelectCoupon = ({
@@ -18,49 +19,55 @@ const SelectCoupon = ({
     setShowCouponModal(false);
   };
   return (
-    <div
-      className="flex items-end justify-end 
-                    max-w-3xl w-full h-full mx-auto  
-                    bg-[rgba(0,0,0,0.5)] 
-                    fixed bottom-0 left-[50%] translate-x-[-50%] z-50"
-      onClick={handleBackgroundClick}
+    <motion.div
+      tabIndex={-1}
+      className="max-w-[768px] w-full left-1/2 -translate-x-1/2 fixed inset-0 bg-black/50 flex justify-center items-end z-[9999] overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={() => setShowCouponModal(false)} // ✅ 배경 클릭 시 onClose 실행
     >
       {/* 모달창 */}
-      <div
-        className="
-          flex flex-col gap-[30px]
-          px-[20px] py-[30px] w-full
-          rounded-t-3xl
-        bg-white"
-        onClick={handleModalClick}
+      <motion.div
+        className=" bg-white w-full rounded-t-3xl py-5 shadow-lg px-4"
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 100 }}
+        dragElastic={0.2}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 100) setShowCouponModal(false);
+        }}
+        onClick={e => e.stopPropagation()}
       >
-        <h2 className="text-[24px] text-slate-700 font-semibold">쿠폰 선택</h2>
-        <ul className="max-h-[411px] overflow-y-scroll">
+        <div className="w-12 h-1 bg-slate-400 rounded-full mx-auto mb-4"></div>
+        <h2 className="text-xl text-slate-700 font-semibold mb-6">쿠폰 선택</h2>
+        <ul className="max-h-[411px] overflow-y-scroll flex flex-col gap-3">
           {couponList.map((item, index) => {
             return (
               <li
-                className="flex flex-col gap-[20px]
-                          px-[20px] py-[20px] "
+                className="flex flex-col gap-1 py-5 px-4 border border-slate-200 rounded-lg"
                 key={index}
                 onClick={() => handleClickList(item)}
               >
-                <p className="text-[28px] text-primary font-bold">
+                <p className="text-xl text-primary font-semibold">
                   {item.discountPer}%
                 </p>
-                <div className="flex flex-col gap-[5px]">
-                  <h4 className="text-[20px] text-slate-700 font-semibold">
-                    {item.title}
-                  </h4>
-                  <p className="text-[18px] text-slate-400">
-                    {`${dayjs(item.expiredAt).format("YYYY-MM-DD")} 사용 가능`}
-                  </p>
-                </div>
+
+                <h4 className="text-lg text-slate-700 font-semibold">
+                  {item.title}
+                </h4>
+                <p className="text-sm text-slate-400 font-light">
+                  {`${dayjs(item.expiredAt).format("YYYY.MM.DD")} 사용 가능`}
+                </p>
               </li>
             );
           })}
         </ul>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

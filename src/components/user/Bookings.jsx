@@ -1,4 +1,4 @@
-import { Button, message } from "antd";
+import { Button, Drawer, message } from "antd";
 import dayjs from "dayjs";
 import { memo, useState } from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
@@ -12,6 +12,8 @@ import { getCookie } from "../../utils/cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
+import { PiWarningCircleBold } from "react-icons/pi";
+import Provision from "../booking/Provision";
 
 dayjs.locale("ko");
 
@@ -55,9 +57,27 @@ const Bookings = data => {
         createChatRoom();
       },
     },
+    {
+      label: (
+        <p className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+          <PiWarningCircleBold className="text-slate-300" />
+          취소규정
+        </p>
+      ),
+      onClick: () => {
+        setPevOpen(true);
+        setIsOpen(!isOpen);
+      },
+    },
   ];
   //useState
   const [isOpen, setIsOpen] = useState(false);
+  const [prvOpen, setPevOpen] = useState(false);
+  const [placement, setPlacement] = useState("bottom");
+
+  const onClose = () => {
+    setPevOpen(false);
+  };
 
   // API 채팅방 생성
   const createChatRoom = async () => {
@@ -92,11 +112,21 @@ const Bookings = data => {
         bookingId: bookingId,
       });
 
-      if (res.data.code === "200") {
-        message.success("예약이 취소되었습니다.");
+      if (res.data.code === "50퍼센트 환불 완료") {
+        message.success("50퍼센트 환불 완료");
         // 부모 컴포넌트의 예약 목록 새로고침
         data.getBookings?.();
-      } else {
+      } else if (res.data.code === "70퍼센트 환불 완료") {
+        message.success("70퍼센트 환불 완료");
+        // 부모 컴포넌트의 예약 목록 새로고침
+        data.getBookings?.();
+      } else if (res.data.code === "100퍼센트 환불 완료") {
+        message.success("100퍼센트 환불 완료");
+        // 부모 컴포넌트의 예약 목록 새로고침
+        data.getBookings?.();
+      }
+
+      {
         message.error("예약 취소에 실패했습니다.");
       }
     } catch (error) {
@@ -183,72 +213,73 @@ const Bookings = data => {
         );
     }
   };
+
   return (
-    <div className="w-full px-6 py-4 flex flex-col gap-4 border-b-[10px] border-slate-100 last:border-none">
+    <div className="w-full px-4 py-6 flex flex-col gap-4 border-b-[10px] border-slate-100 last:border-none">
       {/* 예약 상태 */}
       <div
-        className={`w-fit flex items-center justify-center px-2 py-1 text-sm font-bold ${matchStateStyle(state)}`}
+        className={`w-fit flex items-center justify-center px-2 py-1 text-xs font-semibold ${matchStateStyle(state)}`}
       >
         <p>{matchState(state)}</p>
       </div>
       {/* 숙소 이름 */}
       <div>
-        <h3 className="text-xl font-bold text-slate-700">{strfTitle}</h3>
+        <h3 className="text-xl font-semibold text-slate-700">{strfTitle}</h3>
       </div>
       {/* 내용 */}
-      <div className="flex gap-[20px]">
+      <div className="flex gap-4">
         {/* 예약 정보 */}
 
         {/* 썸네일 */}
-        <div className="w-[85px] h-[85px] rounded-2xl overflow-hidden bg-slate-100">
+        <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-100">
           <img
             src={strfPic ? `${ProductPic}/${strfId}/${strfPic}` : ""}
             alt={strfTitle || ""}
-            className="w-full h-full object-cover"
+            className="w-full h-full  aspect-square object-cover"
           />
         </div>
         {/* 정보 */}
-        <div className="flex flex-col gap-[10px]">
+        <div className="flex flex-col gap-3">
           {/* 날짜 */}
-          <div className="flex items-center gap-3 text-[16px] text-slate-700">
-            <h4 className="text-slate-400 font-semibold text-base tracking-tight">
+          <div className="flex items-start gap-2 text-sm text-slate-700">
+            <h4 className="whitespace-nowrap text-slate-400 font-semibold text-sm ">
               이용일시
             </h4>
-            <p className="text-base text-slate-700">
+            <p className="text-base text-slate-700 tracking-tight break-all">
               <span>
                 {dayjs(checkInDate, "YYYY-MM-DD").format("YYYY.MM.DD ddd")}
-              </span>
-              <span>~</span>
-              <span>
+                &nbsp;~&nbsp;
                 {dayjs(checkOutDate, "YYYY-MM-DD").format("YYYY.MM.DD ddd")}
               </span>
             </p>
           </div>
-          <div className="flex items-center gap-3 text-[16px] text-slate-700">
-            <h4 className="text-slate-400 font-semibold text-base">예약일시</h4>
+          <div className="flex items-center gap-3 text-base text-slate-700">
+            <h4 className="whitespace-nowrap text-slate-400 font-semibold text-sm">
+              예약일시
+            </h4>
             <p className="text-base text-slate-700 tracking-tight">
               {dayjs(createdAt, "YYYY-MM-DD").format("YYYY.MM.DD ddd")}
             </p>
           </div>
-          <div className="flex items-center gap-3 text-[16px] text-slate-700">
-            <h4 className="text-slate-400 font-semibold text-base tracking-tight">
+          <div className="flex items-center gap-3 text-base text-slate-700">
+            <h4 className="whitespace-nowrap text-slate-400 font-semibold text-sm tracking-tight">
               인원
             </h4>
-            <p className="text-base text-slate-700">
+            <p className="text-base text-slate-700 tracking-tight">
               {dayjs(createdAt, "YYYY-MM-DD").format("YYYY.MM.DD ddd")}
             </p>
           </div>
         </div>
       </div>
       {/* 버튼 */}
-      <div className="flex gap-[8px] items-center">
+      <div className="flex gap-2 items-center">
         {matchButton(state)}
         <button
           type="button"
-          className="aspect-square h-auto py-3 px-3 text-2xl text-slate-700 rounded-lg border border-slate-300 flex justify-center items-center"
+          className="aspect-square h-auto p-3 text-base text-slate-700 rounded-lg border border-slate-300 flex justify-center items-center"
           onClick={() => setIsOpen(true)}
         >
-          <CgMoreVerticalAlt />
+          <CgMoreVerticalAlt className="text-[1.5rem]" />
         </button>
       </div>
       <BottomSheet
@@ -256,6 +287,16 @@ const Bookings = data => {
         onClose={() => setIsOpen(false)}
         actions={actions}
       />
+      <Drawer
+        title="예약 취소 규정"
+        placement={placement}
+        closable={false}
+        onClose={onClose}
+        open={prvOpen}
+        key={placement}
+      >
+        <Provision />
+      </Drawer>
     </div>
   );
 };
