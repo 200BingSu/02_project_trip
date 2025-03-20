@@ -73,10 +73,8 @@ const BusinessLayout = () => {
     chatEventRef.current.addEventListener("connect", event => {
       // console.log("안 읽은 알림 존재:", typeof event.data);
       if (event.data === "false") {
-        console.log("없다고 말해");
         setChatAlert(false);
       } else {
-        console.log("있다고 말해");
         setChatAlert(true);
       }
     });
@@ -103,9 +101,7 @@ const BusinessLayout = () => {
       chatEventRef.current?.close();
     };
   }, [chatEventRef]);
-  useEffect(() => {
-    console.log("chatAlert", chatAlert);
-  }, [chatAlert]);
+
   return (
     <div className="max-w-[768px] min-w-xs mx-auto relative min-h-screen flex flex-col">
       <div className="flex-1">
