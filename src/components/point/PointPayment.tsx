@@ -2,14 +2,8 @@ import { Button, Checkbox, Radio } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
-import "../../styles/antd-styles.css";
 import { IAPI, IRemainPoint } from "../../types/interface";
 import TitleHeaderTs from "../layout/header/TitleHeaderTs";
-
-// interface Payment {
-//   pointCardId: number;
-//   amount: number;
-// }
 
 const PointPayment = (): JSX.Element => {
   const [selectedPoint, setSelectedPoint] = useState<IRemainPoint>();
@@ -33,7 +27,7 @@ const PointPayment = (): JSX.Element => {
       });
 
       if (res.data.data) {
-        window.open(res.data.data, "_blank");
+        window.open(res.data.data, "_self");
       }
     } catch (error) {
       console.log(error);
