@@ -7,7 +7,7 @@ import { categoryKor, matchRestDataToKor } from "../../utils/match";
 import { IStrf } from "../../types/interface";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-// import "swiper/css";
+
 
 export interface StrInfoProps {
   strfId: number;
