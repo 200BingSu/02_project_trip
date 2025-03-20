@@ -1,27 +1,25 @@
 import { Button } from "antd";
 import TitleHeaderTs from "../layout/header/TitleHeaderTs";
-import jwtAxios from "../../apis/jwt";
-import { useState } from "react";
 
-interface advance {
-  amount: number;
-  strf_id: number;
-}
+// interface advance {
+//   amount: number;
+//   strf_id: number;
+// }
 
 const PointProductPayment = () => {
-  const [paid, setPaid] = useState<advance>();
+  // const [paid, setPaid] = useState<advance>();
 
-  const pointPaid = async () => {
-    const payload = {
-      amount: 10000,
-      strf_id: 1,
-    };
-    try {
-      const res = await jwtAxios.post(`payload`, payload);
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
+  // const pointPaid = async () => {
+  //   const payload = {
+  //     amount: 10000,
+  //     strf_id: 1,
+  //   };
+  //   try {
+  //     const res = await jwtAxios.post(`payload`, payload);
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // };
 
   return (
     <div>
@@ -62,7 +60,10 @@ const PointProductPayment = () => {
           </sup>
           <Button
             type="primary"
-            onClick={() => pointPaid()}
+            onClick={() => {
+              console.log("결제 보내기");
+              // pointPaid();
+            }}
             className="w-full h-auto py-3 text-base"
           >
             결제하기

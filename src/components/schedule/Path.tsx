@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import { tripAtom } from "../../atoms/tripAtom";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -9,6 +9,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { matchPathTypeIcon } from "../../utils/match";
 import { IAPI } from "../../types/interface";
 import { Button } from "antd";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface PathProps {
   open: boolean;
@@ -23,13 +24,19 @@ interface PathData {
 
 const Path = ({ open, onClose }: PathProps) => {
   console.log(open);
+  // router
+  const naviagate = useNavigate();
   // cookie
+  const [searchParams] = useSearchParams();
+  const strfId = searchParams.get("strfId");
   const accessToken = getCookie("accessToken");
   const [trip] = useRecoilState(tripAtom);
+  const resetTrip = useResetRecoilState(tripAtom);
   console.log("trip", trip);
   const [pathList, setPathList] = useState<PathData[]>([]);
   const [pathcode, setPathcode] = useState("");
   const [selectedPath, setSelectedPath] = useState<number | null>(null);
+  const [pathData, setPathData] = useState<PathData>();
 
   // api 길찾기
   const getPathList = async (): Promise<IAPI<PathData[]> | null> => {
@@ -52,7 +59,33 @@ const Path = ({ open, onClose }: PathProps) => {
       return null;
     }
   };
-
+  // api 일정 등록
+  const createSchedule = async () => {
+    const url = "/api/schedule";
+    const payload = {
+      seq: trip.lastSeq + 1,
+      day: trip.day,
+      time: pathData?.totalTime,
+      distance: pathData?.totalDistance,
+      strf_id: strfId,
+      trip_id: trip.nowTripId,
+      path_type: pathData?.pathType,
+    };
+    try {
+      const res = await axios.post(url, payload, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const resultData = res.data;
+      if (resultData) {
+        resetTrip();
+        naviagate(`/schedule/index?tripId=${trip.nowTripId}`);
+      }
+    } catch (error) {
+      console.log("일정 등록", error);
+    }
+  };
   // 시간 변환
   const formatMinutes = (totalMinutes: any) => {
     const hours = Math.floor(totalMinutes / 60);
@@ -61,7 +94,7 @@ const Path = ({ open, onClose }: PathProps) => {
   };
   //  선택 완료
   const handleClickSubmit = () => {
-    console.log("선택 완료");
+    createSchedule();
   };
   useEffect(() => {
     getPathList();
@@ -139,6 +172,8 @@ const Path = ({ open, onClose }: PathProps) => {
                             `}
                       onClick={() => {
                         setSelectedPath(index);
+                        console.log(item);
+                        setPathData(item);
                       }}
                       key={index}
                     >
@@ -168,14 +203,16 @@ const Path = ({ open, onClose }: PathProps) => {
               </ul>
             )}
             {/* 완료 */}
-            <Button
-              type="primary"
-              htmlType="button"
-              className="px-[15px] py-[20px] text-[24px] text-white font-semibold"
-              onClick={handleClickSubmit}
-            >
-              선택 완료
-            </Button>
+            <div className="pb-5">
+              <Button
+                type="primary"
+                htmlType="button"
+                className="text-2xl py-5 max-h-[50px] h-[16vw] w-full text-white font-semibold"
+                onClick={handleClickSubmit}
+              >
+                선택 완료
+              </Button>
+            </div>
           </section>
         </div>
       </motion.div>
