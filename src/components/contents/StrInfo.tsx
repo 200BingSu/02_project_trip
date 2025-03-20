@@ -7,7 +7,7 @@ import { categoryKor, matchRestDataToKor } from "../../utils/match";
 import { IStrf } from "../../types/interface";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
+// import "swiper/css";
 
 export interface StrInfoProps {
   strfId: number;
@@ -18,7 +18,6 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
   return (
     <div>
       <div>
-
         <Swiper loop={true} className="mySwiper">
           {contentData?.strfPics.map((item, index) => (
             <SwiperSlide key={index} className="aspect-[1/2] max-h-[500px]">
@@ -30,7 +29,6 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
             </SwiperSlide>
           ))}
         </Swiper>
-
       </div>
       <div className="px-4 py-3 flex flex-col gap-2">
         <p className="text-sm text-slate-500 -mb-[6px]">
