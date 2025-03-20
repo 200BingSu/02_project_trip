@@ -28,7 +28,7 @@ const StroeEdit = (): JSX.Element => {
   const accessToken = getCookie("accessToken");
   const userInfo = getCookie("user");
   const busiNum = userInfo.strfDtos[0].busiNum;
-  console.log(busiNum);
+
   // 쿼리
   const [searchParmas] = useSearchParams();
   const strfId = Number(searchParmas.get("strfId"));
@@ -44,9 +44,9 @@ const StroeEdit = (): JSX.Element => {
   const initialFileList: UploadFile[] = strfData.strfPics.map(
     (item, index) => ({
       uid: `prev-${index}`,
-      name: item.strfPic,
+      name: item.strfPics,
       status: "done" as const,
-      url: `${ProductPic}/${strfId}/${item.strfPic}`,
+      url: `${ProductPic}/${strfId}/${item.strfPics}`,
     }),
   );
   // useState
@@ -81,7 +81,13 @@ const StroeEdit = (): JSX.Element => {
         formData.append("strfPic", image.originFileObj as File);
       });
     }
-    await updateStrfPic(formData);
+    if (fileList.some(file => !file.uid.includes("prev"))) {
+      // console.log("prev 제외 포함");
+      updateStrfPic(formData);
+    } else {
+      // console.log("prev만 있음");
+      navigateToStore();
+    }
   };
   // antD 이미지
   const onChange = ({ fileList: newFileList }: any) => {
@@ -103,7 +109,7 @@ const StroeEdit = (): JSX.Element => {
   };
 
   const onRemove = (file: UploadFile) => {
-    console.log("file", file);
+    console.log("삭제 선택 file", file);
     if (file.uid.includes("prev")) {
       deleteStrfPic(file.name);
     }
@@ -242,8 +248,13 @@ const StroeEdit = (): JSX.Element => {
       });
       const resultData = res.data;
       console.log("주소 수정", resultData);
+      if (resultData.code === "200 성공") {
+        message.success("주소 수정을 성공했습니다");
+        navigateToStore();
+      }
     } catch (error) {
       console.log("주소 수정", error);
+      message.error("주소 수정에 실패했습니다");
     }
   };
   useEffect(() => {
@@ -263,7 +274,7 @@ const StroeEdit = (): JSX.Element => {
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <h3 className="text-slate-700 text-lg font-semibold">
-                <i className="text-secondary3_3">*</i> 업체 주소
+                업체 주소
               </h3>
               <p className="text-base text-slate-500">
                 고객이 방문할 수 있는 주소를 적어주세요.
@@ -331,55 +342,65 @@ const StroeEdit = (): JSX.Element => {
           </div>
         )}
         {edit === "strfPic" && (
-          <Form
-            form={form}
-            onFinish={onFinish}
-            name="edit"
-            className="flex flex-col gap-5"
-          >
-            <Form.Item
-              name="strfPic"
-              rules={[
-                {
-                  required: true,
-                  message: "메뉴 사진을 등록해주세요.",
-                  validator: () => {
-                    if (fileList.length > 0) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("메뉴 사진을 등록해주세요."),
-                    );
-                  },
-                },
-              ]}
-              help={`${matchName(category)} 이미지는 다수(최대 5장)을 등록하실 수 있습니다.`}
+          <>
+            <div className="flex flex-col gap-2 pb-5">
+              <h3 className="text-slate-700 text-lg font-semibold">
+                업체 사진
+              </h3>
+              <p className="text-base text-slate-500">
+                고객에게 보여질 업체 사진을 등록해주세요.
+              </p>
+            </div>
+            <Form
+              form={form}
+              onFinish={onFinish}
+              name="edit"
+              className="flex flex-col gap-5"
             >
-              <Upload
-                listType="picture-card"
-                fileList={fileList}
-                onChange={onChange}
-                onPreview={onPreview}
-                onRemove={onRemove}
-                beforeUpload={() => false}
-                accept="image/*"
-                maxCount={5}
+              <Form.Item
+                name="strfPic"
+                rules={[
+                  {
+                    required: true,
+                    message: "메뉴 사진을 등록해주세요.",
+                    validator: () => {
+                      if (fileList.length > 0) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("메뉴 사진을 등록해주세요."),
+                      );
+                    },
+                  },
+                ]}
+                help={`${matchName(category)} 이미지는 다수(최대 5장)을 등록하실 수 있습니다.`}
               >
-                {fileList.length < 5 && "+ Upload"}
-              </Upload>
-            </Form.Item>
-
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                className="text-lg"
-              >
-                등록하기
-              </Button>
-            </Form.Item>
-          </Form>
+                <Upload
+                  listType="picture-card"
+                  fileList={fileList}
+                  onChange={onChange}
+                  onPreview={onPreview}
+                  onRemove={onRemove}
+                  beforeUpload={() => false}
+                  accept="image/*"
+                  maxCount={5}
+                  multiple
+                >
+                  {fileList.length < 5 && "+ Upload"}
+                </Upload>
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  size="large"
+                  className="text-lg max-h-[50px] h-[16vw] w-full"
+                >
+                  등록하기
+                </Button>
+              </Form.Item>
+            </Form>
+          </>
         )}
       </Spin>
     </div>

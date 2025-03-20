@@ -336,7 +336,7 @@ const SearchAfter = () => {
           )}
         </Spin>
 
-        {searchValue.more && (
+        {category !== 0 && searchValue.more && (
           <div className="flex justify-center items-center py-4">
             <Button
               className="px-5 py-4 border border-slate-300 

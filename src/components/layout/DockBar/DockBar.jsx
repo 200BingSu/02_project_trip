@@ -51,18 +51,15 @@ const DockBar = React.memo(() => {
     // 기본 메세지 이벤트
     chatEventRef.current.onmessage = event => {
       console.log("새로운 알림:", event.data);
+      if (event.data === "false") {
+        setChatAlert(false);
+      } else {
+        setChatAlert(true);
+      }
     };
 
     // "exist unread notice" 이벤트 수신 (백엔드 이벤트 이름 따라 변경 필수)
-    chatEventRef.current.addEventListener("connect", event => {
-      if (event.data === "false") {
-        console.log("없어");
-        setChatAlert(false);
-      } else {
-        console.log("있어");
-        setChatAlert(true);
-      }
-    });
+    chatEventRef.current.addEventListener("connect", event => {});
 
     chatEventRef.current.onerror = async () => {
       // e: Event
@@ -181,7 +178,7 @@ const DockBar = React.memo(() => {
           <IoLogoWechat className="text-2xl" />
           채팅
           <div
-            className={`absolute top-3 right-10 w-3 h-3 bg-primary rounded-full border-2 border-white
+            className={`absolute top-3 right-9 w-3 h-3 bg-primary rounded-full border-2 border-white
               ${chatAlert ? "visible" : "invisible"}`}
           ></div>
         </button>

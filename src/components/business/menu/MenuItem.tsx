@@ -31,7 +31,7 @@ const MenuItem = ({ strfId, item, category, getMenuList }: MenuItemProps) => {
   const navigate = useNavigate();
   const navigateToCreateRoom = () => {
     navigate(
-      `/business/menu/create?strfId=${strfId}&category=${category}&what=room`,
+      `/business/menu/create?strfId=${strfId}&category=${category}&menuId=${item.menuId}&what=room`,
     );
   };
   const navigateToEditMenu = () => {

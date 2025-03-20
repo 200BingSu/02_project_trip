@@ -15,7 +15,7 @@ const Review = (): JSX.Element => {
   // useNavigate
   const navigate = useNavigate();
   const navigateToHome = () => {
-    navigate("/business");
+    navigate("/business/mypage");
   };
   const navigateToEdit = () => {
     navigate(-1);
