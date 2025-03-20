@@ -45,6 +45,9 @@ const LazySearch = lazy(() => import("../pages/userpage/search/SearchIndex"));
 const LazySignIn = lazy(() => import("../pages/userpage/signin/SingInIndex"));
 const LazySignUp = lazy(() => import("../pages/userpage/signup/SignUp"));
 const LazyUser = lazy(() => import("../pages/userpage/user/User"));
+const LazyPointProductPayment = lazy(
+  () => import("../components/point/PointProductPayment"),
+);
 const LazyContent = lazy(() => import("../pages/userpage/contents/Contents"));
 const LazyChat = lazy(() => import("../pages/common/ChatIndex"));
 
@@ -201,6 +204,15 @@ const router = createBrowserRouter([
           </Suspense>
         ),
         children: usertrouter(),
+      },
+      {
+        path: "/point/product/payment",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <LazyPointProductPayment />
+          </Suspense>
+        ),
+        children: pointRouter(),
       },
     ],
   },
