@@ -94,23 +94,49 @@ const SearchAfter = () => {
   const getCategorySearch = async () => {
     const url = "/api/search/category";
     setIsLoading(true);
-    try {
-      const res = await axios.get(
-        `${url}?start_idx=${searchRecoil.start_idx}&category=${
-          categoryArr[category].name
-        }&search_word=${keyword}&order_type=${orderTypeArr[orderType].type}`,
-      );
-      const resultData = res.data;
-      if (resultData.code === "200 성공") {
-        setIsLoading(false);
-        setSearchRecoil(prev => ({
-          ...prev,
-          searchData: [...prev.searchData, ...resultData.data],
-          more: resultData.data[0]?.more,
-        }));
+    if (accessToken) {
+      try {
+        const res = await axios.get(
+          `${url}?start_idx=${searchRecoil.start_idx}&category=${
+            categoryArr[category].name
+          }&search_word=${keyword}&order_type=${orderTypeArr[orderType].type}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        const resultData = res.data;
+        if (resultData.code === "200 성공") {
+          setIsLoading(false);
+          setSearchRecoil(prev => ({
+            ...prev,
+            searchData: [...prev.searchData, ...resultData.data],
+            more: resultData.data[0]?.more,
+          }));
+        }
+      } catch (error) {
+        console.log("카테고리 검색", error);
       }
-    } catch (error) {
-      console.log("카테고리 검색", error);
+    } else {
+      try {
+        const res = await axios.get(
+          `${url}?start_idx=${searchRecoil.start_idx}&category=${
+            categoryArr[category].name
+          }&search_word=${keyword}&order_type=${orderTypeArr[orderType].type}`,
+        );
+        const resultData = res.data;
+        if (resultData.code === "200 성공") {
+          setIsLoading(false);
+          setSearchRecoil(prev => ({
+            ...prev,
+            searchData: [...prev.searchData, ...resultData.data],
+            more: resultData.data[0]?.more,
+          }));
+        }
+      } catch (error) {
+        console.log("카테고리 검색", error);
+      }
     }
   };
   // api 편의시설 검색 더보기

@@ -113,16 +113,18 @@ const UserIndex = () => {
     const userInfo = getCookie("user");
     if (userInfo.isSaveEmail === false) {
       setCookie("user", { ...userInfo, email: "" });
+    } else {
+      setCookie("user", { ...userInfo, userId: "", role: [ROLE.GUEST] });
     }
-    if (userInfo.isSaveLogin === false) {
-      setCookie("user", {
-        ...userInfo,
-        userId: "",
-        email: "",
-        accessToken: "",
-        role: [ROLE.GUEST],
-      });
-    }
+    // if (userInfo.isSaveLogin === false) {
+    //   setCookie("user", {
+    //     ...userInfo,
+    //     userId: "",
+    //     email: "",
+    //     accessToken: "",
+    //     role: [ROLE.GUEST],
+    //   });
+    // }
 
     navigate("/signin");
   };
