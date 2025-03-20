@@ -15,7 +15,7 @@ const CreateMenu = () => {
 
   // useState
   const [current, setCurrent] = useState<number>(0);
-  const [menuId, setMenuId] = useState<string | null>(null);
+  const [, setMenuId] = useState<string | null>(null);
   const hadleMenuId = (value: string | null) => {
     setMenuId(value);
   };
@@ -43,7 +43,7 @@ const CreateMenu = () => {
         {current === 0 && (
           <MenuForm handleCurrent={handleCurrent} hadleMenuId={hadleMenuId} />
         )}
-        {current === 1 && <RoomForm menuId={menuId} />}
+        {current === 1 && <RoomForm />}
       </section>
     </div>
   );

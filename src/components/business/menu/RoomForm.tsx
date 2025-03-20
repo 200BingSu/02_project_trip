@@ -28,10 +28,6 @@ interface EditRoomDataType {
   stayReq: CreateRoomDataType;
 }
 
-interface RoomFormProps {
-  menuId: string | null;
-}
-
 const RoomForm = () => {
   // 쿠키
   const accessToken = getCookie("accessToken");
