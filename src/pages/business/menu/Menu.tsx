@@ -19,7 +19,7 @@ const Menu = (): JSX.Element => {
   const navigateToBack = (path: string) => {
     switch (path) {
       case "/business/menu":
-        navigate("/business");
+        navigate("/business/mypage");
         break;
       case "/business/menu/create":
         navigate(-1);

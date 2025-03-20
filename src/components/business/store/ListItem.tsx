@@ -293,7 +293,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
   };
   // API 편의시설 삭제
   const deleteAmenity = async () => {
-    const url = "/api/detail/amenity";
+    const url = "/api/detail/amenity/all";
     // const payload = strfData.amenity;
     try {
       const res = await axios.delete(
@@ -497,7 +497,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
         }
       }
       if (type === "tell") {
-        if (areaCode === strfData.areaCode || value === strfData.tell) {
+        if (areaCode === strfData.areaCode && value === strfData.tell) {
           message.warning("동일한 전화번호이기 때문에 수정을 취소합니다");
         } else {
           areaCode !== "" && value !== "" && updateTell();
@@ -638,7 +638,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
                 );
               })}
             {type === "strfPic" && (
-              <ul className="flex flex-wrap gap-2">
+              <ul className="flex gap-2">
                 {strfData.strfPics.map((item, index) => {
                   return (
                     <li
@@ -646,8 +646,8 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
                       className="bg-slate-100 rounded-lg overflow-hidden w-full max-h-[200px] h-[53.33vw]"
                     >
                       <img
-                        src={`${ProductPic}/${strfId}/${item.strfPic}`}
-                        alt={item.strfPic}
+                        src={`${ProductPic}/${strfId}/${item.strfPics}`}
+                        alt={item.strfPics}
                         className="w-full h-full object-cover"
                       />
                     </li>

@@ -134,7 +134,6 @@ const PostBoard = () => {
   };
   return (
     <div>
-      <TitleHeader icon="back" onClick={navigateBack} title="여행기 공유" />
       <div className="mt-[60px] py-[40px] flex flex-col gap-[40px]">
         {/* 상단: 여행기 */}
         <div className="flex flex-col  px-[32px]">

@@ -52,7 +52,7 @@ const SearchTripItem = ({ item }: SearchTripItemProps) => {
             value={item.ratingIn ? 1 : 0}
             style={{ fontSize: "16px" }}
           />
-          <p className="text-[12px] text-slate-500">{item.ratingCnt}</p>
+          <p className="text-[12px] text-slate-500">{item.avgRating}</p>
           <p className="text-[12px] text-slate-500">
             ({item.ratingCnt.toLocaleString()})
           </p>

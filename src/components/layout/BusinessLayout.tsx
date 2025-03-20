@@ -67,16 +67,14 @@ const BusinessLayout = () => {
     // 기본 메세지 이벤트
     chatEventRef.current.onmessage = event => {
       console.log("새로운 알림:", event.data);
+      if (event.data) {
+        setChatAlert(true);
+      }
     };
 
     // "exist unread notice" 이벤트 수신 (백엔드 이벤트 이름 따라 변경 필수)
     chatEventRef.current.addEventListener("connect", event => {
-      // console.log("안 읽은 알림 존재:", typeof event.data);
-      if (event.data === "false") {
-        setChatAlert(false);
-      } else {
-        setChatAlert(true);
-      }
+      console.log("안 읽은 알림 존재:", typeof event.data);
     });
 
     chatEventRef.current.onerror = async () => {

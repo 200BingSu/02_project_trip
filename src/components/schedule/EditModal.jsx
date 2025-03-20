@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 const { RangePicker } = DatePicker;
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import styled from "@emotion/styled";
+import { getCookie } from "../../utils/cookie";
+import { useSearchParams } from "react-router-dom";
 dayjs.extend(customParseFormat);
 const StyledCheckbox = styled(Checkbox)`
   && {
@@ -41,10 +43,15 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `;
 
-const EditModal = ({ tripData, handleClickCancle }) => {
+const EditModal = ({ tripData, handleClickCancle, getTrip }) => {
+  // 쿠키
+  const accessToken = getCookie("accessToken");
   const [form] = Form.useForm();
   console.log("tripData", tripData);
   const tripDataLocationIdArr = tripData.tripLocationList;
+  // 쿼리
+  const [searchParams] = useSearchParams();
+  const tripId = searchParams.get("tripId");
   // 모달
 
   const handleBackgroundClick = () => {
@@ -84,12 +91,17 @@ const EditModal = ({ tripData, handleClickCancle }) => {
   const updateTrip = async payload => {
     const url = "/api/trip";
     try {
-      const res = await axios.patch(url, payload);
+      const res = await axios.patch(url, payload, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const resultData = res.data;
       console.log("여행 수정", resultData);
       if (resultData) {
         message.success("여행 수정 완료");
         handleClickCancle();
+        getTrip();
       }
     } catch (error) {
       console.log("여행 수정", error);
@@ -120,12 +132,14 @@ const EditModal = ({ tripData, handleClickCancle }) => {
 
     const payload = {
       title: values.title,
-      startAt: values.dates[0].format("YYYY-MM-DD"),
-      endAt: values.dates[1].format("YYYY-MM-DD"),
+      trip_id: tripId,
+      start_at: values.dates[0].format("YYYY-MM-DD"),
+      end_at: values.dates[1].format("YYYY-MM-DD"),
       del_user_list: delUserList,
       ins_location_list: insLocationList,
       del_location_list: delLocationList,
     };
+    updateTrip(payload);
     console.log("payload", payload);
   };
 
@@ -163,7 +177,9 @@ const EditModal = ({ tripData, handleClickCancle }) => {
         <Spin spinning={isLoadging}>
           {/* 지역 선택 */}
           <div className="flex flex-col gap-1 pb-5">
-            <h4 className="text-slate-700 text-lg">지역 선택</h4>
+            <h4 className="text-slate-700 text-lg font-pretendard">
+              지역 선택
+            </h4>
             <div className="flex flex-wrap gap-2">
               {locationList.map((item, index) => {
                 return (

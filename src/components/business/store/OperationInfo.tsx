@@ -1,13 +1,9 @@
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 // import { matchRestDataToKor } from "../../../utils/match";
-import { message } from "antd";
-import axios from "axios";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { CategoryType } from "../../../types/enum";
-import { getCookie, setCookie } from "../../../utils/cookie";
-import CenterModalTs from "../../common/CenterModalTs";
 import ListItem from "./ListItem";
 dayjs.extend(customParseFormat);
 
@@ -16,49 +12,38 @@ interface OperationInfoProps {
 }
 
 const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
-  const navigate = useNavigate();
-  // 쿠키
-  const userInfo = getCookie("user");
-  const userEmail = userInfo.email;
-  const accessToken = getCookie("accessToken");
   // 쿼리
   const [searchParams] = useSearchParams();
-  const strfId = searchParams.get("strfId");
+
   const category = searchParams.get("category");
 
-  const [isDelete, setIsDelete] = useState(false);
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
   // 상품 삭제
-  const deleteStrf = async () => {
-    const url = "/api/detail/strf";
-    setIsLoading(true);
-    try {
-      const res = await axios.delete(`${url}?strf_id=${strfId}`, {
-        data: { strf_id: strfId },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      console.log("상품 삭제 성공", res);
-      const resultData = res.data;
-      if (resultData) {
-        message.success("업체가 삭제되었습니다.");
-        setCookie("user", {
-          ...userInfo,
-          strfDtos: [{ strfId: null, title: null, category: null }],
-        });
-        navigate("/business");
-      }
-    } catch (error) {
-      console.log("상품 삭제 실패", error);
-      message.error("통신 오류로 인해 업체 삭제에 실패했습니다.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const deleteStrf = async () => {
+  //   const url = "/api/detail/strf";
+  //   setIsLoading(true);
+  //   try {
+  //     const res = await axios.delete(`${url}?strf_id=${strfId}`, {
+  //       data: { strf_id: strfId },
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     });
+  //     console.log("상품 삭제 성공", res);
+  //     const resultData = res.data;
+  //     if (resultData) {
+  //       message.success("업체가 삭제되었습니다.");
+  //       setCookie("user", {
+  //         ...userInfo,
+  //         strfDtos: [{ strfId: null, title: null, category: null }],
+  //       });
+  //       navigate("/business");
+  //     }
+  //   } catch (error) {
+  //     console.log("상품 삭제 실패", error);
+  //     message.error("통신 오류로 인해 업체 삭제에 실패했습니다.");
+  //   } finally {
+  //   }
+  // };
 
   const matchCheck = (category: string) => {
     if (category === CategoryType.STAY) {
@@ -124,17 +109,16 @@ const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
           </div>
         </Spin>
       </section> */}
-      {isDelete && (
+      {/* {isDelete && (
         <CenterModalTs
           title="업체 삭제"
           content="정말 업체를 삭제하시겠습니까?"
           handleClickSubmit={() => {
-            deleteStrf();
             setIsDelete(false);
           }}
           handleClickCancle={() => setIsDelete(false)}
         />
-      )}
+      )} */}
     </>
   );
 };
