@@ -5,7 +5,7 @@ import { MenuType } from "../../types/interface";
 import { Button, DatePicker } from "antd";
 import "../../styles/antd-styles.css";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import dayjs, { Dayjs } from "dayjs";
 import { message } from "antd";
@@ -16,6 +16,16 @@ const { RangePicker } = DatePicker;
 interface inquiryCheck {
   menuId: number;
   check: boolean;
+}
+
+interface roomProps {
+  maxCapacity: number;
+  recomCapacity: number;
+  surcharge: number;
+  title?: string | null;
+  menuId: string;
+  roomId: number;
+  roomNum: number[];
 }
 
 const Parlor = ({
@@ -29,6 +39,7 @@ const Parlor = ({
 }) => {
   const navigate = useNavigate();
   const [inquiry, setInquiry] = useState<inquiryCheck[]>([]);
+  const [isRoom, setIsRoom] = useState<roomProps[]>([]);
   const [selectedDates, setSelectedDates] = useState<[string, string] | null>(
     null,
   );
@@ -49,6 +60,24 @@ const Parlor = ({
       setInquiry([]);
     }
   };
+  const getRoom = async () => {
+    try {
+      const res = await jwtAxios.get(
+        `/api/detail/parlor?strf_id=${strfId}&category=숙소`,
+      );
+      if (res.data?.data) {
+        setIsRoom(res.data.data);
+      }
+      console.log("예약 가능 여부:", res.data);
+    } catch (error) {
+      console.log("예약 조회 에러:", error);
+      setInquiry([]);
+    }
+  };
+
+  useEffect(() => {
+    getRoom();
+  }, []);
 
   const handleDateChange = (dates: any) => {
     if (dates) {
@@ -82,6 +111,7 @@ const Parlor = ({
         dates: selectedDates,
         item: item,
         contentData: contentData,
+        isRoom: isRoom,
       },
     });
   };

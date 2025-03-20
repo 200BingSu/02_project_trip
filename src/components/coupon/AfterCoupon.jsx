@@ -44,10 +44,7 @@ const AfterCoupon = () => {
                 <p className="text-sm text-slate-400">
                   기한 만료{" "}
                   <span className="text-slate-400">
-                    (
-                    {item.expiredAt.split(" ")[0].replaceAll("-", ".") +
-                      " " +
-                      item.expiredAt}
+                    ({item.expiredAt.split(" ")[0].replaceAll("-", ".")}
                     까지)
                   </span>
                 </p>
