@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import jwtAxios from "../../apis/jwt";
 import { LocationPic } from "../../constants/pic";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { scrapAtom } from "../../atoms/scrapAtom";
 const SelectTrip = ({
   openSelectTripModal,
   setOpenSelectTripModal,
@@ -22,7 +24,8 @@ const SelectTrip = ({
       },
     });
   };
-
+  //reocil
+  const [scrapData, setScrapData] = useRecoilState(scrapAtom);
   //useState
   const [tripListData, setTripListData] = useState([]);
   const [selectedTrip, setSelectedTrip] = useState(null);
@@ -51,6 +54,7 @@ const SelectTrip = ({
     setSelectedTrip(index);
     console.log("item", item);
     setSelectedTripData(item);
+    setScrapData({ ...scrapData, tripReviewId: item.tripId });
   };
   // 모달창
 

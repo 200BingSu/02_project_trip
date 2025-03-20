@@ -183,9 +183,7 @@ const SearchAfter = () => {
         ...prev,
         fromContent: false,
       }));
-      navigate(
-        `/search/strf?keyword=${e.target.value}&category=${category}&orderType=${orderType}`,
-      );
+      navigate(`/search/strf?keyword=${e.target.value}&category=0&orderType=0`);
     }
   };
   // 카테고리 선택
@@ -305,8 +303,8 @@ const SearchAfter = () => {
         <div className="h-[2.66vw] max-h-[10px] bg-slate-100"></div>
         {/* 총 개수, 정렬 방식 */}
         {category !== 0 && (
-          <div className="flex items-center gap-3 justify-between py-4">
-            <div className="text-xs text-slate-700 font-semibold">
+          <div className="flex items-center gap-3 justify-between px-4 py-4">
+            <div className="text-sm text-slate-700 font-semibold">
               {category === 0 ? null : `총 ${searchValue.count}개`}
             </div>
             <div className="flex items-center gap-3">
