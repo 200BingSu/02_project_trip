@@ -30,7 +30,7 @@ interface TabProps {
  */
 const Tab = ({ list, current, changeCateIndex }: TabProps): JSX.Element => {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 mb-1">
       {/* 탭 */}
       <section>
         <ul className="flex items-center w-full">

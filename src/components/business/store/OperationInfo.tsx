@@ -2,13 +2,13 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { ReactNode, useState } from "react";
 // import { matchRestDataToKor } from "../../../utils/match";
+import { message } from "antd";
+import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CategoryType } from "../../../types/enum";
-import ListItem from "./ListItem";
-import { Button, Input, message, Spin } from "antd";
+import { getCookie, setCookie } from "../../../utils/cookie";
 import CenterModalTs from "../../common/CenterModalTs";
-import { getCookie } from "../../../utils/cookie";
-import axios from "axios";
+import ListItem from "./ListItem";
 dayjs.extend(customParseFormat);
 
 interface OperationInfoProps {
@@ -37,6 +37,7 @@ const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
     setIsLoading(true);
     try {
       const res = await axios.delete(`${url}?strf_id=${strfId}`, {
+        data: { strf_id: strfId },
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -45,11 +46,15 @@ const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
       const resultData = res.data;
       if (resultData) {
         message.success("업체가 삭제되었습니다.");
+        setCookie("user", {
+          ...userInfo,
+          strfDtos: [{ strfId: null, title: null, category: null }],
+        });
         navigate("/business");
       }
     } catch (error) {
       console.log("상품 삭제 실패", error);
-      message.error("업체 삭제에 실패했습니다.");
+      message.error("통신 오류로 인해 업체 삭제에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +80,7 @@ const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
       <ListItem title={matchCheck(category as string)} type="checkTime" />
       <ListItem title="휴무일" type="restDate" />
       {/* <ListItem title="임시 휴무일 등록" type="tempRest" /> */}
-      <section className="flex flex-col gap-2 px-6 py-5 border-t border-slate-200">
+      {/* <section className="flex flex-col gap-2 px-6 py-5 border-t border-slate-200">
         <div className="flex items-center gap-3">
           <h3 className="text-xl font-semibold text-slate-700">업체 삭제</h3>
           <p className="text-sm text-secondary3 font-normal">
@@ -118,7 +123,7 @@ const OperationInfo = ({}: OperationInfoProps): JSX.Element => {
             </Button>
           </div>
         </Spin>
-      </section>
+      </section> */}
       {isDelete && (
         <CenterModalTs
           title="업체 삭제"

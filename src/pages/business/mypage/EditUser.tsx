@@ -4,6 +4,7 @@ import {
   Form,
   Input,
   message,
+  Spin,
   Upload,
   UploadFile,
 } from "antd";
@@ -62,6 +63,7 @@ const EditUser = () => {
   // api 유저 정보 수정
   const updateUser = async (payload: any) => {
     const url = "/api/user";
+    setIsLoading(true);
     try {
       const res = await axios.patch(url, payload, {
         headers: {
@@ -76,6 +78,8 @@ const EditUser = () => {
       }
     } catch (error) {
       console.log("유저 정보 수정", error);
+    } finally {
+      setIsLoading(false);
     }
   };
   const onFinish = (values: any) => {
@@ -145,112 +149,116 @@ const EditUser = () => {
       />
       <section className="flex flex-col gap-5 mt-5 py-3 px-4">
         {/* 유저 이미지 */}
-        <Form
-          form={form}
-          onFinish={onFinish}
-          className="flex flex-col gap-2 relative"
-        >
-          <div className="flex justify-center">
-            <div className="mx-auto w-32 aspect-square relative">
-              <img
-                src={previewUrl || `${ProfilePic}/${userId}/${profilePic}`}
-                alt="User-Profile"
-                className="w-full h-full object-cover rounded-full"
-              />
-              <Form.Item
-                name="profilePic"
-                rules={[
-                  { required: true, message: "프로필 이미지를 입력해주세요" },
-                ]}
-                className="absolute -bottom-7 -right-0"
-              >
-                <Upload
+        <Spin spinning={isLoading}>
+          <Form
+            form={form}
+            onFinish={onFinish}
+            className="flex flex-col gap-2 relative"
+          >
+            <div className="flex justify-center">
+              <div className="mx-auto w-32 aspect-square relative">
+                <img
+                  src={previewUrl || `${ProfilePic}/${userId}/${profilePic}`}
+                  alt="User-Profile"
+                  className="w-full h-full object-cover rounded-full"
+                />
+                <Form.Item
                   name="profilePic"
-                  showUploadList={false}
-                  fileList={fileList}
-                  onChange={onChange}
-                  onPreview={onPreview}
-                  beforeUpload={() => false}
-                  accept="image/*"
-                  maxCount={1}
+                  rules={[
+                    { required: true, message: "프로필 이미지를 입력해주세요" },
+                  ]}
+                  className="absolute -bottom-7 -right-0"
                 >
-                  <div className="flex bg-primary w-8 h-8 justify-center items-center rounded-full cursor-pointer border-2 border-white box-content">
-                    <BiSolidCamera className="text-lg text-white" />
-                  </div>
-                </Upload>
-              </Form.Item>
+                  <Upload
+                    name="profilePic"
+                    showUploadList={false}
+                    fileList={fileList}
+                    onChange={onChange}
+                    onPreview={onPreview}
+                    beforeUpload={() => false}
+                    accept="image/*"
+                    maxCount={1}
+                  >
+                    <div className="flex bg-primary w-8 h-8 justify-center items-center rounded-full cursor-pointer border-2 border-white box-content">
+                      <BiSolidCamera className="text-lg text-white" />
+                    </div>
+                  </Upload>
+                </Form.Item>
+              </div>
             </div>
-          </div>
 
-          <h3 className="text-slate-700 text-xs font-semibold pb-1">닉네임</h3>
-          <Form.Item
-            name="name"
-            rules={[{ required: true, message: "닉네임을 입력해주세요" }, {}]}
-          >
-            <Input
-              placeholder="닉네임을 입력해주세요"
-              size="large"
-              className="h-12"
-            />
-          </Form.Item>
-          <h3 className="text-slate-700 text-xs font-semibold pb-1">
-            전화번호
-          </h3>
-          <Form.Item
-            name="tell"
-            rules={[
-              {
-                required: false,
-                validator: async (_, value) => {
-                  if (!value) return Promise.resolve();
-                  const phoneRegex =
-                    /^01([0|1|6|7|8|9])-([0-9]{3,4})-([0-9]{4})$/;
-                  if (!phoneRegex.test(value)) {
-                    return Promise.reject(
-                      "올바른 휴대폰 번호 형식이 아닙니다. (예: 010-1234-5678)",
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
-          >
-            <Input
-              placeholder="전화번호를 입력해주세요"
-              size="large"
-              className="h-12"
-              maxLength={13}
-              onChange={e => {
-                const value = e.target.value.replace(/[^\d]/g, "");
-                const formattedNumber = formatPhoneNumber(value);
-                form.setFieldsValue({ tell: formattedNumber });
-              }}
-            />
-          </Form.Item>
-          <h3 className="text-slate-700 text-xs font-semibold pb-1">
-            생년월일
-          </h3>
-          <Form.Item
-            name="birth"
-            rules={[{ required: true, message: "생년월일을 입력해주세요" }]}
-          >
-            <DatePicker
-              placeholder="생년월일을 입력해주세요"
-              size="large"
-              className="h-12 w-full"
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              htmlType="submit"
-              type="primary"
-              size="large"
-              className="h-12 w-full text-lg font-semibold"
+            <h3 className="text-slate-700 text-xs font-semibold pb-1">
+              닉네임
+            </h3>
+            <Form.Item
+              name="name"
+              rules={[{ required: true, message: "닉네임을 입력해주세요" }, {}]}
             >
-              완료
-            </Button>
-          </Form.Item>
-        </Form>
+              <Input
+                placeholder="닉네임을 입력해주세요"
+                size="large"
+                className="h-12"
+              />
+            </Form.Item>
+            <h3 className="text-slate-700 text-xs font-semibold pb-1">
+              전화번호
+            </h3>
+            <Form.Item
+              name="tell"
+              rules={[
+                {
+                  required: false,
+                  validator: async (_, value) => {
+                    if (!value) return Promise.resolve();
+                    const phoneRegex =
+                      /^01([0|1|6|7|8|9])-([0-9]{3,4})-([0-9]{4})$/;
+                    if (!phoneRegex.test(value)) {
+                      return Promise.reject(
+                        "올바른 휴대폰 번호 형식이 아닙니다. (예: 010-1234-5678)",
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <Input
+                placeholder="전화번호를 입력해주세요"
+                size="large"
+                className="h-12"
+                maxLength={13}
+                onChange={e => {
+                  const value = e.target.value.replace(/[^\d]/g, "");
+                  const formattedNumber = formatPhoneNumber(value);
+                  form.setFieldsValue({ tell: formattedNumber });
+                }}
+              />
+            </Form.Item>
+            <h3 className="text-slate-700 text-xs font-semibold pb-1">
+              생년월일
+            </h3>
+            <Form.Item
+              name="birth"
+              rules={[{ required: true, message: "생년월일을 입력해주세요" }]}
+            >
+              <DatePicker
+                placeholder="생년월일을 입력해주세요"
+                size="large"
+                className="h-12 w-full"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                htmlType="submit"
+                type="primary"
+                size="large"
+                className="h-12 w-full text-lg font-semibold"
+              >
+                완료
+              </Button>
+            </Form.Item>
+          </Form>
+        </Spin>
       </section>
     </div>
   );

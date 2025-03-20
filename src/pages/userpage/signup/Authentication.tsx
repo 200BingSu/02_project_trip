@@ -21,6 +21,11 @@ const Authentication = (): JSX.Element => {
   const [timer, setTimer] = useState<number | null>(null);
   const [isExpired, setIsExpired] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    console.log("error", error);
+  }, [error]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -66,11 +71,13 @@ const Authentication = (): JSX.Element => {
         message.success("사용 가능한 이메일입니다");
       } else {
         message.error("이미 사용중인 이메일입니다");
+        setError(true);
       }
       return res.data.data;
     } catch (error) {
       console.log(error);
       message.error("이메일 중복 확인 중 오류가 발생했습니다");
+
       setIsEmailValid(false);
       return false;
     }
@@ -149,7 +156,13 @@ const Authentication = (): JSX.Element => {
             className="py-[14px] px-3"
             value={isEmail}
             onBlur={handleEmailBlur}
-            onChange={e => setIsEmail(e.target.value)}
+            onChange={e => {
+              setIsEmail(e.target.value);
+              if (e.target.value.trim() !== "") {
+                setError(false);
+              }
+            }}
+            status={error ? "error" : undefined}
           />
           <Button
             type="primary"

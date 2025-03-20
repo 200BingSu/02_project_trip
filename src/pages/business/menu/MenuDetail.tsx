@@ -27,7 +27,6 @@ const MenuDetail = (): JSX.Element => {
   const navigate = useNavigate();
   const location = useLocation();
   const state: MenuType = location.state;
-  console.log("state", state);
   // useState
   const [isBottomOpen, setIsBottomOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
@@ -43,10 +42,8 @@ const MenuDetail = (): JSX.Element => {
         `${url}?strf_id=${strfId}&category=${categoryKor(category)}`,
       );
       const resultData = res.data;
-      console.log("객실/호실 조회", resultData);
       const tempParlor =
         resultData.data.find(item => item.menuId === menuId) ?? null;
-      console.log("현재", tempParlor);
       setParlor(tempParlor);
       return resultData;
     } catch (error) {
@@ -99,13 +96,9 @@ const MenuDetail = (): JSX.Element => {
       console.log("객실 삭제", error);
     }
   };
-  const formatedRoomNum = parlor?.roomNum.map(item => {
-    return `${item.toString().padStart(3, "0")}호`;
-  });
 
   useEffect(() => {
     if (parlor) {
-      console.log("parlor", parlor);
     }
   }, [parlor]);
   useEffect(() => {
@@ -331,10 +324,10 @@ const MenuDetail = (): JSX.Element => {
                 <>
                   <li className="grid grid-cols-4 items-center">
                     <h4 className="col-span-1 text-lg text-slate-600 font-semibold">
-                      객실 번호
+                      객실 수량
                     </h4>
                     <p className="col-span-3 text-base text-slate-500">
-                      {formatedRoomNum?.join(", ")}
+                      {parlor?.roomNum.length}개
                     </p>
                   </li>
 

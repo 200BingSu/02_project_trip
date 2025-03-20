@@ -66,14 +66,14 @@ const BookingList = ({ item }: BookingListProps) => {
       case "1":
         return (
           <>
-            <Button
+            {/* <Button
               color="primary"
               variant="filled"
               className="w-full h-auto py-3 rounded-lg text-base font-semibold text-primary3 "
               onClick={() => setIsCancelModalOpen(true)}
             >
               예약 취소
-            </Button>
+            </Button> */}
             <Button
               type="primary"
               className="w-full h-auto py-3 rounded-lg text-base font-semibold "
@@ -86,23 +86,23 @@ const BookingList = ({ item }: BookingListProps) => {
       case "2":
         return (
           <>
-            <Button
+            {/* <Button
               className="w-full h-auto py-3 rounded-lg text-base font-semibold bg-primary2 text-slate-700"
               onClick={() => setIsCancelModalOpen(true)}
             >
               예약 취소
-            </Button>
+            </Button> */}
           </>
         );
       case "3":
         return (
           <>
-            <Button
+            {/* <Button
               className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
               disabled
             >
               예약 취소 완료
-            </Button>
+            </Button> */}
           </>
         );
     }

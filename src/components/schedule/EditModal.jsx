@@ -1,4 +1,4 @@
-import { Button, Checkbox, DatePicker, Form, Input, Spin } from "antd";
+import { Button, Checkbox, DatePicker, Form, Input, message, Spin } from "antd";
 import axios from "axios";
 import { format } from "date-fns";
 import dayjs from "dayjs";
@@ -58,12 +58,13 @@ const EditModal = ({ tripData, handleClickCancle }) => {
   const [locationList, setLocationList] = useState([]);
   const [selectedLoca, setSelectedLoca] = useState([]); // tripData에서 초기화
   const [checkBox, setCheckBox] = useState([]);
+  const [delUserList, setDelUserList] = useState([]);
+  const [insLocationList, setInsLocationList] = useState([]);
+  const [delLocationList, setDelLocationList] = useState([]);
+
   useEffect(() => {
     console.log("checkBox", checkBox);
   }, [checkBox]);
-  useEffect(() => {
-    console.log("selectedLoca", selectedLoca);
-  }, [selectedLoca]);
   // API 여행 대분류 목록 불러오기
   const getLocation = async () => {
     const url = "/api/trip/location";
@@ -79,10 +80,53 @@ const EditModal = ({ tripData, handleClickCancle }) => {
     }
   };
 
-  const handleClickCate = location => {};
+  // API 여행 수정하기
+  const updateTrip = async payload => {
+    const url = "/api/trip";
+    try {
+      const res = await axios.patch(url, payload);
+      const resultData = res.data;
+      console.log("여행 수정", resultData);
+      if (resultData) {
+        message.success("여행 수정 완료");
+        handleClickCancle();
+      }
+    } catch (error) {
+      console.log("여행 수정", error);
+    }
+  };
+  const handleClickCate = location => {
+    if (selectedLoca.includes(location.locationId)) {
+      setSelectedLoca(
+        selectedLoca.filter(item => item !== location.locationId),
+      );
+      setDelLocationList([...delLocationList, location.locationId]);
+    } else {
+      setSelectedLoca([...selectedLoca, location.locationId]);
+      setInsLocationList([...insLocationList, location.locationId]);
+    }
+  };
 
   const onFinish = values => {
-    console.log(values);
+    if (checkBox.length === 0) {
+      form.setFields([
+        {
+          name: "member",
+          errors: ["1명 이상의 참여자는 필수입니다"],
+        },
+      ]);
+      return;
+    }
+
+    const payload = {
+      title: values.title,
+      startAt: values.dates[0].format("YYYY-MM-DD"),
+      endAt: values.dates[1].format("YYYY-MM-DD"),
+      del_user_list: delUserList,
+      ins_location_list: insLocationList,
+      del_location_list: delLocationList,
+    };
+    console.log("payload", payload);
   };
 
   useEffect(() => {
@@ -95,8 +139,16 @@ const EditModal = ({ tripData, handleClickCancle }) => {
   }, [tripData]);
   useEffect(() => {
     setCheckBox([...tripData.tripUserIdList]);
-    setSelectedLoca([...tripData.tripLocationList]);
+    setSelectedLoca(tripData.tripLocationList.map(item => item.locationId));
   }, []);
+
+  const handleCheckboxChange = checkedValues => {
+    setCheckBox(checkedValues);
+    setDelUserList(
+      tripData.tripUserIdList.filter(item => !checkedValues.includes(item)),
+    );
+  };
+
   return (
     <div
       className="fixed top-0 left-[50%] translate-x-[-50%] z-10
@@ -119,8 +171,8 @@ const EditModal = ({ tripData, handleClickCancle }) => {
                     type="button"
                     key={index}
                     className={`px-2 text-base rounded-xl border w-fit
-                     ${selectedLoca.find(item => item.locationId === location.locationId)}
-                      `}
+                   ${selectedLoca.includes(item.locationId) ? "text-primary border-primary" : "text-slate-500 border-slate-300"}
+                    `}
                     onClick={() => {
                       handleClickCate(item);
                     }}
@@ -162,21 +214,21 @@ const EditModal = ({ tripData, handleClickCancle }) => {
               </Form.Item>
               <Form.Item
                 name="member"
-                required
-                rules={[
-                  { required: true, message: "1명 이상의 참여자는 필수입니다" },
-                ]}
+                validateStatus={checkBox.length === 0 ? "error" : ""}
+                help={
+                  checkBox.length === 0 ? "1명 이상의 참여자는 필수입니다" : ""
+                }
               >
                 <h4 className="text-slate-700 text-lg font-pretendard">
-                  여행 기간
+                  여행 참여자
                 </h4>
-                <Checkbox.Group className="flex flex-col gap-3">
+                <Checkbox.Group
+                  className="flex flex-col gap-3"
+                  value={checkBox}
+                  onChange={handleCheckboxChange}
+                >
                   {tripData?.tripUserIdList?.map((item, index) => (
-                    <StyledCheckbox
-                      key={index}
-                      size="large"
-                      checked={checkBox.includes(item)}
-                    >
+                    <StyledCheckbox key={index} size="large" value={item}>
                       <p className="text-slate-600 font-pretendard text-base">
                         {item}
                       </p>
@@ -185,7 +237,7 @@ const EditModal = ({ tripData, handleClickCancle }) => {
                 </Checkbox.Group>
               </Form.Item>
               <Form.Item>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pt-2">
                   <Button
                     className="w-full"
                     size="large"

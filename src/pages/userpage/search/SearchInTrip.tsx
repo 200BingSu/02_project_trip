@@ -45,6 +45,7 @@ const SearchInTrip = () => {
   const navigateToBack = () => {
     navigate(-1);
   };
+
   const navigateToOtherCate = (item: { type: string; name: string }) => {
     // if (category !== item.type) {
     //   navigate(
@@ -56,7 +57,7 @@ const SearchInTrip = () => {
         `/search/trip?tripId=${tripId}&category=${item.type}&keyword=${text}&type=search`,
       );
     }
-    if (item.type === "ALL" && keyword === "") {
+    if (item.type === "ALL") {
       navigate(
         `/search/trip?tripId=${tripId}&category=${item.type}&keyword=${text}&type=basic`,
       );
