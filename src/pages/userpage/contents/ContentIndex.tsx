@@ -13,8 +13,11 @@ import StrInfo from "../../../components/contents/StrInfo";
 import ContentsHeader from "../../../components/layout/header/ContentsHeader";
 import "../../../styles/antd-styles.css";
 import { IStrf, MenuType } from "../../../types/interface";
+import { useRecoilState } from "recoil";
+import { tripAtom } from "../../../atoms/tripAtom";
 
 const ContentIndex = (): JSX.Element => {
+  const [, setTrip] = useRecoilState(tripAtom);
   const [contentData, setContentData] = useState<IStrf | null>(null);
   const [menuData, setMenuData] = useState<MenuType[]>([]);
   const [searchParams] = useSearchParams();
@@ -26,6 +29,12 @@ const ContentIndex = (): JSX.Element => {
       res.data.data;
       console.log("상품조회-회원", res.data.data);
       setContentData(res.data.data);
+      setTrip(prev => ({
+        ...prev,
+        nowName: res.data.data.strfTitle,
+        nowLat: res.data.data.latit,
+        nowLng: res.data.data.longitude,
+      }));
     } catch (error) {
       console.log("상품조회-회원", error);
     }

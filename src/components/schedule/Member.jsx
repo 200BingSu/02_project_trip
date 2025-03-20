@@ -45,7 +45,7 @@ const Member = ({ tripData, handleClickCancle }) => {
                   /> */}
                   <img src="" alt="" />
                 </div>
-                <p className="text-slate-700 text-base">{item}</p>
+                <p className="text-slate-700 text-base">{item.name}</p>
               </li>
             ))}
           </ul>
