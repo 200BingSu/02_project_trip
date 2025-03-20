@@ -208,18 +208,30 @@ const Index = (): JSX.Element => {
     resetSalesData();
     removeCookie("accessToken");
     const userInfo = getCookie("user");
+
     if (userInfo.isSaveEmail === false) {
-      setCookie("user", { ...userInfo, email: "" });
-    }
-    if (userInfo.isSaveLogin === false) {
       setCookie("user", {
         ...userInfo,
-        userId: "",
         email: "",
-        accessToken: "",
         role: [ROLE.GUEST],
+        strfDtos: [],
+      });
+    } else {
+      setCookie("user", {
+        ...userInfo,
+        role: [ROLE.GUEST],
+        strfDtos: [],
       });
     }
+    // if (userInfo.isSaveLogin === false) {
+    //   setCookie("user", {
+    //     ...userInfo,
+    //     userId: "",
+    //     email: "",
+    //     accessToken: "",
+    //     role: [ROLE.GUEST],
+    //   });
+    // }
 
     navigate("/signin");
   };

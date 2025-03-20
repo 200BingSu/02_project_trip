@@ -19,7 +19,6 @@ import { ISales } from "../../atoms/salesAtom";
 import Graph from "../../components/business/main/Graph";
 import NoData from "../../components/common/NoData";
 import MainHeader from "../../components/layout/header/MainHeader";
-import { ROLE } from "../../types/enum";
 import { getCookie } from "../../utils/cookie";
 import Footer from "../Footer";
 
@@ -214,6 +213,11 @@ const BusinessIndex = (): JSX.Element => {
       {/* 업체가 있을 경우 */}
       {strfId && (
         <section className="px-4 py-5 flex flex-col gap-3">
+          <div>
+            <h3 className="text-xl font-semibold text-slate-700 select-none">
+              {strfName ?? ""} 매출
+            </h3>
+          </div>
           {/* 그래프 */}
           <div className="select-none">
             <Spin spinning={isLoading}>
@@ -234,11 +238,6 @@ const BusinessIndex = (): JSX.Element => {
           {/* 매출 표 */}
           <div className="select-none flex flex-col gap-2">
             {/* 입금 예정 금액 */}
-            <div>
-              <h3 className="text-xl font-semibold text-slate-700 select-none">
-                {strfName ?? ""} 매출
-              </h3>
-            </div>
             <div className="flex flex-col-reverse gap-2 items-start sm:flex-row justify-between sm:gap-2 whitespace-nowrap">
               <div className="flex items-center gap-2">
                 <RangePicker

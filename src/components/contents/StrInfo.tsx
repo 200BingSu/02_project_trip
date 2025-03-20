@@ -16,7 +16,7 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
     <div>
       <div>
         <img
-          src={`${ProductPic}/${strfId}/${contentData?.strfPics[0].strfPic}`}
+          src={`${ProductPic}/${strfId}/${contentData?.strfPics[0].strfPics}`}
           alt={contentData?.strfTitle || ""}
           className="w-full"
         />
