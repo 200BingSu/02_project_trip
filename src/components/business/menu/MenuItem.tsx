@@ -18,7 +18,7 @@ interface MenuItemProps {
   item: MenuType;
   strfId: number;
   category: string;
-  getMenuList: () => IGetMenuListRes | null;
+  getMenuList: () => Promise<IGetMenuListRes | null>;
 }
 
 const MenuItem = ({ strfId, item, category, getMenuList }: MenuItemProps) => {

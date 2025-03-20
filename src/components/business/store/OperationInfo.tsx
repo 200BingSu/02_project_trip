@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { ReactNode, useState } from "react";
 // import { matchRestDataToKor } from "../../../utils/match";
-import { Button, Input, message, Spin } from "antd";
+import { message } from "antd";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CategoryType } from "../../../types/enum";
