@@ -340,7 +340,11 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       if (resultData) {
         getStrfInfo();
         setIsLoading(false);
-        setStrfData({ ...strfData, strfTitle: value[0], closeCheck: value[1] });
+        setStrfData({
+          ...strfData,
+          strfTitle: dayjs(value[0]).format("HH:mm"),
+          closeCheck: dayjs(value[1]).format("HH:mm"),
+        });
         message.success("체크시간 변경이 변경되었습니다");
       }
       return resultData;
@@ -394,11 +398,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     const formatRestDates = value.map((item: string) =>
       matchRestDateKoToEn(item),
     );
-    const payload = {
-      strfId: strfId,
-      busiNum: busiNum,
-      restDates: formatRestDates,
-    };
+    const payload = formatRestDates;
     console.log("payload", payload);
     setIsLoading(true);
     const restDatesPara = formatRestDates
@@ -407,7 +407,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     console.log("restDatesPara", restDatesPara);
     try {
       const res = await axios.patch<IAPI<string>>(
-        `${url}?strfId=${strfId}&busiNum=${busiNum}&${restDatesPara}`,
+        `${url}?strf_id=${strfId}&busi_num=${busiNum}`,
         payload,
         {
           headers: {
@@ -435,28 +435,28 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
     }
   };
   // API 휴무일 삭제
-  const deleteRestDate = async (): Promise<IAPI<number> | null> => {
-    const url = "/api/detail/rest";
-    try {
-      const res = await axios.delete<IAPI<number>>(
-        `${url}?strfId=${strfId}&busiNum=${busiNum}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-      const resultData = res.data;
-      if (resultData) {
-        console.log("영업 상태 삭제", resultData);
-        updateRestDate();
-      }
-      return resultData;
-    } catch (error) {
-      console.log("영업 상태 삭제", error);
-      return null;
-    }
-  };
+  // const deleteRestDate = async (): Promise<IAPI<number> | null> => {
+  //   const url = "/api/detail/rest";
+  //   try {
+  //     const res = await axios.delete<IAPI<number>>(
+  //       `${url}?strfId=${strfId}&busiNum=${busiNum}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       },
+  //     );
+  //     const resultData = res.data;
+  //     if (resultData) {
+  //       console.log("영업 상태 삭제", resultData);
+  //       updateRestDate();
+  //     }
+  //     return resultData;
+  //   } catch (error) {
+  //     console.log("영업 상태 삭제", error);
+  //     return null;
+  //   }
+  // };
   // 수정/완료 클릭
   const handleClickButton = () => {
     if (type === "strfPic") {
@@ -514,7 +514,7 @@ const ListItem = ({ title, type }: ListItemProps): JSX.Element => {
       type === "amenity" && deleteAmenity();
       type === "duration" && updateDuration();
       type === "checkTime" && updateCheckTime();
-      type === "restDate" && deleteRestDate();
+      type === "restDate" && updateRestDate();
     }
   };
   const selectOptions = [

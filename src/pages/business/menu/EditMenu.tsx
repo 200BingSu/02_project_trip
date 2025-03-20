@@ -9,6 +9,7 @@ const EditMenu = (): JSX.Element => {
   // const strfId = searchParams.get("strfId");
   const category = searchParams.get("category");
   const menuId = searchParams.get("menuId");
+  console.log(menuId);
   const what = searchParams.get("what");
   // useState
 
@@ -21,7 +22,7 @@ const EditMenu = (): JSX.Element => {
       </div>
       <section>
         {what === "menu" && <MenuForm />}
-        {what === "room" && <RoomForm menuId={menuId} />}
+        {what === "room" && <RoomForm />}
       </section>
     </div>
   );

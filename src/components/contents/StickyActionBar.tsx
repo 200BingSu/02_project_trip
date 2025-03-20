@@ -31,7 +31,7 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
     isReviewModalOpen: false,
   });
   // const [selectPath] = useState<ISelectPath>({});
-  const [trip, setTrip] = useRecoilState(tripAtom);
+  const [trip] = useRecoilState(tripAtom);
   // const [messageApi] = message.useMessage();
   const [isOpen, setIsOpen] = useState(false);
   const [isPath, setIsPath] = useState(false);
@@ -100,7 +100,10 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
   return (
     <div className="sticky bottom-0 left-0 z-50 w-full px-4 py-5 flex gap-3 bg-white border-t-[1px] border-slate-100">
       <Button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          setIsPath(!isPath);
+        }}
         icon={<FaLocationDot className="!text-sm opacity-50 mb-[2px]" />}
         className="flex items-center justify-center gap-[6px] border-slate-200 rounded-lg w-full h-auto py-[14px] text-lg text-slate-700 "
       >
@@ -149,7 +152,9 @@ const StickyActionBar = ({ strfId, contentData }: StrInfoProps) => {
           일정 추가는 일정 등록 후 추가하실 수 있습니다.
         </p>
       </Modal> */}
-      {isOpen && <AddSchedule open={isOpen} onClose={() => setIsOpen(false)} />}
+      {isOpen && trip.nowTripId === 0 && (
+        <AddSchedule open={isOpen} onClose={() => setIsOpen(false)} />
+      )}
       {trip.nowTripId !== 0 && isPath && (
         <Path open={isPath} onClose={() => setIsPath(false)} />
       )}

@@ -14,7 +14,9 @@ import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
 import { PiWarningCircleBold } from "react-icons/pi";
 import Provision from "../booking/Provision";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
+dayjs.extend(customParseFormat);
 dayjs.locale("ko");
 
 const BookingState = ["결제완료", "예약확정", "이용완료", "취소완료"];
