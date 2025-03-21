@@ -54,11 +54,12 @@
     "recoil": "^0.7.7",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
-    "swiper": "^11.2.4",
+    "swiper": "^11.2.6",
     "yup": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/node": "^22.13.10",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@types/swiper": "^5.4.3",

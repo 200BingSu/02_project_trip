@@ -8,7 +8,7 @@ const CompleteBooking = () => {
   //useNavigate
   const navigate = useNavigate();
   const navigateHome = () => {
-    navigate("/");
+    navigate("/user/userbooking");
   };
   // 쿼리스트링
   const [searchParams] = useSearchParams();
@@ -93,9 +93,7 @@ const CompleteBooking = () => {
             type="button"
             className="px-[15px] py-[30px] rounded-lg border border-slate-300
             text-[24px] font-semibold text-slate-700 w-full"
-            onClick={() => {
-              window.close();
-            }}
+            onClick={navigateHome}
           >
             {" "}
             결제 완료{" "}
