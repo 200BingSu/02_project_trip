@@ -1,10 +1,9 @@
-import { Button, Spin } from "antd";
+import { Spin } from "antd";
+import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import CenterModalTs from "../../../components/common/CenterModalTs";
 import { getCookie } from "../../../utils/cookie";
-import axios from "axios";
 
 interface IBookingDetail {
   menuTitle: string;
@@ -25,7 +24,6 @@ interface IBookingDetail {
   extraFee: number;
 
   usedPoint: number;
-
 }
 
 const BookingDetail = (): JSX.Element => {
@@ -34,15 +32,15 @@ const BookingDetail = (): JSX.Element => {
   // 쿼리
   const [searchParams] = useSearchParams();
   const bookingId = searchParams.get("bookingId");
-  const state = searchParams.get("state");
+  // const state = searchParams.get("state");
   console.log("예약 상세 조회 예약 번호", bookingId);
   // useState
   const [bookingDetail, setBookingDetail] = useState<IBookingDetail | null>(
     null,
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [isOkModalOpen, setIsOkModalOpen] = useState(false);
-  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  // const [, setIsOkModalOpen] = useState(false);
+  // const [, setIsCancelModalOpen] = useState(false);
   // API 예약 상세
   const getBookingDetail = async () => {
     const url = "/api/business/my-page/booking/details";
@@ -64,53 +62,53 @@ const BookingDetail = (): JSX.Element => {
       setIsLoading(false);
     }
   };
-  const matchBusiBookingButton = (state: string) => {
-    switch (state) {
-      case "0":
-      case "1":
-        return (
-          <>
-            <Button
-              color="primary"
-              variant="filled"
-              className="w-full h-auto py-3 rounded-lg text-base font-semibold text-primary3 "
-              onClick={() => setIsCancelModalOpen(true)}
-            >
-              예약 취소
-            </Button>
-            <Button
-              type="primary"
-              className="w-full h-auto py-3 rounded-lg text-base font-semibold "
-              onClick={() => setIsOkModalOpen(true)}
-            >
-              예약 승인
-            </Button>
-          </>
-        );
-      case "2":
-        return (
-          <>
-            <Button
-              className="w-full h-auto py-3 rounded-lg text-base font-semibold bg-primary2 text-slate-700"
-              onClick={() => setIsCancelModalOpen(true)}
-            >
-              예약 취소
-            </Button>
-          </>
-        );
-      case "3":
-        return (
-          <>
-            <Button
-              className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
-              disabled
-            >
-              예약 취소 완료
-            </Button>
-          </>
-        );
-    }
-  };
+  // const matchBusiBookingButton = (state: string) => {
+  //   switch (state) {
+  //     case "0":
+  //     case "1":
+  //       return (
+  //         <>
+  //           <Button
+  //             color="primary"
+  //             variant="filled"
+  //             className="w-full h-auto py-3 rounded-lg text-base font-semibold text-primary3 "
+  //             onClick={() => setIsCancelModalOpen(true)}
+  //           >
+  //             예약 취소
+  //           </Button>
+  //           <Button
+  //             type="primary"
+  //             className="w-full h-auto py-3 rounded-lg text-base font-semibold "
+  //             onClick={() => setIsOkModalOpen(true)}
+  //           >
+  //             예약 승인
+  //           </Button>
+  //         </>
+  //       );
+  //     case "2":
+  //       return (
+  //         <>
+  //           <Button
+  //             className="w-full h-auto py-3 rounded-lg text-base font-semibold bg-primary2 text-slate-700"
+  //             onClick={() => setIsCancelModalOpen(true)}
+  //           >
+  //             예약 취소
+  //           </Button>
+  //         </>
+  //       );
+  //     case "3":
+  //       return (
+  //         <>
+  //           <Button
+  //             className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
+  //             disabled
+  //           >
+  //             예약 취소 완료
+  //           </Button>
+  //         </>
+  //       );
+  //   }
+  // };
 
   useEffect(() => {
     getBookingDetail();
@@ -218,9 +216,7 @@ const BookingDetail = (): JSX.Element => {
                 결제 예정 금액
               </p>
               <p className="col-span-3 text-slate-500 text-base">
-
                 {bookingDetail?.totalPayment?.toLocaleString()}원
-
               </p>
             </div>
             <div className="grid grid-cols-4">
@@ -240,7 +236,6 @@ const BookingDetail = (): JSX.Element => {
                 {bookingDetail?.usedPoint?.toLocaleString()}P
               </p>
             </div>
-
           </div>
         </section>
       </Spin>
@@ -269,7 +264,6 @@ const BookingDetail = (): JSX.Element => {
         />
 
       )} */}
-
     </div>
   );
 };

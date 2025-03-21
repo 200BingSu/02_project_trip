@@ -36,6 +36,7 @@ const SearchAfter = () => {
 
   const resetSearch = useResetRecoilState(searchAtom);
   const searchValue = useRecoilValue(searchAtom);
+  console.log("searchValue", searchValue);
   //useRef
   const topRef = useRef(null);
   const swiperRef = useRef(null);
@@ -107,14 +108,26 @@ const SearchAfter = () => {
           },
         );
         const resultData = res.data;
+        const dtoList = resultData.data.dtoList;
+        const more = resultData.data.more;
+        console.log(more);
+        console.log(resultData);
         if (resultData.code === "200 성공") {
           setIsLoading(false);
           setSearchRecoil(prev => ({
             ...prev,
-            searchData: [...prev.searchData, ...resultData.data],
-            more: resultData.data[0]?.more,
+            searchData: [...prev.searchData, ...dtoList],
+            more: more,
           }));
         }
+        // if (resultData.code === "200 성공") {
+        //   setIsLoading(false);
+        //   setSearchRecoil(prev => ({
+        //     ...prev,
+        //     searchData: [...prev.searchData, ...resultData.data],
+        //     more: resultData.data[0]?.more,
+        //   }));
+        // }
       } catch (error) {
         console.log("카테고리 검색", error);
       }
@@ -126,14 +139,26 @@ const SearchAfter = () => {
           }&search_word=${keyword}&order_type=${orderTypeArr[orderType].type}`,
         );
         const resultData = res.data;
+        const dtoList = resultData.data.dtoList;
+        const more = resultData.data.more;
+        console.log(dtoList);
         if (resultData.code === "200 성공") {
           setIsLoading(false);
           setSearchRecoil(prev => ({
             ...prev,
-            searchData: [...prev.searchData, ...resultData.data],
-            more: resultData.data[0]?.more,
+            searchData: [...prev.searchData, ...dtoList],
+            more: more,
           }));
         }
+
+        // if (resultData.code === "200 성공") {
+        //   setIsLoading(false);
+        //   setSearchRecoil(prev => ({
+        //     ...prev,
+        //     searchData: [...prev.searchData, ...resultData.data],
+        //     more: resultData.data[0]?.more,
+        //   }));
+        // }
       } catch (error) {
         console.log("카테고리 검색", error);
       }
@@ -162,6 +187,8 @@ const SearchAfter = () => {
     }
   }, []);
 
+  // 편의시설 선택 수
+
   // api 검색 총 수
   const getSearchCount = async () => {
     try {
@@ -183,13 +210,15 @@ const SearchAfter = () => {
         ...prev,
         fromContent: false,
       }));
-      navigate(`/search/strf?keyword=${e.target.value}&category=0&orderType=0`);
+      navigate(
+        `/search/strf?keyword=${e.target.value}&category=0&orderType=0&filter=none`,
+      );
     }
   };
   // 카테고리 선택
   const handleChangeCategory = index => {
     navigate(
-      `/search/strf?keyword=${keyword}&category=${index}&orderType=${orderType}`,
+      `/search/strf?keyword=${keyword}&category=${index}&orderType=${orderType}&filter=none`,
     );
     if (index !== category) {
       setSearchRecoil(prev => ({
@@ -204,7 +233,7 @@ const SearchAfter = () => {
   // 정렬 선택
   const handleOrderTypeChange = value => {
     navigate(
-      `/search/strf?keyword=${keyword}&category=${category}&orderType=${value}`,
+      `/search/strf?keyword=${keyword}&category=${category}&orderType=${value}&filter=none`,
     );
     setSearchRecoil(prev => ({
       ...prev,
@@ -220,7 +249,7 @@ const SearchAfter = () => {
       ...prev,
       start_idx: prev.start_idx + 10,
     }));
-    getCategorySearch();
+    // getCategorySearch();
   };
 
   // 편의시설 필터 모달
@@ -238,7 +267,7 @@ const SearchAfter = () => {
         getSearchCount();
       }
     }
-  }, [keyword, category, orderType]);
+  }, [keyword, category, orderType, searchValue.start_idx]);
 
   return (
     <div className="w-full flex flex-col mb-[100px]">
@@ -316,6 +345,11 @@ const SearchAfter = () => {
                     ${filter === "selected" ? "text-primary" : "text-slate-500"}`}
               >
                 필터 <VscSettings />
+                {searchRecoil.amenityId.length > 0 ? (
+                  <span>선택 {searchRecoil.amenityId.length}개</span>
+                ) : (
+                  <span>선택 {searchRecoil.amenityId.length}개</span>
+                )}
               </Button>
               {category !== 0 && (
                 <Select
