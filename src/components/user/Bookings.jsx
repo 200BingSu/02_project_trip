@@ -83,11 +83,9 @@ const Bookings = data => {
 
   const [bookingList, setBookingList] = useState([]);
 
-
   const onClose = () => {
     setPevOpen(false);
   };
-
 
   const getBookingList = useCallback(async () => {
     try {
@@ -100,6 +98,10 @@ const Bookings = data => {
       const resultData = res.data;
       if (resultData.code === "200 성공") {
         setBookingList(resultData.data);
+        // setBookingAtom({
+        //   ...bookingAtom,
+        //   data: [...bookingAtom.data, ...resultData.data],
+        // });
       }
       // setBeforeList(resultData.data.beforeList);
       // setAfterList(resultData.data.afterList);
@@ -111,7 +113,6 @@ const Bookings = data => {
   useEffect(() => {
     getBookingList();
   }, []);
-
 
   // API 채팅방 생성
   const createChatRoom = async () => {
@@ -160,11 +161,10 @@ const Bookings = data => {
         data.getBookings?.();
       } else if (res.data.data === "환불 가능 기간이 아닙니다.") {
         message.error("환불 가능 기간이 아닙니다.");
-
       }
+      getBookingList();
     } catch (error) {
       console.log("예약 취소 에러:", error);
-      message.error("예약 취소에 실패했습니다.");
     }
   };
 
@@ -219,12 +219,10 @@ const Bookings = data => {
               상세보기
             </Button>
             <Button
-
               onClick={() => {
                 handleCancelBooking(data.data.bookingId);
                 getBookingList();
               }}
-
               className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
             >
               예약 취소
@@ -315,7 +313,6 @@ const Bookings = data => {
             </h4>
 
             <p className="text-base text-slate-700 tracking-tight">1명</p>
-
           </div>
         </div>
       </div>

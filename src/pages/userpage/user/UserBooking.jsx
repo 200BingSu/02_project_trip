@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../../apis/jwt";
 import { userAtom } from "../../../atoms/userAtom";
 import Loading from "../../../components/loading/Loading";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { LiaComment } from "react-icons/lia";
 import Footer from "../../Footer";
 import Bookings from "../../../components/user/Bookings";
@@ -12,12 +12,17 @@ import axios from "axios";
 import { getCookie } from "../../../utils/cookie";
 import { Tabs } from "antd";
 import "../../../styles/antd-styles.css";
+import { userBookingAtom } from "../../../atoms/user-bookingAtom";
+import { userBookingSelector } from "../../../selectors/user-bookingSelector";
 
 const UserBooking = () => {
   // 쿠키
   const accessToken = getCookie("accessToken");
   //recoil
   const { userId } = useRecoilValue(userAtom);
+  const [bookingAtom, setBookingAtom] = useRecoilState(userBookingAtom);
+  // const filterBookingData
+  const bookingValue = useRecoilValue(userBookingSelector);
   // useNavigate
   const navigate = useNavigate();
   const navigateBack = () => {
@@ -43,6 +48,10 @@ const UserBooking = () => {
       const resultData = res.data;
       if (resultData.code === "200 성공") {
         setBookingList(resultData.data);
+        //   setBookingAtom({
+        //     ...bookingAtom,
+        //     data: [...bookingAtom.data, ...resultData.data],
+        //   });
       }
       // setBeforeList(resultData.data.beforeList);
       // setAfterList(resultData.data.afterList);
@@ -53,7 +62,7 @@ const UserBooking = () => {
 
   useEffect(() => {
     getBookingList();
-  }, []);
+  }, [getBookingList]);
 
   return (
     <div className="flex flex-col">
@@ -73,8 +82,17 @@ const UserBooking = () => {
                     {bookingList
                       ?.filter(item => item.state === 0 || item.state === 1) // state가 0 또는 1인 경우만 필터링
                       .map((item, index) => (
-                        <Bookings key={index} data={item} />
+                        <Bookings
+                          key={index}
+                          data={item}
+                          getBookingList={getBookingList}
+                        />
                       ))}
+                    {/* {bookingValue.data
+                      ?.filter(item => item.state === 0 || item.state === 1) // state가 0 또는 1인 경우만 필터링
+                      .map((item, index) => (
+                        <Bookings key={index} data={item} />
+                      ))} */}
                   </>
                 ),
               },

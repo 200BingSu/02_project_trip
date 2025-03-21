@@ -180,7 +180,6 @@ const BookingIndex = () => {
 
         const paymentWindow = window.open(resultData.data, "_self");
 
-
         if (!paymentWindow) {
           alert("팝업이 차단되었습니다. 팝업 차단을 해제해주세요.");
         }
