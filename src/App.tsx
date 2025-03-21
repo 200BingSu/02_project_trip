@@ -23,7 +23,7 @@ const App = () => {
 
   const [tsUserInfo, setTsUserInfo] = useRecoilState(tsUserAtom);
 
-  // API 유저 정보 호출
+  // API 유저 정보 호출!
 
   const getUserInfo = async (): Promise<IgetUserInfo | null> => {
     try {
