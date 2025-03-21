@@ -1,6 +1,5 @@
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import { BiDownload, BiTime } from "react-icons/bi";
 
@@ -10,18 +9,17 @@ import { ProductPic } from "../../constants/pic";
 import { categoryKor, matchRestDataToKor } from "../../utils/match";
 import { IStrf } from "../../types/interface";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-
+import { useEffect, useState } from "react";
+import jwtAxios from "../../apis/jwt";
+import CouponList from "./CouponList";
 
 export interface StrInfoProps {
   strfId: number;
   contentData: IStrf | null;
 }
-
 
 export interface couponProps {
   couponId: number;
@@ -33,7 +31,7 @@ export interface couponProps {
 
 const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
   const [coupon, setCoupon] = useState<couponProps[]>([]);
-  const [isOpen, setIsOpen] = useState<boolean>();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const getCoupon = async () => {
     try {
@@ -54,7 +52,6 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
     <div>
       <div>
         <Swiper loop={true} className="mySwiper flex">
-
           {contentData?.strfPics.map((item, index) => (
             <SwiperSlide key={index} className="aspect-[1/2] max-h-[500px]">
               <img
@@ -124,7 +121,6 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
         )}
       </div>
       {isOpen && <CouponList coupon={coupon} setIsOpen={setIsOpen} />}
-
     </div>
   );
 };

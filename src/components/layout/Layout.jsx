@@ -5,6 +5,7 @@ import { ROLE } from "../../types/enum";
 import { useRecoilValue } from "recoil";
 import { tsUserAtom } from "../../atoms/tsuserAtom";
 import { moveTop } from "../../utils/moveTo";
+import DockBar from "./DockBar/DockBar";
 
 const Layout = () => {
   const userInfo = getCookie("user") ?? {};
@@ -25,9 +26,10 @@ const Layout = () => {
   return (
     <div className="max-w-[768px] min-w-xs mx-auto relative h-screen ">
       {/* {path === "/" ? <MainHeader /> : <Header />} */}
-      <div>
+      <div className="pb-20">
         <Outlet />
       </div>
+      <DockBar />
     </div>
   );
 };

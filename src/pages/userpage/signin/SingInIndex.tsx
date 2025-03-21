@@ -109,10 +109,10 @@ const SingInIndex = () => {
           message.error("잘못된 비밀번호입니다");
         }
         if (error.response?.status === 403) {
-          message.error("개인회원 계정입니다.");
+          message.error("사업자 계정입니다.");
         }
         if (error.response?.status === 405) {
-          message.error("사업자 계정입니다.");
+          message.error("개인 계정입니다.");
         }
       }
       removeCookie(`accessToken`);
