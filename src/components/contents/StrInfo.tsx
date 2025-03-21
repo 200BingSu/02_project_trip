@@ -5,9 +5,11 @@ import { RxStarFilled } from "react-icons/rx";
 import { ProductPic } from "../../constants/pic";
 import { categoryKor, matchRestDataToKor } from "../../utils/match";
 import { IStrf } from "../../types/interface";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 export interface StrInfoProps {
   strfId: number;

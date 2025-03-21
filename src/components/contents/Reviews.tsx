@@ -2,9 +2,11 @@ import { Rate } from "antd";
 import axios from "axios";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { LiaComment } from "react-icons/lia";
+import { useNavigate } from "react-router-dom";
 import jwtAxios from "../../apis/jwt";
 import { ProfilePic } from "../../constants/pic";
 import "../../styles/antd-styles.css";
+import { ReportType } from "../../types/enum";
 import { IReview, IReviewData } from "../../types/interface";
 import DynamicGrid from "../basic/DynamicGrid";
 import { StrInfoProps } from "./StrInfo";
@@ -19,7 +21,7 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
   {
     console.log("contentData", contentData);
     // 쿠키
-
+    const navigate = useNavigate();
     //useState
     const [reviewsData, setReviewsData] = useState<IReviewData[]>([]);
     const [moreData, setMoreData] = useState<boolean>();
@@ -142,6 +144,18 @@ const Reviews = ({ strfId, contentData }: StrInfoProps) =>
                         <p className="font-semibold text-sm text-slate-700">
                           {item.rating}
                         </p>
+                        <button
+                          type="button"
+                          className="text-slate-400 flex gap-1 items-center justify-center text-sm"
+                          onClick={() => {
+                            navigate(
+                              `/report?type=${ReportType.STRF}&reportTarget=${contentData?.strfId}`,
+                            );
+                          }}
+                        >
+                          <span>|</span>
+                          <span>신고</span>
+                        </button>
                       </div>
                       <div>
                         <p className="text-sm text-slate-500">

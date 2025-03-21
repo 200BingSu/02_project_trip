@@ -5,10 +5,10 @@ import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { BiCoin } from "react-icons/bi";
 import PointItem from "../../../components/business/point/PointItem";
 import NoData from "../../../components/common/NoData";
-import { IAPI, IPoint } from "../../../types/interface";
+import { IPoint } from "../../../types/interface";
 import { getCookie } from "../../../utils/cookie";
 
-interface PoinData {
+export interface PoinData {
   totalAmount: number;
   pointDetails: IPoint[];
 }
@@ -17,25 +17,25 @@ const Index = () => {
   // 쿠키
   const accessToken = getCookie("accessToken");
   // useState
-  const [pointData, setPointData] = useState<PoinData>({
-    totalAmount: 0,
-    pointDetails: [],
-  });
+  const [pointData, setPointData] = useState<PoinData>();
+  useEffect(() => {
+    console.log("pointData", pointData);
+  }, [pointData]);
   const [isLoading, setIsLoading] = useState(false);
 
   // API 포인트 조회
-  const getPointList = async (): Promise<IAPI<PoinData> | null> => {
+  const getPointList = async (): Promise<PoinData | null> => {
     const url = "/api/business/my-page/used-point";
     setIsLoading(true);
     try {
-      const res = await axios.get<IAPI<PoinData>>(url, {
+      const res = await axios.get<PoinData>(url, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       const resultData = res.data;
       console.log("포인트 조회", resultData);
-      setPointData(resultData.data);
+      setPointData(resultData);
       return resultData;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -89,19 +89,12 @@ const Index = () => {
       <section className="px-4">
         <Spin spinning={isLoading}>
           <ul className="py-5">
-            {!isLoading &&
-              pointData?.pointDetails.length > 0 &&
-              pointData?.pointDetails.map((item, index) => (
-                <PointItem key={index} item={item} />
-              ))}
-            {!isLoading &&
-              (pointData?.pointDetails.length === 0 ||
-                !pointData?.pointDetails) && (
-                <NoData
-                  icon={<BiCoin />}
-                  content="포인트 결제 내역이 없습니다"
-                />
-              )}
+            {pointData?.pointDetails.map((item, index) => (
+              <PointItem key={index} item={item} getPointList={getPointList} />
+            ))}
+            {!isLoading && pointData?.pointDetails.length === 0 && (
+              <NoData icon={<BiCoin />} content="포인트 결제 내역이 없습니다" />
+            )}
           </ul>
         </Spin>
       </section>

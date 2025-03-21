@@ -21,6 +21,10 @@ import { ProviderType, ROLE } from "../../../types/enum";
 import { IAPI } from "../../../types/interface";
 import NotificationComponent from "../../../components/basic/NotificationComponent";
 
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
 //interface
 interface ITripList {
   tripId: number;

@@ -293,6 +293,9 @@ export interface IPoint {
   title: string;
   amount: number;
   usedAt: string | Dayjs;
+  createdAt?: string;
+  pointHistoryId?: number;
+  userId: number;
   refund: boolean;
 }
 
