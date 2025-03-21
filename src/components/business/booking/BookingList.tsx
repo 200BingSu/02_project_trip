@@ -1,3 +1,6 @@
+
+import { Button } from "antd";
+
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useState } from "react";
@@ -59,6 +62,7 @@ const BookingList = ({ item }: BookingListProps) => {
     const duration = end.diff(start, "day");
     return duration;
   };
+
   // const matchBusiBookingButton = (state: string) => {
   //   switch (state) {
   //     case "0":
@@ -107,12 +111,15 @@ const BookingList = ({ item }: BookingListProps) => {
   //   }
   // };
 
+
   return (
     <div className="flex flex-col gap-3">
       <div className="px-4 py-3 flex flex-col gap-2">
         {/* 날짜 */}
         <div className="flex items-start justify-between h-[10vw] max-h-[60px] border-b border-slate-200 ">
+
           <p></p>
+
           <button
             type="button"
             className="flex gap-1 items-center text-primary"
@@ -167,6 +174,7 @@ const BookingList = ({ item }: BookingListProps) => {
               </div>
             </div>
           </div>
+
           {/* <div className="flex items-center gap-3 w-full"> */}
           {/* {matchBusiBookingButton(item.state)} */}
           {/* <Button className="w-full h-[16vw] max-h-[50px]">예약 취소</Button>
@@ -174,6 +182,7 @@ const BookingList = ({ item }: BookingListProps) => {
               예약 승인
             </Button> */}
           {/* </div> */}
+
         </section>
       </div>
       {/* 모달 */}

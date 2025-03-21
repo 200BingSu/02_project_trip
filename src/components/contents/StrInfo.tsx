@@ -1,26 +1,60 @@
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { BiTime } from "react-icons/bi";
+
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { BiDownload, BiTime } from "react-icons/bi";
+
 import { FaLocationDot } from "react-icons/fa6";
 import { RxStarFilled } from "react-icons/rx";
 import { ProductPic } from "../../constants/pic";
 import { categoryKor, matchRestDataToKor } from "../../utils/match";
 import { IStrf } from "../../types/interface";
+
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
+
 export interface StrInfoProps {
   strfId: number;
   contentData: IStrf | null;
 }
 
+
+export interface couponProps {
+  couponId: number;
+  couponName: string;
+  expiredAt: string;
+  discountPer: number;
+  distributeAt: string;
+}
+
 const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
+  const [coupon, setCoupon] = useState<couponProps[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>();
+
+  const getCoupon = async () => {
+    try {
+      const res = await jwtAxios.get(`/api/detail/coupon?strf_id=${strfId}`);
+      setCoupon(res.data);
+      console.log("응답 전체:", res);
+      console.log("쿠폰", res.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {
+    getCoupon();
+  }, []);
+
   return (
     <div>
       <div>
-        <Swiper loop={true} className="mySwiper">
+        <Swiper loop={true} className="mySwiper flex">
+
           {contentData?.strfPics.map((item, index) => (
             <SwiperSlide key={index} className="aspect-[1/2] max-h-[500px]">
               <img
@@ -75,7 +109,22 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
             {contentData?.closeCheck.replace(/:\d{2}$/, "")}
           </p>
         </div>
+
+        {contentData?.category === "STAY" && (
+          <div className="w-full flex flex-col gap-[30px]">
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className="w-full gap-3 flex items-center justify-between  rounded-lg px-4 py-3 border border-primary2 text-primary text-[16px] font-semibold"
+            >
+              쿠폰 받기
+              <BiDownload className="text-xl" />
+            </button>
+          </div>
+        )}
       </div>
+      {isOpen && <CouponList coupon={coupon} setIsOpen={setIsOpen} />}
+
     </div>
   );
 };

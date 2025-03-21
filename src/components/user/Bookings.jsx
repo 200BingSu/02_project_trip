@@ -1,6 +1,8 @@
 import { Button, Drawer, message } from "antd";
 import dayjs from "dayjs";
-import { memo, useState } from "react";
+
+import { memo, useCallback, useEffect, useState } from "react";
+
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { ProductPic } from "../../constants/pic";
 import { CgMoreVerticalAlt } from "react-icons/cg";
@@ -15,6 +17,8 @@ import jwtAxios from "../../apis/jwt";
 import { PiWarningCircleBold } from "react-icons/pi";
 import Provision from "../booking/Provision";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+
+import NoData from "../common/NoData";
 
 dayjs.extend(customParseFormat);
 dayjs.locale("ko");
@@ -77,9 +81,37 @@ const Bookings = data => {
   const [prvOpen, setPevOpen] = useState(false);
   const [placement, setPlacement] = useState("bottom");
 
+  const [bookingList, setBookingList] = useState([]);
+
+
   const onClose = () => {
     setPevOpen(false);
   };
+
+
+  const getBookingList = useCallback(async () => {
+    try {
+      const res = await axios.get(`/api/booking?page=0`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("예약 목록", res.data);
+      const resultData = res.data;
+      if (resultData.code === "200 성공") {
+        setBookingList(resultData.data);
+      }
+      // setBeforeList(resultData.data.beforeList);
+      // setAfterList(resultData.data.afterList);
+    } catch (error) {
+      console.log("예약 목록 불러오기 실패", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getBookingList();
+  }, []);
+
 
   // API 채팅방 생성
   const createChatRoom = async () => {
@@ -114,22 +146,21 @@ const Bookings = data => {
         bookingId: bookingId,
       });
 
-      if (res.data.code === "50퍼센트 환불 완료") {
+      if (res.data.data === "50퍼센트 환불 완료") {
         message.success("50퍼센트 환불 완료");
         // 부모 컴포넌트의 예약 목록 새로고침
         data.getBookings?.();
-      } else if (res.data.code === "70퍼센트 환불 완료") {
+      } else if (res.data.data === "70퍼센트 환불 완료") {
         message.success("70퍼센트 환불 완료");
         // 부모 컴포넌트의 예약 목록 새로고침
         data.getBookings?.();
-      } else if (res.data.code === "100퍼센트 환불 완료") {
+      } else if (res.data.data === "100퍼센트 환불 완료") {
         message.success("100퍼센트 환불 완료");
         // 부모 컴포넌트의 예약 목록 새로고침
         data.getBookings?.();
-      }
+      } else if (res.data.data === "환불 가능 기간이 아닙니다.") {
+        message.error("환불 가능 기간이 아닙니다.");
 
-      {
-        message.error("예약 취소에 실패했습니다.");
       }
     } catch (error) {
       console.log("예약 취소 에러:", error);
@@ -188,7 +219,12 @@ const Bookings = data => {
               상세보기
             </Button>
             <Button
-              onClick={() => handleCancelBooking(data.data.bookingId)}
+
+              onClick={() => {
+                handleCancelBooking(data.data.bookingId);
+                getBookingList();
+              }}
+
               className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
             >
               예약 취소
@@ -277,9 +313,9 @@ const Bookings = data => {
             <h4 className="whitespace-nowrap text-slate-400 font-semibold text-sm tracking-tight">
               인원
             </h4>
-            <p className="text-base text-slate-700 tracking-tight">
-              {dayjs(createdAt, "YYYY-MM-DD").format("YYYY.MM.DD ddd")}
-            </p>
+
+            <p className="text-base text-slate-700 tracking-tight">1명</p>
+
           </div>
         </div>
       </div>

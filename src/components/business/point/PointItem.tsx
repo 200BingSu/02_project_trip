@@ -4,6 +4,7 @@ import { IPoint } from "../../../types/interface";
 import BottomSheet from "../../basic/BottomSheet";
 import { useState } from "react";
 import { RiRefundLine } from "react-icons/ri";
+
 import { getCookie } from "../../../utils/cookie";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
@@ -55,6 +56,7 @@ const PointItem = ({ item, getPointList }: PointItemProps) => {
       ),
       onClick: () => {
         deletePoint();
+
       },
     },
   ];
@@ -67,7 +69,9 @@ const PointItem = ({ item, getPointList }: PointItemProps) => {
             거래 일시
           </h5>
           <p className="col-span-2 text-slate-600 text-lg">
+
             {dayjs(item.createdAt).format("YYYY-MM-DD HH:mm:ss")}
+
           </p>
           <div className="flex justify-end">
             <button

@@ -75,7 +75,9 @@ const Index = () => {
   const options = [
     {
       value: 1,
+
       label: "잘못된 업체(잘못된 정보 또는 폐업 상태)",
+
     },
     {
       value: 2,
