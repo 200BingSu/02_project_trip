@@ -26,7 +26,7 @@ export interface couponProps {
 
 const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
   const [coupon, setCoupon] = useState<couponProps[]>([]);
-  const [isOpen, setIsOpen] = useState<boolean>();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const getCoupon = async () => {
     try {

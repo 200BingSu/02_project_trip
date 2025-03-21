@@ -53,7 +53,7 @@ const UserBooking = () => {
 
   useEffect(() => {
     getBookingList();
-  }, []);
+  }, [getBookingList]);
 
   return (
     <div className="flex flex-col">
@@ -73,7 +73,11 @@ const UserBooking = () => {
                     {bookingList
                       ?.filter(item => item.state === 0 || item.state === 1) // state가 0 또는 1인 경우만 필터링
                       .map((item, index) => (
-                        <Bookings key={index} data={item} />
+                        <Bookings
+                          key={index}
+                          data={item}
+                          getBookingList={getBookingList}
+                        />
                       ))}
                   </>
                 ),
