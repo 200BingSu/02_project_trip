@@ -3,7 +3,7 @@ import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
 import StrfInfo from "../../../components/business/StrfInfo";
 
 const Booking = (): JSX.Element => {
-  // 쿼리
+
   // useNavigate
   const navigate = useNavigate();
   const location = useLocation();

@@ -1,4 +1,6 @@
-import { Button, DatePicker } from "antd";
+
+import { Button, DatePicker, message } from "antd";
+
 import axios from "axios";
 import { BiCalendar } from "react-icons/bi";
 import { useRecoilState } from "recoil";
@@ -39,6 +41,9 @@ const FilterDate = () => {
           setBookingData({ ...bookingData, bookingList: [] });
         } else {
           console.log("예약 목록 확인", error);
+
+          message.info("날짜 내 검색 결과가 없습니다.");
+
         }
       }
       return null;

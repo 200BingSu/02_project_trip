@@ -1,20 +1,27 @@
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import { BiDownload, BiTime } from "react-icons/bi";
+
 import { FaLocationDot } from "react-icons/fa6";
 import { RxStarFilled } from "react-icons/rx";
 import { ProductPic } from "../../constants/pic";
 import { categoryKor, matchRestDataToKor } from "../../utils/match";
 import { IStrf } from "../../types/interface";
-import jwtAxios from "../../apis/jwt";
-import { useEffect, useState } from "react";
-import CouponList from "./CouponList.tsx";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
 
 export interface StrInfoProps {
   strfId: number;
   contentData: IStrf | null;
 }
+
 
 export interface couponProps {
   couponId: number;
@@ -47,6 +54,7 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
     <div>
       <div>
         <Swiper loop={true} className="mySwiper flex">
+
           {contentData?.strfPics.map((item, index) => (
             <SwiperSlide key={index} className="aspect-[1/2] max-h-[500px]">
               <img
@@ -101,6 +109,7 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
             {contentData?.closeCheck.replace(/:\d{2}$/, "")}
           </p>
         </div>
+
         {contentData?.category === "STAY" && (
           <div className="w-full flex flex-col gap-[30px]">
             <button
@@ -115,6 +124,7 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
         )}
       </div>
       {isOpen && <CouponList coupon={coupon} setIsOpen={setIsOpen} />}
+
     </div>
   );
 };

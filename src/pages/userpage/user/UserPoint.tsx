@@ -1,17 +1,22 @@
 import dayjs from "dayjs";
+
 import { useEffect, useRef, useState } from "react";
+
 import { IoIosArrowDown } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import jwtAxios from "../../../apis/jwt";
 import SortSelection from "../../../components/basic/SortSelection";
 import TitleHeaderTs from "../../../components/layout/header/TitleHeaderTs";
+
 import { IPoint } from "../../../types/interface";
 import Footer from "../../Footer";
 
 const UserPoint = (): JSX.Element => {
+
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [point, setPoint] = useState<IPoint>();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const navigate = useNavigate();
 
   const [startDate, setStartDate] = useState(
@@ -21,6 +26,8 @@ const UserPoint = (): JSX.Element => {
   const [isDesc, setIsDesc] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState("1개월");
   const [sortText, setSortText] = useState("최신순");
+
+
 
   const pointHis = async () => {
     try {
@@ -61,6 +68,7 @@ const UserPoint = (): JSX.Element => {
     setSortText(desc ? "최신순" : "과거순");
   };
 
+
   const openCamera = () => {
     fileInputRef.current?.click();
   };
@@ -71,6 +79,7 @@ const UserPoint = (): JSX.Element => {
       alert(`이미지 선택됨: ${file.name}`);
     }
   };
+
 
   return (
     <div>
@@ -83,7 +92,9 @@ const UserPoint = (): JSX.Element => {
         <div className="mx-4 my-6">
           <div>
             <h3 className="text-base text-slate-500 mb-[6px]">
+
               {point?.userName}님의{" "}
+
               <span className="text-primary">보유 포인트</span>
             </h3>
             <h1 className="text-4xl font-bold text-slate-700">
@@ -94,7 +105,9 @@ const UserPoint = (): JSX.Element => {
           <div className="flex py-6 border-[1px] border-slate-200 rounded-lg mt-4">
             <div
               className="flex flex-col flex-1 items-center gap-[6px] border-r-[1px] border-slate-100 cursor-pointer"
+
               onClick={openCamera}
+
             >
               <img
                 src="/images/icon/IoQrCode.svg"
@@ -103,6 +116,7 @@ const UserPoint = (): JSX.Element => {
               />
               <p className="text-sm text-slate-700">QR/스마트 결제</p>
             </div>
+
             {/* 숨겨진 input 요소 */}
             <input
               ref={fileInputRef}
@@ -112,6 +126,7 @@ const UserPoint = (): JSX.Element => {
               style={{ display: "none" }}
               onChange={handleFileChange}
             />
+
             <Link
               to="payment"
               className="flex flex-col flex-1 items-center gap-[6px] cursor-pointer"
@@ -173,6 +188,8 @@ const UserPoint = (): JSX.Element => {
           })}
         </ul>
       </div>
+
+
 
       <SortSelection
         open={isSortOpen}

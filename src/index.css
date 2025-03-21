@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "swiper/css";
 
 /* @font-face {
   font-family: "Work Sans";

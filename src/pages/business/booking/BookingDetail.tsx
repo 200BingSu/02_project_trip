@@ -15,12 +15,17 @@ interface IBookingDetail {
   name: string;
   tell: string;
   email: string;
-  finalPayment: number;
+
+  totalPayment: number;
+
   couponTitle: string;
   recomCapacity: number;
   maxCapacity: number;
   extraPersonCount: number;
   extraFee: number;
+
+  usedPoint: number;
+
 }
 
 const BookingDetail = (): JSX.Element => {
@@ -213,7 +218,9 @@ const BookingDetail = (): JSX.Element => {
                 결제 예정 금액
               </p>
               <p className="col-span-3 text-slate-500 text-base">
-                {bookingDetail?.finalPayment.toLocaleString()}원
+
+                {bookingDetail?.totalPayment?.toLocaleString()}원
+
               </p>
             </div>
             <div className="grid grid-cols-4">
@@ -224,16 +231,28 @@ const BookingDetail = (): JSX.Element => {
                 {bookingDetail?.couponTitle}
               </p>
             </div>
+
+            <div className="grid grid-cols-4">
+              <p className="col-span-1 text-slate-600 text-lg font-semibold">
+                사용된 포인트
+              </p>
+              <p className="col-span-3 text-slate-500 text-base">
+                {bookingDetail?.usedPoint?.toLocaleString()}P
+              </p>
+            </div>
+
           </div>
         </section>
       </Spin>
       <div className="h-[10px] bg-slate-100"></div>
       {/* 버튼 */}
-      <section className="flex gap-3">
+
+      {/* <section className="flex gap-3">
         {matchBusiBookingButton(state as string)}
-      </section>
+      </section> */}
       {/* 모달 */}
-      {isOkModalOpen && (
+      {/* {isOkModalOpen && (
+
         <CenterModalTs
           title="예약 승인"
           content="해당 예약을 승인하시겠습니까?"
@@ -248,7 +267,9 @@ const BookingDetail = (): JSX.Element => {
           handleClickSubmit={() => {}}
           handleClickCancle={() => setIsCancelModalOpen(false)}
         />
-      )}
+
+      )} */}
+
     </div>
   );
 };

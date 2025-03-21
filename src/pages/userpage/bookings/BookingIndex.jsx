@@ -177,7 +177,9 @@ const BookingIndex = () => {
       if (resultData.code === "200 성공" && resultData.data) {
         navigate("/booking/waiting");
         console.log("카카오페이먼트 도전");
+
         const paymentWindow = window.open(resultData.data, "_self");
+
 
         if (!paymentWindow) {
           alert("팝업이 차단되었습니다. 팝업 차단을 해제해주세요.");

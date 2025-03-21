@@ -3,7 +3,13 @@ import ContentsMap from "./ContentsMap";
 import { StrInfoProps } from "./StrInfo";
 import { useEffect, useRef, useState } from "react";
 
+import { PiWarningCircleBold } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
+import { ReportType } from "../../types/enum";
+
 const StrDetail = ({ contentData }: StrInfoProps): JSX.Element => {
+  const navigate = useNavigate();
+
   const [openDetail, setOpenDetail] = useState(false);
   const [isLongText, setIsLongText] = useState(false);
   // ref의 타입을 HTMLDivElement로 명시
@@ -43,7 +49,24 @@ const StrDetail = ({ contentData }: StrInfoProps): JSX.Element => {
       </section>
       <section className="w-full h-[10px] bg-slate-100" />
       <section className="my-6 px-4">
-        <h3 className="font-semibold text-slate-700 text-xl mb-4">위치</h3>
+
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-slate-700 text-xl mb-4">위치</h3>
+          <button
+            type="button"
+            className="text-slate-400 flex gap-1 items-center text-sm font-semibold"
+            onClick={() => {
+              navigate(
+                `/report?type=${ReportType.STRF}&reportTarget=${contentData?.strfId}`,
+              );
+            }}
+          >
+            <PiWarningCircleBold />
+            문제 보고
+          </button>
+        </div>
+
+
         <ContentsMap contentData={contentData} />
         <div>
           <dl className="mt-4 px-4 py-6 bg-slate-50 rounded-lg">
