@@ -60,7 +60,7 @@ const RegisterIndex = (): JSX.Element => {
   //useNavigate
   const navigate = useNavigate();
   const navigateToBack = () => {
-    navigate("/business");
+    navigate(-1);
   };
   const navigateToComfirm = () => {
     navigate("/business/register/confirm");

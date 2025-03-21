@@ -27,6 +27,9 @@ const Index = (): JSX.Element => {
   const navigateToChatRoom = (roomId: string | number) => {
     navigate(`/chatroom?roomId=${roomId}`);
   };
+  const navigateToRegister = () => {
+    navigate("/business/register");
+  };
   // 쿠키
   const userInfo = getCookie("user");
   const accessToken = getCookie("accessToken");
@@ -401,7 +404,12 @@ const Index = (): JSX.Element => {
               ))}
             </>
           ) : (
-            <li className="py-4 flex items-center gap-4 text-2xl font-medium text-slate-700">
+            <li
+              className="py-4 flex items-center gap-4 text-2xl font-medium text-slate-700 select-none cursor-pointer"
+              onClick={() => {
+                navigateToRegister();
+              }}
+            >
               <i className="text-2xl text-slate-400">
                 <AiOutlinePlus />
               </i>
