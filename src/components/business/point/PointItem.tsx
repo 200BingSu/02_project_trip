@@ -5,18 +5,58 @@ import BottomSheet from "../../basic/BottomSheet";
 import { useState } from "react";
 import { RiRefundLine } from "react-icons/ri";
 
-const PointItem = ({ item }: { item: IPoint }) => {
+import { getCookie } from "../../../utils/cookie";
+import axios from "axios";
+import { useSearchParams } from "react-router-dom";
+import { PoinData } from "../../../pages/business/point/Index";
+
+interface PointItemProps {
+  item: IPoint;
+  getPointList: () => Promise<PoinData | null>;
+}
+
+const PointItem = ({ item, getPointList }: PointItemProps) => {
+  console.log(item);
+  // 쿠키
+  const accessToken = getCookie("accessToken");
   const [isOpen, setIsOpen] = useState(false);
+  // 쿼리
+  const [searchParams] = useSearchParams();
+  const strfId = searchParams.get("strfId");
+  // API 포인트 사용 취소
+  const deletePoint = async () => {
+    const url = "/api/point/history";
+    try {
+      const res = await axios.delete(`${url}`, {
+        data: {
+          point_history_id: item.pointHistoryId,
+          strf_id: strfId,
+        },
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const resultData = res.data;
+      if (resultData.code == "200 성공") {
+        setIsOpen(false);
+        getPointList();
+      }
+      console.log("포인트 환불", resultData);
+    } catch (error) {
+      console.log("포인트 환불", error);
+    }
+  };
   const actions = [
     {
       label: (
-        <div className="flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500">
+        <button
+          className={`flex items-center gap-3 px-4 py-[14px] text-lg text-slate-500`}
+        >
           <RiRefundLine />
           환불하기
-        </div>
+        </button>
       ),
       onClick: () => {
-        console.log("환불하기");
+        deletePoint();
+
       },
     },
   ];
@@ -29,7 +69,9 @@ const PointItem = ({ item }: { item: IPoint }) => {
             거래 일시
           </h5>
           <p className="col-span-2 text-slate-600 text-lg">
-            {dayjs(item.usedAt).format("YYYY-MM-DD HH:mm:ss")}
+
+            {dayjs(item.createdAt).format("YYYY-MM-DD HH:mm:ss")}
+
           </p>
           <div className="flex justify-end">
             <button

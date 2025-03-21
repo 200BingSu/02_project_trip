@@ -78,6 +78,7 @@ const ContentIndex = (): JSX.Element => {
                 strfId={strfId}
                 menuData={menuData}
                 contentData={contentData}
+                getMenuDetail={getMenuDetail}
               />
             )}
             {contentData?.category === "RESTAUR" && (

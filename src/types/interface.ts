@@ -57,6 +57,7 @@ export interface ICoupon {
 // 메뉴 목록
 export interface MenuType {
   menuId: number;
+  check?: boolean;
   menuPrice: number;
   menuTitle: string;
   menuPic: string;
@@ -293,6 +294,11 @@ export interface IPoint {
   title: string;
   amount: number;
   usedAt: string | Dayjs;
+
+  createdAt?: string;
+  pointHistoryId?: number;
+  userId: number;
+
   refund: boolean;
 }
 

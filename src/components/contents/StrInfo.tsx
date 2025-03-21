@@ -2,14 +2,19 @@ import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { BiDownload, BiTime } from "react-icons/bi";
+
 import { FaLocationDot } from "react-icons/fa6";
 import { RxStarFilled } from "react-icons/rx";
 import { ProductPic } from "../../constants/pic";
 import { categoryKor, matchRestDataToKor } from "../../utils/match";
 import { IStrf } from "../../types/interface";
-import jwtAxios from "../../apis/jwt";
+
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 import { useEffect, useState } from "react";
-import CouponList from "./CouponList.tsx";
+import jwtAxios from "../../apis/jwt";
+import CouponList from "./CouponList";
 
 export interface StrInfoProps {
   strfId: number;
@@ -101,6 +106,7 @@ const StrInfo = ({ strfId, contentData }: StrInfoProps): JSX.Element => {
             {contentData?.closeCheck.replace(/:\d{2}$/, "")}
           </p>
         </div>
+
         {contentData?.category === "STAY" && (
           <div className="w-full flex flex-col gap-[30px]">
             <button

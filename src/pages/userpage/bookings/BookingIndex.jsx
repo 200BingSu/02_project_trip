@@ -177,6 +177,7 @@ const BookingIndex = () => {
       if (resultData.code === "200 성공" && resultData.data) {
         navigate("/booking/waiting");
         console.log("카카오페이먼트 도전");
+
         const paymentWindow = window.open(resultData.data, "_self");
 
         if (!paymentWindow) {

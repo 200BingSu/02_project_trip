@@ -12,13 +12,16 @@ import { LiaComment } from "react-icons/lia";
 import Footer from "../../Footer";
 import "../../../styles/antd-styles.css";
 import TitleHeader from "../../../components/layout/header/TitleHeader";
+
 import jwtAxios from "../../../apis/jwt";
 
 const UserRecentList = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [useProfile, setUseProfile] = useState([]);
   const [isRecents, setIsRecents] = useState([]);
+
   const [count, setCount] = useState(0);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const accessToken = getCookie("accessToken");
@@ -90,6 +93,7 @@ const UserRecentList = () => {
     }
   };
 
+
   const getCount = async () => {
     try {
       const res = await jwtAxios.get(`/api/recent/count`);
@@ -98,6 +102,7 @@ const UserRecentList = () => {
       console.log("error", error);
     }
   };
+
   useEffect(() => {
     if (userInfo.accessToken) {
       getUserInfo();
@@ -106,7 +111,9 @@ const UserRecentList = () => {
 
   useEffect(() => {
     getRecentList();
+
     getCount();
+
   }, []);
 
   const handleClickList = item => {
@@ -136,7 +143,9 @@ const UserRecentList = () => {
 
   const navigate = useNavigate();
 
+
   console.log(" count", count);
+
   return (
     <div>
       <TitleHeader
@@ -157,7 +166,9 @@ const UserRecentList = () => {
       ) : (
         <div className="relative flex flex-col gap-6 px-4 mb-6">
           <div className="flex justify-between py-[14px] border-b-[1px] border-slate-100 ">
+
             <p className="text-sm font-semibold text-slate-700">총 {count}개</p>
+
 
             <button
               onClick={showModal}

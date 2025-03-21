@@ -1,4 +1,6 @@
+
 import { Button } from "antd";
+
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useState } from "react";
@@ -60,60 +62,64 @@ const BookingList = ({ item }: BookingListProps) => {
     const duration = end.diff(start, "day");
     return duration;
   };
-  const matchBusiBookingButton = (state: string) => {
-    switch (state) {
-      case "0":
-      case "1":
-        return (
-          <>
-            {/* <Button
-              color="primary"
-              variant="filled"
-              className="w-full h-auto py-3 rounded-lg text-base font-semibold text-primary3 "
-              onClick={() => setIsCancelModalOpen(true)}
-            >
-              예약 취소
-            </Button> */}
-            <Button
-              type="primary"
-              className="w-full h-auto py-3 rounded-lg text-base font-semibold "
-              onClick={() => setIsOkModalOpen(true)}
-            >
-              예약 승인
-            </Button>
-          </>
-        );
-      case "2":
-        return (
-          <>
-            {/* <Button
-              className="w-full h-auto py-3 rounded-lg text-base font-semibold bg-primary2 text-slate-700"
-              onClick={() => setIsCancelModalOpen(true)}
-            >
-              예약 취소
-            </Button> */}
-          </>
-        );
-      case "3":
-        return (
-          <>
-            {/* <Button
-              className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
-              disabled
-            >
-              예약 취소 완료
-            </Button> */}
-          </>
-        );
-    }
-  };
+
+  // const matchBusiBookingButton = (state: string) => {
+  //   switch (state) {
+  //     case "0":
+  //     case "1":
+  //       return (
+  //         <>
+  //           {/* <Button
+  //             color="primary"
+  //             variant="filled"
+  //             className="w-full h-auto py-3 rounded-lg text-base font-semibold text-primary3 "
+  //             onClick={() => setIsCancelModalOpen(true)}
+  //           >
+  //             예약 취소
+  //           </Button> */}
+  //           <Button
+  //             type="primary"
+  //             className="w-full h-auto py-3 rounded-lg text-base font-semibold "
+  //             onClick={() => setIsOkModalOpen(true)}
+  //           >
+  //             예약 승인
+  //           </Button>
+  //         </>
+  //       );
+  //     case "2":
+  //       return (
+  //         <>
+  //           {/* <Button
+  //             className="w-full h-auto py-3 rounded-lg text-base font-semibold bg-primary2 text-slate-700"
+  //             onClick={() => setIsCancelModalOpen(true)}
+  //           >
+  //             예약 취소
+  //           </Button> */}
+  //         </>
+  //       );
+  //     case "3":
+  //       return (
+  //         <>
+  //           {/* <Button
+  //             className="w-full h-auto py-3 rounded-lg text-base font-semibold text-slate-700"
+  //             disabled
+  //           >
+  //             예약 취소 완료
+  //           </Button> */}
+  //         </>
+  //       );
+  //   }
+  // };
+
 
   return (
     <div className="flex flex-col gap-3">
       <div className="px-4 py-3 flex flex-col gap-2">
         {/* 날짜 */}
         <div className="flex items-start justify-between h-[10vw] max-h-[60px] border-b border-slate-200 ">
-          <p>생성 날짜</p>
+
+          <p></p>
+
           <button
             type="button"
             className="flex gap-1 items-center text-primary"
@@ -168,13 +174,15 @@ const BookingList = ({ item }: BookingListProps) => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3 w-full">
-            {matchBusiBookingButton(item.state)}
-            {/* <Button className="w-full h-[16vw] max-h-[50px]">예약 취소</Button>
+
+          {/* <div className="flex items-center gap-3 w-full"> */}
+          {/* {matchBusiBookingButton(item.state)} */}
+          {/* <Button className="w-full h-[16vw] max-h-[50px]">예약 취소</Button>
             <Button type="primary" className="w-full h-[16vw] max-h-[50px]">
               예약 승인
             </Button> */}
-          </div>
+          {/* </div> */}
+
         </section>
       </div>
       {/* 모달 */}

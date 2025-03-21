@@ -1,15 +1,13 @@
+import { Button, DatePicker, message } from "antd";
+import dayjs, { Dayjs } from "dayjs";
+import { useState, useEffect } from "react";
 import { BiTime } from "react-icons/bi";
 import { FiUsers } from "react-icons/fi";
-import { MenuPic } from "../../constants/pic";
-import { MenuType } from "../../types/interface";
-import { Button, DatePicker } from "antd";
-import "../../styles/antd-styles.css";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-
-import dayjs, { Dayjs } from "dayjs";
-import { message } from "antd";
 import jwtAxios from "../../apis/jwt";
+import { MenuPic } from "../../constants/pic";
+import "../../styles/antd-styles.css";
+import { MenuType } from "../../types/interface";
 
 const { RangePicker } = DatePicker;
 
@@ -32,10 +30,12 @@ const Parlor = ({
   strfId,
   menuData,
   contentData,
+  getMenuDetail,
 }: {
   strfId: number;
   menuData: MenuType[];
   contentData: any;
+  getMenuDetail: () => Promise<void>;
 }) => {
   const navigate = useNavigate();
   const [inquiry, setInquiry] = useState<inquiryCheck[]>([]);
@@ -44,22 +44,29 @@ const Parlor = ({
     null,
   );
   const [quantity] = useState(1);
-  const [, setClickItem] = useState(null);
+  const [, setRefresh] = useState({});
 
   const getRsrvtInquiry = async (start: string, end: string) => {
     try {
       const res = await jwtAxios.get(
         `/api/detail/check?strfId=${strfId}&checkIn=${start}&checkOut=${end}`,
       );
-      if (res.data?.data) {
-        setInquiry(res.data.data);
+      if (res.data) {
+        console.log("예약 조회 응답:", res.data);
+        setInquiry(res.data);
+        setRefresh({});
       }
-      console.log("예약 가능 여부:", res.data);
     } catch (error) {
       console.log("예약 조회 에러:", error);
       setInquiry([]);
     }
   };
+
+  useEffect(() => {
+    console.log("inquiry 상태 변경됨:", inquiry);
+    setRefresh({});
+  }, [inquiry]);
+
   const getRoom = async () => {
     try {
       const res = await jwtAxios.get(
@@ -79,61 +86,30 @@ const Parlor = ({
     getRoom();
   }, []);
 
+  const isBookingAvailable = (menuId: number): boolean => {
+    if (!selectedDates || inquiry.length === 0) return false;
+
+    const menuStatus = inquiry.find(item => {
+      console.log("현재 메뉴 체크:", item.menuId, menuId, item.check);
+      return item.menuId === menuId;
+    });
+
+    const isAvailable = Boolean(menuStatus?.check);
+    console.log(`메뉴 ${menuId}의 최종 예약가능여부:`, isAvailable);
+    return isAvailable;
+  };
+
   const handleDateChange = (dates: any) => {
     if (dates) {
       const [start, end] = dates;
       const formattedStart = dayjs(start).format("YYYY-MM-DD");
       const formattedEnd = dayjs(end).format("YYYY-MM-DD");
-
-      console.log("선택된 날짜 범위:", {
-        start: formattedStart,
-        end: formattedEnd,
-      });
-
       setSelectedDates([formattedStart, formattedEnd]);
       getRsrvtInquiry(formattedStart, formattedEnd);
     } else {
-      console.log("날짜 선택이 취소됨");
       setSelectedDates(null);
+      setInquiry([]);
     }
-  };
-
-  const handleBooking = (item: any) => {
-    if (!selectedDates) {
-      message.error("날짜를 선택해주세요");
-      return;
-    }
-
-    setClickItem(item);
-    navigate(`/booking/index?strfId=${strfId}`, {
-      state: {
-        quantity: quantity,
-        dates: selectedDates,
-        item: item,
-        contentData: contentData,
-        isRoom: isRoom,
-      },
-    });
-  };
-
-  // 해당 메뉴의 예약 가능 여부 체크
-  const isBookingAvailable = (menuId: number) => {
-    // 날짜 선택 전이거나 로딩 중일 때는 예약 가능
-    if (!selectedDates) return false;
-
-    // inquiry 데이터가 있을 때만 체크
-    if (inquiry && inquiry.length > 0) {
-      const menuInquiry = inquiry.find(item => item.menuId === menuId);
-      // check가 true면 예약 불가
-      return menuInquiry?.check || false;
-    }
-    return false;
-  };
-
-  // 버튼 텍스트 결정
-  const getButtonText = (menuId: number) => {
-    if (isBookingAvailable(menuId)) return "예약불가";
-    return "예약하기";
   };
 
   const handleBookingClick = (item: any) => {
@@ -141,15 +117,25 @@ const Parlor = ({
       message.warning("날짜를 선택해주세요");
       return;
     }
-    handleBooking(item);
+
+    navigate(`/booking/index?strfId=${strfId}`, {
+      state: {
+        quantity,
+        dates: selectedDates,
+        item,
+        contentData,
+        isRoom: isRoom,
+      },
+    });
   };
 
+  console.log("isRoom", isRoom);
   const disabledDate = (current: Dayjs | null): boolean => {
     return !!current && current.isBefore(dayjs().startOf("day"));
   };
 
   return (
-    <div className="mt-3 ">
+    <div className="mt-3">
       <div className="px-4">
         <RangePicker
           className="custom-lodgment-picker w-full border-slate-300 rounded-lg py-3 text-slate-700 mb-3"
@@ -157,13 +143,9 @@ const Parlor = ({
           disabledDate={disabledDate}
           format="YYYY-MM-DD"
         />
-
-        {/* <button className="w-full border border-slate-300 rounded-lg py-3 text-base text-slate-700 mb-3">
-          성인 2
-        </button> */}
       </div>
       <ul>
-        {menuData?.map(item => (
+        {menuData?.map((item, index) => (
           <li
             key={item.menuId}
             className="py-5 px-4 border-b-[10px] border-slate-100 last:border-b-0"
@@ -184,7 +166,7 @@ const Parlor = ({
                 입실 {item.openCheckIn.replace(/:\d{2}$/, "")} - 퇴실
                 {item.closeCheckIn.replace(/:\d{2}$/, "")}
               </p>
-              <p className="flex items-center gap-[6px] text-slate-500 text-sm ">
+              <p className="flex items-center gap-[6px] text-slate-500 text-sm">
                 <FiUsers className="text-base" />
                 기준 {item.recomCapacity}인 / 최대 {item.maxCapacity}인
               </p>
@@ -196,9 +178,9 @@ const Parlor = ({
                   type="primary"
                   className="text-base py-2 px-4 h-auto rounded-lg"
                   onClick={() => handleBookingClick(item)}
-                  disabled={isBookingAvailable(item.menuId)}
+                  disabled={!inquiry[index]?.check}
                 >
-                  {getButtonText(item.menuId)}
+                  {!inquiry[index]?.check ? "예약불가" : "예약하기"}
                 </Button>
               </div>
             </div>
