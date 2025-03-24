@@ -41,16 +41,23 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
   const pathName = location.pathname;
   // navigate
   const navigate = useNavigate();
-  const navigateToNext = () => {
+  const navigateToNext = (menuId: number) => {
     if (pathName === "/business/menu/create") {
       if (category === CategoryType.STAY) {
         handleCurrent?.(1);
+        navigate(
+          `/business/menu/create?strfId=${strfId}&category=${category}&menuId=${menuId}`,
+        );
       } else {
-        navigate(`/business/menu?strfId=${strfId}&category=${category}`);
+        navigate(
+          `/business/menu?strfId=${strfId}&category=${category}&menuId=${menuId}`,
+        );
       }
     }
     if (pathName === "/business/menu/edit") {
-      navigate(`/business/menu?strfId=${strfId}&category=${category}`);
+      navigate(
+        `/business/menu?strfId=${strfId}&category=${category}&menuId=${menuId}`,
+      );
     }
   };
 
@@ -111,9 +118,10 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
       });
       console.log("메뉴 등록 code", res.data.code);
       const resultData = res.data;
+      const menuId = Number(resultData.data);
       if (resultData.code === "200 성공") {
         message.success("메뉴 등록을 성공했습니다");
-        navigateToNext();
+        navigateToNext(menuId);
         hadleMenuId?.(resultData.data);
         setIsLoading(false);
         resetMenu();

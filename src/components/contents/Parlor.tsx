@@ -30,7 +30,6 @@ const Parlor = ({
   strfId,
   menuData,
   contentData,
-  getMenuDetail,
 }: {
   strfId: number;
   menuData: MenuType[];
@@ -86,18 +85,18 @@ const Parlor = ({
     getRoom();
   }, []);
 
-  const isBookingAvailable = (menuId: number): boolean => {
-    if (!selectedDates || inquiry.length === 0) return false;
+  // const isBookingAvailable = (menuId: number): boolean => {
+  //   if (!selectedDates || inquiry.length === 0) return false;
 
-    const menuStatus = inquiry.find(item => {
-      console.log("현재 메뉴 체크:", item.menuId, menuId, item.check);
-      return item.menuId === menuId;
-    });
+  //   const menuStatus = inquiry.find(item => {
+  //     console.log("현재 메뉴 체크:", item.menuId, menuId, item.check);
+  //     return item.menuId === menuId;
+  //   });
 
-    const isAvailable = Boolean(menuStatus?.check);
-    console.log(`메뉴 ${menuId}의 최종 예약가능여부:`, isAvailable);
-    return isAvailable;
-  };
+  //   const isAvailable = Boolean(menuStatus?.check);
+  //   console.log(`메뉴 ${menuId}의 최종 예약가능여부:`, isAvailable);
+  //   return isAvailable;
+  // };
 
   const handleDateChange = (dates: any) => {
     if (dates) {
