@@ -29,7 +29,7 @@ const Layout = () => {
       <div className="pb-20">
         <Outlet />
       </div>
-      <DockBar />
+      {/* <DockBar /> */}
     </div>
   );
 };
