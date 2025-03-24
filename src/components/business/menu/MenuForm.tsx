@@ -149,7 +149,7 @@ const MenuForm = ({ handleCurrent, hadleMenuId }: MenuFormProps) => {
       const resultData = res.data;
       if (resultData?.code === "200 성공") {
         setIsLoading(false);
-        navigateToNext();
+        navigateToNext(menuId);
         message.success("메뉴 수정을 성공했습니다");
         resetMenu();
       }
